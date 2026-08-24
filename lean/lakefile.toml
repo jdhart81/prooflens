@@ -1,0 +1,14 @@
+name = "prooflens"
+version = "0.1.0"
+defaultTargets = ["ProofLens", "prooflens-extract"]
+
+# The ProofLens core deliberately depends on Lean 4 only.
+# It must remain usable against ANY Lean project, mathlib or not.
+
+[[lean_lib]]
+name = "ProofLens"
+
+[[lean_exe]]
+name = "prooflens-extract"
+root = "Main"
+supportInterpreter = true

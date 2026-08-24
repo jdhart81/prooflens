@@ -1,0 +1,18 @@
+name = "prooflensCorpus"
+version = "0.1.0"
+defaultTargets = ["ProofLensExamples"]
+
+# The example corpus DOES depend on mathlib, so that ProofLens is exercised
+# against the mathematics people actually write, not against toy stand-ins.
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+version = "git#v4.24.0"
+
+[[require]]
+name = "prooflens"
+path = "../lean"
+
+[[lean_lib]]
+name = "ProofLensExamples"

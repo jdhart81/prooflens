@@ -1,0 +1,37 @@
+{
+  "name": "prooflens",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Visual interpretability for formal mathematics",
+  "license": "Apache-2.0",
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -b packages/epistemics packages/formal-ir packages/math-ir packages/classifier packages/visual-ir packages/pipeline packages/renderer-svg packages/renderer-text packages/cli",
+    "build:widget": "node scripts/build-widget.mjs",
+    "clean": "tsc -b --clean packages/epistemics packages/formal-ir packages/math-ir packages/classifier packages/visual-ir packages/pipeline packages/renderer-svg packages/renderer-text packages/cli && rm -rf packages/*/dist apps/web/dist",
+    "typecheck": "tsc -b packages/epistemics packages/formal-ir packages/math-ir packages/classifier packages/visual-ir packages/pipeline packages/renderer-svg packages/renderer-text packages/cli && tsc --noEmit -p lean/widget/tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint packages apps --ext .ts,.tsx",
+    "format": "prettier --write \"{packages,apps,scripts}/**/*.{ts,tsx,json,md}\"",
+    "format:check": "prettier --check \"{packages,apps,scripts}/**/*.{ts,tsx,json,md}\"",
+    "prooflens": "node packages/cli/dist/bin.js",
+    "extract:corpus": "node packages/cli/dist/bin.js extract --project corpus --module ProofLensExamples.Bounds --module ProofLensExamples.Monotonicity --module ProofLensExamples.Implication --module ProofLensExamples.DependencyChain --module ProofLensExamples.IntelligenceBound --out examples/corpus.formal-ir.json && node scripts/sync-corpus.mjs",
+    "dev:web": "pnpm --filter @prooflens/web dev",
+    "sync:corpus": "node scripts/sync-corpus.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "esbuild": "^0.24.0",
+    "eslint": "^8.57.1",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

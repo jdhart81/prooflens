@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.lake/
+lake-packages/
+.DS_Store
+*.log
+apps/web/dist/
+.vitest/
+prooflens-figures/
+prooflens-out/

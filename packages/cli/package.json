@@ -1,0 +1,30 @@
+{
+  "name": "@prooflens/cli",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "prooflens": "./dist/bin.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@prooflens/epistemics": "workspace:*",
+    "@prooflens/formal-ir": "workspace:*",
+    "@prooflens/math-ir": "workspace:*",
+    "@prooflens/classifier": "workspace:*",
+    "@prooflens/visual-ir": "workspace:*",
+    "@prooflens/pipeline": "workspace:*",
+    "@prooflens/renderer-svg": "workspace:*",
+    "@prooflens/renderer-text": "workspace:*"
+  }
+}

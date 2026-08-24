@@ -1,0 +1,179 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typescript:
+    name: TypeScript (typecheck, lint, test, build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Format check
+        run: pnpm run format:check
+
+      - name: Unit and integration tests
+        run: pnpm run test
+
+      - name: Build the web application
+        run: pnpm --filter @prooflens/web build
+
+      - name: Typecheck the infoview widget
+        run: npx tsc --noEmit -p lean/widget/tsconfig.json
+
+      - name: The committed widget bundle must be current
+        run: |
+          pnpm run build:widget
+          if ! git diff --quiet -- lean/ProofLens/Widget/prooflens.js; then
+            echo "::error::lean/ProofLens/Widget/prooflens.js is stale."
+            echo "Run \`pnpm build:widget\` and commit the result."
+            git --no-pager diff --stat -- lean/ProofLens/Widget/prooflens.js
+            exit 1
+          fi
+
+  lean-core:
+    name: Lean core (no mathlib)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install elan
+        run: |
+          curl -sSfL https://elan.lean-lang.org/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain "$(cat lean/lean-toolchain)"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      # The ProofLens extractor depends on Lean core only, so that it can be
+      # pointed at any Lean project. This job exists to keep that true: if a
+      # mathlib import ever creeps into `lean/`, it fails here.
+      - name: Build the extractor
+        working-directory: lean
+        run: lake build
+
+  lean-corpus-e2e:
+    name: Lean corpus and end-to-end pipeline
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install elan
+        run: |
+          curl -sSfL https://elan.lean-lang.org/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain "$(cat lean/lean-toolchain)"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Cache mathlib build artifacts
+        uses: actions/cache@v4
+        with:
+          path: corpus/.lake/packages
+          key: mathlib-${{ hashFiles('corpus/lake-manifest.json') }}
+
+      - name: Fetch the mathlib cache
+        working-directory: corpus
+        run: |
+          lake update -R
+          lake exe cache get
+
+      - name: Build the example corpus
+        working-directory: corpus
+        run: lake build ProofLensExamples
+
+      - name: The corpus must be free of `sorry`
+        run: |
+          if grep -rn --include=*.lean '\bsorry\b' corpus/ProofLensExamples/; then
+            echo "::error::The example corpus contains `sorry`."
+            exit 1
+          fi
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+
+      # Extraction runs through Lean's own frontend (see ADR 0001), which is the
+      # only path guaranteed to produce full notation fidelity.
+      - name: Extract Formal IR from the corpus
+        run: |
+          node packages/cli/dist/bin.js extract \
+            --project corpus \
+            --module ProofLensExamples.Bounds \
+            --module ProofLensExamples.Monotonicity \
+            --module ProofLensExamples.Implication \
+            --module ProofLensExamples.DependencyChain \
+            --module ProofLensExamples.IntelligenceBound \
+            --out /tmp/ci.formal-ir.json
+
+      - name: The extraction must not be degraded
+        run: |
+          FIDELITY=$(node -e "console.log(JSON.parse(require('fs').readFileSync('/tmp/ci.formal-ir.json','utf8')).notationFidelity)")
+          echo "notationFidelity: $FIDELITY"
+          test "$FIDELITY" = "notation"
+
+      - name: Run the full pipeline and render every figure
+        run: |
+          node packages/cli/dist/bin.js summary /tmp/ci.formal-ir.json
+          node packages/cli/dist/bin.js render /tmp/ci.formal-ir.json --out-dir /tmp/figures --format both
+          ls /tmp/figures | head -20
+
+      # The checked-in Formal IR is what the tests and the web application read.
+      # If a change to the Lean side alters it, that has to be visible in review.
+      - name: The committed Formal IR must match a fresh extraction
+        run: |
+          node -e "
+            const fs = require('node:fs');
+            const strip = (p) => { const d = JSON.parse(fs.readFileSync(p,'utf8')); delete d.toolchain; return JSON.stringify(d); };
+            if (strip('/tmp/ci.formal-ir.json') !== strip('examples/corpus.formal-ir.json')) {
+              console.error('examples/corpus.formal-ir.json is stale. Re-extract and commit it.');
+              process.exit(1);
+            }
+            console.log('Committed Formal IR matches a fresh extraction.');
+          "
+
+      - name: The Lean widget must elaborate
+        working-directory: corpus
+        run: |
+          cat > /tmp/widget-check.lean <<'EOF'
+          import ProofLens.Widget
+          import ProofLensExamples.Bounds
+          #prooflens ProofLens.Examples.simple_upper_bound
+          EOF
+          lake env lean /tmp/widget-check.lean
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: prooflens-figures
+          path: /tmp/figures

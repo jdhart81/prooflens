@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions and discussion
+    url: https://github.com/prooflens/prooflens/discussions
+    about: Ask a question, share what you built, or propose an idea before filing an issue.
+  - name: Report a security vulnerability
+    url: https://github.com/prooflens/prooflens/blob/main/SECURITY.md
+    about: Please email security@prooflens.dev instead of opening a public issue.
+  - name: Contributing guide
+    url: https://github.com/prooflens/prooflens/blob/main/CONTRIBUTING.md
+    about: Setup, repository layout, coding standards, and our epistemic discipline rules.

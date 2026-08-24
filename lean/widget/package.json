@@ -1,0 +1,19 @@
+{
+  "name": "@prooflens/widget",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "description": "ProofLens panel widget for the Lean 4 infoview",
+  "scripts": { "build": "node ../../scripts/build-widget.mjs" },
+  "dependencies": {
+    "@prooflens/epistemics": "workspace:*",
+    "@prooflens/formal-ir": "workspace:*",
+    "@prooflens/math-ir": "workspace:*",
+    "@prooflens/classifier": "workspace:*",
+    "@prooflens/visual-ir": "workspace:*",
+    "@prooflens/pipeline": "workspace:*",
+    "@prooflens/renderer-svg": "workspace:*"
+  },
+  "devDependencies": { "@types/react": "^18.3.12" }
+}

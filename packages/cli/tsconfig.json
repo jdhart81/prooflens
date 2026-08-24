@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "rootDir": "./src", "outDir": "./dist" },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../epistemics" },
+    { "path": "../formal-ir" },
+    { "path": "../math-ir" },
+    { "path": "../classifier" },
+    { "path": "../visual-ir" },
+    { "path": "../pipeline" },
+    { "path": "../renderer-svg" },
+    { "path": "../renderer-text" }
+  ]
+}

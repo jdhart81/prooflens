@@ -10,6 +10,7 @@
  * into a repository and diffed.
  */
 import type { AxisSpec, VisualEntity, VisualSpec } from "@prooflens/visual-ir";
+import { afterStage, stageDelay, TRACE_DURATION } from "./animate.js";
 import {
   box,
   circle,
@@ -92,9 +93,14 @@ const NL_HEIGHT = 148;
  * Distances along the axis are meaningless when the axis is `schematic`, so the
  * axis line is drawn broken in that case and the legend says why — an unbroken
  * ruler would imply measurements the theorem never made.
+ *
+ * Animated, the figure builds in the order a reader should parse it: the axis,
+ * then the bound marker drawing in, then the permitted band, then the excluded
+ * band, then the quantity itself.
  */
 export function layoutNumberLine(spec: VisualSpec, ctx: RenderContext): LayoutResult {
   const legend: LegendRow[] = [];
+  const fadeAt = (stage: number): string => ctx.anim({ kind: "fade", delay: stageDelay(stage) });
   const x0 = ctx.pad + 12;
   const x1 = ctx.width - ctx.pad - 12;
   const span = x1 - x0;
@@ -141,12 +147,14 @@ export function layoutNumberLine(spec: VisualSpec, ctx: RenderContext): LayoutRe
     const right = at <= boundX ? X(boundX) : x1;
     const excluded = region.state === "excluded";
     const cls = excluded ? "pl-region-exclude" : "pl-region-permit";
+    // Permitted before excluded: the theorem's positive content leads.
+    const regionAnim = fadeAt(excluded ? 3 : 2);
     svg += box({
       x: left,
       y: NL_BAND_TOP,
       width: right - left,
       height: NL_BAND_BOTTOM - NL_BAND_TOP,
-      className: `${cls}${weakStrokeClass(region.epistemic)}${weakFillClass(region.epistemic)}`,
+      className: `${cls}${weakStrokeClass(region.epistemic)}${weakFillClass(region.epistemic)}${regionAnim}`,
       radius: 3,
       tooltip: entityTooltip(region),
     });
@@ -164,6 +172,7 @@ export function layoutNumberLine(spec: VisualSpec, ctx: RenderContext): LayoutRe
           ry: 3,
           fill: `url(#${hatchId})`,
           stroke: "none",
+          class: regionAnim === "" ? undefined : regionAnim.trimStart(),
         },
         "",
       );
@@ -172,7 +181,7 @@ export function layoutNumberLine(spec: VisualSpec, ctx: RenderContext): LayoutRe
     svg += text(region.label, {
       x: (left + right) / 2,
       y: NL_REGION_LABEL_Y,
-      className: excluded ? "pl-exclude-text" : "pl-permit-text",
+      className: `${excluded ? "pl-exclude-text" : "pl-permit-text"}${regionAnim}`,
       anchor: "middle",
       fontSize: 10.5,
       maxWidth: Math.max(20, labelWidth),
@@ -182,7 +191,7 @@ export function layoutNumberLine(spec: VisualSpec, ctx: RenderContext): LayoutRe
 
   // --- axis --------------------------------------------------------------
   const axisStatus = axis?.epistemic ?? "illustrative";
-  const axisClass = `pl-axis${schematic ? " pl-schematic" : ""}${weakStrokeClass(axisStatus)}`;
+  const axisClass = `pl-axis${schematic ? " pl-schematic" : ""}${weakStrokeClass(axisStatus)}${fadeAt(0)}`;
   svg += line(
     x0 - 8,
     NL_AXIS_Y,
@@ -196,12 +205,12 @@ export function layoutNumberLine(spec: VisualSpec, ctx: RenderContext): LayoutRe
 
   for (const tick of axis?.ticks ?? []) {
     const tx = X(tick.at);
-    svg += line(tx, NL_BAND_BOTTOM, tx, NL_BAND_BOTTOM + 6, "pl-axis", tick.label);
+    svg += line(tx, NL_BAND_BOTTOM, tx, NL_BAND_BOTTOM + 6, `pl-axis${fadeAt(0)}`, tick.label);
     const width = measureText(tick.label, 10);
     svg += text(tick.label, {
       x: clampCenter(tx, width, ctx.pad, ctx.width - ctx.pad),
       y: NL_TICK_LABEL_Y,
-      className: "pl-tick",
+      className: `pl-tick${fadeAt(0)}`,
       anchor: "middle",
       fontSize: 10,
       maxWidth: ctx.width - ctx.pad * 2,
@@ -214,7 +223,7 @@ export function layoutNumberLine(spec: VisualSpec, ctx: RenderContext): LayoutRe
     svg += text(`${axis.label}${units}${suffix}`, {
       x: x0 - 8,
       y: NL_AXIS_TITLE_Y,
-      className: "pl-axis-title",
+      className: `pl-axis-title${fadeAt(0)}`,
       fontSize: 10.5,
       maxWidth: ctx.width - ctx.pad * 2,
       title: `${axis.label}${units} — ${axis.scale} axis`,
@@ -228,7 +237,7 @@ export function layoutNumberLine(spec: VisualSpec, ctx: RenderContext): LayoutRe
       qx,
       NL_AXIS_Y,
       5,
-      `pl-dot${weakFillClass(quantity.epistemic)}`,
+      `pl-dot${weakFillClass(quantity.epistemic)}${fadeAt(4)}`,
       entityTooltip(quantity),
     );
     const label = quantity.detail ? `${quantity.label}  ·  ${quantity.detail}` : quantity.label;
@@ -236,7 +245,7 @@ export function layoutNumberLine(spec: VisualSpec, ctx: RenderContext): LayoutRe
     svg += text(label, {
       x: clampCenter(qx, width, ctx.pad, ctx.width - ctx.pad),
       y: NL_QTY_LABEL_Y,
-      className: `pl-label pl-mono${isWeak(quantity.epistemic) ? " pl-weak-text" : ""}`,
+      className: `pl-label pl-mono${isWeak(quantity.epistemic) ? " pl-weak-text" : ""}${fadeAt(4)}`,
       anchor: "middle",
       fontSize: 12,
       maxWidth: ctx.width - ctx.pad * 2,
@@ -249,6 +258,15 @@ export function layoutNumberLine(spec: VisualSpec, ctx: RenderContext): LayoutRe
   if (bound) {
     strict = bound.state === "excluded";
     const bx = X(bound.position?.x);
+    // The marker line draws in; when the bound is weak its stroke is dashed,
+    // and sliding a dash pattern is not a draw, so it fades instead.
+    const markerAnim = isWeak(bound.epistemic)
+      ? fadeAt(1)
+      : ctx.anim({
+          kind: "draw",
+          delay: stageDelay(1),
+          length: NL_MARKER_BOTTOM - NL_MARKER_TOP,
+        });
     svg += line(
       bx,
       NL_MARKER_TOP,
@@ -256,21 +274,21 @@ export function layoutNumberLine(spec: VisualSpec, ctx: RenderContext): LayoutRe
       NL_MARKER_BOTTOM,
       // Strictness is carried by the open circle alone. A dash here would
       // collide with the epistemic encoding, where dashed means "illustrative".
-      `pl-marker${weakStrokeClass(bound.epistemic)}`,
+      `pl-marker${weakStrokeClass(bound.epistemic)}${markerAnim}`,
       entityTooltip(bound),
     );
     svg += circle(
       bx,
       NL_AXIS_Y,
       5.5,
-      strict ? "pl-dot-open" : "pl-dot",
+      `${strict ? "pl-dot-open" : "pl-dot"}${fadeAt(1)}`,
       `${entityTooltip(bound)} — ${strict ? "open circle: the bound is excluded (strict)" : "filled circle: the bound is included (non-strict)"}`,
     );
     const width = measureText(bound.label, 12.5);
     svg += text(bound.label, {
       x: clampCenter(bx, width, ctx.pad, ctx.width - ctx.pad),
       y: NL_BOUND_LABEL_Y,
-      className: "pl-label-strong pl-mono",
+      className: `pl-label-strong pl-mono${fadeAt(1)}`,
       anchor: "middle",
       fontSize: 12.5,
       maxWidth: ctx.width - ctx.pad * 2,
@@ -323,6 +341,11 @@ export function layoutNumberLine(spec: VisualSpec, ctx: RenderContext): LayoutRe
  */
 export function layoutMonotonicity(spec: VisualSpec, ctx: RenderContext): LayoutResult {
   const legend: LegendRow[] = [];
+  // Animated: axes first, then the curve traces, then everything that reads
+  // off the curve (sample points, guides, captions).
+  const axesAnim = ctx.anim({ kind: "fade", delay: stageDelay(0) });
+  const afterTrace = (): string =>
+    ctx.anim({ kind: "fade", delay: stageDelay(1) + TRACE_DURATION });
   const px0 = ctx.pad + 30;
   const py0 = 14;
   const py1 = 200;
@@ -337,7 +360,7 @@ export function layoutMonotonicity(spec: VisualSpec, ctx: RenderContext): Layout
   const xAxis = spec.axes.find((a) => a.orientation === "horizontal");
   const yAxis = spec.axes.find((a) => a.orientation === "vertical");
   const schematic = (xAxis?.scale ?? "schematic") === "schematic";
-  const axisClass = `pl-axis${schematic ? " pl-schematic" : ""}`;
+  const axisClass = `pl-axis${schematic ? " pl-schematic" : ""}${axesAnim}`;
 
   let svg = "";
   svg += line(
@@ -364,10 +387,18 @@ export function layoutMonotonicity(spec: VisualSpec, ctx: RenderContext): Layout
   const by = decreasing ? py1 - 16 : py0 + 16;
   const c1x = ax + (bx - ax) * 0.45;
   const c2x = ax + (bx - ax) * 0.55;
+  const curveAnim = isWeak(status)
+    ? ctx.anim({ kind: "fade", delay: stageDelay(1), duration: TRACE_DURATION })
+    : ctx.anim({
+        kind: "draw",
+        delay: stageDelay(1),
+        duration: TRACE_DURATION,
+        length: cubicLength(ax, ay, c1x, ay, c2x, by, bx, by),
+      });
   const d = `M ${num(ax)} ${num(ay)} C ${num(c1x)} ${num(ay)} ${num(c2x)} ${num(by)} ${num(bx)} ${num(by)}`;
   svg += path(
     d,
-    `pl-curve${weakStrokeClass(status)}`,
+    `pl-curve${weakStrokeClass(status)}${curveAnim}`,
     {},
     `${fn?.label ?? "f"} — ${fn?.detail ?? "monotone"} — ${statusPhrase(status)}`,
   );
@@ -380,13 +411,13 @@ export function layoutMonotonicity(spec: VisualSpec, ctx: RenderContext): Layout
     const t = solveCubicT(ax, c1x, c2x, bx, ax + clamp01(sample.position?.x) * (bx - ax));
     const sx = cubic(ax, c1x, c2x, bx, t);
     const sy = cubic(ay, ay, by, by, t);
-    svg += line(sx, py1, sx, sy, "pl-guide");
-    svg += line(px0, sy, sx, sy, "pl-guide");
-    svg += circle(sx, sy, 3.5, "pl-dot", entityTooltip(sample));
+    svg += line(sx, py1, sx, sy, `pl-guide${afterTrace()}`);
+    svg += line(px0, sy, sx, sy, `pl-guide${afterTrace()}`);
+    svg += circle(sx, sy, 3.5, `pl-dot${afterTrace()}`, entityTooltip(sample));
     svg += text(sample.label, {
       x: sx,
       y: py1 + 15,
-      className: "pl-label pl-mono",
+      className: `pl-label pl-mono${afterTrace()}`,
       anchor: "middle",
       fontSize: 11.5,
       maxWidth: 60,
@@ -397,7 +428,7 @@ export function layoutMonotonicity(spec: VisualSpec, ctx: RenderContext): Layout
   svg += text(xAxis?.label ?? "input", {
     x: px1 + 12,
     y: py1 + 15,
-    className: "pl-axis-title",
+    className: `pl-axis-title${axesAnim}`,
     fontSize: 10.5,
     maxWidth: 90,
   });
@@ -406,7 +437,9 @@ export function layoutMonotonicity(spec: VisualSpec, ctx: RenderContext): Layout
     {
       x: px0 - 14,
       y: (py0 + py1) / 2,
-      class: "pl-axis-title",
+      // Fade, never enter: a CSS transform would displace the rotation this
+      // label carries in its own `transform` attribute mid-animation.
+      class: `pl-axis-title${axesAnim}`,
       "text-anchor": "middle",
       transform: `rotate(-90 ${num(px0 - 14)} ${num((py0 + py1) / 2)})`,
     },
@@ -421,7 +454,7 @@ export function layoutMonotonicity(spec: VisualSpec, ctx: RenderContext): Layout
     svg += text(fn?.label ?? "f", {
       x: capX,
       y: capY,
-      className: "pl-label-strong pl-mono",
+      className: `pl-label-strong pl-mono${afterTrace()}`,
       fontSize: 13,
       maxWidth: capWidth,
       title: fn ? entityTooltip(fn) : undefined,
@@ -431,7 +464,7 @@ export function layoutMonotonicity(spec: VisualSpec, ctx: RenderContext): Layout
       const para = paragraph(fn.detail, {
         x: capX,
         y: capY,
-        className: "pl-detail",
+        className: `pl-detail${afterTrace()}`,
         maxWidth: capWidth,
         fontSize: 10.5,
         lineHeight: 13,
@@ -445,7 +478,7 @@ export function layoutMonotonicity(spec: VisualSpec, ctx: RenderContext): Layout
       const para = paragraph(relationship.label, {
         x: capX,
         y: capY,
-        className: `pl-label pl-mono${isWeak(relationship.epistemic) ? " pl-weak-text" : ""}`,
+        className: `pl-label pl-mono${isWeak(relationship.epistemic) ? " pl-weak-text" : ""}${afterTrace()}`,
         maxWidth: capWidth,
         fontSize: 12,
         lineHeight: 16,
@@ -494,6 +527,47 @@ function solveCubicT(p0: number, p1: number, p2: number, p3: number, target: num
   return (lo + hi) / 2;
 }
 
+/**
+ * Arc length of a cubic Bézier, by chord sampling, rounded up.
+ *
+ * Used as the dash budget for a curve trace. A fixed step count keeps it
+ * deterministic; the +2 rounds the polyline underestimate the safe way, since
+ * a budget shorter than the path would leave a gap in the final frame.
+ */
+function cubicLength(
+  x0: number,
+  y0: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  x3: number,
+  y3: number,
+): number {
+  let length = 0;
+  let px = x0;
+  let py = y0;
+  for (let i = 1; i <= 24; i += 1) {
+    const t = i / 24;
+    const x = cubic(x0, x1, x2, x3, t);
+    const y = cubic(y0, y1, y2, y3, t);
+    length += Math.hypot(x - px, y - py);
+    px = x;
+    py = y;
+  }
+  return Math.ceil(length + 2);
+}
+
+/**
+ * Dash budget for an edge drawn with {@link connector} or
+ * {@link connectorVertical}: the endpoint distance plus the worst detour the
+ * control handles can add. Always an overestimate — which only makes the
+ * trace finish early — and always an integer, for byte-stable output.
+ */
+function edgeLength(x1: number, y1: number, x2: number, y2: number): number {
+  return Math.ceil(Math.abs(x2 - x1) + Math.abs(y2 - y1)) + 100;
+}
+
 // ---------------------------------------------------------------------------
 // Limit
 // ---------------------------------------------------------------------------
@@ -527,6 +601,14 @@ const LM_BASE = 200;
  */
 export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult {
   const legend: LegendRow[] = [];
+
+  // Animated: the frame and the asymptote come first, so the curve is seen
+  // approaching something that already exists; the curve then traces; text
+  // that reads off the finished curve fades in last. For a divergence there
+  // is no asymptote, and the arrowhead appears only as the trace completes.
+  const axesAnim = ctx.anim({ kind: "fade", delay: stageDelay(0) });
+  const afterTrace = (): string =>
+    ctx.anim({ kind: "fade", delay: stageDelay(1) + TRACE_DURATION });
 
   // The y axis needs a gutter wide enough for a tick label; the plot then takes
   // most of what is left, leaving room for the direction marker past its end.
@@ -564,7 +646,7 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
     py0 - 6,
     px0,
     py1,
-    `${axisClass}${weakStrokeClass(yAxis?.epistemic ?? "illustrative")}`,
+    `${axisClass}${weakStrokeClass(yAxis?.epistemic ?? "illustrative")}${axesAnim}`,
     yAxis
       ? `${yAxis.label} — ${yAxis.scale} axis, ${statusPhrase(yAxis.epistemic)}`
       : "value — schematic axis",
@@ -573,7 +655,7 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
   // arrowhead: the reader has to know which way "the input" moves.
   svg += path(
     `M ${num(px0)} ${num(py1)} L ${num(px1 + 10)} ${num(py1)}`,
-    `${axisClass}${weakStrokeClass(xAxis?.epistemic ?? "illustrative")}`,
+    `${axisClass}${weakStrokeClass(xAxis?.epistemic ?? "illustrative")}${axesAnim}`,
     { "marker-end": `url(#${ctx.id("arrow-muted")})` },
     xAxis
       ? `${xAxis.label} — ${xAxis.scale} axis, ${statusPhrase(xAxis.epistemic)}`
@@ -587,11 +669,11 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
 
   for (const tick of yAxis?.ticks ?? []) {
     const ty = Math.max(py0, Math.min(py1, Y(clamp01(tick.at, 0.3))));
-    svg += line(px0 - 5, ty, px0, ty, "pl-axis", tick.label);
+    svg += line(px0 - 5, ty, px0, ty, `pl-axis${axesAnim}`, tick.label);
     svg += text(tick.label, {
       x: px0 - 8,
       y: ty + 3.5,
-      className: "pl-tick",
+      className: `pl-tick${axesAnim}`,
       anchor: "end",
       fontSize: 10,
       maxWidth: Math.max(0, px0 - ctx.pad - 10),
@@ -600,16 +682,18 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
   }
 
   if (limit) {
+    // The asymptote is dotted, so it fades rather than draws — and it fades
+    // with the axes, before the curve, so the curve has something to approach.
     svg += path(
       `M ${num(px0)} ${num(limitY)} L ${num(px1 + 6)} ${num(limitY)}`,
-      `pl-asymptote${weakStrokeClass(limit.epistemic)}`,
+      `pl-asymptote${weakStrokeClass(limit.epistemic)}${axesAnim}`,
       {},
       `${entityTooltip(limit)} — the curve approaches this line and never meets it`,
     );
     svg += text(limit.label, {
       x: px1 + 8,
       y: limitY + 14,
-      className: `pl-label-strong pl-mono${isWeak(limit.epistemic) ? " pl-weak-text" : ""}`,
+      className: `pl-label-strong pl-mono${isWeak(limit.epistemic) ? " pl-weak-text" : ""}${axesAnim}`,
       anchor: "end",
       fontSize: 12.5,
       maxWidth: Math.max(0, plotWidth * 0.6),
@@ -622,6 +706,7 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
   const bx = px1 - 12;
   const dx = bx - ax;
   let curveEnd = py1;
+  let curveLen: number;
   let d: string;
 
   if (convergent) {
@@ -630,24 +715,44 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
     const yEnd = limitY - 4;
     const yStart = Math.max(py0 + 6, Math.min(py0 + 16, yEnd - 36));
     const dy = yEnd - yStart;
+    const c1x = ax + dx * 0.18;
+    const c1y = yStart + dy * 0.72;
+    const c2x = ax + dx * 0.48;
     d =
-      `M ${num(ax)} ${num(yStart)} C ${num(ax + dx * 0.18)} ${num(yStart + dy * 0.72)}` +
-      ` ${num(ax + dx * 0.48)} ${num(yEnd)} ${num(bx)} ${num(yEnd)}`;
+      `M ${num(ax)} ${num(yStart)} C ${num(c1x)} ${num(c1y)}` +
+      ` ${num(c2x)} ${num(yEnd)} ${num(bx)} ${num(yEnd)}`;
+    curveLen = cubicLength(ax, yStart, c1x, c1y, c2x, yEnd, bx, yEnd);
     curveEnd = yEnd;
   } else {
     // Flat on the left and steep at the right: the shape of leaving.
     const yStart = downward ? py0 + 22 : py1 - 22;
     const yEnd = downward ? py1 + 18 : py0 - 8;
     const dy = yEnd - yStart;
+    const c1x = ax + dx * 0.55;
+    const c2x = ax + dx * 0.86;
+    const c2y = yStart + dy * 0.55;
     d =
-      `M ${num(ax)} ${num(yStart)} C ${num(ax + dx * 0.55)} ${num(yStart)}` +
-      ` ${num(ax + dx * 0.86)} ${num(yStart + dy * 0.55)} ${num(bx)} ${num(yEnd)}`;
+      `M ${num(ax)} ${num(yStart)} C ${num(c1x)} ${num(yStart)}` +
+      ` ${num(c2x)} ${num(c2y)} ${num(bx)} ${num(yEnd)}`;
+    curveLen = cubicLength(ax, yStart, c1x, yStart, c2x, c2y, bx, yEnd);
     curveEnd = yEnd;
   }
 
+  const curveAnim = isWeak(status)
+    ? ctx.anim({ kind: "fade", delay: stageDelay(1), duration: TRACE_DURATION })
+    : ctx.anim({
+        kind: "draw",
+        delay: stageDelay(1),
+        duration: TRACE_DURATION,
+        length: curveLen,
+        // The divergence arrowhead appears only as the trace reaches the edge
+        // of the frame; a convergent curve never carries one.
+        revealMarker: convergent ? undefined : ctx.id("arrow"),
+      });
+
   svg += path(
     d,
-    `pl-curve${weakStrokeClass(status)}`,
+    `pl-curve${weakStrokeClass(status)}${curveAnim}`,
     convergent ? {} : { "marker-end": `url(#${ctx.id("arrow")})` },
     `${fn?.label ?? "the function"} — ${fn?.detail ?? (convergent ? "converges" : "diverges")} — ${statusPhrase(status)}`,
   );
@@ -659,7 +764,7 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
     svg += text("the values leave every bound", {
       x: px0 + 10,
       y: noticeY,
-      className: "pl-label",
+      className: `pl-label${afterTrace()}`,
       fontSize: 12,
       maxWidth: Math.max(0, bx - px0 - 24),
       title: `${fn?.label ?? "the function"} ${fn?.detail ?? "leaves every bound"}`,
@@ -671,7 +776,7 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
     svg += text(direction.label, {
       x: px1 + 16,
       y: py1 + 4,
-      className: `pl-label-strong pl-mono${isWeak(direction.epistemic) ? " pl-weak-text" : ""}`,
+      className: `pl-label-strong pl-mono${isWeak(direction.epistemic) ? " pl-weak-text" : ""}${axesAnim}`,
       fontSize: 12.5,
       maxWidth: Math.max(0, ctx.width - ctx.pad - (px1 + 16)),
       title: entityTooltip(direction),
@@ -687,7 +792,7 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
     svg += text(`${xAxis.label}${units}${suffix}`, {
       x: px0,
       y: axisTitleY,
-      className: "pl-axis-title",
+      className: `pl-axis-title${axesAnim}`,
       fontSize: 10.5,
       maxWidth: Math.max(0, ctx.width - ctx.pad - px0),
       title: `${xAxis.label}${units} — ${xAxis.scale} axis`,
@@ -698,7 +803,9 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
     {
       x: ctx.pad + 8,
       y: (py0 + py1) / 2,
-      class: "pl-axis-title",
+      // Fade, never enter: a CSS transform would displace this label's own
+      // rotation mid-animation.
+      class: `pl-axis-title${axesAnim}`,
       "text-anchor": "middle",
       transform: `rotate(-90 ${num(ctx.pad + 8)} ${num((py0 + py1) / 2)})`,
     },
@@ -713,7 +820,7 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
     svg += text(fn?.label ?? "the function", {
       x: capX,
       y: capY,
-      className: "pl-label-strong pl-mono",
+      className: `pl-label-strong pl-mono${afterTrace()}`,
       fontSize: 13,
       maxWidth: capWidth,
       title: fn ? entityTooltip(fn) : undefined,
@@ -723,7 +830,7 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
       const para = paragraph(fn.detail, {
         x: capX,
         y: capY,
-        className: "pl-detail",
+        className: `pl-detail${afterTrace()}`,
         maxWidth: capWidth,
         fontSize: 10.5,
         lineHeight: 13,
@@ -737,7 +844,7 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
       const para = paragraph(relationship.label, {
         x: capX,
         y: capY,
-        className: `pl-label pl-mono${isWeak(relationship.epistemic) ? " pl-weak-text" : ""}`,
+        className: `pl-label pl-mono${isWeak(relationship.epistemic) ? " pl-weak-text" : ""}${afterTrace()}`,
         maxWidth: capWidth,
         fontSize: 12,
         lineHeight: 16,
@@ -750,7 +857,7 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
       svg += text(direction.detail, {
         x: capX,
         y: capY,
-        className: "pl-detail",
+        className: `pl-detail${afterTrace()}`,
         fontSize: 10.5,
         maxWidth: capWidth,
         title: entityTooltip(direction),
@@ -814,6 +921,12 @@ interface HypBox {
  * own heading rather than merely greyed out, because "greyed out" is a
  * convention a reader has to be taught, whereas "these ones are not connected
  * to anything" is not.
+ *
+ * Animated, the used hypotheses enter first, then the conclusion, then the
+ * wires draw from one to the other — the proof building from its premises.
+ * The unused hypotheses fade in *in place*, muted, between the used group and
+ * the conclusion: no rise, no wire, no entrance that could imply they
+ * contribute.
  */
 export function layoutAssumptionSensitivity(spec: VisualSpec, ctx: RenderContext): LayoutResult {
   const legend: LegendRow[] = [];
@@ -827,16 +940,23 @@ export function layoutAssumptionSensitivity(spec: VisualSpec, ctx: RenderContext
   const unused = hypotheses.filter((h) => h.state === "unused");
   const conclusion = entitiesOfKind(spec, "conclusion")[0];
 
+  const usedAnim = ctx.anim({ kind: "enter", delay: stageDelay(0) });
+  const unusedAnim = (): string => ctx.anim({ kind: "fade", delay: stageDelay(1) });
+  const conclusionStage = unused.length > 0 ? 2 : 1;
+  const conclusionAnim = (): string =>
+    ctx.anim({ kind: "enter", delay: stageDelay(conclusionStage) });
+
   const boxes: HypBox[] = [];
   let svg = "";
   let y = 12;
 
   const layoutGroup = (group: VisualEntity[], heading: string, isUsed: boolean): void => {
     if (group.length === 0) return;
+    const anim = isUsed ? usedAnim : unusedAnim();
     svg += text(heading, {
       x: leftX,
       y,
-      className: "pl-heading",
+      className: `pl-heading${anim}`,
       fontSize: 10,
       maxWidth: colWidth,
     });
@@ -844,7 +964,7 @@ export function layoutAssumptionSensitivity(spec: VisualSpec, ctx: RenderContext
     for (const entity of group) {
       const height = hypothesisBoxHeight(entity, colWidth, isUsed);
       boxes.push({ entity, x: leftX, y, width: colWidth, height, used: isUsed });
-      svg += renderHypothesisBox(entity, leftX, y, colWidth, isUsed);
+      svg += renderHypothesisBox(entity, leftX, y, colWidth, isUsed, anim);
       y += height + 10;
     }
     y += 8;
@@ -852,7 +972,7 @@ export function layoutAssumptionSensitivity(spec: VisualSpec, ctx: RenderContext
 
   layoutGroup(used, `USED BY THE PROOF TERM (${used.length})`, true);
   if (unused.length > 0) {
-    svg += line(leftX, y - 4, leftX + colWidth, y - 4, "pl-rule");
+    svg += line(leftX, y - 4, leftX + colWidth, y - 4, `pl-rule${unusedAnim()}`);
     y += 8;
     layoutGroup(unused, `STATED BUT NEVER USED (${unused.length})`, false);
   }
@@ -880,7 +1000,7 @@ export function layoutAssumptionSensitivity(spec: VisualSpec, ctx: RenderContext
     rightSvg += text("CONCLUSION", {
       x: rightX,
       y: top - 10,
-      className: "pl-heading",
+      className: `pl-heading${conclusionAnim()}`,
       fontSize: 10,
       maxWidth: colWidth,
     });
@@ -889,13 +1009,13 @@ export function layoutAssumptionSensitivity(spec: VisualSpec, ctx: RenderContext
       y: top,
       width: colWidth,
       height,
-      className: `pl-box-primary${weakStrokeClass(conclusion.epistemic)}`,
+      className: `pl-box-primary${weakStrokeClass(conclusion.epistemic)}${conclusionAnim()}`,
       tooltip: entityTooltip(conclusion),
     });
     const para = paragraph(label, {
       x: rightX + 10,
       y: top + 22,
-      className: "pl-label pl-mono",
+      className: `pl-label pl-mono${conclusionAnim()}`,
       maxWidth: colWidth - 20,
       fontSize: 12,
       lineHeight: 16,
@@ -912,15 +1032,21 @@ export function layoutAssumptionSensitivity(spec: VisualSpec, ctx: RenderContext
       if (relationship.to !== conclusion.id) continue;
       const source = byId.get(relationship.from);
       if (!source || !source.used) continue;
-      const d = connector(
-        source.x + source.width,
-        source.y + source.height / 2,
-        rightX,
-        conclusionCy,
-      );
+      const x1 = source.x + source.width;
+      const y1 = source.y + source.height / 2;
+      const d = connector(x1, y1, rightX, conclusionCy);
+      // A wire draws only once both of its endpoints stand.
+      const wireAnim = isWeak(relationship.epistemic)
+        ? ctx.anim({ kind: "fade", delay: afterStage(conclusionStage) })
+        : ctx.anim({
+            kind: "draw",
+            delay: afterStage(conclusionStage),
+            length: edgeLength(x1, y1, rightX, conclusionCy),
+            revealMarker: ctx.id("arrow"),
+          });
       svg += path(
         d,
-        `pl-edge-used${weakStrokeClass(relationship.epistemic)}`,
+        `pl-edge-used${weakStrokeClass(relationship.epistemic)}${wireAnim}`,
         { "marker-end": `url(#${ctx.id("arrow")})` },
         `${source.entity.label} is used to prove the conclusion — ${statusPhrase(relationship.epistemic)}`,
       );
@@ -960,17 +1086,18 @@ function renderHypothesisBox(
   y: number,
   width: number,
   used: boolean,
+  anim = "",
 ): string {
   const height = hypothesisBoxHeight(entity, width, used);
   const className = used
-    ? `pl-box${weakStrokeClass(entity.epistemic)}`
-    : `pl-box-unused${weakFillClass(entity.epistemic)}`;
+    ? `pl-box${weakStrokeClass(entity.epistemic)}${anim}`
+    : `pl-box-unused${weakFillClass(entity.epistemic)}${anim}`;
   let svg = box({ x, y, width, height, className, tooltip: entityTooltip(entity) });
   let cursor = y + 22;
   svg += text(entity.label, {
     x: x + 10,
     y: cursor,
-    className: `pl-label-strong pl-mono${used ? "" : " pl-unused-text"}`,
+    className: `pl-label-strong pl-mono${used ? "" : " pl-unused-text"}${anim}`,
     fontSize: 12.5,
     maxWidth: width - 20,
     title: entityTooltip(entity),
@@ -980,7 +1107,7 @@ function renderHypothesisBox(
     const para = paragraph(entity.detail, {
       x: x + 10,
       y: cursor,
-      className: `pl-detail pl-mono${used ? "" : " pl-unused-text"}`,
+      className: `pl-detail pl-mono${used ? "" : " pl-unused-text"}${anim}`,
       maxWidth: width - 20,
       fontSize: 10.5,
       lineHeight: 13,
@@ -994,7 +1121,7 @@ function renderHypothesisBox(
     svg += text("NEVER USED IN THIS PROOF", {
       x: x + 10,
       y: cursor,
-      className: "pl-badge",
+      className: `pl-badge${anim}`,
       fontSize: 9,
       maxWidth: width - 20,
     });
@@ -1020,6 +1147,13 @@ interface Rect {
  * ("this rests on that"). When the columns would be too narrow to hold a
  * declaration name, the layout flips to rows top-to-bottom instead of
  * shrinking labels into illegibility.
+ *
+ * Animated, layers appear in ascending `layer` order. For a dependency graph
+ * the planner assigns `layer` = dependency depth, with 0 the declarations
+ * that rest on nothing local — so the proof builds upward from its
+ * foundations and the focused theorem, at the greatest depth, arrives last.
+ * Every edge draws only after both of its endpoints' layers have entered.
+ * That order is derived from the proof term; only the pacing is a choice.
  */
 export function layoutLayeredGraph(spec: VisualSpec, ctx: RenderContext): LayoutResult {
   const legend: LegendRow[] = [];
@@ -1037,6 +1171,12 @@ export function layoutLayeredGraph(spec: VisualSpec, ctx: RenderContext): Layout
     const bucket = layers.get(key) as VisualEntity[];
     bucket.sort((a, b) => (a.position?.order ?? 0) - (b.position?.order ?? 0));
   }
+
+  /** Animation stage of an entity: the rank of its layer, foundations first. */
+  const stageOf = (entity: VisualEntity): number => {
+    const index = layerKeys.indexOf(entity.position?.layer ?? 0);
+    return index < 0 ? 0 : index;
+  };
 
   const hasDetail = spec.entities.some((e) => e.detail);
   const nodeHeight = hasDetail ? 42 : 30;
@@ -1084,15 +1224,35 @@ export function layoutLayeredGraph(spec: VisualSpec, ctx: RenderContext): Layout
   }
 
   // Edges first, so nodes paint over the wire ends.
+  const entityById = new Map(spec.entities.map((e) => [e.id, e] as const));
   for (const relationship of spec.relationships) {
     const from = rects.get(relationship.from);
     const to = rects.get(relationship.to);
     if (!from || !to) continue;
     const d = routeEdge(from, to, horizontal);
     const weak = isWeak(relationship.epistemic);
+    // An edge draws only after both of its endpoints' layers have entered.
+    const fromEntity = entityById.get(relationship.from);
+    const toEntity = entityById.get(relationship.to);
+    const readyAt = afterStage(
+      Math.max(fromEntity ? stageOf(fromEntity) : 0, toEntity ? stageOf(toEntity) : 0),
+    );
+    const edgeAnim = weak
+      ? ctx.anim({ kind: "fade", delay: readyAt })
+      : ctx.anim({
+          kind: "draw",
+          delay: readyAt,
+          length: edgeLength(
+            from.x + from.width / 2,
+            from.y + from.height / 2,
+            to.x + to.width / 2,
+            to.y + to.height / 2,
+          ),
+          revealMarker: ctx.id("arrow-muted"),
+        });
     svg += path(
       d,
-      `pl-edge${weak ? " pl-weak-stroke" : ""}`,
+      `pl-edge${weak ? " pl-weak-stroke" : ""}${edgeAnim}`,
       { "marker-end": `url(#${ctx.id("arrow-muted")})` },
       `${labelFor(spec, relationship.from)} ${relationship.kind} ${labelFor(spec, relationship.to)} — ${statusPhrase(relationship.epistemic)}`,
     );
@@ -1101,7 +1261,7 @@ export function layoutLayeredGraph(spec: VisualSpec, ctx: RenderContext): Layout
       svg += text(relationship.label, {
         x: mid.x,
         y: mid.y - 5,
-        className: "pl-detail",
+        className: `pl-detail${ctx.anim({ kind: "fade", delay: readyAt })}`,
         anchor: "middle",
         fontSize: 10.5,
         maxWidth: 120,
@@ -1114,18 +1274,19 @@ export function layoutLayeredGraph(spec: VisualSpec, ctx: RenderContext): Layout
     const rect = rects.get(entity.id);
     if (!rect) continue;
     const primary = entity.emphasis === "primary";
+    const nodeAnim = ctx.anim({ kind: "enter", delay: stageDelay(stageOf(entity)) });
     svg += box({
       x: rect.x,
       y: rect.y,
       width: rect.width,
       height: rect.height,
-      className: `${primary ? "pl-box-primary" : "pl-box"}${weakStrokeClass(entity.epistemic)}`,
+      className: `${primary ? "pl-box-primary" : "pl-box"}${weakStrokeClass(entity.epistemic)}${nodeAnim}`,
       tooltip: entityTooltip(entity),
     });
     svg += text(entity.label, {
       x: rect.x + 9,
       y: rect.y + (entity.detail ? 19 : 19),
-      className: `pl-label pl-mono${isWeak(entity.epistemic) ? " pl-weak-text" : ""}`,
+      className: `pl-label pl-mono${isWeak(entity.epistemic) ? " pl-weak-text" : ""}${nodeAnim}`,
       fontSize: 11.5,
       maxWidth: rect.width - 18,
       title: entityTooltip(entity),
@@ -1134,7 +1295,7 @@ export function layoutLayeredGraph(spec: VisualSpec, ctx: RenderContext): Layout
       svg += text(entity.detail, {
         x: rect.x + 9,
         y: rect.y + 33,
-        className: "pl-detail",
+        className: `pl-detail${nodeAnim}`,
         fontSize: 10.5,
         maxWidth: rect.width - 18,
       });
@@ -1196,6 +1357,12 @@ export function layoutExpressionTree(spec: VisualSpec, ctx: RenderContext): Layo
   const conclusion = entitiesOfKind(spec, "conclusion")[0];
   const hypotheses = entitiesOfKind(spec, "hypothesis");
 
+  // Animated: the conclusion (layer 0, the statement itself) first, then the
+  // hypotheses beneath it — used ones entering, unused ones fading in place —
+  // then the spine that ties them to the goal.
+  const conclusionAnim = (): string => ctx.anim({ kind: "enter", delay: stageDelay(0) });
+  const spineAt = afterStage(1);
+
   let svg = "";
   let y = 12;
   let spineTop = y;
@@ -1204,7 +1371,7 @@ export function layoutExpressionTree(spec: VisualSpec, ctx: RenderContext): Layo
     svg += text("CONCLUSION", {
       x: ctx.pad,
       y,
-      className: "pl-heading",
+      className: `pl-heading${conclusionAnim()}`,
       fontSize: 10,
       maxWidth: inner,
     });
@@ -1216,13 +1383,13 @@ export function layoutExpressionTree(spec: VisualSpec, ctx: RenderContext): Layo
       y,
       width: inner,
       height,
-      className: `pl-box-primary${weakStrokeClass(conclusion.epistemic)}`,
+      className: `pl-box-primary${weakStrokeClass(conclusion.epistemic)}${conclusionAnim()}`,
       tooltip: entityTooltip(conclusion),
     });
     svg += paragraph(conclusion.label, {
       x: ctx.pad + 10,
       y: y + 21,
-      className: "pl-label pl-mono",
+      className: `pl-label pl-mono${conclusionAnim()}`,
       maxWidth: inner - 20,
       fontSize: 12.5,
       lineHeight: 16,
@@ -1237,7 +1404,7 @@ export function layoutExpressionTree(spec: VisualSpec, ctx: RenderContext): Layo
     svg += text(`HYPOTHESES (${hypotheses.length})`, {
       x: ctx.pad + 26,
       y,
-      className: "pl-heading",
+      className: `pl-heading${ctx.anim({ kind: "fade", delay: stageDelay(1) })}`,
       fontSize: 10,
       maxWidth: inner - 26,
     });
@@ -1249,18 +1416,36 @@ export function layoutExpressionTree(spec: VisualSpec, ctx: RenderContext): Layo
     for (const entity of hypotheses) {
       const used = entity.state !== "unused";
       const height = hypothesisBoxHeight(entity, boxWidth, used);
-      svg += renderHypothesisBox(entity, boxX, y, boxWidth, used);
+      // Unused hypotheses fade in place: no rise, nothing that could imply
+      // they contribute to the conclusion.
+      const hypAnim = ctx.anim({
+        kind: used ? "enter" : "fade",
+        delay: stageDelay(1),
+      });
+      svg += renderHypothesisBox(entity, boxX, y, boxWidth, used, hypAnim);
       lastCenter = y + height / 2;
       svg += line(
         spineX,
         lastCenter,
         boxX,
         lastCenter,
-        used ? "pl-edge-used" : "pl-edge pl-weak-stroke",
+        used
+          ? `pl-edge-used${ctx.anim({ kind: "draw", delay: spineAt, length: boxX - spineX })}`
+          : `pl-edge pl-weak-stroke${ctx.anim({ kind: "fade", delay: spineAt })}`,
       );
       y += height + 10;
     }
-    svg += line(spineX, spineTop, spineX, lastCenter, "pl-edge");
+    svg += line(
+      spineX,
+      spineTop,
+      spineX,
+      lastCenter,
+      `pl-edge${ctx.anim({
+        kind: "draw",
+        delay: spineAt,
+        length: Math.max(1, lastCenter - spineTop),
+      })}`,
+    );
   }
 
   legend.push({

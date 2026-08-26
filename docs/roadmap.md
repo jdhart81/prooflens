@@ -30,14 +30,14 @@ a Lean infoview widget, a CLI, and a browser application.
 
 Seven modules, 679 declarations, at `notationFidelity: "notation"`:
 
-| | Round 0 | Round 1 | Round 2 |
-|---|---:|---:|---:|
-| Structurally classified | 516 (76.0%) | 582 (85.7%) | **653 (96.2%)** |
-| Fully readable | 230 (33.9%) | 443 (65.2%) | **552 (81.3%)** |
-| Classified with opaque subterms | 286 | 139 | 101 |
-| Unrecognised shape | 163 | 97 | **26** |
+|                                 |     Round 0 |     Round 1 |         Round 2 |
+| ------------------------------- | ----------: | ----------: | --------------: |
+| Structurally classified         | 516 (76.0%) | 582 (85.7%) | **653 (96.2%)** |
+| Fully readable                  | 230 (33.9%) | 443 (65.2%) | **552 (81.3%)** |
+| Classified with opaque subterms |         286 |         139 |             101 |
+| Unrecognised shape              |         163 |          97 |          **26** |
 
-"Fully readable" is the strict number: the conclusion classified *and* every term inside it has a
+"Fully readable" is the strict number: the conclusion classified _and_ every term inside it has a
 name in ProofLens's tables. "Structurally classified" is the weaker one: ProofLens recognised the
 statement's shape, which does not mean the resulting figure is illuminating.
 
@@ -225,7 +225,7 @@ Ordered roughly by value per unit of work.
 
 ### Proof-to-concept graphs
 
-Today's dependency graph is a graph of *declarations*. `@prooflens.concept` already lets an author
+Today's dependency graph is a graph of _declarations_. `@prooflens.concept` already lets an author
 name the idea a declaration is about, and `DependencyChain.lean` and `IntelligenceBound.lean` are
 both written as chains of named concepts for exactly this reason. Collapsing the declaration graph
 along concept names would turn "this lemma calls that lemma" into "positivity of the logarithm
@@ -273,7 +273,7 @@ can be dragged to `T = 0` when the theorem assumes `0 < T` would be showing a va
 says nothing about, so the domain is not a nicety. `AxisSpec.scale` already has a `numeric` value
 waiting for the day an axis can honestly claim one.
 
-### Proof animation
+### Proof animation _(landed: `--animate` renders staged CSS animations — order from the proof term is derived, pacing is illustrative)_
 
 Stepping through a proof rather than seeing its end state. This needs tactic-level information
 that v0.1 deliberately does not extract, so it is gated on a real change to the Lean side rather
@@ -305,7 +305,7 @@ than on TypeScript work.
      `packages/epistemics/test/no-forged-verification.test.ts` exists to keep it that way.
 
 A note on adapters and coverage. An adapter that guessed at unrecognised statements would improve
-the *apparent* number while emptying the backlog that drives real work, which is the same failure
+the _apparent_ number while emptying the backlog that drives real work, which is the same failure
 mode `classifyProperty`'s table gate exists to prevent. Any adapter has to leave the coverage
 report measuring the deterministic core, not the core plus a model.
 

@@ -125,6 +125,11 @@ export interface RenderCommandOptions {
   declaration?: string;
   outDir: string;
   format: "svg" | "text" | "both";
+  /**
+   * Animate SVG figures as a proof progression (renderer option `animate`).
+   * Text output is unaffected: a text figure has no frames to stage.
+   */
+  animate?: boolean;
   log: (line: string) => void;
 }
 
@@ -148,7 +153,10 @@ export async function commandRender(options: RenderCommandOptions): Promise<void
     for (const visual of analysis.visuals) {
       const base = `${short}.${visual.type}`;
       if (options.format === "svg" || options.format === "both") {
-        await writeOut(join(options.outDir, `${base}.svg`), renderSvgDocument(visual));
+        await writeOut(
+          join(options.outDir, `${base}.svg`),
+          renderSvgDocument(visual, { animate: options.animate === true }),
+        );
         written += 1;
       }
       if (options.format === "text" || options.format === "both") {

@@ -48,7 +48,9 @@ your code:
 - **which of the stated hypotheses the proof actually uses**;
 - how the bound responds to each parameter, where that follows from the
   hypotheses;
-- a generated figure;
+- a generated figure — optionally **animated**: dependency graphs build
+  foundations-first to the conclusion in the proof's own dependency order,
+  limit curves trace onto their asymptote (`prooflens render --animate`);
 - what the proof rests on: its local dependency graph, its axioms, and whether
   it reaches `sorry`;
 - and, for every one of the above, why ProofLens is telling you it.
@@ -93,14 +95,14 @@ found `hP` by walking the elaborated proof term.
 
 Every piece of information ProofLens produces carries one of six statuses:
 
-| | |
-|---|---|
-| `verified` | Asserted by the Lean kernel. |
-| `derived` | Computed from verified data by a deterministic, inspectable rule. |
-| `interpreted` | A reading of the statement, or a human author's declaration about it. |
-| `heuristic` | A rule of thumb, expected to be wrong sometimes. |
-| `illustrative` | A display choice. It makes no mathematical claim. |
-| `speculative` | Produced by a language model. Nothing underwrites it. |
+|                |                                                                       |
+| -------------- | --------------------------------------------------------------------- |
+| `verified`     | Asserted by the Lean kernel.                                          |
+| `derived`      | Computed from verified data by a deterministic, inspectable rule.     |
+| `interpreted`  | A reading of the statement, or a human author's declaration about it. |
+| `heuristic`    | A rule of thumb, expected to be wrong sometimes.                      |
+| `illustrative` | A display choice. It makes no mathematical claim.                     |
+| `speculative`  | Produced by a language model. Nothing underwrites it.                 |
 
 Two properties are enforced in code rather than by convention:
 
@@ -214,7 +216,7 @@ v0.1. It works end to end, and it has been measured.
 Against a **679-declaration slice of real mathlib** — order theory, real
 analysis, inequalities, binary entropy — ProofLens structurally classifies
 **96.2%** of declarations and reads **81.3%** of them end to end, meaning the
-conclusion classified *and* every term inside it has a name. 1,490 figures
+conclusion classified _and_ every term inside it has a name. 1,490 figures
 render without a failure.
 
 Those numbers started at 76.0% and 33.9%. They moved because ProofLens measures

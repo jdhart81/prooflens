@@ -26,7 +26,7 @@ USAGE
   prooflens extract  --project <dir> --module <Mod> [--module <Mod> ...] [--out <file>]
   prooflens summary  <formal-ir.json>
   prooflens explain  <formal-ir.json> <declaration>
-  prooflens render   <formal-ir.json> [declaration] [--out-dir <dir>] [--format svg|text|both]
+  prooflens render   <formal-ir.json> [declaration] [--out-dir <dir>] [--format svg|text|both] [--animate]
   prooflens coverage <formal-ir.json> [--format text|markdown|json] [--out <file>]
   prooflens inspect  <formal-ir.json> [declaration] --stage formal|math|classifier|visual|explain|bundle [--out <file>]
   prooflens pipeline --project <dir> --module <Mod> [...] [--out-dir <dir>]
@@ -37,7 +37,10 @@ COMMANDS
   summary   Show every extracted declaration, its classification, and any
             warnings (unused hypotheses, sorry, unusual axioms).
   explain   Print the layered explanation and text figures for one declaration.
-  render    Write SVG and/or text figures to disk.
+  render    Write SVG and/or text figures to disk. With --animate, SVG figures
+            animate as a proof progression — elements appear in dependency
+            order, ending on exactly the static figure; text output is
+            unaffected, and prefers-reduced-motion disables the animation.
   coverage  Measure what fraction of a body of mathematics ProofLens can read,
             and print a ranked backlog of what would improve it.
   inspect   Dump one pipeline stage as JSON. Every stage is inspectable.
@@ -132,6 +135,7 @@ async function main(argv: string[]): Promise<number> {
         declaration: parsed.positional[1],
         outDir: one(parsed.flags, "out-dir") ?? "prooflens-figures",
         format,
+        animate: parsed.flags.has("animate"),
         log,
       });
       return 0;

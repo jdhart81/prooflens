@@ -10,7 +10,7 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import * as esbuild from "esbuild";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -112,11 +112,81 @@ describe("prooflens coverage", () => {
   });
 });
 
+describe("prooflens render --animate", () => {
+  function renderTo(...extra: string[]): { dir: string; svgs: string[] } {
+    const dir = mkdtempSync(join(tmpdir(), "prooflens-render-"));
+    const result = run(
+      "render",
+      CORPUS_PATH,
+      "sequence_limit_example",
+      "--format",
+      "svg",
+      "--out-dir",
+      dir,
+      ...extra,
+    );
+    expect(result.status).toBe(0);
+    const svgs = readdirSync(dir)
+      .filter((f) => f.endsWith(".svg"))
+      .sort()
+      .map((f) => readFileSync(join(dir, f), "utf8"));
+    expect(svgs.length).toBeGreaterThan(0);
+    return { dir, svgs };
+  }
+
+  it("adds the CSS proof animation to every SVG figure", () => {
+    const { svgs } = renderTo("--animate");
+    // Every figure of an animatable type carries keyframes, a delay
+    // progression, and the reduced-motion override.
+    const animated = svgs.filter((svg) => svg.includes("@keyframes"));
+    expect(animated.length).toBeGreaterThan(0);
+    for (const svg of animated) {
+      expect(svg).toContain("animation-delay:");
+      expect(svg).toContain("@media (prefers-reduced-motion:reduce)");
+      expect(svg).toContain("Order of appearance");
+    }
+  });
+
+  it("renders statically without the flag", () => {
+    const { svgs } = renderTo();
+    for (const svg of svgs) {
+      expect(svg).not.toContain("@keyframes");
+      expect(svg).not.toContain("pl-anim-");
+    }
+  });
+
+  it("leaves text output untouched by --animate", () => {
+    const dir = mkdtempSync(join(tmpdir(), "prooflens-render-"));
+    const result = run(
+      "render",
+      CORPUS_PATH,
+      "simple_upper_bound",
+      "--format",
+      "text",
+      "--out-dir",
+      dir,
+      "--animate",
+    );
+    expect(result.status).toBe(0);
+    const texts = readdirSync(dir).filter((f) => f.endsWith(".txt"));
+    expect(texts.length).toBeGreaterThan(0);
+    for (const file of texts) {
+      expect(readFileSync(join(dir, file), "utf8")).not.toContain("@keyframes");
+    }
+  });
+});
+
 describe("prooflens usage", () => {
   it("lists the coverage command in its usage text", () => {
     const result = run("not-a-command");
     expect(result.status).toBe(2);
     expect(result.stderr).toContain("prooflens coverage");
     expect(result.stderr).toContain("Unknown command");
+  });
+
+  it("documents --animate on the render command", () => {
+    const result = run("help");
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("--animate");
   });
 });

@@ -10,6 +10,45 @@ import type { VisualEntity, VisualSpec } from "@prooflens/visual-ir";
 import { attrs, el, escapeXml, num, sanitizeId, titleEl } from "./xml.js";
 import { measureText, truncateToWidth, wrapToWidth } from "./measure.js";
 
+/** The three ways an element can be brought in. */
+export type AnimKind = "enter" | "fade" | "draw";
+
+/** What a layout asks for when it binds an element to the animation. */
+export interface AnimOptions {
+  /**
+   * `enter` is the staged fade + slight rise for boxes and their labels;
+   * `fade` is opacity only, for anything whose transform or dash pattern must
+   * not be disturbed (rotated labels, dashed strokes, region fills);
+   * `draw` is a stroke-dashoffset trace for solid strokes — never use it on a
+   * dashed stroke, where sliding the dash pattern is not a draw.
+   */
+  kind: AnimKind;
+  /** Seconds from figure start. Use {@link stageDelay} for staged entrances. */
+  delay: number;
+  /** Seconds; defaults to the entrance duration. Curve traces pass their own. */
+  duration?: number;
+  /**
+   * `draw` only: the dash budget, at least the path's length (round up — an
+   * overestimate only makes the trace finish early, an underestimate leaves a
+   * gap in the final frame).
+   */
+  length?: number;
+  /** `draw` only: a marker id whose arrowhead should appear as the trace ends. */
+  revealMarker?: string;
+}
+
+/** One registered animation binding; the CSS builder consumes these. */
+export interface AnimTarget {
+  /** The class token that binds elements to this rule, without leading dot. */
+  className: string;
+  kind: AnimKind;
+  delay: number;
+  duration: number;
+  /** Dash budget; only meaningful for `draw`. */
+  length: number;
+  revealMarker?: string;
+}
+
 /** Per-render state. Ids are derived from the spec, never from a global counter. */
 export interface RenderContext {
   readonly spec: VisualSpec;
@@ -17,8 +56,23 @@ export interface RenderContext {
   readonly width: number;
   /** Horizontal padding on both sides. */
   readonly pad: number;
+  /** Whether this render is animated. Layouts rarely need to check: `anim` is a no-op when it is off. */
+  readonly animate: boolean;
+  /** Every animation binding registered so far, in emission order. */
+  readonly animTargets: readonly AnimTarget[];
   /** Mint a document-unique, deterministic id from a stable suffix. */
   id(suffix: string): string;
+  /**
+   * Register an animation binding and return its class token, with a leading
+   * space so it appends onto a `className` the way {@link weakStrokeClass}
+   * does. Returns `""` when animation is off, so layouts have a single code
+   * path and the static markup is identical whether or not the feature exists.
+   *
+   * Identical requests share one token, so all of stage 3 is one CSS rule.
+   */
+  anim(options: AnimOptions): string;
+  /** Drop every registered binding. Used when a layout fails and is replaced. */
+  resetAnim(): void;
 }
 
 export function createContext(
@@ -26,13 +80,48 @@ export function createContext(
   width: number,
   pad: number,
   prefix: string,
+  animate = false,
 ): RenderContext {
   const base = sanitizeId(`${prefix}-${spec.id}`);
+  const targets: AnimTarget[] = [];
+  const byShape = new Map<string, string>();
   return {
     spec,
     width,
     pad,
+    animate,
+    animTargets: targets,
     id: (suffix: string) => `${base}-${sanitizeId(suffix)}`,
+    anim(options: AnimOptions): string {
+      if (!animate) return "";
+      const duration = options.duration ?? 0.45;
+      const length = Math.max(1, Math.ceil(options.length ?? 0));
+      const shape = [
+        options.kind,
+        options.delay,
+        duration,
+        options.kind === "draw" ? length : "",
+        options.revealMarker ?? "",
+      ].join("|");
+      let className = byShape.get(shape);
+      if (className === undefined) {
+        className = `pl-anim-${base}-a${targets.length}`;
+        byShape.set(shape, className);
+        targets.push({
+          className,
+          kind: options.kind,
+          delay: options.delay,
+          duration,
+          length,
+          revealMarker: options.revealMarker,
+        });
+      }
+      return ` ${className}`;
+    },
+    resetAnim(): void {
+      targets.length = 0;
+      byShape.clear();
+    },
   };
 }
 

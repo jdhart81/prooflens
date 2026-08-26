@@ -25,6 +25,7 @@
  */
 import { EPISTEMIC_GLOSS, weakest, type EpistemicStatus } from "@prooflens/epistemics";
 import type { VisualSpec, VisualType } from "@prooflens/visual-ir";
+import { ANIMATION_LEGEND_ROW, buildAnimationStylesheet, CHROME_FADE_DURATION } from "./animate.js";
 import { headerHeight, renderAnnotations, renderHeader, renderLegend } from "./chrome.js";
 import {
   createContext,
@@ -65,6 +66,18 @@ export interface SvgOptions {
   fontFamily?: string;
   /** Prefix for every generated element id. Defaults to `"pl"`. */
   idPrefix?: string;
+  /**
+   * Animate the figure as a proof progression (§27): elements appear in
+   * dependency order — foundations first, the conclusion last, edges only
+   * after both of their endpoints. Defaults to `false`.
+   *
+   * The animation is pure CSS in the figure's own `<style>` (no JavaScript,
+   * no SMIL), it ends on exactly the static render, and it is disabled
+   * entirely under `prefers-reduced-motion: reduce`. The order is derived
+   * from the spec; the pacing is illustrative, and an extra legend row says
+   * so. Types with no purpose-built animation render statically.
+   */
+  animate?: boolean;
 }
 
 export { escapeXml, sanitizeId } from "./xml.js";
@@ -86,9 +99,13 @@ export function renderSvg(spec: VisualSpec, options: SvgOptions = {}): string {
   const width = clampWidth(options.width ?? DEFAULT_WIDTH);
   const theme: Theme = options.theme ?? "auto";
   const prefix = sanitizeId(options.idPrefix ?? "pl");
-  const ctx = createContext(spec, width, PAD, prefix);
+  const ctx = createContext(spec, width, PAD, prefix, options.animate === true);
 
   const body = safeLayout(spec, ctx);
+
+  // A figure animates only if its layout registered something to animate: a
+  // generic or unknown-type figure stays entirely static, notice and all.
+  const animated = ctx.animTargets.length > 0;
 
   const legendRows: LegendRow[] = [...body.legend];
   if (specHasWeakElement(spec)) legendRows.push(WEAK_LEGEND_ROW);
@@ -96,6 +113,15 @@ export function renderSvg(spec: VisualSpec, options: SvgOptions = {}): string {
     swatch: "none",
     text: `This figure as a whole is ${spec.epistemic}. ${EPISTEMIC_GLOSS[spec.epistemic]}`,
   });
+  if (animated) legendRows.push(ANIMATION_LEGEND_ROW);
+
+  // Legend and annotations fade in together, quickly, once the figure has
+  // finished building. The header never animates: it anchors the figure.
+  let chromeAnim = "";
+  if (animated) {
+    const settled = ctx.animTargets.reduce((t, a) => Math.max(t, a.delay + a.duration), 0);
+    chromeAnim = ctx.anim({ kind: "fade", delay: settled, duration: CHROME_FADE_DURATION });
+  }
 
   const header = renderHeader(spec, ctx);
   const headerH = headerHeight(spec);
@@ -109,12 +135,12 @@ export function renderSvg(spec: VisualSpec, options: SvgOptions = {}): string {
   y += body.height + BLOCK_GAP;
 
   if (legend.height > 0) {
-    content += group(y, legend.svg);
+    content += group(y, legend.svg, chromeAnim);
     y += legend.height + BLOCK_GAP;
   }
 
   if (annotations.height > 0) {
-    content += group(y, annotations.svg);
+    content += group(y, annotations.svg, chromeAnim);
     y += annotations.height;
   }
 
@@ -139,7 +165,7 @@ export function renderSvg(spec: VisualSpec, options: SvgOptions = {}): string {
     "data-prooflens-epistemic": spec.epistemic,
   });
 
-  const style = `<style>${buildStylesheet(theme, options.fontFamily ?? DEFAULT_FONT_FAMILY)}</style>`;
+  const style = `<style>${buildStylesheet(theme, options.fontFamily ?? DEFAULT_FONT_FAMILY)}${buildAnimationStylesheet(ctx)}</style>`;
   const label = `<title id="${titleId}">${escapeXml(spec.title)}</title><desc id="${descId}">${escapeXml(describe(spec))}</desc>`;
   const background = `<rect x="0" y="0" width="${num(width)}" height="${num(totalHeight)}" class="pl-bg"/>`;
 
@@ -160,9 +186,10 @@ export function renderSvgDocument(spec: VisualSpec, options: SvgOptions = {}): s
 // Internals
 // ---------------------------------------------------------------------------
 
-function group(y: number, inner: string): string {
+function group(y: number, inner: string, animClass = ""): string {
   if (inner === "") return "";
-  return `<g transform="translate(0 ${num(y)})">${inner}</g>`;
+  const cls = animClass === "" ? "" : ` class="${animClass.trimStart()}"`;
+  return `<g transform="translate(0 ${num(y)})"${cls}>${inner}</g>`;
 }
 
 function clampWidth(width: number): number {
@@ -182,9 +209,13 @@ function safeLayout(spec: VisualSpec, ctx: RenderContext): LayoutResult {
   try {
     return dispatch(spec.type, spec, ctx);
   } catch {
+    // A half-run layout may have registered animation bindings for markup it
+    // never emitted; drop them so the fallback figure is honestly static.
+    ctx.resetAnim();
     try {
       return layoutGeneric(spec, ctx);
     } catch {
+      ctx.resetAnim();
       return { svg: "", height: 40, legend: [] };
     }
   }

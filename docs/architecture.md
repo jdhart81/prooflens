@@ -14,6 +14,11 @@ loses the ability to tell which parts of what they are looking at a machine actu
 The mechanism is described in [epistemic-model.md](./epistemic-model.md). This document
 describes the stages, the packages, and the boundaries between them.
 
+The second organising idea is the measurement loop described under
+[The coverage loop](#the-coverage-loop). ProofLens's understanding of mathematics is a table of
+explicit rules, so the question of what to teach it next is an empirical one, and it is answered
+by measuring against real mathematics rather than by guessing.
+
 ## The stage pipeline
 
 ```
@@ -50,6 +55,11 @@ describes the stages, the packages, and the boundaries between them.
         ▼                   ▼                   ▼
    renderSvg()         infoview widget      renderText()
    (SVG string)        (React + SVG)        (plain text)
+
+  Off to one side, reading every stage at once rather than transforming it:
+
+   coverageReport()  →  totals, per-classification counts, and two ranked
+   (@prooflens/pipeline)  backlogs of what to teach ProofLens next
 ```
 
 The same pipeline as a mermaid diagram:
@@ -68,6 +78,9 @@ flowchart TD
     VIR --> SVG[renderer-svg]
     VIR --> WIDGET[infoview widget]
     VIR --> TEXT[renderer-text]
+    MIR -.->|opaqueHeadsIn| COV[coverageReport]
+    STRUCT -.-> COV
+    VIR -.-> COV
 ```
 
 The important edge in this diagram is the one that is missing. No renderer has an edge from
@@ -107,6 +120,21 @@ narrow. `BinderUsage` reports three independent booleans about the *elaborated t
 not about mathematical necessity, and every downstream layer that surfaces it is required to
 say so.
 
+Extraction classifies each binder's `role` as `hypothesis`, `parameter`, or `instance`. The
+third exists because a typeclass instance is `Prop`-valued often enough to be mistaken for an
+assumption, and counting `[IsStrictOrderedRing α]` as a stated hypothesis distorts assumption
+sensitivity. The mathlib sweep found 208 such binders being miscounted before the split.
+
+Extraction is also resilient per declaration. `extractOneResilient` wraps each one in
+`Core.withCurrHeartbeats` plus a catch, so a pathological declaration becomes one stub row
+carrying an `extractionError` rather than taking the sweep down or vanishing from the output:
+
+```lean
+A failed declaration still appears in the Formal IR, carrying its name and the
+error. Losing a theorem without saying so is the outcome ProofLens is not
+allowed to have, and that applies to extraction as much as to visualization.
+```
+
 The Lean side also never imports the TypeScript side. Extraction is a one-way boundary.
 
 ### Formal IR (`@prooflens/formal-ir`)
@@ -117,6 +145,12 @@ JSON, and `kernelWitness` decides whether a declaration earns a `KernelWitness`.
 Forbidden: mathematics. There is no notion of "upper bound" or "monotone" anywhere in this
 package. `paths.ts` provides structural addressing (`argPath`, `resolvePath`, `walk`,
 `headConstant`, `size`) and nothing else.
+
+This is also the only package in the workspace that depends on `zod`, deliberately. Schema
+validation belongs at the trust boundary where untrusted JSON enters; every stage after it
+consumes types that have already been checked, so paying the validation cost again downstream
+would buy nothing and would tempt a later stage into re-parsing rather than into using the IR it
+was handed.
 
 This is also the only package permitted to mint kernel witnesses. `mintKernelWitness` is
 exported from `@prooflens/epistemics` but marked `@internal`, and `formal-ir/src/load.ts` is
@@ -132,14 +166,20 @@ export function kernelWitness(
     declaration: decl.name,
     module: decl.source?.module ?? null,
     axioms: decl.axioms,
-    provedWithoutSorry: !decl.usesSorry,
+    // A stub row means extraction failed, so ProofLens never saw the real
+    // declaration. `usesSorry: false` records that no `sorry` was *observed* —
+    // which is not evidence the kernel accepted anything.
+    provedWithoutSorry: !decl.usesSorry && decl.extractionError === null,
   });
 }
 ```
 
 A declaration whose proof reaches `sorryAx` gets `null`, so nothing about it can ever be
-labelled `verified`. `transcribe` is the only producer of `verified` in the system and it
-throws a `TypeError` if handed anything that is not a branded witness.
+labelled `verified`. So does a stub row from a failed extraction, for the reason the comment
+gives: a stub is a record of what ProofLens could not read, not evidence of what Lean accepted.
+
+`transcribe` is the only producer of `verified` in the system and it throws a `TypeError` if
+handed anything that is not a branded witness.
 
 ### MathIR (`@prooflens/math-ir`)
 
@@ -147,24 +187,42 @@ Job: turn proof-assistant plumbing into mathematics. `LE.le ℝ Real.instLE x (H
 becomes a `relation` node with `relation: "less-than-or-equal"`, an `lhs` variable and an `rhs`
 `div` operator.
 
-Forbidden: guessing. Anything the constant tables do not recognise becomes `opaque`, which
-preserves structure and arity while declining to name the head. Forbidden also: producing
-`verified`. Every claim MathIR emits about a conclusion comes from `derive`, because the
-constant table is a ProofLens artefact, not something Lean checked.
+Forbidden: guessing. Anything neither the constant tables nor `locals` recognise becomes
+`opaque`, which preserves structure and arity while declining to name the head. Forbidden also:
+producing `verified`. Every claim MathIR emits about a conclusion comes from `derive`, because
+the constant table is a ProofLens artefact, not something Lean checked.
+
+`traverse.ts` is the read-only companion: `walkExpression`, `walkProposition`, `walkTheorem` and
+`opaqueHeadsIn` enumerate everything in a lowered theorem. Coverage analysis is built on it,
+which is what makes the difference between "ProofLens reads 40% of mathlib" and "here are the
+twelve constants to add next".
 
 See [math-ir.md](./math-ir.md).
 
 ### Structural analysis (`@prooflens/classifier`, `classify.ts`)
 
-Job: recognise statement shapes. `classifyTheorem` runs definition, bound, equality,
-monotonicity and implication classifiers, then appends the analytical classifiers
-(assumption sensitivity, trust base). Each firing carries a stable `Rule` id and a `rationale`
+Job: recognise statement shapes. `classifyTheorem` runs the structural classifiers in order
+(definition, limit, property, conjunction, membership, existence, positivity, distinctness,
+bounds, equality, monotonicity, implication), then appends the analytical ones (assumption
+sensitivity, trust base). Each firing carries a stable `Rule` id from `RULES` and a `rationale`
 naming the concrete evidence.
 
 Forbidden: returning nothing. `classifyTheorem` always returns at least one classification;
 when no structural rule matches, it appends `STRUCTURE_UNSUPPORTED_001` carrying the head
 constant it did not recognise. Forbidden also: consulting a language model. There is none in
 this package and none is required.
+
+Forbidden also, and less obviously: recognising a shape ProofLens has not been taught.
+`classifyProperty` fires only for predicates present in the `PREDICATES` table, and the code says
+why:
+
+```ts
+ * Being recognised requires an entry in the `PREDICATES` table. That is
+ * deliberate: a blanket rule covering every predicate would classify things
+ * ProofLens has never been taught about, and the unsupported backlog — the
+ * thing that tells us what to build next — would go quiet while coverage looked
+ * artificially complete.
+```
 
 ### Semantic analysis (`@prooflens/classifier`, `signs.ts`)
 
@@ -174,17 +232,21 @@ Job: decide whether ProofLens is entitled to say "increasing `P` raises this bou
 
 Forbidden: filling gaps. Both functions return `unknown` for any case the rules do not cover,
 and `sensitivityOf` in `classify.ts` filters `unknown` and `constant` out before the result
-reaches an explanation. The only sign fact assumed without a hypothesis is that `Real.sqrt` is
-nonnegative.
+reaches an explanation. The sign facts assumed without a hypothesis are exactly three:
+`Real.sqrt` is nonnegative, `Real.exp` is positive, and `Real.log` of a numeric literal has the
+sign that literal determines.
 
 ### Visualization planner (`@prooflens/visual-ir`, `plan.ts`)
 
-Job: choose figures and encode them logically. See [visual-ir.md](./visual-ir.md) for the
-selection order and the encoding rules.
+Job: choose figures and encode them logically, and honour the author's `@prooflens.visual`
+preference where one is given. See [visual-ir.md](./visual-ir.md) for the selection order, the
+encoding rules, and how hints are resolved.
 
 Forbidden: shipping a figure that cannot explain itself. `VisualSpec.rationale` is a required
 field. Forbidden also: implying magnitudes it does not have; every schematic axis is marked
-`scale: "schematic"` and `epistemic: "illustrative"`.
+`scale: "schematic"` and `epistemic: "illustrative"`. Forbidden also: letting an author's hint
+conjure a figure the analysis does not support, or displace a finding. `applyAuthorHint` can
+reorder what the planner already chose and nothing more.
 
 ### Renderers (`@prooflens/renderer-svg`, `@prooflens/renderer-text`)
 
@@ -201,10 +263,10 @@ dispatches unknown types to `pushGeneric`.
 | --- | --- | --- |
 | `@prooflens/epistemics` | Claims, lattice, provenance | (nothing) |
 | `@prooflens/formal-ir` | Formal IR schema, loading, paths | `epistemics`, `zod` |
-| `@prooflens/math-ir` | MathIR types, tables, annotations, lowering, rendering | `epistemics`, `formal-ir` |
+| `@prooflens/math-ir` | MathIR types, tables, annotations, lowering, rendering, traversal (`traverse.ts`) | `epistemics`, `formal-ir` |
 | `@prooflens/classifier` | Rules, signs, classification, explanation, dependencies | `epistemics`, `formal-ir`, `math-ir` |
 | `@prooflens/visual-ir` | VisualIR types and the planner | `epistemics`, `formal-ir`, `math-ir`, `classifier` |
-| `@prooflens/pipeline` | End-to-end bundle | `epistemics`, `formal-ir`, `math-ir`, `classifier`, `visual-ir` |
+| `@prooflens/pipeline` | End-to-end bundle, coverage analysis (`coverage.ts`) | `epistemics`, `formal-ir`, `math-ir`, `classifier`, `visual-ir` |
 | `@prooflens/renderer-svg` | SVG output | `epistemics`, `visual-ir` |
 | `@prooflens/renderer-text` | Plain-text output | `epistemics`, `visual-ir` |
 | `@prooflens/cli` | The `prooflens` command | all of the above |
@@ -251,7 +313,57 @@ Two properties of this graph are load-bearing:
 
 `@prooflens/pipeline` is the assembly point. `runPipeline` keeps every intermediate stage in
 the returned `PipelineBundle` rather than discarding stages as it goes, which is what makes
-`prooflens inspect --stage formal|math|classifier|visual|explain|bundle` possible.
+`prooflens inspect --stage formal|math|classifier|visual|explain|bundle` possible. It is also
+where `coverageReport` lives, because measuring coverage requires every stage at once: the
+classification to know what was recognised, the MathIR to know what was left opaque, and the
+plan to know what a reader would actually have seen.
+
+`zod` is the only third-party runtime dependency anywhere under `packages/`, and it appears in
+one of them. The two React dependencies live in `apps/web` and `lean/widget`, which are surfaces
+rather than pipeline stages.
+
+## The coverage loop
+
+ProofLens understands mathematics through explicit tables and explicit classifier rules. That
+design has an obvious question attached: which entries are missing, and which of the missing ones
+matter? Guessing at it produces a tool tuned to the mathematics its authors happened to think of.
+
+`coverageReport` in `packages/pipeline/src/coverage.ts` answers it by measurement. Given a
+`PipelineBundle` over any body of Lean, it produces totals, per-classification counts, and two
+separately ranked backlogs:
+
+```ts
+ * Two different kinds of miss are counted separately, because they call for
+ * different work:
+ *
+ *  - **Unrecognised shapes.** No classifier matched the conclusion at all.
+ *    Fixing one unlocks a statement form ProofLens currently cannot read.
+ *  - **Opaque subterms.** The statement classified fine, but some term inside it
+ *    could not be named — `x ≤ ∑ i ∈ s, f i` is a perfectly good upper bound
+ *    with an unreadable bound. Fixing one improves statements that already work.
+```
+
+Keeping them apart is the point. An unrecognised shape and an opaque subterm both show up as
+"ProofLens did not fully read this", but one calls for a classifier and the other for a table
+entry, and the second is usually the cheaper win. A row in `opaqueConstants` whose head also
+appears in `unrecognisedShapes` is marked `alsoUnrecognised`, because it has no already-classifying
+statements to improve and is therefore not cheap after all.
+
+`prooflens coverage <formal-ir.json> [--format text|markdown|json]` is the command. Its output
+against a seven-module mathlib slice is committed as [coverage.md](./coverage.md) and
+`examples/mathlib-coverage.json`, and the ranking there is what drove two rounds of classifier
+and table work: from 76.0% structurally classified to 96.2%, and from 33.9% fully readable to
+81.3%. Neither round was planned in advance; each took the top of the previous round's backlog.
+
+Two consequences worth stating, because they constrain how the rest of the system is written:
+
+- A classifier must not fire on a shape ProofLens has not been taught. A blanket rule would move
+  declarations out of the backlog without teaching anyone anything, and the backlog is the
+  instrument. This is why `classifyProperty` is gated on the `PREDICATES` table.
+- `walkTheorem` must reach every proposition and expression kind. A kind that lowers but does not
+  traverse silently drops out of coverage analysis, so a gap in it makes the instrument lie.
+  `packages/math-ir/test/propositions.test.ts` checks each new kind at all three layers
+  (lowering, rendering, traversal) for exactly this reason.
 
 ## Two extraction paths
 
@@ -377,6 +489,7 @@ prooflens extract  --project <dir> --module <Mod> [--module <Mod> ...] [--out <f
 prooflens summary  <formal-ir.json>
 prooflens explain  <formal-ir.json> <declaration>
 prooflens render   <formal-ir.json> [declaration] [--out-dir <dir>] [--format svg|text|both]
+prooflens coverage <formal-ir.json> [--format text|markdown|json] [--out <file>]
 prooflens inspect  <formal-ir.json> [declaration] --stage formal|math|classifier|visual|explain|bundle [--out <file>]
 prooflens pipeline --project <dir> --module <Mod> [...] [--out-dir <dir>]
 ```
@@ -397,35 +510,41 @@ prooflens/
 │   ├── Main.lean                     Entry point for the standalone `prooflens-extract` exe
 │   ├── ProofLens.lean                Library root
 │   ├── ProofLens/
-│   │   ├── Extract/Expr.lean         Structure-preserving `Expr` → JSON, plus `exprPayload`
-│   │   ├── Extract/Declaration.lean  Formal IR for one declaration, incl. `BinderUsage`
-│   │   ├── Extract/Module.lean       Whole-module extraction, envelope, `probeNotationFidelity`
+│   │   ├── Extract/Expr.lean         Structure-preserving `Expr` → JSON, `exprPayload`, `exprSize`
+│   │   ├── Extract/Declaration.lean  Formal IR for one declaration: binders, roles, usage, `definitionBody`
+│   │   ├── Extract/Module.lean       Whole-module sweep, `extractOneResilient`, `probeNotationFidelity`
 │   │   ├── Extract/Focus.lean        One declaration plus its same-module dependency closure
 │   │   ├── Export.lean               The `#prooflens_export` frontend command
 │   │   ├── Widget.lean               The `#prooflens` infoview command
-│   │   └── Widget/prooflens.js       Committed widget bundle (generated; do not hand-edit)
+│   │   └── Widget/prooflens.js       Committed widget bundle (generated; CI fails if stale)
 │   └── widget/src/index.tsx          Widget source: runs the whole TS pipeline in the infoview
 ├── packages/
 │   ├── epistemics/                   Claim, EpistemicStatus lattice, KernelWitness, provenance
 │   ├── formal-ir/                    zod schema, loader, witness minting, structural paths
-│   ├── math-ir/                      MathIR types, constant tables, annotations, lowering, rendering
+│   ├── math-ir/                      Types, constant tables, annotations, lowering, rendering, traversal
 │   ├── classifier/                   Rule registry, sign analysis, classifiers, explanations, deps
-│   ├── visual-ir/                    VisualIR types and the visualization planner
-│   ├── pipeline/                     runPipeline: every stage, kept side by side
+│   ├── visual-ir/                    VisualIR types, the planner, author-hint resolution
+│   ├── pipeline/                     runPipeline plus coverageReport
 │   ├── renderer-svg/                 Deterministic, self-contained, accessible SVG
 │   ├── renderer-text/                Deterministic plain text, unicode or pure ASCII
-│   └── cli/                          The `prooflens` command and the Lean invocation
+│   └── cli/                          The `prooflens` command, the Lean invocation, report formatting
 ├── apps/web/                         Vite + React shell; runs the pipeline in the browser
 ├── corpus/                           Lean example corpus (depends on mathlib, unlike lean/)
 │   └── ProofLensExamples/            Bounds, Monotonicity, Implication, DependencyChain, IntelligenceBound
-├── examples/corpus.formal-ir.json    Real extracted output: 34 declarations, notationFidelity "notation"
-├── scripts/build-widget.mjs          esbuild bundling for the infoview widget
-└── docs/                             This directory
+├── examples/
+│   ├── corpus.formal-ir.json         Real extracted output: 35 declarations, notationFidelity "notation"
+│   └── mathlib-coverage.json         The coverage report over the 679-declaration mathlib slice
+├── scripts/
+│   ├── build-widget.mjs              esbuild bundling for the infoview widget
+│   └── sync-corpus.mjs               Copies the extracted corpus into apps/web/public
+└── docs/                             This directory, plus coverage.md and adr/
 ```
 
 Note the split between `lean/` and `corpus/`. The ProofLens Lean library deliberately depends
-on Lean 4 only, so it stays usable against any Lean project. The example corpus does depend on
-mathlib, so ProofLens is exercised against the mathematics people actually write.
+on Lean 4 only, so it stays usable against any Lean project, and the `lean-core` CI job exists
+to keep that true: it builds `lean/` without mathlib and fails if a mathlib import creeps in.
+The example corpus does depend on mathlib, so ProofLens is exercised against the mathematics
+people actually write.
 
 ## What is deliberately absent from v0.1
 
@@ -450,11 +569,18 @@ statement might need them, so this is a fact about the proof, not about mathemat
 necessity.
 ```
 
+Definition bodies are the one exception to "the Lean side ships statements, not terms", and it is
+a narrow one. `definitionBody` carries what a definition unfolds to, size-guarded by `exprSize`,
+because a definition without its body is an opaque name. Proof terms stay excluded: they are
+enormous, and the interesting facts about them (which hypotheses they touch, which constants they
+reference) are already computed during extraction.
+
 ### No numeric evaluation
 
 Nothing in ProofLens evaluates an expression. There is no arithmetic on `MathExpression`, no
 sampling of a function, and no plotting of computed values. The sign analysis in `signs.ts`
-reasons symbolically about signs and directions, never about magnitudes. This is why every plot
+reasons symbolically about signs and directions, never about magnitudes; where it reads a numeric
+literal, as in `Real.log 2`, it is deciding a sign, not computing a value. This is why every plot
 axis carries `scale: "schematic"` and `epistemic: "illustrative"`.
 
 ### No cross-module dependency graph
@@ -464,19 +590,28 @@ counts the rest:
 
 ```ts
   const local = new Set(doc.declarations.map((d) => d.name));
-  ...
+  …
       if (local.has(dep)) edges.push({ from: decl.name, to: dep });
       else externalCount += 1;
 ```
 
 Every dependency figure carries a legend row stating how many edges were counted but not drawn.
-A theorem proved with mathlib tactics references hundreds of library lemmas; drawing them would
-produce a graph nobody can read, and pretending the local graph is the whole proof would be a
-false claim.
+A theorem proved with mathlib tactics references hundreds of library lemmas; over the mathlib
+slice the ratio is 1,837 external dependencies against 22 drawable local edges. Drawing them all
+would produce a graph nobody can read, and pretending the local graph is the whole proof would be
+a false claim.
+
+### No interpretation of the properties it recognises
+
+`classifyProperty` reads `Continuous f` and reports "the theorem asserts that `f` is continuous".
+It does not know what continuity means, cannot draw it, and cannot reason with it. Recognition and
+interpretation are separate capabilities and only the first exists. The rationale text says so
+in as many words: "ProofLens recognises the property but does not interpret what it means."
 
 ## Related documents
 
 - [epistemic-model.md](./epistemic-model.md) — the lattice, `Claim`, and why confidence cannot rise
+- [coverage.md](./coverage.md) — the measured mathlib coverage report and the ranked backlogs
 - [math-ir.md](./math-ir.md) — MathIR reference
 - [visual-ir.md](./visual-ir.md) — VisualIR reference
 - [roadmap.md](./roadmap.md) — what v0.1 does, what it does not, and what comes next

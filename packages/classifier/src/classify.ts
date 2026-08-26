@@ -6,6 +6,7 @@ import {
   type MathIRDocument,
   type TheoremIR,
 } from "@prooflens/math-ir";
+import { PREDICATES } from "@prooflens/math-ir";
 import { RULES } from "./rules.js";
 import { directionOf, signFactsOf, type Direction } from "./signs.js";
 import type { Classification, ClassificationPayload } from "./types.js";
@@ -252,6 +253,120 @@ function classifyMonotonicity(theorem: TheoremIR): Classification[] {
   ];
 }
 
+/**
+ * Limits.
+ *
+ * `Filter.Tendsto f atTop (nhds 0)` is not an opaque predicate: it says the
+ * function settles on a value as its input runs off to infinity, and that is a
+ * shape a reader can picture. Divergence is distinguished from convergence,
+ * because "grows without bound" and "approaches 0" are different pictures.
+ */
+function classifyLimit(theorem: TheoremIR): Classification[] {
+  const prop = theorem.conclusion.value;
+  if (prop.kind !== "limit") return [];
+  const convergent = prop.target.kind === "neighbourhood" || prop.target.kind === "punctured";
+  return [
+    makeClassification(
+      theorem,
+      RULES.LIMIT,
+      {
+        kind: "limit",
+        data: {
+          subject: prop.subject,
+          source: prop.source,
+          target: prop.target,
+          convergent,
+        },
+      },
+      `The conclusion is a \`Filter.Tendsto\`: \`${renderExpression(prop.subject)}\` ${
+        convergent ? `approaches \`${prop.target.display}\`` : `${prop.target.label}`
+      } as its input ${prop.source.label}.`,
+      prop.path,
+    ),
+  ];
+}
+
+function classifyExistence(theorem: TheoremIR): Classification[] {
+  const prop = theorem.conclusion.value;
+  if (prop.kind !== "existential") return [];
+  return [
+    makeClassification(
+      theorem,
+      RULES.EXISTENCE,
+      { kind: "existence", data: { binder: prop.binder, body: prop.body } },
+      `The conclusion is an existential: it asserts that some \`${prop.binder}\` satisfying \`${renderProposition(
+        prop.body,
+      )}\` exists, without ProofLens knowing which one the proof produces.`,
+      prop.path,
+    ),
+  ];
+}
+
+/**
+ * Named properties.
+ *
+ * `Continuous f` is not a shape ProofLens can draw, but it is a shape ProofLens
+ * can *read*, and saying "the theorem asserts that f is continuous" is strictly
+ * better than "no classifier supports this".
+ *
+ * Being recognised requires an entry in the `PREDICATES` table. That is
+ * deliberate: a blanket rule covering every predicate would classify things
+ * ProofLens has never been taught about, and the unsupported backlog — the
+ * thing that tells us what to build next — would go quiet while coverage looked
+ * artificially complete.
+ */
+function classifyProperty(theorem: TheoremIR): Classification[] {
+  const prop = theorem.conclusion.value;
+  if (prop.kind !== "predicate" || prop.predicate !== "other") return [];
+  const label = PREDICATES[prop.name]?.label ?? prop.name;
+  return [
+    makeClassification(
+      theorem,
+      RULES.PROPERTY,
+      {
+        kind: "property",
+        data: { name: prop.name, label, subject: prop.subject, args: prop.args },
+      },
+      `The conclusion applies \`${prop.name}\`, which ProofLens reads as "${
+        prop.subject ? renderExpression(prop.subject) : "the subject"
+      } is ${label}". ProofLens recognises the property but does not interpret what it means.`,
+      prop.path,
+    ),
+  ];
+}
+
+function classifyConjunction(theorem: TheoremIR): Classification[] {
+  const prop = theorem.conclusion.value;
+  if (prop.kind !== "conjunction") return [];
+  return [
+    makeClassification(
+      theorem,
+      RULES.CONJUNCTION,
+      { kind: "conjunction", data: { conjuncts: prop.conjuncts } },
+      `The conclusion asserts ${prop.conjuncts.length} facts at once: ${prop.conjuncts
+        .map((c) => `\`${renderProposition(c)}\``)
+        .join(" and ")}.`,
+      prop.path,
+    ),
+  ];
+}
+
+function classifyMembership(theorem: TheoremIR): Classification[] {
+  const prop = theorem.conclusion.value;
+  if (prop.kind !== "membership") return [];
+  return [
+    makeClassification(
+      theorem,
+      RULES.MEMBERSHIP,
+      { kind: "membership", data: { element: prop.element, collection: prop.collection } },
+      `The conclusion places \`${renderExpression(prop.element)}\` inside \`${renderExpression(
+        prop.collection,
+      )}\`.`,
+      prop.path,
+    ),
+  ];
+}
+
 function classifyImplication(theorem: TheoremIR): Classification[] {
   const prop = theorem.conclusion.value;
   if (prop.kind === "implication") {
@@ -417,6 +532,11 @@ function classifyDefinition(theorem: TheoremIR): Classification[] {
 export function classifyTheorem(theorem: TheoremIR): Classification[] {
   const structural = [
     ...classifyDefinition(theorem),
+    ...classifyLimit(theorem),
+    ...classifyProperty(theorem),
+    ...classifyConjunction(theorem),
+    ...classifyMembership(theorem),
+    ...classifyExistence(theorem),
     ...classifyPositivity(theorem),
     ...classifyDistinctness(theorem),
     ...classifyBounds(theorem),
@@ -476,6 +596,7 @@ export function primaryClassification(
   );
 
   const priority: Array<ClassificationPayload["kind"]> = [
+    "limit",
     "positivity",
     "monotonicity",
     "distinctness",
@@ -485,6 +606,10 @@ export function primaryClassification(
     "equality",
     "implication",
     "equivalence",
+    "existence",
+    "property",
+    "membership",
+    "conjunction",
     "definition",
     "unsupported",
   ];

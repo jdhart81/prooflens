@@ -16,6 +16,7 @@ const ALL_VISUAL_TYPES = [
   "lower-bound-plot",
   "number-line",
   "monotonicity-plot",
+  "limit-plot",
   "relationship-diagram",
   "dependency-graph",
   "implication-graph",
@@ -123,7 +124,8 @@ describe("planned orderings", () => {
     log_two_pos: ["number-line", "lower-bound-plot"],
     simple_lower_bound: ["lower-bound-plot", "assumption-sensitivity"],
     div_upper_bound: ["upper-bound-plot", "assumption-sensitivity"],
-    unsupported_tendsto_fixture: ["expression-tree"],
+    sequence_limit_example: ["limit-plot"],
+    energy_cost_injective: ["assumption-sensitivity", "dependency-graph", "expression-tree"],
     switching_coefficient_ne_zero: ["assumption-sensitivity", "dependency-graph"],
     landauerCost: ["relationship-diagram"],
     energyBudget: ["relationship-diagram"],
@@ -274,6 +276,98 @@ describe("positivity theorems", () => {
       const zero = spec.entities.find((x) => x.id === "zero")!;
       const quantity = spec.entities.find((x) => x.id === "quantity")!;
       expect(zero.position!.x!).toBeLessThan(quantity.position!.x!);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Limit plots
+// ---------------------------------------------------------------------------
+
+describe("limit theorems", () => {
+  const p = forName("sequence_limit_example");
+
+  it("plans a limit-plot for the corpus convergence fixture", () => {
+    expect(p.classifications.map((c) => c.payload.kind)).toEqual(["limit"]);
+    expect(p.specs.map((spec) => spec.type)).toEqual(["limit-plot"]);
+  });
+
+  it("titles a convergent limit with an arrow to its value", () => {
+    const spec = p.specs[0]!;
+    expect(spec.title).toBe("n ↦ 1 / (n + 1) ⟶ 0");
+    expect(spec.entities.find((e) => e.id === "function")!.detail).toBe("approaches 0");
+  });
+
+  it("draws the limit value and an arrow to it", () => {
+    const spec = p.specs[0]!;
+    const limitValue = spec.entities.find((e) => e.id === "limit-value")!;
+    expect(limitValue.label).toBe("0");
+    expect(limitValue.detail).toBe("the limit");
+    expect(spec.relationships).toHaveLength(1);
+    expect(spec.relationships[0]!.from).toBe("function");
+    expect(spec.relationships[0]!.to).toBe("limit-value");
+  });
+
+  it("labels the direction of travel from the source filter", () => {
+    const direction = p.specs[0]!.entities.find((e) => e.id === "direction")!;
+    expect(direction.label).toBe("+∞");
+    expect(direction.detail).toBe("input grows without bound");
+  });
+
+  it("is illustrative overall, because both axes are schematic", () => {
+    const spec = p.specs[0]!;
+    expect(spec.axes.map((a) => a.scale)).toEqual(["schematic", "schematic"]);
+    expect(spec.epistemic).toBe("illustrative");
+  });
+
+  it("says the drawn curve is one arbitrary function with the proved limit", () => {
+    const legend = p.specs[0]!.annotations.find((a) => a.id === "shape-notice")!;
+    expect(legend.text).toContain("arbitrary function");
+    expect(legend.text).toContain("not the path they take");
+    expect(legend.epistemic).toBe("illustrative");
+  });
+
+  function divergent() {
+    const theorem = synthetic({
+      kind: "limit",
+      subject: v("f"),
+      source: {
+        kind: "at-top" as const,
+        display: "+∞",
+        label: "grows without bound",
+        point: null,
+      },
+      target: {
+        kind: "at-top" as const,
+        display: "+∞",
+        label: "grows without bound",
+        point: null,
+      },
+      path: "conclusion",
+    });
+    return planVisuals(theorem, classifyTheorem(theorem))[0]!;
+  }
+
+  it("draws no limit value for a divergent statement", () => {
+    const spec = divergent();
+    expect(spec.type).toBe("limit-plot");
+    expect(spec.entities.map((e) => e.id)).not.toContain("limit-value");
+    expect(spec.relationships).toEqual([]);
+    expect(spec.axes.find((a) => a.id === "output")!.ticks).toEqual([]);
+  });
+
+  it("titles a divergent statement with what it does, not where it lands", () => {
+    expect(divergent().title).toBe("f grows without bound");
+  });
+
+  it("claims no rate of growth for a divergent statement", () => {
+    const legend = divergent().annotations.find((a) => a.id === "shape-notice")!;
+    expect(legend.text).toContain("no rate of growth is claimed");
+  });
+
+  it("resolves the limit hint aliases", () => {
+    for (const hint of ["limit", "convergence", "asymptote", "limit-plot"]) {
+      expect(resolveVisualHint(hint), hint).toBe("limit-plot");
     }
   });
 });
@@ -868,7 +962,10 @@ describe("schematic axes are illustrative", () => {
 // ---------------------------------------------------------------------------
 
 describe("the unsupported fixture degrades gracefully", () => {
-  const p = forName("unsupported_tendsto_fixture");
+  // `energy_cost_injective` replaced `unsupported_tendsto_fixture` once the
+  // `limit` classifier could read the latter. `Function.Injective` is kept out
+  // of the tables on purpose so this path stays exercised.
+  const p = forName("energy_cost_injective");
 
   it("still gets a spec", () => {
     expect(p.specs.length).toBeGreaterThanOrEqual(1);
@@ -879,51 +976,32 @@ describe("the unsupported fixture degrades gracefully", () => {
     const spec = p.specs.find((s) => s.type === "expression-tree")!;
     const conclusion = spec.entities.find((e) => e.id === "conclusion")!;
     expect(conclusion.label).toBe(p.theorem.conclusionDisplay);
-    expect(conclusion.label).toContain("Tendsto");
+    expect(conclusion.label).toContain("landauerCost");
   });
 
   it("says why it is showing structure instead of a picture", () => {
     const spec = p.specs.find((s) => s.type === "expression-tree")!;
-    expect(spec.rationale).toContain("Filter.Tendsto");
+    expect(spec.rationale).toContain("Function.Injective");
     expect(spec.annotations.map((a) => a.text).join(" ")).toMatch(/Nothing here is guessed/);
   });
 
-  it("preserves hypotheses and conclusion when an unsupported theorem has some", () => {
-    // Built by hand: every unsupported declaration left in the corpus is
-    // hypothesis-free, so this shape needs constructing to be checked at all.
-    const theorem = synthetic(opaqueProp("Quasar.emits q atTop", "Quasar.emits"), {
-      name: "Made.Up.quasar",
-      hypotheses: [
-        { symbol: "hq", proposition: rel("less-than", num(0), v("q")) },
-        {
-          symbol: "hr",
-          proposition: rel("less-than-or-equal", v("q"), v("r")),
-          unusedInProof: true,
-        },
-      ],
-    });
-    const classifications = classifyTheorem(theorem);
-    expect(classifications.map((c) => c.payload.kind)).toContain("unsupported");
-
-    const spec = planVisuals(theorem, classifications).find((x) => x.type === "expression-tree")!;
+  it("preserves this fixture's hypotheses alongside its conclusion", () => {
+    expect(p.theorem.hypotheses.length).toBeGreaterThan(0);
+    const spec = p.specs.find((s) => s.type === "expression-tree")!;
     const labels = spec.entities.map((e) => e.label);
-    expect(labels).toContain(theorem.conclusionDisplay);
-    for (const h of theorem.hypotheses) {
+    expect(labels).toContain(p.theorem.conclusionDisplay);
+    for (const h of p.theorem.hypotheses) {
       expect(labels).toContain(`${h.symbol} : ${h.display}`);
     }
-    expect(spec.relationships).toHaveLength(theorem.hypotheses.length);
-    const states = spec.entities.filter((e) => e.kind === "hypothesis").map((e) => e.state);
-    expect(states).toEqual(["used", "unused"]);
+    expect(spec.relationships).toHaveLength(p.theorem.hypotheses.length);
   });
 
   it("plans an expression tree for every unsupported declaration in the corpus", () => {
     const unsupported = planned.filter((x) =>
       x.classifications.some((c) => c.payload.kind === "unsupported"),
     );
-    // `switching_coefficient_ne_zero` is read by the `distinctness` classifier
-    // now, leaving the deliberate convergence fixture as the only one.
     expect(unsupported.map((x) => x.theorem.name.split(".").pop())).toEqual([
-      "unsupported_tendsto_fixture",
+      "energy_cost_injective",
     ]);
     for (const x of unsupported) {
       expect(x.specs.map((s) => s.type)).toContain("expression-tree");

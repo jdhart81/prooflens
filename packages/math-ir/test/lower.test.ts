@@ -210,33 +210,67 @@ describe("rate_bound_iff", () => {
   });
 });
 
-describe("unsupported_tendsto_fixture", () => {
-  const t = theorem("unsupported_tendsto_fixture");
+describe("sequence_limit_example", () => {
+  const t = theorem("sequence_limit_example");
   const prop = t.conclusion.value;
 
-  it("lowers to `opaque` rather than inventing a reading", () => {
-    expect(prop.kind).toBe("opaque");
-    expect((prop as Extract<MathProposition, { kind: "opaque" }>).head).toBe("Filter.Tendsto");
+  it("lowers `Filter.Tendsto` to a `limit` proposition", () => {
+    // This declaration used to be the unsupported fixture, named
+    // `unsupported_tendsto_fixture`. The `limit` proposition kind is what
+    // changed; the Lean statement and its proof did not.
+    expect(prop.kind).toBe("limit");
   });
 
-  it("still lowers its arguments so the mathematics stays readable", () => {
-    expect(t.conclusionDisplay).toContain("1 / (n + 1)");
+  it("keeps the sequence as its subject, with its arguments lowered", () => {
+    const limit = prop as Extract<MathProposition, { kind: "limit" }>;
+    expect(renderExpression(limit.subject)).toBe("n ↦ 1 / (n + 1)");
+    expect(limit.subject.kind).toBe("lambda");
   });
 
-  it("shows no elaborator plumbing in the opaque display", () => {
-    expect(t.conclusionDisplay).not.toContain("hDiv");
-    expect(t.conclusionDisplay).not.toContain("ofNat");
-    expect(t.conclusionDisplay).not.toContain("inst");
+  it("names both filters rather than leaving them opaque", () => {
+    const limit = prop as Extract<MathProposition, { kind: "limit" }>;
+    expect(limit.source.kind).toBe("at-top");
+    expect(limit.source.display).toBe("+∞");
+    expect(limit.source.label).toBe("grows without bound");
+    expect(limit.target.kind).toBe("neighbourhood");
+    expect(limit.target.display).toBe("0");
+    expect(limit.target.point).not.toBeNull();
+  });
+
+  it("renders the whole statement in ordinary notation", () => {
+    expect(t.conclusionDisplay).toBe("n ↦ 1 / (n + 1) ⟶ 0 (along +∞)");
+  });
+
+  it("shows no elaborator plumbing", () => {
+    for (const noise of ["hDiv", "ofNat", "inst", "cast", "Tendsto"]) {
+      expect(t.conclusionDisplay).not.toContain(noise);
+    }
   });
 
   it("sees through the Nat.cast coercion on the index", () => {
-    // `↑n + 1` must come out as `n + 1`, not `Nat.cast(n) + 1`.
-    expect(t.conclusionDisplay).not.toContain("cast");
     expect(t.conclusionDisplay).toMatch(/\bn \+ 1\b/);
   });
+});
 
-  it("is exactly the display we expect end to end", () => {
-    expect(t.conclusionDisplay).toBe("Tendsto(n ↦ 1 / (n + 1), atTop, nhds(0))");
+describe("energy_cost_injective, the deliberate unsupported fixture", () => {
+  const t = theorem("energy_cost_injective");
+
+  it("lowers to `opaque`, because `Function.Injective` is not in the tables", () => {
+    expect(t.conclusion.value.kind).toBe("opaque");
+    expect((t.conclusion.value as Extract<MathProposition, { kind: "opaque" }>).head).toBe(
+      "Function.Injective",
+    );
+  });
+
+  it("still lowers the function it is about", () => {
+    expect(t.conclusionDisplay).toContain("landauerCost(kB, T, D)");
+    expect(t.conclusionDisplay).toContain("N ↦");
+  });
+
+  it("shows no elaborator plumbing inside the opaque display", () => {
+    for (const noise of ["hMul", "inst", "ofNat"]) {
+      expect(t.conclusionDisplay).not.toContain(noise);
+    }
   });
 });
 

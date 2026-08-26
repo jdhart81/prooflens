@@ -37,7 +37,7 @@ const analysed = math.theorems.map((theorem) => {
 // ---------------------------------------------------------------------------
 
 describe("classification provenance", () => {
-  it("has something to check for all 34 declarations", () => {
+  it("has something to check for every corpus declaration", () => {
     expect(analysed).toHaveLength(CORPUS_DECLARATION_COUNT);
     expect(analysed.flatMap((a) => a.classifications).length).toBeGreaterThan(50);
   });
@@ -273,10 +273,10 @@ describe("explanation provenance", () => {
         titles.set(layer.title, (titles.get(layer.title) ?? 0) + 1);
       }
     }
-    // 31 theorems were proved; 3 definitions were accepted, not proved.
+    // 32 theorems were proved; 3 definitions were accepted, not proved.
     expect([...titles.entries()].sort()).toEqual([
       ["What was defined", 3],
-      ["What was proved", 31],
+      ["What was proved", 32],
     ]);
   });
 
@@ -350,10 +350,10 @@ describe("explanation provenance", () => {
 
   it("still admits it cannot read a theorem whose structure it does not recognise", () => {
     // The definition branches must not have swallowed the honest admission.
-    const theorem = math.theorems.find((t) => t.name.endsWith(".unsupported_tendsto_fixture"))!;
+    const theorem = math.theorems.find((t) => t.name.endsWith(".energy_cost_injective"))!;
     const mathematical = explain(theorem, classifyTheorem(theorem), {
       formalDocument: doc,
-      formalDeclaration: decl("unsupported_tendsto_fixture"),
+      formalDeclaration: decl("energy_cost_injective"),
     }).find((l) => l.id === "mathematical")!;
     expect(mathematical.claim.value).toContain("does not have a reading for its head symbol");
   });

@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    # Weekly, so the coverage metric tracks mathlib rather than going stale.
+    - cron: "17 6 * * 1"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -177,3 +180,102 @@ jobs:
         with:
           name: prooflens-figures
           path: /tmp/figures
+
+  # Coverage against real mathlib is a tracked metric, not a gate. It runs on a
+  # schedule and on demand rather than on every pull request: it needs a mathlib
+  # build, and the number legitimately moves when mathlib does. Failing a PR
+  # because upstream renamed a lemma would be noise.
+  mathlib-coverage:
+    name: Coverage against mathlib (metric)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install elan
+        run: |
+          curl -sSfL https://elan.lean-lang.org/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain "$(cat lean/lean-toolchain)"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Cache mathlib build artifacts
+        uses: actions/cache@v4
+        with:
+          path: corpus/.lake/packages
+          key: mathlib-${{ hashFiles('corpus/lake-manifest.json') }}
+
+      - name: Fetch the mathlib cache
+        working-directory: corpus
+        run: |
+          lake update -R
+          lake exe cache get
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - working-directory: lean
+        run: lake build
+
+      - name: Extract the measured mathlib slice
+        run: |
+          node packages/cli/dist/bin.js extract \
+            --project corpus \
+            --module Mathlib.Order.Monotone.Basic \
+            --module Mathlib.Algebra.Order.Field.Basic \
+            --module Mathlib.Analysis.SpecialFunctions.Log.Basic \
+            --module Mathlib.Analysis.MeanInequalities \
+            --module Mathlib.Analysis.SpecificLimits.Basic \
+            --module Mathlib.Data.Real.Sqrt \
+            --module Mathlib.Analysis.SpecialFunctions.BinaryEntropy \
+            --out /tmp/mathlib-slice.json
+
+      - name: Report coverage
+        run: |
+          node --max-old-space-size=6144 packages/cli/dist/bin.js coverage /tmp/mathlib-slice.json
+          node --max-old-space-size=6144 packages/cli/dist/bin.js coverage /tmp/mathlib-slice.json \
+            --format markdown --out /tmp/coverage.md
+          node --max-old-space-size=6144 packages/cli/dist/bin.js coverage /tmp/mathlib-slice.json \
+            --format json --out /tmp/coverage.json
+          {
+            echo "## ProofLens coverage against mathlib"
+            echo
+            sed -n '1,40p' /tmp/coverage.md
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Every planned figure must render
+        run: |
+          node --max-old-space-size=6144 --input-type=module -e "
+            import {readFileSync} from 'node:fs';
+            import {runPipelineOnJson} from './packages/pipeline/dist/index.js';
+            import {renderSvg} from './packages/renderer-svg/dist/index.js';
+            import {renderText} from './packages/renderer-text/dist/index.js';
+            const b = runPipelineOnJson(readFileSync('/tmp/mathlib-slice.json','utf8'));
+            let n = 0;
+            for (const a of b.analyses) for (const v of a.visuals) {
+              if (!renderSvg(v, {theme:'auto'}).startsWith('<svg')) throw new Error('bad svg: ' + v.id);
+              if (renderText(v).length < 10) throw new Error('bad text: ' + v.id);
+              const ids = new Set(v.entities.map(e => e.id));
+              for (const r of v.relationships) {
+                if (!ids.has(r.from) || !ids.has(r.to)) throw new Error('dangling edge in ' + v.id);
+              }
+              n += 1;
+            }
+            console.log('rendered ' + n + ' figures, no failures');
+          "
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mathlib-coverage
+          path: |
+            /tmp/coverage.md
+            /tmp/coverage.json

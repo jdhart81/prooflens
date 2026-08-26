@@ -44,6 +44,25 @@ Logical positions are the honest encoding of what the planner does know:
   dependencies below it, computed in `dependencyGraph`. `planAssumptionSensitivity` puts every
   hypothesis on `layer: 0` and the conclusion on `layer: 1`.
 
+`y` is **bottom-origin**, and the type says so explicitly:
+
+```ts
+  /**
+   * Normalised vertical placement in [0,1], **bottom-origin**: 0 sits on the
+   * horizontal axis and 1 is the top of the plot area.
+   *
+   * Stated explicitly because renderers otherwise have to guess, and two
+   * renderers guessing differently would silently flip a figure upside down.
+   */
+  y?: number;
+```
+
+This is not a formatting preference. SVG's own coordinate system is top-origin, so an SVG renderer
+that took `y` at face value and a text renderer that did not would disagree about which way a
+figure points. `planLimit` relies on it: a divergence to `Filter.atBot` places its marker at
+`y: 0` and one to `+∞` at `y: 1`, and a renderer that inverted the convention would draw a
+sequence running to negative infinity as one running to positive infinity.
+
 The renderers turn these into geometry independently. `renderer-svg` scales `[0, 1]` across a
 viewBox and lays layered graphs out in columns; `renderer-text` maps the same `[0, 1]` onto
 character cells:
@@ -66,6 +85,7 @@ export type VisualType =
   | "lower-bound-plot"
   | "number-line"
   | "monotonicity-plot"
+  | "limit-plot"
   | "relationship-diagram"
   | "dependency-graph"
   | "implication-graph"
@@ -77,19 +97,57 @@ export type VisualType =
 | Type | Shows | Emitted by |
 | --- | --- | --- |
 | `upper-bound-plot` | A schematic axis with the bound marked, the region the bounded quantity may occupy, and the region the theorem rules out. | `planBound(theorem, c, "upper")` |
-| `lower-bound-plot` | The same figure mirrored. | `planBound(theorem, c, "lower")`, which the planner does not currently call — see [roadmap.md](./roadmap.md) |
-| `number-line` | A marked value and the regions on either side of it, with no bound semantics attached. | Nothing in v0.1; both renderers handle it |
+| `lower-bound-plot` | The same figure mirrored: the permitted region lies to the right of the bound. | `planBound(theorem, c, "lower")` |
+| `number-line` | Zero marked, with the quantity on one side of it. The sign-fact figure. | `planPositivity` |
 | `monotonicity-plot` | A schematic curve with its direction of travel, plus the order relation the predicate asserts (`u ≤ v ⟹ f u ≤ f v`). | `planMonotonicity` |
-| `relationship-diagram` | A layered graph of elements and how they relate. | Nothing in v0.1; both renderers handle it |
+| `limit-plot` | Either a dotted line at the limit value with a curve closing on it, or, for a divergence, a curve leaving the frame in the direction the target filter names. | `planLimit` |
+| `relationship-diagram` | Inputs on one layer, the quantity they compute on the next: what a value is built out of. | `planFunctionalRelationship` |
 | `dependency-graph` | The declarations this proof term references, layered by dependency depth, plus a count of the edges outside the extraction. | `planDependencies` |
 | `implication-graph` | Two propositions and the arrow between them, `→` or `↔`. | `planImplication` |
 | `assumption-sensitivity` | Every stated hypothesis as a node, connected to the conclusion when the proof term uses it and detached when it does not. | `planAssumptionSensitivity` |
 | `expression-tree` | The conclusion with the hypotheses that lead to it. The structure-preserving fallback. | `planExpressionTree` |
 | `text-diagram` | Reserved for a spec whose content is prose. | Nothing in v0.1; falls through to the generic layout in both renderers |
 
-Over the 34 declarations in `examples/corpus.formal-ir.json`, the planner produces 68 figures:
-26 `assumption-sensitivity`, 18 `upper-bound-plot`, 11 `dependency-graph`, 6 `monotonicity-plot`,
-5 `expression-tree`, and 2 `implication-graph`.
+Over the 35 declarations in `examples/corpus.formal-ir.json` the planner produces 75 figures:
+27 `assumption-sensitivity`, 13 `upper-bound-plot`, 12 `dependency-graph`, 6 `monotonicity-plot`,
+5 `lower-bound-plot`, 4 `relationship-diagram`, 4 `number-line`, 2 `implication-graph`,
+1 `expression-tree`, 1 `limit-plot`.
+
+Over the 679-declaration mathlib slice it produces 1,490, in a noticeably different mix:
+527 `dependency-graph`, 437 `assumption-sensitivity`, 165 `implication-graph`,
+121 `upper-bound-plot`, 72 `monotonicity-plot`, 44 `limit-plot`, 43 `lower-bound-plot`,
+42 `expression-tree`, 36 `number-line`, 3 `relationship-diagram`. See
+[coverage.md](./coverage.md).
+
+### `limit-plot`
+
+Worth singling out because it is the one figure type whose *shape* is a claim rather than a
+decoration. `planLimit` splits on `convergent`, computed by `classifyLimit` from the target
+filter's kind:
+
+```ts
+ * Convergence and divergence get visibly different figures. Drawing an
+ * asymptote for a function that grows without bound would be a picture of a
+ * different theorem.
+```
+
+A convergent limit gets a `bound` entity at the limit value, a `maps-to` relationship from the
+function to it, and a tick on the vertical axis. A divergence gets neither, and instead a `label`
+entity positioned at the edge the values run toward:
+
+```ts
+    // Where the values run off to, as a *position* rather than as prose. A
+    // renderer that had to substring-match "decreases without bound" would draw
+    // upward the day a new at-bot-flavoured filter is worded differently.
+```
+
+That is the bottom-origin `y` convention doing real work: `y: target.kind === "at-bot" ? 0 : 1`
+is the entire encoding of which way the figure points, and it is readable by a renderer that
+knows nothing about filters.
+
+A target filter absent from the `FILTERS` table gets `kind: "unknown"`, which is not one of the
+two convergent kinds, so the figure is drawn as a divergence. That is the conservative direction:
+a divergence figure claims less than a convergence figure does.
 
 ## `VisualEntity`
 
@@ -293,14 +351,19 @@ why the corpus histogram reads:
 
 ```
   figures by epistemic status:
-    derived         44  Computed from the verified statement by a deterministic rule.
-    illustrative    24  A display choice. It makes no mathematical claim.
+    derived         46  Computed from the verified statement by a deterministic rule.
+    illustrative    29  A display choice. It makes no mathematical claim.
 ```
 
-The 24 `illustrative` figures are the 18 bound plots and the 6 monotonicity plots, which are
-exactly the two kinds with a schematic axis. `assumption-sensitivity` figures are `derived`
-throughout and say so, because nothing in them is schematic: every node's `state` is a mechanical
-fact about the elaborated term.
+The 29 `illustrative` figures are exactly the ones with a schematic axis: 13 upper-bound plots,
+6 monotonicity plots, 5 lower-bound plots, 4 number lines, and 1 limit plot.
+`assumption-sensitivity`, `dependency-graph`, `implication-graph`, `relationship-diagram` and
+`expression-tree` figures are `derived` throughout and say so, because nothing in them is
+schematic: every node's `state` is a mechanical fact about the elaborated term, and every edge is
+read from it.
+
+The same ratio holds at mathlib scale: 1,174 `derived` against 316 `illustrative` across 1,490
+figures.
 
 The renderers repeat this at the output boundary rather than trusting it to be understood.
 `renderer-svg` writes the whole-figure status into `data-prooflens-epistemic`, into the `<desc>`
@@ -366,7 +429,7 @@ flowchart TD
     B -->|no| D[skip for now]
     C --> E[structural pass]
     D --> E
-    E --> F[upper-bound → planBound<br/>monotonicity → planMonotonicity<br/>implication/equivalence → planImplication]
+    E --> F[limit → planLimit<br/>positivity → planPositivity<br/>natural bound → planBound<br/>monotonicity → planMonotonicity<br/>functional-relationship → planFunctionalRelationship<br/>implication/equivalence → planImplication]
     F --> G{assumption-sensitivity<br/>with no unused?}
     G -->|yes| H[assumption-sensitivity spec, after the structural figures]
     G -->|no| I[skip]
@@ -377,7 +440,8 @@ flowchart TD
     K --> M{no specs yet, or an<br/>unsupported classification?}
     L --> M
     M -->|yes| N[planExpressionTree fallback]
-    M -->|no| O[done]
+    M -->|no| O[applyAuthorHint]
+    N --> O
 ```
 
 ### 1. Assumption sensitivity first, but only when there are unused hypotheses
@@ -393,20 +457,50 @@ flowchart TD
 This is the one place the planner ranks one figure above another on editorial grounds, and the
 reason is that a stated-but-unused hypothesis is a fact about the proof that the reader cannot
 get any other way, whereas the bound plot restates something already visible in the statement.
-Two of the 34 corpus declarations take this branch: `simple_upper_bound`, where `hP` and `hT` are
+Two of the 35 corpus declarations take this branch: `simple_upper_bound`, where `hP` and `hT` are
 decorative, and `information_rate_bound`, where `hP : 0 < P` is stated because a machine drawing
 nonpositive power is not a machine, and the derivation never touches it.
 
 Note the gate in `classifyAssumptionSensitivity`: if no binder reports `proofTermAvailable`, the
 classification is not produced at all, so an axiom or an opaque declaration gets no
-assumption-sensitivity figure rather than a figure claiming everything is unused.
+assumption-sensitivity figure rather than a figure claiming everything is unused. Instance
+binders are excluded upstream, at extraction, so `[IsStrictOrderedRing α]` never appears in one of
+these figures as a hypothesis the proof failed to use.
 
 ### 2. Structural figures, in classification order
 
 The loop walks `classifications` in the order `classifyTheorem` produced them and dispatches on
-`payload.kind`. Only `upper-bound`, `monotonicity`, `implication` and `equivalence` have a
-branch; `lower-bound`, `equality`, `functional-relationship`, `definition` and `unsupported` fall
-through.
+`payload.kind`. Eight kinds have a branch: `limit`, `positivity`, `upper-bound`, `lower-bound`,
+`monotonicity`, `functional-relationship`, and `implication`/`equivalence` sharing `planImplication`.
+The rest fall through: `distinctness`, `equality`, `property`, `conjunction`, `membership` and
+`existence` produce no figure of their own, `unsupported` is handled by the fallback in step 5,
+and `definition` reaches a figure indirectly, because `classifyDefinition` co-emits a
+`functional-relationship` whenever the declaration has a `definitionBody`.
+
+That last group is not an oversight; it is the recognised-but-not-drawable set.
+`switching_coefficient_ne_zero` classifies cleanly as `distinctness` and gets only its
+assumption-sensitivity and dependency figures, which is the correct outcome: `C · V ^ 2 ≠ 0` says
+where a value is *not*, and a number line marking one excluded point would be a picture of
+almost no information.
+
+#### Only the natural reading of a bound gets a figure
+
+`classifyBounds` emits both readings of every inequality, because both are true. The planner draws
+one:
+
+```ts
+      // Every inequality yields both an upper- and a lower-bound reading. Only
+      // the natural one is worth a figure; drawing both would show the reader
+      // the same fact twice, once uselessly.
+      case "upper-bound": {
+        if (!classification.payload.data.natural) break;
+```
+
+`natural` is set by `readingScore` in the classifier, which scores each side of the inequality: a
+bare variable is the quantity a theorem is usually about, a number literal never is. The visible
+consequence is that `simple_lower_bound` (`A / B ≤ x`) now yields a `lower-bound-plot` rather than
+an upper-bound plot on `A / B`, and `log_two_pos` (`0 < Real.log 2`) is classified `positivity`
+and drawn as a number line rather than as "0 is bounded above by log 2".
 
 ### 3. Assumption sensitivity, if it was not already emitted
 
@@ -421,7 +515,7 @@ proof term."
 ### 4. Dependency graph
 
 Emitted whenever `context.dependencies` is supplied and `subgraphFor(graph, theorem.id)` has more
-than one node. `runPipeline` always supplies it. Eleven of the 34 corpus declarations have a
+than one node. `runPipeline` always supplies it. Twelve of the 35 corpus declarations have a
 local dependency deep enough to draw.
 
 ### 5. The structure-preserving fallback
@@ -434,7 +528,7 @@ local dependency deep enough to draw.
 ```
 
 Note the `||`: the fallback is appended whenever there is an `unsupported` classification, even
-if other specs were planned. `switching_coefficient_ne_zero` gets
+if other specs were planned. `energy_cost_injective` gets
 `assumption-sensitivity, dependency-graph, expression-tree` for this reason.
 
 The function's docstring states the invariant this exists to satisfy:
@@ -448,6 +542,81 @@ The function's docstring states the invariant this exists to satisfy:
  * ProofLens is not allowed to have.
  */
 ```
+
+### 6. The author's hint
+
+The last step is `applyAuthorHint`, which reads `TheoremIR.suggestedVisual` (from
+`@prooflens.visual`; see [math-ir.md](./math-ir.md) and
+[adr/0003-semantic-annotations.md](./adr/0003-semantic-annotations.md)).
+
+Two rules govern it, both stated in the source:
+
+```ts
+ * The author of a declaration may state a preference. ProofLens treats it as a
+ * preference and nothing more: it can reorder figures the planner already
+ * chose, but it cannot conjure one, because a visualization the analysis does
+ * not support would have nothing behind it. A hint that matches nothing is
+ * recorded on the figure rather than silently dropped, so the author finds out.
+ *
+ * A hint also never displaces a *finding*. If ProofLens noticed something the
+ * author did not — a hypothesis their proof never uses, a `sorry`, an unusual
+ * axiom — that leads, and the requested figure comes second. An author asking
+ * for a bound plot is expressing taste; a redundant hypothesis is information.
+```
+
+#### Resolution
+
+`resolveVisualHint(hint)` maps the author's string to a `VisualType`, first through
+`VISUAL_HINT_ALIASES` and then by exact match against the known types. The alias table exists
+because authors describe what they want to see rather than what the planner calls it:
+
+```ts
+const VISUAL_HINT_ALIASES: Record<string, VisualType> = {
+  "functional-relationship": "relationship-diagram",
+  "equation-map": "relationship-diagram",
+  "monotone-curve": "monotonicity-plot",
+  "antitone-curve": "monotonicity-plot",
+  "monotonicity-curve": "monotonicity-plot",
+  limit: "limit-plot",
+  convergence: "limit-plot",
+  asymptote: "limit-plot",
+  "positivity-fact": "number-line",
+  "sign-fact": "number-line",
+  …
+};
+```
+
+Without it, an author who asked for exactly the figure ProofLens already planned would be told
+their request went unfulfilled, turning a useful signal into noise.
+
+#### Finding versus preference
+
+```ts
+  const leadIsFinding = specs[0]?.type === "assumption-sensitivity" || theorem.trust.usesSorry;
+  const target = leadIsFinding ? 1 : 0;
+```
+
+`target` is the slot the requested figure is moved into: position 0 normally, position 1 when a
+finding already leads. A hint can therefore promote a figure past every other figure, and past
+nothing else.
+
+#### Unmatched hints
+
+If the hint resolves to no known type, or resolves to a type the planner did not produce, the
+first spec gets a `hint-unmatched` legend annotation naming the request. The two texts differ,
+because the two failures call for different fixes:
+
+```
+The declaration requests a `foo` figure, which is not a visualization type ProofLens knows.
+The declaration requests a `positivity-fact` figure, but no ProofLens classifier produced
+one for this statement.
+```
+
+The second is a live example. `switching_coefficient_ne_zero` asks for `positivity-fact`, which
+resolves to `number-line`, but its conclusion is `C · V ^ 2 ≠ 0` and `classifyDistinctness`
+produces no figure, so the annotation appears on its assumption-sensitivity figure. Recording it
+rather than dropping it is what lets the author discover that the hint no longer matches what the
+declaration says.
 
 ## How to add a renderer
 
@@ -471,6 +640,12 @@ output type. Use `packages/renderer-text` as the smaller model.
    }
    ```
 
+   The existing renderers group types onto shared layouts: `upper-bound-plot`, `lower-bound-plot`
+   and `number-line` all use the number-line layout; `dependency-graph`, `implication-graph` and
+   `relationship-diagram` all use the layered-graph layout. `limit-plot` gets a purpose-built one
+   in each renderer (`layoutLimit`, `pushLimit`), because a limit figure has to distinguish
+   convergence from divergence and the generic layouts cannot.
+
    Note the parameter type is `VisualType | string`, deliberately: a spec produced by a newer
    planner than your renderer must still render. `renderer-svg` goes further and wraps dispatch in
    `safeLayout`, which catches a throwing layout, retries with the generic one, and returns an
@@ -491,11 +666,16 @@ output type. Use `packages/renderer-text` as the smaller model.
    different from one it uses, and the difference must survive the output being pasted somewhere
    with no colour.
 
-5. **Be deterministic.** No clock, no random source, no ambient state. Derive element ids from the
+5. **Honour the coordinate convention.** `LogicalPosition.y` is bottom-origin. SVG's is not, so
+   an SVG-flavoured renderer has to invert; a text renderer drawing rows top to bottom has to
+   invert too. Getting this wrong does not produce an obviously broken figure, it produces a
+   correct-looking figure of the opposite claim.
+
+6. **Be deterministic.** No clock, no random source, no ambient state. Derive element ids from the
    spec's own ids. `renderer-svg` states this first among its four load-bearing properties, and
    the reason is that ProofLens figures are meant to be committed and diffed.
 
-6. **Survive malformed input.** Missing `position`, `NaN` coordinates, dangling relationship
+7. **Survive malformed input.** Missing `position`, `NaN` coordinates, dangling relationship
    endpoints, zero entities. Both renderers have tests for each; `renderText` on an empty spec
    emits "no elements to show".
 
@@ -512,4 +692,5 @@ needs to change: the planner does not know how many renderers exist.
 - [math-ir.md](./math-ir.md) — what the planner consumes
 - [epistemic-model.md](./epistemic-model.md) — `weakest`, `EPISTEMIC_GLOSS`, and the lattice
 - [adr/0002-first-rendering-surface.md](./adr/0002-first-rendering-surface.md) — why the infoview widget was the first renderer target
-- [roadmap.md](./roadmap.md) — the visual types that exist but are not yet planned
+- [coverage.md](./coverage.md) — the figure mix over a real mathlib slice
+- [roadmap.md](./roadmap.md) — what is planned next

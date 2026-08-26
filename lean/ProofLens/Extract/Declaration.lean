@@ -143,7 +143,13 @@ def extractDeclaration (declName : Name) (moduleName : Option Name) :
         , ("rawName", Json.str rawName.toString)
         , ("fvarId", Json.str fid.name.toString)
         , ("binderInfo", Json.str (binderInfoToString decl.binderInfo))
-        , ("role", Json.str (if isProp then "hypothesis" else "parameter"))
+        -- A typeclass instance is plumbing, not an assumption a mathematician
+        -- made. `[IsStrictOrderedRing α]` is `Prop`-valued and would otherwise
+        -- be counted as a hypothesis, which distorts assumption sensitivity and
+        -- fills figures with noise.
+        , ("role", Json.str (
+            if decl.binderInfo == BinderInfo.instImplicit then "instance"
+            else if isProp then "hypothesis" else "parameter"))
         , ("type", ← exprPayload ty)
         , ("usage", usage.toJson valueAvailable) ]
       -- silence the unused `h` from the bounded-for elaboration

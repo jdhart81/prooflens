@@ -10,7 +10,8 @@ export type RelationKind =
   | "greater-than-or-equal"
   | "equivalent";
 
-export type OperatorKind = "add" | "sub" | "mul" | "div" | "pow" | "mod" | "neg" | "inv" | "abs";
+export type OperatorKind =
+  "add" | "sub" | "mul" | "div" | "pow" | "mod" | "neg" | "inv" | "abs" | "comp";
 
 /**
  * A mathematical expression.
@@ -44,6 +45,22 @@ export type PredicateKind =
   | "nonnegative"
   | "other";
 
+/**
+ * A filter, described in terms a reader can follow.
+ *
+ * `Filter.atTop` is "the input grows without bound"; `nhds L` is "approaches L".
+ * Anything else keeps its structure and admits it has no description.
+ */
+export interface FilterSpec {
+  kind: "at-top" | "at-bot" | "neighbourhood" | "punctured" | "other" | "unknown";
+  /** Compact rendering, e.g. `+∞` or the limit point. */
+  display: string;
+  /** Prose fragment, e.g. "grows without bound". */
+  label: string;
+  /** The point being approached, when there is one. */
+  point: MathExpression | null;
+}
+
 export type MathProposition =
   | {
       kind: "relation";
@@ -61,6 +78,16 @@ export type MathProposition =
       path: string;
     }
   | { kind: "implication"; antecedent: MathProposition; consequent: MathProposition; path: string }
+  | {
+      kind: "limit";
+      subject: MathExpression;
+      source: FilterSpec;
+      target: FilterSpec;
+      path: string;
+    }
+  | { kind: "existential"; binder: string; body: MathProposition; path: string }
+  | { kind: "conjunction"; conjuncts: MathProposition[]; path: string }
+  | { kind: "membership"; element: MathExpression; collection: MathExpression; path: string }
   | { kind: "opaque"; head: string | null; display: string; path: string };
 
 /**
@@ -86,6 +113,13 @@ export interface MathVariable {
   typeDisplay: string;
   binderInfo: string;
   annotation: SemanticAnnotation | null;
+}
+
+/** A typeclass instance binder: recorded, but not treated as an assumption. */
+export interface MathInstance {
+  id: string;
+  symbol: string;
+  typeDisplay: string;
 }
 
 export interface MathHypothesis {
@@ -120,6 +154,11 @@ export interface TheoremIR {
   documentation: string | null;
   variables: MathVariable[];
   hypotheses: MathHypothesis[];
+  /**
+   * Typeclass instances the declaration requires. Kept for completeness and for
+   * provenance, but deliberately excluded from `hypotheses`.
+   */
+  instances: MathInstance[];
   conclusion: Claim<MathProposition>;
   conclusionDisplay: string;
   /**

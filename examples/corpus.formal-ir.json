@@ -1016,10 +1016,10 @@
      "instOfNatNat",
      "Nat.instNeZeroSucc"]},
    "source":
-   {"startLine": 141,
+   {"startLine": 143,
     "startColumn": 0,
     "module": "ProofLensExamples.IntelligenceBound",
-    "endLine": 157,
+    "endLine": 159,
     "endColumn": 12},
    "proofTermAvailable": true,
    "namespace": "ProofLens.Examples",
@@ -2933,10 +2933,10 @@
     "pretty": "ℝ → ℝ → ℝ",
     "constants": ["Real"]},
    "source":
-   {"startLine": 50,
+   {"startLine": 52,
     "startColumn": 0,
     "module": "ProofLensExamples.IntelligenceBound",
-    "endLine": 58,
+    "endLine": 60,
     "endColumn": 39},
    "proofTermAvailable": true,
    "namespace": "ProofLens.Examples",
@@ -3088,10 +3088,10 @@
      "Real.instZero",
      "ProofLens.Examples.energyBudget"]},
    "source":
-   {"startLine": 89,
+   {"startLine": 91,
     "startColumn": 0,
     "module": "ProofLensExamples.IntelligenceBound",
-    "endLine": 99,
+    "endLine": 101,
     "endColumn": 15},
    "proofTermAvailable": true,
    "namespace": "ProofLens.Examples",
@@ -3616,6 +3616,380 @@
          "body":
          {"kind": "forall",
           "body":
+          {"kind": "app",
+           "fn":
+           {"name": "Function.Injective",
+            "levels": ["(0+1)", "(0+1)"],
+            "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"name": "Real", "levels": [], "kind": "const"},
+            {"kind": "lam",
+             "body":
+             {"kind": "app",
+              "fn":
+              {"name": "HMul.hMul", "levels": ["0", "0", "0"], "kind": "const"},
+              "args":
+              [{"name": "Real", "levels": [], "kind": "const"},
+               {"name": "Real", "levels": [], "kind": "const"},
+               {"name": "Real", "levels": [], "kind": "const"},
+               {"kind": "app",
+                "fn": {"name": "instHMul", "levels": ["0"], "kind": "const"},
+                "args":
+                [{"name": "Real", "levels": [], "kind": "const"},
+                 {"name": "Real.instMul", "levels": [], "kind": "const"}]},
+               {"kind": "bvar", "index": 0},
+               {"kind": "app",
+                "fn":
+                {"name": "ProofLens.Examples.landauerCost",
+                 "levels": [],
+                 "kind": "const"},
+                "args":
+                [{"kind": "bvar", "index": 6},
+                 {"kind": "bvar", "index": 5},
+                 {"kind": "bvar", "index": 4}]}]},
+             "binderType": {"name": "Real", "levels": [], "kind": "const"},
+             "binderName": "N",
+             "binderInfo": "default"}]},
+          "binderType":
+          {"kind": "app",
+           "fn": {"name": "LT.lt", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"name": "Real.instLT", "levels": [], "kind": "const"},
+            {"kind": "app",
+             "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
+             "args":
+             [{"name": "Real", "levels": [], "kind": "const"},
+              {"value": 0, "litKind": "nat", "kind": "lit"},
+              {"kind": "app",
+               "fn":
+               {"name": "Zero.toOfNat0", "levels": ["0"], "kind": "const"},
+               "args":
+               [{"name": "Real", "levels": [], "kind": "const"},
+                {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
+            {"kind": "bvar", "index": 2}]},
+          "binderName": "hD",
+          "binderInfo": "default"},
+         "binderType":
+         {"kind": "app",
+          "fn": {"name": "LT.lt", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"name": "Real", "levels": [], "kind": "const"},
+           {"name": "Real.instLT", "levels": [], "kind": "const"},
+           {"kind": "app",
+            "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "Real", "levels": [], "kind": "const"},
+             {"value": 0, "litKind": "nat", "kind": "lit"},
+             {"kind": "app",
+              "fn": {"name": "Zero.toOfNat0", "levels": ["0"], "kind": "const"},
+              "args":
+              [{"name": "Real", "levels": [], "kind": "const"},
+               {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
+           {"kind": "bvar", "index": 2}]},
+         "binderName": "hT",
+         "binderInfo": "default"},
+        "binderType":
+        {"kind": "app",
+         "fn": {"name": "LT.lt", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "Real", "levels": [], "kind": "const"},
+          {"name": "Real.instLT", "levels": [], "kind": "const"},
+          {"kind": "app",
+           "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"value": 0, "litKind": "nat", "kind": "lit"},
+            {"kind": "app",
+             "fn": {"name": "Zero.toOfNat0", "levels": ["0"], "kind": "const"},
+             "args":
+             [{"name": "Real", "levels": [], "kind": "const"},
+              {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
+          {"kind": "bvar", "index": 2}]},
+        "binderName": "hkB",
+        "binderInfo": "default"},
+       "binderType": {"name": "Real", "levels": [], "kind": "const"},
+       "binderName": "D",
+       "binderInfo": "default"},
+      "binderType": {"name": "Real", "levels": [], "kind": "const"},
+      "binderName": "T",
+      "binderInfo": "default"},
+     "binderType": {"name": "Real", "levels": [], "kind": "const"},
+     "binderName": "kB",
+     "binderInfo": "default"},
+    "pretty":
+    "∀ (kB T D : ℝ), 0 < kB → 0 < T → 0 < D → Function.Injective fun N => N * ProofLens.Examples.landauerCost kB T D",
+    "constants":
+    ["Real",
+     "LT.lt",
+     "Real.instLT",
+     "OfNat.ofNat",
+     "Zero.toOfNat0",
+     "Real.instZero",
+     "Function.Injective",
+     "HMul.hMul",
+     "instHMul",
+     "Real.instMul",
+     "ProofLens.Examples.landauerCost"]},
+   "source":
+   {"startLine": 242,
+    "startColumn": 0,
+    "module": "ProofLensExamples.IntelligenceBound",
+    "endLine": 287,
+    "endColumn": 74},
+   "proofTermAvailable": true,
+   "namespace": "ProofLens.Examples",
+   "name": "ProofLens.Examples.energy_cost_injective",
+   "kind": "theorem",
+   "docstring":
+   "**Deliberate \"unsupported mathematics\" fixture.**\n\nThe map sending an operation count `N` to the energy that many operations cost,\n`N ↦ N * landauerCost kB T D`, is injective: because the per-operation cost is\nstrictly positive, two workloads of different sizes can never present the same\nenergy bill. Physically this is what makes the bill a faithful measurement of\nthe work done — reading the joules back tells you the operation count exactly.\n\n**ProofLens is expected to fail on this, and to fail cleanly.** The head constant\nof the proposition is `Function.Injective`, for which no classifier exists today.\nThere is no bounded quantity, no bound expression, no monotone function and no\nfilter; the content is a universally quantified implication between equalities,\nhidden behind a definition that unfolds to a `∀`. It is not a limit, and it is\nnot a bound, so none of the supported proposition kinds apply.\n\nThe correct behaviour is a clean report that no classifier supports this\nstatement, accompanied by the full formal structure — the statement, its\nhypotheses, its dependencies — so that a reader still gets everything ProofLens\ndoes know. What is *not* acceptable is a plausible-looking wrong picture: the\nunderlying function here is affine, so a renderer that ignored the\n`Function.Injective` head and pattern-matched on the body could easily emit a\nmonotone-curve figure, which would be answering a question nobody asked.\n\n`Function.Injective` was chosen over the other unrecognised shapes the mathlib\ncoverage sweep reported because it is adjacent to things ProofLens *does*\nsupport — `strictMono_affine` in `Monotonicity.lean` is one implication away —\nwhich makes it a sharper test of whether classification keys on the proposition's\nhead or merely on the shape of what is inside it.\n\nNo visual annotation is given for this declaration, deliberately: there is no\ncorrect figure to suggest. (The annotation keyword is spelled out nowhere in\nthis docstring on purpose, so that even a parser matching on substrings rather\nthan on line starts cannot mistake this paragraph for a request to draw\nsomething.)\n\n@prooflens.var kB meaning=\"Boltzmann constant\" units=\"J/K\" domain=\"positive reals\"\n@prooflens.var T meaning=\"operating temperature of the heat bath\" units=\"K\" domain=\"positive reals\"\n@prooflens.var D meaning=\"useful operations extracted per erased bit\" units=\"dimensionless\" domain=\"positive reals\"\n@prooflens.var N meaning=\"number of logical operations performed\" units=\"ops\" domain=\"reals\"\n@prooflens.concept \"energy cost determines operation count\"\n",
+   "dependencies":
+   ["Real",
+    "LT.lt",
+    "Real.instLT",
+    "OfNat.ofNat",
+    "Zero.toOfNat0",
+    "Real.instZero",
+    "Function.Injective",
+    "HMul.hMul",
+    "instHMul",
+    "Real.instMul",
+    "ProofLens.Examples.landauerCost",
+    "Eq",
+    "mul_right_cancel₀",
+    "IsCancelMulZero.toIsRightCancelMulZero",
+    "IsDomain.toIsCancelMulZero",
+    "Real.semiring",
+    "Real.instIsDomain",
+    "ne_of_gt",
+    "Real.instPreorder",
+    "ProofLens.Examples.landauerCost_pos"],
+   "definitionBody": null,
+   "conclusion":
+   {"tree":
+    {"kind": "app",
+     "fn":
+     {"name": "Function.Injective",
+      "levels": ["(0+1)", "(0+1)"],
+      "kind": "const"},
+     "args":
+     [{"name": "Real", "levels": [], "kind": "const"},
+      {"name": "Real", "levels": [], "kind": "const"},
+      {"kind": "lam",
+       "body":
+       {"kind": "app",
+        "fn": {"name": "HMul.hMul", "levels": ["0", "0", "0"], "kind": "const"},
+        "args":
+        [{"name": "Real", "levels": [], "kind": "const"},
+         {"name": "Real", "levels": [], "kind": "const"},
+         {"name": "Real", "levels": [], "kind": "const"},
+         {"kind": "app",
+          "fn": {"name": "instHMul", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"name": "Real", "levels": [], "kind": "const"},
+           {"name": "Real.instMul", "levels": [], "kind": "const"}]},
+         {"kind": "bvar", "index": 0},
+         {"kind": "app",
+          "fn":
+          {"name": "ProofLens.Examples.landauerCost",
+           "levels": [],
+           "kind": "const"},
+          "args":
+          [{"name": "kB", "kind": "fvar", "fvarId": "_uniq.49"},
+           {"name": "T", "kind": "fvar", "fvarId": "_uniq.50"},
+           {"name": "D", "kind": "fvar", "fvarId": "_uniq.51"}]}]},
+       "binderType": {"name": "Real", "levels": [], "kind": "const"},
+       "binderName": "N",
+       "binderInfo": "default"}]},
+    "pretty":
+    "Function.Injective fun N => N * ProofLens.Examples.landauerCost kB T D",
+    "constants":
+    ["Function.Injective",
+     "Real",
+     "HMul.hMul",
+     "instHMul",
+     "Real.instMul",
+     "ProofLens.Examples.landauerCost"]},
+   "binders":
+   [{"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": true,
+      "occursInConclusion": true},
+     "type":
+     {"tree": {"name": "Real", "levels": [], "kind": "const"},
+      "pretty": "ℝ",
+      "constants": ["Real"]},
+     "role": "parameter",
+     "rawName": "kB",
+     "name": "kB",
+     "index": 0,
+     "fvarId": "_uniq.49",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": true,
+      "occursInConclusion": true},
+     "type":
+     {"tree": {"name": "Real", "levels": [], "kind": "const"},
+      "pretty": "ℝ",
+      "constants": ["Real"]},
+     "role": "parameter",
+     "rawName": "T",
+     "name": "T",
+     "index": 1,
+     "fvarId": "_uniq.50",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": true,
+      "occursInConclusion": true},
+     "type":
+     {"tree": {"name": "Real", "levels": [], "kind": "const"},
+      "pretty": "ℝ",
+      "constants": ["Real"]},
+     "role": "parameter",
+     "rawName": "D",
+     "name": "D",
+     "index": 2,
+     "fvarId": "_uniq.51",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn": {"name": "LT.lt", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "Real.instLT", "levels": [], "kind": "const"},
+        {"kind": "app",
+         "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "Real", "levels": [], "kind": "const"},
+          {"value": 0, "litKind": "nat", "kind": "lit"},
+          {"kind": "app",
+           "fn": {"name": "Zero.toOfNat0", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
+        {"name": "kB", "kind": "fvar", "fvarId": "_uniq.49"}]},
+      "pretty": "0 < kB",
+      "constants":
+      ["LT.lt",
+       "Real",
+       "Real.instLT",
+       "OfNat.ofNat",
+       "Zero.toOfNat0",
+       "Real.instZero"]},
+     "role": "hypothesis",
+     "rawName": "hkB",
+     "name": "hkB",
+     "index": 3,
+     "fvarId": "_uniq.52",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn": {"name": "LT.lt", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "Real.instLT", "levels": [], "kind": "const"},
+        {"kind": "app",
+         "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "Real", "levels": [], "kind": "const"},
+          {"value": 0, "litKind": "nat", "kind": "lit"},
+          {"kind": "app",
+           "fn": {"name": "Zero.toOfNat0", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
+        {"name": "T", "kind": "fvar", "fvarId": "_uniq.50"}]},
+      "pretty": "0 < T",
+      "constants":
+      ["LT.lt",
+       "Real",
+       "Real.instLT",
+       "OfNat.ofNat",
+       "Zero.toOfNat0",
+       "Real.instZero"]},
+     "role": "hypothesis",
+     "rawName": "hT",
+     "name": "hT",
+     "index": 4,
+     "fvarId": "_uniq.53",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn": {"name": "LT.lt", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "Real.instLT", "levels": [], "kind": "const"},
+        {"kind": "app",
+         "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "Real", "levels": [], "kind": "const"},
+          {"value": 0, "litKind": "nat", "kind": "lit"},
+          {"kind": "app",
+           "fn": {"name": "Zero.toOfNat0", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
+        {"name": "D", "kind": "fvar", "fvarId": "_uniq.51"}]},
+      "pretty": "0 < D",
+      "constants":
+      ["LT.lt",
+       "Real",
+       "Real.instLT",
+       "OfNat.ofNat",
+       "Zero.toOfNat0",
+       "Real.instZero"]},
+     "role": "hypothesis",
+     "rawName": "hD",
+     "name": "hD",
+     "index": 5,
+     "fvarId": "_uniq.54",
+     "binderInfo": "default"}],
+   "axioms": ["propext", "Classical.choice", "Quot.sound"]},
+  {"usesSorry": false,
+   "statement":
+   {"tree":
+    {"kind": "forall",
+     "body":
+     {"kind": "forall",
+      "body":
+      {"kind": "forall",
+       "body":
+       {"kind": "forall",
+        "body":
+        {"kind": "forall",
+         "body":
+         {"kind": "forall",
+          "body":
           {"kind": "forall",
            "body":
            {"kind": "forall",
@@ -3809,10 +4183,10 @@
      "DivInvMonoid.toDiv",
      "Real.instDivInvMonoid"]},
    "source":
-   {"startLine": 118,
+   {"startLine": 120,
     "startColumn": 0,
     "module": "ProofLensExamples.IntelligenceBound",
-    "endLine": 139,
+    "endLine": 141,
     "endColumn": 42},
    "proofTermAvailable": true,
    "namespace": "ProofLens.Examples",
@@ -3848,7 +4222,7 @@
      "args":
      [{"name": "Real", "levels": [], "kind": "const"},
       {"name": "Real.instLE", "levels": [], "kind": "const"},
-      {"name": "N", "kind": "fvar", "fvarId": "_uniq.53"},
+      {"name": "N", "kind": "fvar", "fvarId": "_uniq.59"},
       {"kind": "app",
        "fn": {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
        "args":
@@ -3873,17 +4247,17 @@
           "levels": [],
           "kind": "const"},
          "args":
-         [{"name": "P", "kind": "fvar", "fvarId": "_uniq.49"},
-          {"name": "t", "kind": "fvar", "fvarId": "_uniq.54"}]},
+         [{"name": "P", "kind": "fvar", "fvarId": "_uniq.55"},
+          {"name": "t", "kind": "fvar", "fvarId": "_uniq.60"}]},
         {"kind": "app",
          "fn":
          {"name": "ProofLens.Examples.landauerCost",
           "levels": [],
           "kind": "const"},
          "args":
-         [{"name": "kB", "kind": "fvar", "fvarId": "_uniq.51"},
-          {"name": "T", "kind": "fvar", "fvarId": "_uniq.50"},
-          {"name": "D", "kind": "fvar", "fvarId": "_uniq.52"}]}]}]},
+         [{"name": "kB", "kind": "fvar", "fvarId": "_uniq.57"},
+          {"name": "T", "kind": "fvar", "fvarId": "_uniq.56"},
+          {"name": "D", "kind": "fvar", "fvarId": "_uniq.58"}]}]}]},
     "pretty":
     "N ≤ ProofLens.Examples.energyBudget P t / ProofLens.Examples.landauerCost kB T D",
     "constants":
@@ -3911,7 +4285,7 @@
      "rawName": "P",
      "name": "P",
      "index": 0,
-     "fvarId": "_uniq.49",
+     "fvarId": "_uniq.55",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -3927,7 +4301,7 @@
      "rawName": "T",
      "name": "T",
      "index": 1,
-     "fvarId": "_uniq.50",
+     "fvarId": "_uniq.56",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -3943,7 +4317,7 @@
      "rawName": "kB",
      "name": "kB",
      "index": 2,
-     "fvarId": "_uniq.51",
+     "fvarId": "_uniq.57",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -3959,7 +4333,7 @@
      "rawName": "D",
      "name": "D",
      "index": 3,
-     "fvarId": "_uniq.52",
+     "fvarId": "_uniq.58",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -3975,7 +4349,7 @@
      "rawName": "N",
      "name": "N",
      "index": 4,
-     "fvarId": "_uniq.53",
+     "fvarId": "_uniq.59",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -3991,7 +4365,7 @@
      "rawName": "t",
      "name": "t",
      "index": 5,
-     "fvarId": "_uniq.54",
+     "fvarId": "_uniq.60",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -4016,7 +4390,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "T", "kind": "fvar", "fvarId": "_uniq.50"}]},
+        {"name": "T", "kind": "fvar", "fvarId": "_uniq.56"}]},
       "pretty": "0 < T",
       "constants":
       ["LT.lt",
@@ -4029,7 +4403,7 @@
      "rawName": "hT",
      "name": "hT",
      "index": 6,
-     "fvarId": "_uniq.55",
+     "fvarId": "_uniq.61",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -4054,7 +4428,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "kB", "kind": "fvar", "fvarId": "_uniq.51"}]},
+        {"name": "kB", "kind": "fvar", "fvarId": "_uniq.57"}]},
       "pretty": "0 < kB",
       "constants":
       ["LT.lt",
@@ -4067,7 +4441,7 @@
      "rawName": "hkB",
      "name": "hkB",
      "index": 7,
-     "fvarId": "_uniq.56",
+     "fvarId": "_uniq.62",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -4092,7 +4466,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "D", "kind": "fvar", "fvarId": "_uniq.52"}]},
+        {"name": "D", "kind": "fvar", "fvarId": "_uniq.58"}]},
       "pretty": "0 < D",
       "constants":
       ["LT.lt",
@@ -4105,7 +4479,7 @@
      "rawName": "hD",
      "name": "hD",
      "index": 8,
-     "fvarId": "_uniq.57",
+     "fvarId": "_uniq.63",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -4132,24 +4506,24 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-          {"name": "N", "kind": "fvar", "fvarId": "_uniq.53"},
+          {"name": "N", "kind": "fvar", "fvarId": "_uniq.59"},
           {"kind": "app",
            "fn":
            {"name": "ProofLens.Examples.landauerCost",
             "levels": [],
             "kind": "const"},
            "args":
-           [{"name": "kB", "kind": "fvar", "fvarId": "_uniq.51"},
-            {"name": "T", "kind": "fvar", "fvarId": "_uniq.50"},
-            {"name": "D", "kind": "fvar", "fvarId": "_uniq.52"}]}]},
+           [{"name": "kB", "kind": "fvar", "fvarId": "_uniq.57"},
+            {"name": "T", "kind": "fvar", "fvarId": "_uniq.56"},
+            {"name": "D", "kind": "fvar", "fvarId": "_uniq.58"}]}]},
         {"kind": "app",
          "fn":
          {"name": "ProofLens.Examples.energyBudget",
           "levels": [],
           "kind": "const"},
          "args":
-         [{"name": "P", "kind": "fvar", "fvarId": "_uniq.49"},
-          {"name": "t", "kind": "fvar", "fvarId": "_uniq.54"}]}]},
+         [{"name": "P", "kind": "fvar", "fvarId": "_uniq.55"},
+          {"name": "t", "kind": "fvar", "fvarId": "_uniq.60"}]}]},
       "pretty":
       "N * ProofLens.Examples.landauerCost kB T D ≤ ProofLens.Examples.energyBudget P t",
       "constants":
@@ -4165,7 +4539,7 @@
      "rawName": "hN",
      "name": "hN",
      "index": 9,
-     "fvarId": "_uniq.58",
+     "fvarId": "_uniq.64",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -4602,7 +4976,7 @@
      "args":
      [{"name": "Real", "levels": [], "kind": "const"},
       {"name": "Real.instLE", "levels": [], "kind": "const"},
-      {"name": "f", "kind": "fvar", "fvarId": "_uniq.61"},
+      {"name": "f", "kind": "fvar", "fvarId": "_uniq.67"},
       {"kind": "app",
        "fn": {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
        "args":
@@ -4621,7 +4995,7 @@
             {"name": "Real.instDivInvMonoid",
              "levels": [],
              "kind": "const"}]}]},
-        {"name": "Pmax", "kind": "fvar", "fvarId": "_uniq.62"},
+        {"name": "Pmax", "kind": "fvar", "fvarId": "_uniq.68"},
         {"kind": "app",
          "fn":
          {"name": "HMul.hMul", "levels": ["0", "0", "0"], "kind": "const"},
@@ -4634,7 +5008,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-          {"name": "C", "kind": "fvar", "fvarId": "_uniq.59"},
+          {"name": "C", "kind": "fvar", "fvarId": "_uniq.65"},
           {"kind": "app",
            "fn":
            {"name": "HPow.hPow", "levels": ["0", "0", "0"], "kind": "const"},
@@ -4653,7 +5027,7 @@
                "args":
                [{"name": "Real", "levels": [], "kind": "const"},
                 {"name": "Real.instMonoid", "levels": [], "kind": "const"}]}]},
-            {"name": "V", "kind": "fvar", "fvarId": "_uniq.60"},
+            {"name": "V", "kind": "fvar", "fvarId": "_uniq.66"},
             {"kind": "app",
              "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
              "args":
@@ -4697,7 +5071,7 @@
      "rawName": "C",
      "name": "C",
      "index": 0,
-     "fvarId": "_uniq.59",
+     "fvarId": "_uniq.65",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -4713,7 +5087,7 @@
      "rawName": "V",
      "name": "V",
      "index": 1,
-     "fvarId": "_uniq.60",
+     "fvarId": "_uniq.66",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -4729,7 +5103,7 @@
      "rawName": "f",
      "name": "f",
      "index": 2,
-     "fvarId": "_uniq.61",
+     "fvarId": "_uniq.67",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -4745,7 +5119,7 @@
      "rawName": "Pmax",
      "name": "Pmax",
      "index": 3,
-     "fvarId": "_uniq.62",
+     "fvarId": "_uniq.68",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -4770,7 +5144,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "C", "kind": "fvar", "fvarId": "_uniq.59"}]},
+        {"name": "C", "kind": "fvar", "fvarId": "_uniq.65"}]},
       "pretty": "0 < C",
       "constants":
       ["LT.lt",
@@ -4783,7 +5157,7 @@
      "rawName": "hC",
      "name": "hC",
      "index": 4,
-     "fvarId": "_uniq.63",
+     "fvarId": "_uniq.69",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -4797,7 +5171,7 @@
        "fn": {"name": "Ne", "levels": ["(0+1)"], "kind": "const"},
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
-        {"name": "V", "kind": "fvar", "fvarId": "_uniq.60"},
+        {"name": "V", "kind": "fvar", "fvarId": "_uniq.66"},
         {"kind": "app",
          "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
          "args":
@@ -4815,7 +5189,7 @@
      "rawName": "hV",
      "name": "hV",
      "index": 5,
-     "fvarId": "_uniq.64",
+     "fvarId": "_uniq.70",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -4854,7 +5228,7 @@
              "args":
              [{"name": "Real", "levels": [], "kind": "const"},
               {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-            {"name": "C", "kind": "fvar", "fvarId": "_uniq.59"},
+            {"name": "C", "kind": "fvar", "fvarId": "_uniq.65"},
             {"kind": "app",
              "fn":
              {"name": "HPow.hPow", "levels": ["0", "0", "0"], "kind": "const"},
@@ -4876,7 +5250,7 @@
                   {"name": "Real.instMonoid",
                    "levels": [],
                    "kind": "const"}]}]},
-              {"name": "V", "kind": "fvar", "fvarId": "_uniq.60"},
+              {"name": "V", "kind": "fvar", "fvarId": "_uniq.66"},
               {"kind": "app",
                "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
                "args":
@@ -4885,8 +5259,8 @@
                 {"kind": "app",
                  "fn": {"name": "instOfNatNat", "levels": [], "kind": "const"},
                  "args": [{"value": 2, "litKind": "nat", "kind": "lit"}]}]}]}]},
-          {"name": "f", "kind": "fvar", "fvarId": "_uniq.61"}]},
-        {"name": "Pmax", "kind": "fvar", "fvarId": "_uniq.62"}]},
+          {"name": "f", "kind": "fvar", "fvarId": "_uniq.67"}]},
+        {"name": "Pmax", "kind": "fvar", "fvarId": "_uniq.68"}]},
       "pretty": "C * V ^ 2 * f ≤ Pmax",
       "constants":
       ["LE.le",
@@ -4906,7 +5280,7 @@
      "rawName": "h",
      "name": "h",
      "index": 6,
-     "fvarId": "_uniq.65",
+     "fvarId": "_uniq.71",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -5446,10 +5820,10 @@
      "instOfNatNat",
      "Nat.instNeZeroSucc"]},
    "source":
-   {"startLine": 162,
+   {"startLine": 164,
     "startColumn": 0,
     "module": "ProofLensExamples.IntelligenceBound",
-    "endLine": 203,
+    "endLine": 205,
     "endColumn": 18},
    "proofTermAvailable": true,
    "namespace": "ProofLens.Examples",
@@ -5631,8 +6005,8 @@
             {"name": "Real.instDivInvMonoid",
              "levels": [],
              "kind": "const"}]}]},
-        {"name": "N", "kind": "fvar", "fvarId": "_uniq.70"},
-        {"name": "t", "kind": "fvar", "fvarId": "_uniq.71"}]},
+        {"name": "N", "kind": "fvar", "fvarId": "_uniq.76"},
+        {"name": "t", "kind": "fvar", "fvarId": "_uniq.77"}]},
       {"kind": "app",
        "fn": {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
        "args":
@@ -5663,8 +6037,8 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-          {"name": "P", "kind": "fvar", "fvarId": "_uniq.66"},
-          {"name": "D", "kind": "fvar", "fvarId": "_uniq.69"}]},
+          {"name": "P", "kind": "fvar", "fvarId": "_uniq.72"},
+          {"name": "D", "kind": "fvar", "fvarId": "_uniq.75"}]},
         {"kind": "app",
          "fn":
          {"name": "HMul.hMul", "levels": ["0", "0", "0"], "kind": "const"},
@@ -5689,8 +6063,8 @@
              "args":
              [{"name": "Real", "levels": [], "kind": "const"},
               {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-            {"name": "kB", "kind": "fvar", "fvarId": "_uniq.68"},
-            {"name": "T", "kind": "fvar", "fvarId": "_uniq.67"}]},
+            {"name": "kB", "kind": "fvar", "fvarId": "_uniq.74"},
+            {"name": "T", "kind": "fvar", "fvarId": "_uniq.73"}]},
           {"kind": "app",
            "fn": {"name": "Real.log", "levels": [], "kind": "const"},
            "args":
@@ -5778,7 +6152,7 @@
      "rawName": "P",
      "name": "P",
      "index": 0,
-     "fvarId": "_uniq.66",
+     "fvarId": "_uniq.72",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -5794,7 +6168,7 @@
      "rawName": "T",
      "name": "T",
      "index": 1,
-     "fvarId": "_uniq.67",
+     "fvarId": "_uniq.73",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -5810,7 +6184,7 @@
      "rawName": "kB",
      "name": "kB",
      "index": 2,
-     "fvarId": "_uniq.68",
+     "fvarId": "_uniq.74",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -5826,7 +6200,7 @@
      "rawName": "D",
      "name": "D",
      "index": 3,
-     "fvarId": "_uniq.69",
+     "fvarId": "_uniq.75",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -5842,7 +6216,7 @@
      "rawName": "N",
      "name": "N",
      "index": 4,
-     "fvarId": "_uniq.70",
+     "fvarId": "_uniq.76",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -5858,7 +6232,7 @@
      "rawName": "t",
      "name": "t",
      "index": 5,
-     "fvarId": "_uniq.71",
+     "fvarId": "_uniq.77",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": true,
@@ -5883,7 +6257,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "P", "kind": "fvar", "fvarId": "_uniq.66"}]},
+        {"name": "P", "kind": "fvar", "fvarId": "_uniq.72"}]},
       "pretty": "0 < P",
       "constants":
       ["LT.lt",
@@ -5896,7 +6270,7 @@
      "rawName": "hP",
      "name": "hP",
      "index": 6,
-     "fvarId": "_uniq.72",
+     "fvarId": "_uniq.78",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -5921,7 +6295,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "T", "kind": "fvar", "fvarId": "_uniq.67"}]},
+        {"name": "T", "kind": "fvar", "fvarId": "_uniq.73"}]},
       "pretty": "0 < T",
       "constants":
       ["LT.lt",
@@ -5934,7 +6308,7 @@
      "rawName": "hT",
      "name": "hT",
      "index": 7,
-     "fvarId": "_uniq.73",
+     "fvarId": "_uniq.79",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -5959,7 +6333,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "kB", "kind": "fvar", "fvarId": "_uniq.68"}]},
+        {"name": "kB", "kind": "fvar", "fvarId": "_uniq.74"}]},
       "pretty": "0 < kB",
       "constants":
       ["LT.lt",
@@ -5972,7 +6346,7 @@
      "rawName": "hkB",
      "name": "hkB",
      "index": 8,
-     "fvarId": "_uniq.74",
+     "fvarId": "_uniq.80",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -5997,7 +6371,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "D", "kind": "fvar", "fvarId": "_uniq.69"}]},
+        {"name": "D", "kind": "fvar", "fvarId": "_uniq.75"}]},
       "pretty": "0 < D",
       "constants":
       ["LT.lt",
@@ -6010,7 +6384,7 @@
      "rawName": "hD",
      "name": "hD",
      "index": 9,
-     "fvarId": "_uniq.75",
+     "fvarId": "_uniq.81",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6035,7 +6409,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "t", "kind": "fvar", "fvarId": "_uniq.71"}]},
+        {"name": "t", "kind": "fvar", "fvarId": "_uniq.77"}]},
       "pretty": "0 < t",
       "constants":
       ["LT.lt",
@@ -6048,7 +6422,7 @@
      "rawName": "ht",
      "name": "ht",
      "index": 10,
-     "fvarId": "_uniq.76",
+     "fvarId": "_uniq.82",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6075,7 +6449,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-          {"name": "N", "kind": "fvar", "fvarId": "_uniq.70"},
+          {"name": "N", "kind": "fvar", "fvarId": "_uniq.76"},
           {"kind": "app",
            "fn":
            {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
@@ -6121,8 +6495,8 @@
                  "args":
                  [{"name": "Real", "levels": [], "kind": "const"},
                   {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-                {"name": "kB", "kind": "fvar", "fvarId": "_uniq.68"},
-                {"name": "T", "kind": "fvar", "fvarId": "_uniq.67"}]},
+                {"name": "kB", "kind": "fvar", "fvarId": "_uniq.74"},
+                {"name": "T", "kind": "fvar", "fvarId": "_uniq.73"}]},
               {"kind": "app",
                "fn": {"name": "Real.log", "levels": [], "kind": "const"},
                "args":
@@ -6185,7 +6559,7 @@
                            [{"value": 0,
                              "litKind": "nat",
                              "kind": "lit"}]}]}]}]}]}]}]}]},
-            {"name": "D", "kind": "fvar", "fvarId": "_uniq.69"}]}]},
+            {"name": "D", "kind": "fvar", "fvarId": "_uniq.75"}]}]},
         {"kind": "app",
          "fn":
          {"name": "HMul.hMul", "levels": ["0", "0", "0"], "kind": "const"},
@@ -6198,8 +6572,8 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-          {"name": "P", "kind": "fvar", "fvarId": "_uniq.66"},
-          {"name": "t", "kind": "fvar", "fvarId": "_uniq.71"}]}]},
+          {"name": "P", "kind": "fvar", "fvarId": "_uniq.72"},
+          {"name": "t", "kind": "fvar", "fvarId": "_uniq.77"}]}]},
       "pretty": "N * (kB * T * Real.log 2 / D) ≤ P * t",
       "constants":
       ["LE.le",
@@ -6224,7 +6598,7 @@
      "rawName": "hN",
      "name": "hN",
      "index": 11,
-     "fvarId": "_uniq.77",
+     "fvarId": "_uniq.83",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -6248,10 +6622,10 @@
     "pretty": "ℝ → ℝ → ℝ → ℝ",
     "constants": ["Real"]},
    "source":
-   {"startLine": 35,
+   {"startLine": 37,
     "startColumn": 0,
     "module": "ProofLensExamples.IntelligenceBound",
-    "endLine": 48,
+    "endLine": 50,
     "endColumn": 74},
    "proofTermAvailable": true,
    "namespace": "ProofLens.Examples",
@@ -6313,8 +6687,8 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-          {"name": "kB", "kind": "fvar", "fvarId": "_uniq.78"},
-          {"name": "T", "kind": "fvar", "fvarId": "_uniq.79"}]},
+          {"name": "kB", "kind": "fvar", "fvarId": "_uniq.84"},
+          {"name": "T", "kind": "fvar", "fvarId": "_uniq.85"}]},
         {"kind": "app",
          "fn": {"name": "Real.log", "levels": [], "kind": "const"},
          "args":
@@ -6333,7 +6707,7 @@
               {"name": "ProofLens.Examples.landauerCost._proof_1",
                "levels": [],
                "kind": "const"}]}]}]}]},
-      {"name": "D", "kind": "fvar", "fvarId": "_uniq.80"}]},
+      {"name": "D", "kind": "fvar", "fvarId": "_uniq.86"}]},
     "pretty": "kB * T * Real.log 2 / D",
     "constants":
     ["HDiv.hDiv",
@@ -6368,7 +6742,7 @@
      "rawName": "kB",
      "name": "kB",
      "index": 0,
-     "fvarId": "_uniq.78",
+     "fvarId": "_uniq.84",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6384,7 +6758,7 @@
      "rawName": "T",
      "name": "T",
      "index": 1,
-     "fvarId": "_uniq.79",
+     "fvarId": "_uniq.85",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6400,7 +6774,7 @@
      "rawName": "D",
      "name": "D",
      "index": 2,
-     "fvarId": "_uniq.80",
+     "fvarId": "_uniq.86",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -6521,10 +6895,10 @@
      "Real.instZero",
      "ProofLens.Examples.landauerCost"]},
    "source":
-   {"startLine": 71,
+   {"startLine": 73,
     "startColumn": 0,
     "module": "ProofLensExamples.IntelligenceBound",
-    "endLine": 87,
+    "endLine": 89,
     "endColumn": 51},
    "proofTermAvailable": true,
    "namespace": "ProofLens.Examples",
@@ -6595,9 +6969,9 @@
         "levels": [],
         "kind": "const"},
        "args":
-       [{"name": "kB", "kind": "fvar", "fvarId": "_uniq.81"},
-        {"name": "T", "kind": "fvar", "fvarId": "_uniq.82"},
-        {"name": "D", "kind": "fvar", "fvarId": "_uniq.83"}]}]},
+       [{"name": "kB", "kind": "fvar", "fvarId": "_uniq.87"},
+        {"name": "T", "kind": "fvar", "fvarId": "_uniq.88"},
+        {"name": "D", "kind": "fvar", "fvarId": "_uniq.89"}]}]},
     "pretty": "0 < ProofLens.Examples.landauerCost kB T D",
     "constants":
     ["LT.lt",
@@ -6622,7 +6996,7 @@
      "rawName": "kB",
      "name": "kB",
      "index": 0,
-     "fvarId": "_uniq.81",
+     "fvarId": "_uniq.87",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6638,7 +7012,7 @@
      "rawName": "T",
      "name": "T",
      "index": 1,
-     "fvarId": "_uniq.82",
+     "fvarId": "_uniq.88",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6654,7 +7028,7 @@
      "rawName": "D",
      "name": "D",
      "index": 2,
-     "fvarId": "_uniq.83",
+     "fvarId": "_uniq.89",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6679,7 +7053,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "kB", "kind": "fvar", "fvarId": "_uniq.81"}]},
+        {"name": "kB", "kind": "fvar", "fvarId": "_uniq.87"}]},
       "pretty": "0 < kB",
       "constants":
       ["LT.lt",
@@ -6692,7 +7066,7 @@
      "rawName": "hkB",
      "name": "hkB",
      "index": 3,
-     "fvarId": "_uniq.84",
+     "fvarId": "_uniq.90",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6717,7 +7091,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "T", "kind": "fvar", "fvarId": "_uniq.82"}]},
+        {"name": "T", "kind": "fvar", "fvarId": "_uniq.88"}]},
       "pretty": "0 < T",
       "constants":
       ["LT.lt",
@@ -6730,7 +7104,7 @@
      "rawName": "hT",
      "name": "hT",
      "index": 4,
-     "fvarId": "_uniq.85",
+     "fvarId": "_uniq.91",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6755,7 +7129,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "D", "kind": "fvar", "fvarId": "_uniq.83"}]},
+        {"name": "D", "kind": "fvar", "fvarId": "_uniq.89"}]},
       "pretty": "0 < D",
       "constants":
       ["LT.lt",
@@ -6768,7 +7142,7 @@
      "rawName": "hD",
      "name": "hD",
      "index": 5,
-     "fvarId": "_uniq.86",
+     "fvarId": "_uniq.92",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -6861,8 +7235,8 @@
      "args":
      [{"name": "Real", "levels": [], "kind": "const"},
       {"name": "Real.instLE", "levels": [], "kind": "const"},
-      {"name": "x", "kind": "fvar", "fvarId": "_uniq.87"},
-      {"name": "w", "kind": "fvar", "fvarId": "_uniq.90"}]},
+      {"name": "x", "kind": "fvar", "fvarId": "_uniq.93"},
+      {"name": "w", "kind": "fvar", "fvarId": "_uniq.96"}]},
     "pretty": "x ≤ w",
     "constants": ["LE.le", "Real", "Real.instLE"]},
    "binders":
@@ -6880,7 +7254,7 @@
      "rawName": "x",
      "name": "x",
      "index": 0,
-     "fvarId": "_uniq.87",
+     "fvarId": "_uniq.93",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6896,7 +7270,7 @@
      "rawName": "y",
      "name": "y",
      "index": 1,
-     "fvarId": "_uniq.88",
+     "fvarId": "_uniq.94",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6912,7 +7286,7 @@
      "rawName": "z",
      "name": "z",
      "index": 2,
-     "fvarId": "_uniq.89",
+     "fvarId": "_uniq.95",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6928,7 +7302,7 @@
      "rawName": "w",
      "name": "w",
      "index": 3,
-     "fvarId": "_uniq.90",
+     "fvarId": "_uniq.96",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6943,15 +7317,15 @@
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
         {"name": "Real.instLE", "levels": [], "kind": "const"},
-        {"name": "x", "kind": "fvar", "fvarId": "_uniq.87"},
-        {"name": "y", "kind": "fvar", "fvarId": "_uniq.88"}]},
+        {"name": "x", "kind": "fvar", "fvarId": "_uniq.93"},
+        {"name": "y", "kind": "fvar", "fvarId": "_uniq.94"}]},
       "pretty": "x ≤ y",
       "constants": ["LE.le", "Real", "Real.instLE"]},
      "role": "hypothesis",
      "rawName": "a._@._internal._hyg.0",
      "name": "a✝",
      "index": 4,
-     "fvarId": "_uniq.91",
+     "fvarId": "_uniq.97",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6966,15 +7340,15 @@
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
         {"name": "Real.instLE", "levels": [], "kind": "const"},
-        {"name": "y", "kind": "fvar", "fvarId": "_uniq.88"},
-        {"name": "z", "kind": "fvar", "fvarId": "_uniq.89"}]},
+        {"name": "y", "kind": "fvar", "fvarId": "_uniq.94"},
+        {"name": "z", "kind": "fvar", "fvarId": "_uniq.95"}]},
       "pretty": "y ≤ z",
       "constants": ["LE.le", "Real", "Real.instLE"]},
      "role": "hypothesis",
      "rawName": "a._@._internal._hyg.0",
      "name": "a✝",
      "index": 5,
-     "fvarId": "_uniq.92",
+     "fvarId": "_uniq.98",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -6989,15 +7363,15 @@
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
         {"name": "Real.instLE", "levels": [], "kind": "const"},
-        {"name": "z", "kind": "fvar", "fvarId": "_uniq.89"},
-        {"name": "w", "kind": "fvar", "fvarId": "_uniq.90"}]},
+        {"name": "z", "kind": "fvar", "fvarId": "_uniq.95"},
+        {"name": "w", "kind": "fvar", "fvarId": "_uniq.96"}]},
       "pretty": "z ≤ w",
       "constants": ["LE.le", "Real", "Real.instLE"]},
      "role": "hypothesis",
      "rawName": "a._@._internal._hyg.0",
      "name": "a✝",
      "index": 6,
-     "fvarId": "_uniq.93",
+     "fvarId": "_uniq.99",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -7080,10 +7454,10 @@
      "instOfNatNat",
      "Nat.instNeZeroSucc"]},
    "source":
-   {"startLine": 60,
+   {"startLine": 62,
     "startColumn": 0,
     "module": "ProofLensExamples.IntelligenceBound",
-    "endLine": 69,
+    "endLine": 71,
     "endColumn": 28},
    "proofTermAvailable": true,
    "namespace": "ProofLens.Examples",
@@ -7464,9 +7838,9 @@
             "args":
             [{"name": "Real", "levels": [], "kind": "const"},
              {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-           {"name": "a", "kind": "fvar", "fvarId": "_uniq.94"},
+           {"name": "a", "kind": "fvar", "fvarId": "_uniq.100"},
            {"kind": "bvar", "index": 0}]},
-         {"name": "b", "kind": "fvar", "fvarId": "_uniq.95"}]},
+         {"name": "b", "kind": "fvar", "fvarId": "_uniq.101"}]},
        "binderType": {"name": "Real", "levels": [], "kind": "const"},
        "binderName": "x",
        "binderInfo": "default"}]},
@@ -7496,7 +7870,7 @@
      "rawName": "a",
      "name": "a",
      "index": 0,
-     "fvarId": "_uniq.94",
+     "fvarId": "_uniq.100",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -7512,7 +7886,7 @@
      "rawName": "b",
      "name": "b",
      "index": 1,
-     "fvarId": "_uniq.95",
+     "fvarId": "_uniq.101",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -7537,7 +7911,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "a", "kind": "fvar", "fvarId": "_uniq.94"}]},
+        {"name": "a", "kind": "fvar", "fvarId": "_uniq.100"}]},
       "pretty": "0 ≤ a",
       "constants":
       ["LE.le",
@@ -7550,7 +7924,7 @@
      "rawName": "ha",
      "name": "ha",
      "index": 2,
-     "fvarId": "_uniq.96",
+     "fvarId": "_uniq.102",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -7755,7 +8129,7 @@
       {"kind": "app",
        "fn":
        {"name": "ProofLens.Examples.throughput", "levels": [], "kind": "const"},
-       "args": [{"name": "ipc", "kind": "fvar", "fvarId": "_uniq.97"}]}]},
+       "args": [{"name": "ipc", "kind": "fvar", "fvarId": "_uniq.103"}]}]},
     "pretty": "Monotone (ProofLens.Examples.throughput ipc)",
     "constants":
     ["Monotone", "Real", "Real.instPreorder", "ProofLens.Examples.throughput"]},
@@ -7774,7 +8148,7 @@
      "rawName": "ipc",
      "name": "ipc",
      "index": 0,
-     "fvarId": "_uniq.97",
+     "fvarId": "_uniq.103",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -7799,7 +8173,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "ipc", "kind": "fvar", "fvarId": "_uniq.97"}]},
+        {"name": "ipc", "kind": "fvar", "fvarId": "_uniq.103"}]},
       "pretty": "0 ≤ ipc",
       "constants":
       ["LE.le",
@@ -7812,7 +8186,7 @@
      "rawName": "hipc",
      "name": "hipc",
      "index": 1,
-     "fvarId": "_uniq.98",
+     "fvarId": "_uniq.104",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -8217,7 +8591,7 @@
      "args":
      [{"name": "Real", "levels": [], "kind": "const"},
       {"name": "Real.instLE", "levels": [], "kind": "const"},
-      {"name": "N", "kind": "fvar", "fvarId": "_uniq.104"},
+      {"name": "N", "kind": "fvar", "fvarId": "_uniq.110"},
       {"kind": "app",
        "fn": {"name": "HMul.hMul", "levels": ["0", "0", "0"], "kind": "const"},
        "args":
@@ -8248,7 +8622,7 @@
               {"name": "Real.instDivInvMonoid",
                "levels": [],
                "kind": "const"}]}]},
-          {"name": "Pmax", "kind": "fvar", "fvarId": "_uniq.102"},
+          {"name": "Pmax", "kind": "fvar", "fvarId": "_uniq.108"},
           {"kind": "app",
            "fn":
            {"name": "HMul.hMul", "levels": ["0", "0", "0"], "kind": "const"},
@@ -8261,7 +8635,7 @@
              "args":
              [{"name": "Real", "levels": [], "kind": "const"},
               {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-            {"name": "C", "kind": "fvar", "fvarId": "_uniq.99"},
+            {"name": "C", "kind": "fvar", "fvarId": "_uniq.105"},
             {"kind": "app",
              "fn":
              {"name": "HPow.hPow", "levels": ["0", "0", "0"], "kind": "const"},
@@ -8283,7 +8657,7 @@
                   {"name": "Real.instMonoid",
                    "levels": [],
                    "kind": "const"}]}]},
-              {"name": "V", "kind": "fvar", "fvarId": "_uniq.100"},
+              {"name": "V", "kind": "fvar", "fvarId": "_uniq.106"},
               {"kind": "app",
                "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
                "args":
@@ -8293,7 +8667,7 @@
                  "fn": {"name": "instOfNatNat", "levels": [], "kind": "const"},
                  "args":
                  [{"value": 2, "litKind": "nat", "kind": "lit"}]}]}]}]}]},
-        {"name": "t", "kind": "fvar", "fvarId": "_uniq.103"}]}]},
+        {"name": "t", "kind": "fvar", "fvarId": "_uniq.109"}]}]},
     "pretty": "N ≤ Pmax / (C * V ^ 2) * t",
     "constants":
     ["LE.le",
@@ -8328,7 +8702,7 @@
      "rawName": "C",
      "name": "C",
      "index": 0,
-     "fvarId": "_uniq.99",
+     "fvarId": "_uniq.105",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8344,7 +8718,7 @@
      "rawName": "V",
      "name": "V",
      "index": 1,
-     "fvarId": "_uniq.100",
+     "fvarId": "_uniq.106",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8360,7 +8734,7 @@
      "rawName": "f",
      "name": "f",
      "index": 2,
-     "fvarId": "_uniq.101",
+     "fvarId": "_uniq.107",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8376,7 +8750,7 @@
      "rawName": "Pmax",
      "name": "Pmax",
      "index": 3,
-     "fvarId": "_uniq.102",
+     "fvarId": "_uniq.108",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8392,7 +8766,7 @@
      "rawName": "t",
      "name": "t",
      "index": 4,
-     "fvarId": "_uniq.103",
+     "fvarId": "_uniq.109",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8408,7 +8782,7 @@
      "rawName": "N",
      "name": "N",
      "index": 5,
-     "fvarId": "_uniq.104",
+     "fvarId": "_uniq.110",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8433,7 +8807,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "C", "kind": "fvar", "fvarId": "_uniq.99"}]},
+        {"name": "C", "kind": "fvar", "fvarId": "_uniq.105"}]},
       "pretty": "0 < C",
       "constants":
       ["LT.lt",
@@ -8446,7 +8820,7 @@
      "rawName": "hC",
      "name": "hC",
      "index": 6,
-     "fvarId": "_uniq.105",
+     "fvarId": "_uniq.111",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8460,7 +8834,7 @@
        "fn": {"name": "Ne", "levels": ["(0+1)"], "kind": "const"},
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
-        {"name": "V", "kind": "fvar", "fvarId": "_uniq.100"},
+        {"name": "V", "kind": "fvar", "fvarId": "_uniq.106"},
         {"kind": "app",
          "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
          "args":
@@ -8478,7 +8852,7 @@
      "rawName": "hV",
      "name": "hV",
      "index": 7,
-     "fvarId": "_uniq.106",
+     "fvarId": "_uniq.112",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8503,7 +8877,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "t", "kind": "fvar", "fvarId": "_uniq.103"}]},
+        {"name": "t", "kind": "fvar", "fvarId": "_uniq.109"}]},
       "pretty": "0 ≤ t",
       "constants":
       ["LE.le",
@@ -8516,7 +8890,7 @@
      "rawName": "ht",
      "name": "ht",
      "index": 8,
-     "fvarId": "_uniq.107",
+     "fvarId": "_uniq.113",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8555,7 +8929,7 @@
              "args":
              [{"name": "Real", "levels": [], "kind": "const"},
               {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-            {"name": "C", "kind": "fvar", "fvarId": "_uniq.99"},
+            {"name": "C", "kind": "fvar", "fvarId": "_uniq.105"},
             {"kind": "app",
              "fn":
              {"name": "HPow.hPow", "levels": ["0", "0", "0"], "kind": "const"},
@@ -8577,7 +8951,7 @@
                   {"name": "Real.instMonoid",
                    "levels": [],
                    "kind": "const"}]}]},
-              {"name": "V", "kind": "fvar", "fvarId": "_uniq.100"},
+              {"name": "V", "kind": "fvar", "fvarId": "_uniq.106"},
               {"kind": "app",
                "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
                "args":
@@ -8586,8 +8960,8 @@
                 {"kind": "app",
                  "fn": {"name": "instOfNatNat", "levels": [], "kind": "const"},
                  "args": [{"value": 2, "litKind": "nat", "kind": "lit"}]}]}]}]},
-          {"name": "f", "kind": "fvar", "fvarId": "_uniq.101"}]},
-        {"name": "Pmax", "kind": "fvar", "fvarId": "_uniq.102"}]},
+          {"name": "f", "kind": "fvar", "fvarId": "_uniq.107"}]},
+        {"name": "Pmax", "kind": "fvar", "fvarId": "_uniq.108"}]},
       "pretty": "C * V ^ 2 * f ≤ Pmax",
       "constants":
       ["LE.le",
@@ -8607,7 +8981,7 @@
      "rawName": "h",
      "name": "h",
      "index": 9,
-     "fvarId": "_uniq.108",
+     "fvarId": "_uniq.114",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8621,7 +8995,7 @@
        "fn": {"name": "Eq", "levels": ["(0+1)"], "kind": "const"},
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
-        {"name": "N", "kind": "fvar", "fvarId": "_uniq.104"},
+        {"name": "N", "kind": "fvar", "fvarId": "_uniq.110"},
         {"kind": "app",
          "fn":
          {"name": "HMul.hMul", "levels": ["0", "0", "0"], "kind": "const"},
@@ -8634,15 +9008,15 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-          {"name": "f", "kind": "fvar", "fvarId": "_uniq.101"},
-          {"name": "t", "kind": "fvar", "fvarId": "_uniq.103"}]}]},
+          {"name": "f", "kind": "fvar", "fvarId": "_uniq.107"},
+          {"name": "t", "kind": "fvar", "fvarId": "_uniq.109"}]}]},
       "pretty": "N = f * t",
       "constants": ["Eq", "Real", "HMul.hMul", "instHMul", "Real.instMul"]},
      "role": "hypothesis",
      "rawName": "hN",
      "name": "hN",
      "index": 10,
-     "fvarId": "_uniq.109",
+     "fvarId": "_uniq.115",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -8756,10 +9130,10 @@
      "DivInvMonoid.toDiv",
      "Real.instDivInvMonoid"]},
    "source":
-   {"startLine": 101,
+   {"startLine": 103,
     "startColumn": 0,
     "module": "ProofLensExamples.IntelligenceBound",
-    "endLine": 116,
+    "endLine": 118,
     "endColumn": 24},
    "proofTermAvailable": true,
    "namespace": "ProofLens.Examples",
@@ -8819,7 +9193,7 @@
      "args":
      [{"name": "Real", "levels": [], "kind": "const"},
       {"name": "Real.instLE", "levels": [], "kind": "const"},
-      {"name": "N", "kind": "fvar", "fvarId": "_uniq.110"},
+      {"name": "N", "kind": "fvar", "fvarId": "_uniq.116"},
       {"kind": "app",
        "fn": {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
        "args":
@@ -8838,8 +9212,8 @@
             {"name": "Real.instDivInvMonoid",
              "levels": [],
              "kind": "const"}]}]},
-        {"name": "E", "kind": "fvar", "fvarId": "_uniq.112"},
-        {"name": "c", "kind": "fvar", "fvarId": "_uniq.111"}]}]},
+        {"name": "E", "kind": "fvar", "fvarId": "_uniq.118"},
+        {"name": "c", "kind": "fvar", "fvarId": "_uniq.117"}]}]},
     "pretty": "N ≤ E / c",
     "constants":
     ["LE.le",
@@ -8864,7 +9238,7 @@
      "rawName": "N",
      "name": "N",
      "index": 0,
-     "fvarId": "_uniq.110",
+     "fvarId": "_uniq.116",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8880,7 +9254,7 @@
      "rawName": "c",
      "name": "c",
      "index": 1,
-     "fvarId": "_uniq.111",
+     "fvarId": "_uniq.117",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8896,7 +9270,7 @@
      "rawName": "E",
      "name": "E",
      "index": 2,
-     "fvarId": "_uniq.112",
+     "fvarId": "_uniq.118",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8921,7 +9295,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "c", "kind": "fvar", "fvarId": "_uniq.111"}]},
+        {"name": "c", "kind": "fvar", "fvarId": "_uniq.117"}]},
       "pretty": "0 < c",
       "constants":
       ["LT.lt",
@@ -8934,7 +9308,7 @@
      "rawName": "hc",
      "name": "hc",
      "index": 3,
-     "fvarId": "_uniq.113",
+     "fvarId": "_uniq.119",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -8961,9 +9335,9 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-          {"name": "N", "kind": "fvar", "fvarId": "_uniq.110"},
-          {"name": "c", "kind": "fvar", "fvarId": "_uniq.111"}]},
-        {"name": "E", "kind": "fvar", "fvarId": "_uniq.112"}]},
+          {"name": "N", "kind": "fvar", "fvarId": "_uniq.116"},
+          {"name": "c", "kind": "fvar", "fvarId": "_uniq.117"}]},
+        {"name": "E", "kind": "fvar", "fvarId": "_uniq.118"}]},
       "pretty": "N * c ≤ E",
       "constants":
       ["LE.le",
@@ -8976,7 +9350,7 @@
      "rawName": "h",
      "name": "h",
      "index": 4,
-     "fvarId": "_uniq.114",
+     "fvarId": "_uniq.120",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -9149,7 +9523,7 @@
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
         {"name": "Real.instLE", "levels": [], "kind": "const"},
-        {"name": "x", "kind": "fvar", "fvarId": "_uniq.115"},
+        {"name": "x", "kind": "fvar", "fvarId": "_uniq.121"},
         {"kind": "app",
          "fn":
          {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
@@ -9169,8 +9543,8 @@
               {"name": "Real.instDivInvMonoid",
                "levels": [],
                "kind": "const"}]}]},
-          {"name": "P", "kind": "fvar", "fvarId": "_uniq.116"},
-          {"name": "T", "kind": "fvar", "fvarId": "_uniq.117"}]}]},
+          {"name": "P", "kind": "fvar", "fvarId": "_uniq.122"},
+          {"name": "T", "kind": "fvar", "fvarId": "_uniq.123"}]}]},
       {"kind": "app",
        "fn": {"name": "LE.le", "levels": ["0"], "kind": "const"},
        "args":
@@ -9188,9 +9562,9 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-          {"name": "x", "kind": "fvar", "fvarId": "_uniq.115"},
-          {"name": "T", "kind": "fvar", "fvarId": "_uniq.117"}]},
-        {"name": "P", "kind": "fvar", "fvarId": "_uniq.116"}]}]},
+          {"name": "x", "kind": "fvar", "fvarId": "_uniq.121"},
+          {"name": "T", "kind": "fvar", "fvarId": "_uniq.123"}]},
+        {"name": "P", "kind": "fvar", "fvarId": "_uniq.122"}]}]},
     "pretty": "x ≤ P / T ↔ x * T ≤ P",
     "constants":
     ["Iff",
@@ -9219,7 +9593,7 @@
      "rawName": "x",
      "name": "x",
      "index": 0,
-     "fvarId": "_uniq.115",
+     "fvarId": "_uniq.121",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -9235,7 +9609,7 @@
      "rawName": "P",
      "name": "P",
      "index": 1,
-     "fvarId": "_uniq.116",
+     "fvarId": "_uniq.122",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -9251,7 +9625,7 @@
      "rawName": "T",
      "name": "T",
      "index": 2,
-     "fvarId": "_uniq.117",
+     "fvarId": "_uniq.123",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -9276,7 +9650,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "T", "kind": "fvar", "fvarId": "_uniq.117"}]},
+        {"name": "T", "kind": "fvar", "fvarId": "_uniq.123"}]},
       "pretty": "0 < T",
       "constants":
       ["LT.lt",
@@ -9289,7 +9663,7 @@
      "rawName": "hT",
      "name": "hT",
      "index": 3,
-     "fvarId": "_uniq.118",
+     "fvarId": "_uniq.124",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -9499,7 +9873,7 @@
      "fn": {"name": "Eq", "levels": ["(0+1)"], "kind": "const"},
      "args":
      [{"name": "Real", "levels": [], "kind": "const"},
-      {"name": "R", "kind": "fvar", "fvarId": "_uniq.119"},
+      {"name": "R", "kind": "fvar", "fvarId": "_uniq.125"},
       {"kind": "app",
        "fn": {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
        "args":
@@ -9518,8 +9892,8 @@
             {"name": "Real.instDivInvMonoid",
              "levels": [],
              "kind": "const"}]}]},
-        {"name": "N", "kind": "fvar", "fvarId": "_uniq.120"},
-        {"name": "t", "kind": "fvar", "fvarId": "_uniq.121"}]}]},
+        {"name": "N", "kind": "fvar", "fvarId": "_uniq.126"},
+        {"name": "t", "kind": "fvar", "fvarId": "_uniq.127"}]}]},
     "pretty": "R = N / t",
     "constants":
     ["Eq",
@@ -9543,7 +9917,7 @@
      "rawName": "R",
      "name": "R",
      "index": 0,
-     "fvarId": "_uniq.119",
+     "fvarId": "_uniq.125",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -9559,7 +9933,7 @@
      "rawName": "N",
      "name": "N",
      "index": 1,
-     "fvarId": "_uniq.120",
+     "fvarId": "_uniq.126",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -9575,7 +9949,7 @@
      "rawName": "t",
      "name": "t",
      "index": 2,
-     "fvarId": "_uniq.121",
+     "fvarId": "_uniq.127",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -9589,7 +9963,7 @@
        "fn": {"name": "Ne", "levels": ["(0+1)"], "kind": "const"},
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
-        {"name": "t", "kind": "fvar", "fvarId": "_uniq.121"},
+        {"name": "t", "kind": "fvar", "fvarId": "_uniq.127"},
         {"kind": "app",
          "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
          "args":
@@ -9607,7 +9981,7 @@
      "rawName": "ht",
      "name": "ht",
      "index": 3,
-     "fvarId": "_uniq.122",
+     "fvarId": "_uniq.128",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -9621,7 +9995,7 @@
        "fn": {"name": "Eq", "levels": ["(0+1)"], "kind": "const"},
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
-        {"name": "N", "kind": "fvar", "fvarId": "_uniq.120"},
+        {"name": "N", "kind": "fvar", "fvarId": "_uniq.126"},
         {"kind": "app",
          "fn":
          {"name": "HMul.hMul", "levels": ["0", "0", "0"], "kind": "const"},
@@ -9634,17 +10008,316 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-          {"name": "R", "kind": "fvar", "fvarId": "_uniq.119"},
-          {"name": "t", "kind": "fvar", "fvarId": "_uniq.121"}]}]},
+          {"name": "R", "kind": "fvar", "fvarId": "_uniq.125"},
+          {"name": "t", "kind": "fvar", "fvarId": "_uniq.127"}]}]},
       "pretty": "N = R * t",
       "constants": ["Eq", "Real", "HMul.hMul", "instHMul", "Real.instMul"]},
      "role": "hypothesis",
      "rawName": "h",
      "name": "h",
      "index": 4,
-     "fvarId": "_uniq.123",
+     "fvarId": "_uniq.129",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
+  {"usesSorry": false,
+   "statement":
+   {"tree":
+    {"kind": "app",
+     "fn": {"name": "Filter.Tendsto", "levels": ["0", "0"], "kind": "const"},
+     "args":
+     [{"name": "Nat", "levels": [], "kind": "const"},
+      {"name": "Real", "levels": [], "kind": "const"},
+      {"kind": "lam",
+       "body":
+       {"kind": "app",
+        "fn": {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
+        "args":
+        [{"name": "Real", "levels": [], "kind": "const"},
+         {"name": "Real", "levels": [], "kind": "const"},
+         {"name": "Real", "levels": [], "kind": "const"},
+         {"kind": "app",
+          "fn": {"name": "instHDiv", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"name": "Real", "levels": [], "kind": "const"},
+           {"kind": "app",
+            "fn":
+            {"name": "DivInvMonoid.toDiv", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "Real", "levels": [], "kind": "const"},
+             {"name": "Real.instDivInvMonoid",
+              "levels": [],
+              "kind": "const"}]}]},
+         {"kind": "app",
+          "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"name": "Real", "levels": [], "kind": "const"},
+           {"value": 1, "litKind": "nat", "kind": "lit"},
+           {"kind": "app",
+            "fn": {"name": "One.toOfNat1", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "Real", "levels": [], "kind": "const"},
+             {"name": "Real.instOne", "levels": [], "kind": "const"}]}]},
+         {"kind": "app",
+          "fn":
+          {"name": "HAdd.hAdd", "levels": ["0", "0", "0"], "kind": "const"},
+          "args":
+          [{"name": "Real", "levels": [], "kind": "const"},
+           {"name": "Real", "levels": [], "kind": "const"},
+           {"name": "Real", "levels": [], "kind": "const"},
+           {"kind": "app",
+            "fn": {"name": "instHAdd", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "Real", "levels": [], "kind": "const"},
+             {"name": "Real.instAdd", "levels": [], "kind": "const"}]},
+           {"kind": "app",
+            "fn": {"name": "Nat.cast", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "Real", "levels": [], "kind": "const"},
+             {"name": "Real.instNatCast", "levels": [], "kind": "const"},
+             {"kind": "bvar", "index": 0}]},
+           {"kind": "app",
+            "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "Real", "levels": [], "kind": "const"},
+             {"value": 1, "litKind": "nat", "kind": "lit"},
+             {"kind": "app",
+              "fn": {"name": "One.toOfNat1", "levels": ["0"], "kind": "const"},
+              "args":
+              [{"name": "Real", "levels": [], "kind": "const"},
+               {"name": "Real.instOne", "levels": [], "kind": "const"}]}]}]}]},
+       "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+       "binderName": "n",
+       "binderInfo": "default"},
+      {"kind": "app",
+       "fn": {"name": "Filter.atTop", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"name": "Nat", "levels": [], "kind": "const"},
+        {"name": "Nat.instPreorder", "levels": [], "kind": "const"}]},
+      {"kind": "app",
+       "fn": {"name": "nhds", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"kind": "app",
+         "fn":
+         {"name": "UniformSpace.toTopologicalSpace",
+          "levels": ["0"],
+          "kind": "const"},
+         "args":
+         [{"name": "Real", "levels": [], "kind": "const"},
+          {"kind": "app",
+           "fn":
+           {"name": "PseudoMetricSpace.toUniformSpace",
+            "levels": ["0"],
+            "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"name": "Real.pseudoMetricSpace",
+             "levels": [],
+             "kind": "const"}]}]},
+        {"kind": "app",
+         "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "Real", "levels": [], "kind": "const"},
+          {"value": 0, "litKind": "nat", "kind": "lit"},
+          {"kind": "app",
+           "fn": {"name": "Zero.toOfNat0", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"name": "Real.instZero", "levels": [], "kind": "const"}]}]}]}]},
+    "pretty": "Filter.Tendsto (fun n => 1 / (↑n + 1)) Filter.atTop (nhds 0)",
+    "constants":
+    ["Filter.Tendsto",
+     "Nat",
+     "Real",
+     "HDiv.hDiv",
+     "instHDiv",
+     "DivInvMonoid.toDiv",
+     "Real.instDivInvMonoid",
+     "OfNat.ofNat",
+     "One.toOfNat1",
+     "Real.instOne",
+     "HAdd.hAdd",
+     "instHAdd",
+     "Real.instAdd",
+     "Nat.cast",
+     "Real.instNatCast",
+     "Filter.atTop",
+     "Nat.instPreorder",
+     "nhds",
+     "UniformSpace.toTopologicalSpace",
+     "PseudoMetricSpace.toUniformSpace",
+     "Real.pseudoMetricSpace",
+     "Zero.toOfNat0",
+     "Real.instZero"]},
+   "source":
+   {"startLine": 207,
+    "startColumn": 0,
+    "module": "ProofLensExamples.IntelligenceBound",
+    "endLine": 240,
+    "endColumn": 41},
+   "proofTermAvailable": true,
+   "namespace": "ProofLens.Examples",
+   "name": "ProofLens.Examples.sequence_limit_example",
+   "kind": "theorem",
+   "docstring":
+   "**A convergence example — and a record of how ProofLens learned to read one.**\n\nThe sequence `n ↦ 1 / (n + 1)` converges to `0` as `n` grows without bound.\n\nThis declaration entered the corpus as the deliberate *unsupported mathematics*\nfixture. Its original docstring asserted that the content \"lives in the\ninteraction between two filters, which the v0.1 renderer has no vocabulary for\",\nand at the time that was true.\n\nIt is no longer true. Measuring ProofLens against a 679-declaration slice of\nmathlib found `Filter.Tendsto` to be the single most common shape it could not\nread — 44 declarations, more than any other unrecognised head constant — and\nthat finding motivated first-class limit support: a `limit` proposition kind, a\n`Filter.Tendsto` classifier that separates convergence from divergence, and a\n`limit-plot` figure. ProofLens now reads this statement as \"`n ↦ 1 / (n + 1)`\napproaches 0 as its input grows without bound\" and classifies it as establishing\na limit.\n\nThe history is recorded here rather than deleted because it is the corpus's one\nworked example of a coverage gap being measured and then closed. The statement\nand its proof are unchanged from the day it was unreadable; only the tooling\nmoved. The declaration was renamed from `unsupported_tendsto_fixture`, whose name\nhad become a false description of what it tests.\n\nFor the fixture that plays the unsupported role today, see\n`energy_cost_injective` below.\n\n@prooflens.var n meaning=\"sequence index\" units=\"dimensionless\" domain=\"natural numbers\" axis=\"x\"\n@prooflens.visual limit-plot\n@prooflens.concept \"convergence of a harmonic sequence\"\n",
+   "dependencies":
+   ["Filter.Tendsto",
+    "Nat",
+    "Real",
+    "HDiv.hDiv",
+    "instHDiv",
+    "DivInvMonoid.toDiv",
+    "Real.instDivInvMonoid",
+    "OfNat.ofNat",
+    "One.toOfNat1",
+    "Real.instOne",
+    "HAdd.hAdd",
+    "instHAdd",
+    "Real.instAdd",
+    "Nat.cast",
+    "Real.instNatCast",
+    "Filter.atTop",
+    "Nat.instPreorder",
+    "nhds",
+    "UniformSpace.toTopologicalSpace",
+    "PseudoMetricSpace.toUniformSpace",
+    "Real.pseudoMetricSpace",
+    "Zero.toOfNat0",
+    "Real.instZero",
+    "tendsto_one_div_add_atTop_nhds_zero_nat"],
+   "definitionBody": null,
+   "conclusion":
+   {"tree":
+    {"kind": "app",
+     "fn": {"name": "Filter.Tendsto", "levels": ["0", "0"], "kind": "const"},
+     "args":
+     [{"name": "Nat", "levels": [], "kind": "const"},
+      {"name": "Real", "levels": [], "kind": "const"},
+      {"kind": "lam",
+       "body":
+       {"kind": "app",
+        "fn": {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
+        "args":
+        [{"name": "Real", "levels": [], "kind": "const"},
+         {"name": "Real", "levels": [], "kind": "const"},
+         {"name": "Real", "levels": [], "kind": "const"},
+         {"kind": "app",
+          "fn": {"name": "instHDiv", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"name": "Real", "levels": [], "kind": "const"},
+           {"kind": "app",
+            "fn":
+            {"name": "DivInvMonoid.toDiv", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "Real", "levels": [], "kind": "const"},
+             {"name": "Real.instDivInvMonoid",
+              "levels": [],
+              "kind": "const"}]}]},
+         {"kind": "app",
+          "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"name": "Real", "levels": [], "kind": "const"},
+           {"value": 1, "litKind": "nat", "kind": "lit"},
+           {"kind": "app",
+            "fn": {"name": "One.toOfNat1", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "Real", "levels": [], "kind": "const"},
+             {"name": "Real.instOne", "levels": [], "kind": "const"}]}]},
+         {"kind": "app",
+          "fn":
+          {"name": "HAdd.hAdd", "levels": ["0", "0", "0"], "kind": "const"},
+          "args":
+          [{"name": "Real", "levels": [], "kind": "const"},
+           {"name": "Real", "levels": [], "kind": "const"},
+           {"name": "Real", "levels": [], "kind": "const"},
+           {"kind": "app",
+            "fn": {"name": "instHAdd", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "Real", "levels": [], "kind": "const"},
+             {"name": "Real.instAdd", "levels": [], "kind": "const"}]},
+           {"kind": "app",
+            "fn": {"name": "Nat.cast", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "Real", "levels": [], "kind": "const"},
+             {"name": "Real.instNatCast", "levels": [], "kind": "const"},
+             {"kind": "bvar", "index": 0}]},
+           {"kind": "app",
+            "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "Real", "levels": [], "kind": "const"},
+             {"value": 1, "litKind": "nat", "kind": "lit"},
+             {"kind": "app",
+              "fn": {"name": "One.toOfNat1", "levels": ["0"], "kind": "const"},
+              "args":
+              [{"name": "Real", "levels": [], "kind": "const"},
+               {"name": "Real.instOne", "levels": [], "kind": "const"}]}]}]}]},
+       "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+       "binderName": "n",
+       "binderInfo": "default"},
+      {"kind": "app",
+       "fn": {"name": "Filter.atTop", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"name": "Nat", "levels": [], "kind": "const"},
+        {"name": "Nat.instPreorder", "levels": [], "kind": "const"}]},
+      {"kind": "app",
+       "fn": {"name": "nhds", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"kind": "app",
+         "fn":
+         {"name": "UniformSpace.toTopologicalSpace",
+          "levels": ["0"],
+          "kind": "const"},
+         "args":
+         [{"name": "Real", "levels": [], "kind": "const"},
+          {"kind": "app",
+           "fn":
+           {"name": "PseudoMetricSpace.toUniformSpace",
+            "levels": ["0"],
+            "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"name": "Real.pseudoMetricSpace",
+             "levels": [],
+             "kind": "const"}]}]},
+        {"kind": "app",
+         "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "Real", "levels": [], "kind": "const"},
+          {"value": 0, "litKind": "nat", "kind": "lit"},
+          {"kind": "app",
+           "fn": {"name": "Zero.toOfNat0", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"name": "Real.instZero", "levels": [], "kind": "const"}]}]}]}]},
+    "pretty": "Filter.Tendsto (fun n => 1 / (↑n + 1)) Filter.atTop (nhds 0)",
+    "constants":
+    ["Filter.Tendsto",
+     "Nat",
+     "Real",
+     "HDiv.hDiv",
+     "instHDiv",
+     "DivInvMonoid.toDiv",
+     "Real.instDivInvMonoid",
+     "OfNat.ofNat",
+     "One.toOfNat1",
+     "Real.instOne",
+     "HAdd.hAdd",
+     "instHAdd",
+     "Real.instAdd",
+     "Nat.cast",
+     "Real.instNatCast",
+     "Filter.atTop",
+     "Nat.instPreorder",
+     "nhds",
+     "UniformSpace.toTopologicalSpace",
+     "PseudoMetricSpace.toUniformSpace",
+     "Real.pseudoMetricSpace",
+     "Zero.toOfNat0",
+     "Real.instZero"]},
+   "binders": [],
+   "axioms": ["Quot.sound", "propext", "Classical.choice"]},
   {"usesSorry": false,
    "statement":
    {"tree":
@@ -9837,9 +10510,9 @@
             {"name": "Real.instDivInvMonoid",
              "levels": [],
              "kind": "const"}]}]},
-        {"name": "A", "kind": "fvar", "fvarId": "_uniq.125"},
-        {"name": "B", "kind": "fvar", "fvarId": "_uniq.126"}]},
-      {"name": "x", "kind": "fvar", "fvarId": "_uniq.124"}]},
+        {"name": "A", "kind": "fvar", "fvarId": "_uniq.131"},
+        {"name": "B", "kind": "fvar", "fvarId": "_uniq.132"}]},
+      {"name": "x", "kind": "fvar", "fvarId": "_uniq.130"}]},
     "pretty": "A / B ≤ x",
     "constants":
     ["LE.le",
@@ -9864,7 +10537,7 @@
      "rawName": "x",
      "name": "x",
      "index": 0,
-     "fvarId": "_uniq.124",
+     "fvarId": "_uniq.130",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -9880,7 +10553,7 @@
      "rawName": "A",
      "name": "A",
      "index": 1,
-     "fvarId": "_uniq.125",
+     "fvarId": "_uniq.131",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -9896,7 +10569,7 @@
      "rawName": "B",
      "name": "B",
      "index": 2,
-     "fvarId": "_uniq.126",
+     "fvarId": "_uniq.132",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -9921,7 +10594,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "B", "kind": "fvar", "fvarId": "_uniq.126"}]},
+        {"name": "B", "kind": "fvar", "fvarId": "_uniq.132"}]},
       "pretty": "0 < B",
       "constants":
       ["LT.lt",
@@ -9934,7 +10607,7 @@
      "rawName": "hB",
      "name": "hB",
      "index": 3,
-     "fvarId": "_uniq.127",
+     "fvarId": "_uniq.133",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -9949,7 +10622,7 @@
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
         {"name": "Real.instLE", "levels": [], "kind": "const"},
-        {"name": "A", "kind": "fvar", "fvarId": "_uniq.125"},
+        {"name": "A", "kind": "fvar", "fvarId": "_uniq.131"},
         {"kind": "app",
          "fn":
          {"name": "HMul.hMul", "levels": ["0", "0", "0"], "kind": "const"},
@@ -9962,8 +10635,8 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-          {"name": "x", "kind": "fvar", "fvarId": "_uniq.124"},
-          {"name": "B", "kind": "fvar", "fvarId": "_uniq.126"}]}]},
+          {"name": "x", "kind": "fvar", "fvarId": "_uniq.130"},
+          {"name": "B", "kind": "fvar", "fvarId": "_uniq.132"}]}]},
       "pretty": "A ≤ x * B",
       "constants":
       ["LE.le",
@@ -9976,7 +10649,7 @@
      "rawName": "h",
      "name": "h",
      "index": 4,
-     "fvarId": "_uniq.128",
+     "fvarId": "_uniq.134",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -10149,7 +10822,7 @@
      "args":
      [{"name": "Real", "levels": [], "kind": "const"},
       {"name": "Real.instLE", "levels": [], "kind": "const"},
-      {"name": "x", "kind": "fvar", "fvarId": "_uniq.129"},
+      {"name": "x", "kind": "fvar", "fvarId": "_uniq.135"},
       {"kind": "app",
        "fn": {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
        "args":
@@ -10168,8 +10841,8 @@
             {"name": "Real.instDivInvMonoid",
              "levels": [],
              "kind": "const"}]}]},
-        {"name": "P", "kind": "fvar", "fvarId": "_uniq.130"},
-        {"name": "T", "kind": "fvar", "fvarId": "_uniq.131"}]}]},
+        {"name": "P", "kind": "fvar", "fvarId": "_uniq.136"},
+        {"name": "T", "kind": "fvar", "fvarId": "_uniq.137"}]}]},
     "pretty": "x ≤ P / T",
     "constants":
     ["LE.le",
@@ -10194,7 +10867,7 @@
      "rawName": "x",
      "name": "x",
      "index": 0,
-     "fvarId": "_uniq.129",
+     "fvarId": "_uniq.135",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -10210,7 +10883,7 @@
      "rawName": "P",
      "name": "P",
      "index": 1,
-     "fvarId": "_uniq.130",
+     "fvarId": "_uniq.136",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -10226,7 +10899,7 @@
      "rawName": "T",
      "name": "T",
      "index": 2,
-     "fvarId": "_uniq.131",
+     "fvarId": "_uniq.137",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": true,
@@ -10251,7 +10924,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "P", "kind": "fvar", "fvarId": "_uniq.130"}]},
+        {"name": "P", "kind": "fvar", "fvarId": "_uniq.136"}]},
       "pretty": "0 < P",
       "constants":
       ["LT.lt",
@@ -10264,7 +10937,7 @@
      "rawName": "hP",
      "name": "hP",
      "index": 3,
-     "fvarId": "_uniq.132",
+     "fvarId": "_uniq.138",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": true,
@@ -10289,7 +10962,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "T", "kind": "fvar", "fvarId": "_uniq.131"}]},
+        {"name": "T", "kind": "fvar", "fvarId": "_uniq.137"}]},
       "pretty": "0 < T",
       "constants":
       ["LT.lt",
@@ -10302,7 +10975,7 @@
      "rawName": "hT",
      "name": "hT",
      "index": 4,
-     "fvarId": "_uniq.133",
+     "fvarId": "_uniq.139",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -10317,7 +10990,7 @@
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
         {"name": "Real.instLE", "levels": [], "kind": "const"},
-        {"name": "x", "kind": "fvar", "fvarId": "_uniq.129"},
+        {"name": "x", "kind": "fvar", "fvarId": "_uniq.135"},
         {"kind": "app",
          "fn":
          {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
@@ -10337,8 +11010,8 @@
               {"name": "Real.instDivInvMonoid",
                "levels": [],
                "kind": "const"}]}]},
-          {"name": "P", "kind": "fvar", "fvarId": "_uniq.130"},
-          {"name": "T", "kind": "fvar", "fvarId": "_uniq.131"}]}]},
+          {"name": "P", "kind": "fvar", "fvarId": "_uniq.136"},
+          {"name": "T", "kind": "fvar", "fvarId": "_uniq.137"}]}]},
       "pretty": "x ≤ P / T",
       "constants":
       ["LE.le",
@@ -10352,7 +11025,7 @@
      "rawName": "h",
      "name": "h",
      "index": 5,
-     "fvarId": "_uniq.134",
+     "fvarId": "_uniq.140",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -10719,7 +11392,7 @@
       {"name": "Real.instLE", "levels": [], "kind": "const"},
       {"kind": "app",
        "fn": {"name": "Real.sqrt", "levels": [], "kind": "const"},
-       "args": [{"name": "x", "kind": "fvar", "fvarId": "_uniq.135"}]},
+       "args": [{"name": "x", "kind": "fvar", "fvarId": "_uniq.141"}]},
       {"kind": "app",
        "fn": {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
        "args":
@@ -10750,7 +11423,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instAdd", "levels": [], "kind": "const"}]},
-          {"name": "x", "kind": "fvar", "fvarId": "_uniq.135"},
+          {"name": "x", "kind": "fvar", "fvarId": "_uniq.141"},
           {"kind": "app",
            "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
            "args":
@@ -10841,7 +11514,7 @@
      "rawName": "x",
      "name": "x",
      "index": 0,
-     "fvarId": "_uniq.135",
+     "fvarId": "_uniq.141",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -10866,7 +11539,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "x", "kind": "fvar", "fvarId": "_uniq.135"}]},
+        {"name": "x", "kind": "fvar", "fvarId": "_uniq.141"}]},
       "pretty": "0 ≤ x",
       "constants":
       ["LE.le",
@@ -10879,7 +11552,7 @@
      "rawName": "hx",
      "name": "hx",
      "index": 1,
-     "fvarId": "_uniq.136",
+     "fvarId": "_uniq.142",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -11141,9 +11814,9 @@
             "args":
             [{"name": "Real", "levels": [], "kind": "const"},
              {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-           {"name": "a", "kind": "fvar", "fvarId": "_uniq.137"},
+           {"name": "a", "kind": "fvar", "fvarId": "_uniq.143"},
            {"kind": "bvar", "index": 0}]},
-         {"name": "b", "kind": "fvar", "fvarId": "_uniq.138"}]},
+         {"name": "b", "kind": "fvar", "fvarId": "_uniq.144"}]},
        "binderType": {"name": "Real", "levels": [], "kind": "const"},
        "binderName": "x",
        "binderInfo": "default"}]},
@@ -11173,7 +11846,7 @@
      "rawName": "a",
      "name": "a",
      "index": 0,
-     "fvarId": "_uniq.137",
+     "fvarId": "_uniq.143",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -11189,7 +11862,7 @@
      "rawName": "b",
      "name": "b",
      "index": 1,
-     "fvarId": "_uniq.138",
+     "fvarId": "_uniq.144",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -11214,7 +11887,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "a", "kind": "fvar", "fvarId": "_uniq.137"}]},
+        {"name": "a", "kind": "fvar", "fvarId": "_uniq.143"}]},
       "pretty": "0 < a",
       "constants":
       ["LT.lt",
@@ -11227,7 +11900,7 @@
      "rawName": "ha",
      "name": "ha",
      "index": 2,
-     "fvarId": "_uniq.139",
+     "fvarId": "_uniq.145",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -11478,7 +12151,7 @@
       {"kind": "app",
        "fn":
        {"name": "ProofLens.Examples.throughput", "levels": [], "kind": "const"},
-       "args": [{"name": "ipc", "kind": "fvar", "fvarId": "_uniq.140"}]}]},
+       "args": [{"name": "ipc", "kind": "fvar", "fvarId": "_uniq.146"}]}]},
     "pretty": "StrictMono (ProofLens.Examples.throughput ipc)",
     "constants":
     ["StrictMono",
@@ -11500,7 +12173,7 @@
      "rawName": "ipc",
      "name": "ipc",
      "index": 0,
-     "fvarId": "_uniq.140",
+     "fvarId": "_uniq.146",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -11525,7 +12198,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "ipc", "kind": "fvar", "fvarId": "_uniq.140"}]},
+        {"name": "ipc", "kind": "fvar", "fvarId": "_uniq.146"}]},
       "pretty": "0 < ipc",
       "constants":
       ["LT.lt",
@@ -11538,7 +12211,7 @@
      "rawName": "hipc",
      "name": "hipc",
      "index": 1,
-     "fvarId": "_uniq.141",
+     "fvarId": "_uniq.147",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -11720,7 +12393,7 @@
          "args":
          [{"name": "Real", "levels": [], "kind": "const"},
           {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-        {"name": "C", "kind": "fvar", "fvarId": "_uniq.142"},
+        {"name": "C", "kind": "fvar", "fvarId": "_uniq.148"},
         {"kind": "app",
          "fn":
          {"name": "HPow.hPow", "levels": ["0", "0", "0"], "kind": "const"},
@@ -11739,7 +12412,7 @@
              "args":
              [{"name": "Real", "levels": [], "kind": "const"},
               {"name": "Real.instMonoid", "levels": [], "kind": "const"}]}]},
-          {"name": "V", "kind": "fvar", "fvarId": "_uniq.143"},
+          {"name": "V", "kind": "fvar", "fvarId": "_uniq.149"},
           {"kind": "app",
            "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
            "args":
@@ -11789,7 +12462,7 @@
      "rawName": "C",
      "name": "C",
      "index": 0,
-     "fvarId": "_uniq.142",
+     "fvarId": "_uniq.148",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -11805,7 +12478,7 @@
      "rawName": "V",
      "name": "V",
      "index": 1,
-     "fvarId": "_uniq.143",
+     "fvarId": "_uniq.149",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -11830,7 +12503,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "C", "kind": "fvar", "fvarId": "_uniq.142"}]},
+        {"name": "C", "kind": "fvar", "fvarId": "_uniq.148"}]},
       "pretty": "0 < C",
       "constants":
       ["LT.lt",
@@ -11843,7 +12516,7 @@
      "rawName": "hC",
      "name": "hC",
      "index": 2,
-     "fvarId": "_uniq.144",
+     "fvarId": "_uniq.150",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -11857,7 +12530,7 @@
        "fn": {"name": "Ne", "levels": ["(0+1)"], "kind": "const"},
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
-        {"name": "V", "kind": "fvar", "fvarId": "_uniq.143"},
+        {"name": "V", "kind": "fvar", "fvarId": "_uniq.149"},
         {"kind": "app",
          "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
          "args":
@@ -11875,7 +12548,7 @@
      "rawName": "hV",
      "name": "hV",
      "index": 3,
-     "fvarId": "_uniq.145",
+     "fvarId": "_uniq.151",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -12090,7 +12763,7 @@
          "args":
          [{"name": "Real", "levels": [], "kind": "const"},
           {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-        {"name": "C", "kind": "fvar", "fvarId": "_uniq.146"},
+        {"name": "C", "kind": "fvar", "fvarId": "_uniq.152"},
         {"kind": "app",
          "fn":
          {"name": "HPow.hPow", "levels": ["0", "0", "0"], "kind": "const"},
@@ -12109,7 +12782,7 @@
              "args":
              [{"name": "Real", "levels": [], "kind": "const"},
               {"name": "Real.instMonoid", "levels": [], "kind": "const"}]}]},
-          {"name": "V", "kind": "fvar", "fvarId": "_uniq.147"},
+          {"name": "V", "kind": "fvar", "fvarId": "_uniq.153"},
           {"kind": "app",
            "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
            "args":
@@ -12150,7 +12823,7 @@
      "rawName": "C",
      "name": "C",
      "index": 0,
-     "fvarId": "_uniq.146",
+     "fvarId": "_uniq.152",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -12166,7 +12839,7 @@
      "rawName": "V",
      "name": "V",
      "index": 1,
-     "fvarId": "_uniq.147",
+     "fvarId": "_uniq.153",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -12191,7 +12864,7 @@
            "args":
            [{"name": "Real", "levels": [], "kind": "const"},
             {"name": "Real.instZero", "levels": [], "kind": "const"}]}]},
-        {"name": "C", "kind": "fvar", "fvarId": "_uniq.146"}]},
+        {"name": "C", "kind": "fvar", "fvarId": "_uniq.152"}]},
       "pretty": "0 < C",
       "constants":
       ["LT.lt",
@@ -12204,7 +12877,7 @@
      "rawName": "hC",
      "name": "hC",
      "index": 2,
-     "fvarId": "_uniq.148",
+     "fvarId": "_uniq.154",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -12218,7 +12891,7 @@
        "fn": {"name": "Ne", "levels": ["(0+1)"], "kind": "const"},
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
-        {"name": "V", "kind": "fvar", "fvarId": "_uniq.147"},
+        {"name": "V", "kind": "fvar", "fvarId": "_uniq.153"},
         {"kind": "app",
          "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
          "args":
@@ -12236,7 +12909,7 @@
      "rawName": "hV",
      "name": "hV",
      "index": 3,
-     "fvarId": "_uniq.149",
+     "fvarId": "_uniq.155",
      "binderInfo": "default"}],
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"usesSorry": false,
@@ -12280,8 +12953,8 @@
        "args":
        [{"name": "Real", "levels": [], "kind": "const"},
         {"name": "Real.instMul", "levels": [], "kind": "const"}]},
-      {"name": "ipc", "kind": "fvar", "fvarId": "_uniq.150"},
-      {"name": "f", "kind": "fvar", "fvarId": "_uniq.151"}]},
+      {"name": "ipc", "kind": "fvar", "fvarId": "_uniq.156"},
+      {"name": "f", "kind": "fvar", "fvarId": "_uniq.157"}]},
     "pretty": "ipc * f",
     "constants": ["HMul.hMul", "Real", "instHMul", "Real.instMul"]},
    "conclusion":
@@ -12303,7 +12976,7 @@
      "rawName": "ipc",
      "name": "ipc",
      "index": 0,
-     "fvarId": "_uniq.150",
+     "fvarId": "_uniq.156",
      "binderInfo": "default"},
     {"usage":
      {"unusedInProof": false,
@@ -12319,305 +12992,6 @@
      "rawName": "f",
      "name": "f",
      "index": 1,
-     "fvarId": "_uniq.151",
+     "fvarId": "_uniq.157",
      "binderInfo": "default"}],
-   "axioms": ["propext", "Classical.choice", "Quot.sound"]},
-  {"usesSorry": false,
-   "statement":
-   {"tree":
-    {"kind": "app",
-     "fn": {"name": "Filter.Tendsto", "levels": ["0", "0"], "kind": "const"},
-     "args":
-     [{"name": "Nat", "levels": [], "kind": "const"},
-      {"name": "Real", "levels": [], "kind": "const"},
-      {"kind": "lam",
-       "body":
-       {"kind": "app",
-        "fn": {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
-        "args":
-        [{"name": "Real", "levels": [], "kind": "const"},
-         {"name": "Real", "levels": [], "kind": "const"},
-         {"name": "Real", "levels": [], "kind": "const"},
-         {"kind": "app",
-          "fn": {"name": "instHDiv", "levels": ["0"], "kind": "const"},
-          "args":
-          [{"name": "Real", "levels": [], "kind": "const"},
-           {"kind": "app",
-            "fn":
-            {"name": "DivInvMonoid.toDiv", "levels": ["0"], "kind": "const"},
-            "args":
-            [{"name": "Real", "levels": [], "kind": "const"},
-             {"name": "Real.instDivInvMonoid",
-              "levels": [],
-              "kind": "const"}]}]},
-         {"kind": "app",
-          "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
-          "args":
-          [{"name": "Real", "levels": [], "kind": "const"},
-           {"value": 1, "litKind": "nat", "kind": "lit"},
-           {"kind": "app",
-            "fn": {"name": "One.toOfNat1", "levels": ["0"], "kind": "const"},
-            "args":
-            [{"name": "Real", "levels": [], "kind": "const"},
-             {"name": "Real.instOne", "levels": [], "kind": "const"}]}]},
-         {"kind": "app",
-          "fn":
-          {"name": "HAdd.hAdd", "levels": ["0", "0", "0"], "kind": "const"},
-          "args":
-          [{"name": "Real", "levels": [], "kind": "const"},
-           {"name": "Real", "levels": [], "kind": "const"},
-           {"name": "Real", "levels": [], "kind": "const"},
-           {"kind": "app",
-            "fn": {"name": "instHAdd", "levels": ["0"], "kind": "const"},
-            "args":
-            [{"name": "Real", "levels": [], "kind": "const"},
-             {"name": "Real.instAdd", "levels": [], "kind": "const"}]},
-           {"kind": "app",
-            "fn": {"name": "Nat.cast", "levels": ["0"], "kind": "const"},
-            "args":
-            [{"name": "Real", "levels": [], "kind": "const"},
-             {"name": "Real.instNatCast", "levels": [], "kind": "const"},
-             {"kind": "bvar", "index": 0}]},
-           {"kind": "app",
-            "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
-            "args":
-            [{"name": "Real", "levels": [], "kind": "const"},
-             {"value": 1, "litKind": "nat", "kind": "lit"},
-             {"kind": "app",
-              "fn": {"name": "One.toOfNat1", "levels": ["0"], "kind": "const"},
-              "args":
-              [{"name": "Real", "levels": [], "kind": "const"},
-               {"name": "Real.instOne", "levels": [], "kind": "const"}]}]}]}]},
-       "binderType": {"name": "Nat", "levels": [], "kind": "const"},
-       "binderName": "n",
-       "binderInfo": "default"},
-      {"kind": "app",
-       "fn": {"name": "Filter.atTop", "levels": ["0"], "kind": "const"},
-       "args":
-       [{"name": "Nat", "levels": [], "kind": "const"},
-        {"name": "Nat.instPreorder", "levels": [], "kind": "const"}]},
-      {"kind": "app",
-       "fn": {"name": "nhds", "levels": ["0"], "kind": "const"},
-       "args":
-       [{"name": "Real", "levels": [], "kind": "const"},
-        {"kind": "app",
-         "fn":
-         {"name": "UniformSpace.toTopologicalSpace",
-          "levels": ["0"],
-          "kind": "const"},
-         "args":
-         [{"name": "Real", "levels": [], "kind": "const"},
-          {"kind": "app",
-           "fn":
-           {"name": "PseudoMetricSpace.toUniformSpace",
-            "levels": ["0"],
-            "kind": "const"},
-           "args":
-           [{"name": "Real", "levels": [], "kind": "const"},
-            {"name": "Real.pseudoMetricSpace",
-             "levels": [],
-             "kind": "const"}]}]},
-        {"kind": "app",
-         "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
-         "args":
-         [{"name": "Real", "levels": [], "kind": "const"},
-          {"value": 0, "litKind": "nat", "kind": "lit"},
-          {"kind": "app",
-           "fn": {"name": "Zero.toOfNat0", "levels": ["0"], "kind": "const"},
-           "args":
-           [{"name": "Real", "levels": [], "kind": "const"},
-            {"name": "Real.instZero", "levels": [], "kind": "const"}]}]}]}]},
-    "pretty": "Filter.Tendsto (fun n => 1 / (↑n + 1)) Filter.atTop (nhds 0)",
-    "constants":
-    ["Filter.Tendsto",
-     "Nat",
-     "Real",
-     "HDiv.hDiv",
-     "instHDiv",
-     "DivInvMonoid.toDiv",
-     "Real.instDivInvMonoid",
-     "OfNat.ofNat",
-     "One.toOfNat1",
-     "Real.instOne",
-     "HAdd.hAdd",
-     "instHAdd",
-     "Real.instAdd",
-     "Nat.cast",
-     "Real.instNatCast",
-     "Filter.atTop",
-     "Nat.instPreorder",
-     "nhds",
-     "UniformSpace.toTopologicalSpace",
-     "PseudoMetricSpace.toUniformSpace",
-     "Real.pseudoMetricSpace",
-     "Zero.toOfNat0",
-     "Real.instZero"]},
-   "source":
-   {"startLine": 205,
-    "startColumn": 0,
-    "module": "ProofLensExamples.IntelligenceBound",
-    "endLine": 222,
-    "endColumn": 41},
-   "proofTermAvailable": true,
-   "namespace": "ProofLens.Examples",
-   "name": "ProofLens.Examples.unsupported_tendsto_fixture",
-   "kind": "theorem",
-   "docstring":
-   "**Deliberate \"unsupported mathematics\" fixture.**\n\nProofLens v0.1 is *not* expected to visualise this. The statement is a\nconvergence claim: a filter-level assertion that the sequence `1 / (n + 1)` tends\nto `0` along `atTop`. There is no bounded quantity, no bound expression, and no\nmonotone function to plot; the content lives in the interaction between two\nfilters, which the v0.1 renderer has no vocabulary for.\n\nIt is included precisely so that the corpus contains a case where the correct\nbehaviour is a clean \"cannot visualise this\" rather than a wrong picture. It\nstill compiles and is fully proved.\n\n@prooflens.var n meaning=\"sequence index\" units=\"dimensionless\" domain=\"natural numbers\"\n@prooflens.concept \"convergence of a harmonic sequence\"\n",
-   "dependencies":
-   ["Filter.Tendsto",
-    "Nat",
-    "Real",
-    "HDiv.hDiv",
-    "instHDiv",
-    "DivInvMonoid.toDiv",
-    "Real.instDivInvMonoid",
-    "OfNat.ofNat",
-    "One.toOfNat1",
-    "Real.instOne",
-    "HAdd.hAdd",
-    "instHAdd",
-    "Real.instAdd",
-    "Nat.cast",
-    "Real.instNatCast",
-    "Filter.atTop",
-    "Nat.instPreorder",
-    "nhds",
-    "UniformSpace.toTopologicalSpace",
-    "PseudoMetricSpace.toUniformSpace",
-    "Real.pseudoMetricSpace",
-    "Zero.toOfNat0",
-    "Real.instZero",
-    "tendsto_one_div_add_atTop_nhds_zero_nat"],
-   "definitionBody": null,
-   "conclusion":
-   {"tree":
-    {"kind": "app",
-     "fn": {"name": "Filter.Tendsto", "levels": ["0", "0"], "kind": "const"},
-     "args":
-     [{"name": "Nat", "levels": [], "kind": "const"},
-      {"name": "Real", "levels": [], "kind": "const"},
-      {"kind": "lam",
-       "body":
-       {"kind": "app",
-        "fn": {"name": "HDiv.hDiv", "levels": ["0", "0", "0"], "kind": "const"},
-        "args":
-        [{"name": "Real", "levels": [], "kind": "const"},
-         {"name": "Real", "levels": [], "kind": "const"},
-         {"name": "Real", "levels": [], "kind": "const"},
-         {"kind": "app",
-          "fn": {"name": "instHDiv", "levels": ["0"], "kind": "const"},
-          "args":
-          [{"name": "Real", "levels": [], "kind": "const"},
-           {"kind": "app",
-            "fn":
-            {"name": "DivInvMonoid.toDiv", "levels": ["0"], "kind": "const"},
-            "args":
-            [{"name": "Real", "levels": [], "kind": "const"},
-             {"name": "Real.instDivInvMonoid",
-              "levels": [],
-              "kind": "const"}]}]},
-         {"kind": "app",
-          "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
-          "args":
-          [{"name": "Real", "levels": [], "kind": "const"},
-           {"value": 1, "litKind": "nat", "kind": "lit"},
-           {"kind": "app",
-            "fn": {"name": "One.toOfNat1", "levels": ["0"], "kind": "const"},
-            "args":
-            [{"name": "Real", "levels": [], "kind": "const"},
-             {"name": "Real.instOne", "levels": [], "kind": "const"}]}]},
-         {"kind": "app",
-          "fn":
-          {"name": "HAdd.hAdd", "levels": ["0", "0", "0"], "kind": "const"},
-          "args":
-          [{"name": "Real", "levels": [], "kind": "const"},
-           {"name": "Real", "levels": [], "kind": "const"},
-           {"name": "Real", "levels": [], "kind": "const"},
-           {"kind": "app",
-            "fn": {"name": "instHAdd", "levels": ["0"], "kind": "const"},
-            "args":
-            [{"name": "Real", "levels": [], "kind": "const"},
-             {"name": "Real.instAdd", "levels": [], "kind": "const"}]},
-           {"kind": "app",
-            "fn": {"name": "Nat.cast", "levels": ["0"], "kind": "const"},
-            "args":
-            [{"name": "Real", "levels": [], "kind": "const"},
-             {"name": "Real.instNatCast", "levels": [], "kind": "const"},
-             {"kind": "bvar", "index": 0}]},
-           {"kind": "app",
-            "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
-            "args":
-            [{"name": "Real", "levels": [], "kind": "const"},
-             {"value": 1, "litKind": "nat", "kind": "lit"},
-             {"kind": "app",
-              "fn": {"name": "One.toOfNat1", "levels": ["0"], "kind": "const"},
-              "args":
-              [{"name": "Real", "levels": [], "kind": "const"},
-               {"name": "Real.instOne", "levels": [], "kind": "const"}]}]}]}]},
-       "binderType": {"name": "Nat", "levels": [], "kind": "const"},
-       "binderName": "n",
-       "binderInfo": "default"},
-      {"kind": "app",
-       "fn": {"name": "Filter.atTop", "levels": ["0"], "kind": "const"},
-       "args":
-       [{"name": "Nat", "levels": [], "kind": "const"},
-        {"name": "Nat.instPreorder", "levels": [], "kind": "const"}]},
-      {"kind": "app",
-       "fn": {"name": "nhds", "levels": ["0"], "kind": "const"},
-       "args":
-       [{"name": "Real", "levels": [], "kind": "const"},
-        {"kind": "app",
-         "fn":
-         {"name": "UniformSpace.toTopologicalSpace",
-          "levels": ["0"],
-          "kind": "const"},
-         "args":
-         [{"name": "Real", "levels": [], "kind": "const"},
-          {"kind": "app",
-           "fn":
-           {"name": "PseudoMetricSpace.toUniformSpace",
-            "levels": ["0"],
-            "kind": "const"},
-           "args":
-           [{"name": "Real", "levels": [], "kind": "const"},
-            {"name": "Real.pseudoMetricSpace",
-             "levels": [],
-             "kind": "const"}]}]},
-        {"kind": "app",
-         "fn": {"name": "OfNat.ofNat", "levels": ["0"], "kind": "const"},
-         "args":
-         [{"name": "Real", "levels": [], "kind": "const"},
-          {"value": 0, "litKind": "nat", "kind": "lit"},
-          {"kind": "app",
-           "fn": {"name": "Zero.toOfNat0", "levels": ["0"], "kind": "const"},
-           "args":
-           [{"name": "Real", "levels": [], "kind": "const"},
-            {"name": "Real.instZero", "levels": [], "kind": "const"}]}]}]}]},
-    "pretty": "Filter.Tendsto (fun n => 1 / (↑n + 1)) Filter.atTop (nhds 0)",
-    "constants":
-    ["Filter.Tendsto",
-     "Nat",
-     "Real",
-     "HDiv.hDiv",
-     "instHDiv",
-     "DivInvMonoid.toDiv",
-     "Real.instDivInvMonoid",
-     "OfNat.ofNat",
-     "One.toOfNat1",
-     "Real.instOne",
-     "HAdd.hAdd",
-     "instHAdd",
-     "Real.instAdd",
-     "Nat.cast",
-     "Real.instNatCast",
-     "Filter.atTop",
-     "Nat.instPreorder",
-     "nhds",
-     "UniformSpace.toTopologicalSpace",
-     "PseudoMetricSpace.toUniformSpace",
-     "Real.pseudoMetricSpace",
-     "Zero.toOfNat0",
-     "Real.instZero"]},
-   "binders": [],
-   "axioms": ["Quot.sound", "propext", "Classical.choice"]}]}
+   "axioms": ["propext", "Classical.choice", "Quot.sound"]}]}

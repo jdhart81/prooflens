@@ -14,6 +14,7 @@ import {
   runPipeline,
   runPipelineOnJson,
   runPipelineOnValue,
+  coverageReport,
   type PipelineBundle,
 } from "@prooflens/pipeline";
 import { FormalIRParseError } from "@prooflens/formal-ir";
@@ -94,10 +95,8 @@ describe("the summary counts what the classifiers reported", () => {
     expect(s.unsupported).toBe(unsupported.length);
     // The `distinctness` classifier now reads `switching_coefficient_ne_zero`,
     // leaving only the deliberate convergence fixture unsupported.
-    expect(unsupported.map((a) => a.math.name.split(".").pop())).toEqual([
-      "unsupported_tendsto_fixture",
-    ]);
-    expect(s.classified).toBe(33);
+    expect(unsupported.map((a) => a.math.name.split(".").pop())).toEqual(["energy_cost_injective"]);
+    expect(s.classified).toBe(34);
     for (const analysis of bundle.analyses) {
       expect(analysis.unsupported).toBe(
         analysis.classifications.some((c) => c.payload.kind === "unsupported"),
@@ -133,7 +132,7 @@ describe("the summary counts what the classifiers reported", () => {
     expect(s.visualsPlanned).toBe(planned);
     const histogramTotal = Object.values(s.epistemicHistogram).reduce((a, b) => a + b, 0);
     expect(histogramTotal).toBe(planned);
-    expect(s.visualsPlanned).toBe(72);
+    expect(s.visualsPlanned).toBe(75);
   });
 
   it("histograms the figures by the status each figure actually carries", () => {
@@ -283,13 +282,14 @@ describe("the switching_coefficient_ne_zero path", () => {
 });
 
 describe("every planned figure type in the corpus", () => {
-  it("covers the nine the planner can currently produce", () => {
+  it("covers the ten the planner can currently produce", () => {
     const types = new Set(bundle.analyses.flatMap((a) => a.visuals).map((v) => v.type));
     expect([...types].sort()).toEqual([
       "assumption-sensitivity",
       "dependency-graph",
       "expression-tree",
       "implication-graph",
+      "limit-plot",
       "lower-bound-plot",
       "monotonicity-plot",
       "number-line",
@@ -557,6 +557,235 @@ describe("graceful degradation on an unrecognised conclusion", () => {
   it("is deterministic too", () => {
     expect(JSON.stringify(runPipelineOnValue(unrecognisedDocument()))).toBe(
       JSON.stringify(runPipelineOnValue(unrecognisedDocument())),
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// sequence_limit_example: the fixture that stopped being unsupported
+// ---------------------------------------------------------------------------
+
+describe("the sequence_limit_example path, Formal IR to SVG", () => {
+  const analysis = findAnalysis(bundle, "sequence_limit_example")!;
+
+  it("starts from the Lean convergence statement", () => {
+    // Renamed from `unsupported_tendsto_fixture`: the statement and the proof
+    // are unchanged, ProofLens simply learned to read it.
+    expect(analysis.formal.name).toBe("ProofLens.Examples.sequence_limit_example");
+    expect(analysis.formal.conclusion.pretty).toContain("Filter.Tendsto");
+  });
+
+  it("lowers to a `limit` proposition rather than an opaque term", () => {
+    expect(analysis.math.conclusion.value.kind).toBe("limit");
+    expect(analysis.math.conclusionDisplay).toBe("n ↦ 1 / (n + 1) ⟶ 0 (along +∞)");
+  });
+
+  it("classifies as a convergent limit", () => {
+    expect(analysis.unsupported).toBe(false);
+    expect(analysis.primary!.payload.kind).toBe("limit");
+    const payload = analysis.primary!.payload;
+    expect(payload.kind === "limit" && payload.data.convergent).toBe(true);
+  });
+
+  it("plans a limit-plot", () => {
+    expect(analysis.visuals.map((v) => v.type)).toEqual(["limit-plot"]);
+  });
+
+  it("renders to SVG and to text carrying the limit value", () => {
+    for (const spec of analysis.visuals) {
+      const svg = renderSvg(spec);
+      expect(svg.startsWith("<svg"), spec.id).toBe(true);
+      expect(renderText(spec).length).toBeGreaterThan(0);
+    }
+  });
+
+  it("explains itself without claiming it cannot read the statement", () => {
+    const text = analysis.explanations.map((l) => l.claim.value).join("\n");
+    expect(text).not.toContain("does not have a reading for its head symbol");
+  });
+
+  it("no longer appears in the coverage backlog", () => {
+    const report = coverageReport(bundle);
+    for (const backlog of [report.unrecognisedShapes, report.opaqueConstants]) {
+      expect(backlog.flatMap((m) => m.examples)).not.toContain(analysis.math.name);
+      expect(backlog.map((m) => m.head)).not.toContain("Filter.Tendsto");
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The whole-corpus sweep
+// ---------------------------------------------------------------------------
+
+describe("a sweep over every planned figure", () => {
+  // A cheap stand-in for the 679-declaration mathlib run, which produced 1490
+  // figures with zero render failures and zero dangling relationship endpoints.
+  // The committed corpus is small, but the invariants are the same ones.
+  const specs = bundle.analyses.flatMap((a) => a.visuals);
+
+  it("plans at least one figure for every declaration", () => {
+    for (const analysis of bundle.analyses) {
+      expect(analysis.visuals.length, analysis.math.name).toBeGreaterThanOrEqual(1);
+    }
+    expect(specs.length).toBeGreaterThan(bundle.analyses.length);
+  });
+
+  it("resolves every relationship endpoint to an entity in the same spec", () => {
+    let checked = 0;
+    for (const spec of specs) {
+      const ids = new Set(spec.entities.map((e) => e.id));
+      for (const relationship of spec.relationships) {
+        expect(ids.has(relationship.from), `${spec.id}: ${relationship.id}.from`).toBe(true);
+        expect(ids.has(relationship.to), `${spec.id}: ${relationship.id}.to`).toBe(true);
+        checked += 1;
+      }
+    }
+    expect(checked).toBeGreaterThan(50);
+  });
+
+  it("renders every figure without throwing", () => {
+    for (const spec of specs) {
+      expect(() => renderSvgDocument(spec), spec.id).not.toThrow();
+      expect(() => renderText(spec), spec.id).not.toThrow();
+    }
+  });
+
+  it("produces non-degenerate output for every figure", () => {
+    for (const spec of specs) {
+      const svg = renderSvgDocument(spec);
+      expect(svg, spec.id).toContain("</svg>");
+      expect(svg.length, spec.id).toBeGreaterThan(200);
+      expect(renderText(spec).trim().length, spec.id).toBeGreaterThan(0);
+    }
+  });
+
+  it("gives every figure a rationale and a source", () => {
+    for (const spec of specs) {
+      expect(spec.rationale.trim().length, spec.id).toBeGreaterThan(0);
+      expect(spec.provenance.sources.length, spec.id).toBeGreaterThan(0);
+    }
+  });
+
+  it("marks no figure `verified`", () => {
+    for (const spec of specs) expect(spec.epistemic, spec.id).not.toBe("verified");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Resilient extraction: a declaration the extractor could not read
+// ---------------------------------------------------------------------------
+
+describe("a stub row from a failed extraction", () => {
+  const FAILED = {
+    pretty: "<extraction failed>",
+    tree: { kind: "sort", level: "0" },
+    constants: [] as string[],
+  };
+
+  function stubDocument(): unknown {
+    return {
+      formalIRVersion: "0.1.0",
+      system: "lean4",
+      toolchain: "4.24.0",
+      notationFidelity: "notation",
+      modules: ["Broken.Module"],
+      declarations: [
+        {
+          name: "Broken.Module.exploded",
+          namespace: "Broken.Module",
+          kind: "theorem",
+          docstring: null,
+          source: null,
+          binders: [],
+          conclusion: FAILED,
+          statement: FAILED,
+          dependencies: [],
+          axioms: [],
+          proofTermAvailable: false,
+          extractionError: "(deterministic) maximum recursion depth has been reached",
+          usesSorry: false,
+        },
+      ],
+    };
+  }
+
+  const made = runPipelineOnValue(stubDocument());
+  const analysis = made.analyses[0]!;
+
+  it("does not throw", () => {
+    expect(() => runPipelineOnValue(stubDocument())).not.toThrow();
+  });
+
+  it("produces an analysis rather than dropping the declaration", () => {
+    // Losing a theorem silently is the outcome this project is not allowed to
+    // have; a row that says "I could not read this" is strictly better.
+    expect(made.analyses).toHaveLength(1);
+    expect(analysis.formal.name).toBe("Broken.Module.exploded");
+    expect(analysis.formal.extractionError).toContain("maximum recursion depth");
+  });
+
+  it("marks it unsupported and still plans a figure", () => {
+    expect(analysis.unsupported).toBe(true);
+    expect(analysis.visuals.length).toBeGreaterThanOrEqual(1);
+    expect(analysis.visuals.map((v) => v.type)).toEqual(["expression-tree"]);
+  });
+
+  it("still produces explanation layers", () => {
+    expect(analysis.explanations.length).toBeGreaterThan(0);
+    expect(analysis.explanations[0]!.id).toBe("formal");
+  });
+
+  it("never claims the kernel verified anything about it", () => {
+    // `usesSorry: false` on a stub means no `sorry` was *observed*, not that
+    // Lean accepted the declaration — ProofLens never saw the declaration at all.
+    expect(analysis.math.ceiling).toBe("derived");
+    expect(analysisCeiling(analysis)).toBe("derived");
+    expect(analysis.math.conclusion.status).toBe("derived");
+    for (const layer of analysis.explanations) {
+      expect(layer.claim.status, layer.id).not.toBe("verified");
+    }
+    expect(JSON.stringify(analysis)).not.toContain('"verified"');
+  });
+
+  it("titles the formal layer `What was stated`, not `What was proved`", () => {
+    const formal = analysis.explanations[0]!;
+    expect(formal.title).toBe("What was stated");
+    expect(formal.claim.value).toBe("<extraction failed>");
+  });
+
+  it("still renders to SVG and to text", () => {
+    for (const spec of analysis.visuals) {
+      expect(renderSvgDocument(spec)).toContain("<svg");
+      expect(renderText(spec).length).toBeGreaterThan(0);
+    }
+  });
+
+  it("counts as unrecognised in the coverage report", () => {
+    const report = coverageReport(made);
+    expect(report.totals.classified).toBe(0);
+    expect(report.totals.unsupported).toBe(1);
+    expect(report.unrecognisedShapes.map((m) => m.examples)).toEqual([["Broken.Module.exploded"]]);
+  });
+
+  it("keeps a stub alongside real declarations without disturbing them", () => {
+    const raw = corpusRaw() as Record<string, unknown>;
+    const stub = (stubDocument() as { declarations: unknown[] }).declarations[0]!;
+    const mixed = runPipelineOnValue({
+      ...raw,
+      declarations: [...(raw["declarations"] as unknown[]), stub],
+    });
+    expect(mixed.analyses).toHaveLength(CORPUS_DECLARATION_COUNT + 1);
+    expect(mixed.summary.unsupported).toBe(2);
+
+    // The real declarations keep their kernel standing.
+    const real = findAnalysis(mixed, "simple_upper_bound")!;
+    expect(real.math.ceiling).toBe("verified");
+    expect(real.explanations[0]!.claim.status).toBe("verified");
+  });
+
+  it("is deterministic", () => {
+    expect(JSON.stringify(runPipelineOnValue(stubDocument()))).toBe(
+      JSON.stringify(runPipelineOnValue(stubDocument())),
     );
   });
 });

@@ -29,6 +29,8 @@ import {
 import { planVisuals, type VisualSpec } from "@prooflens/visual-ir";
 import type { EpistemicStatus } from "@prooflens/epistemics";
 
+export * from "./coverage.js";
+
 export interface TheoremAnalysis {
   formal: FormalDeclaration;
   math: TheoremIR;

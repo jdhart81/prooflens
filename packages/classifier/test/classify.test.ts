@@ -703,8 +703,13 @@ describe("primaryClassification", () => {
   });
 
   it("leads with `unsupported` when that is all there is", () => {
-    const theorem = math.theorems.find((t) => t.name.endsWith(".unsupported_tendsto_fixture"))!;
+    const theorem = math.theorems.find((t) => t.name.endsWith(".energy_cost_injective"))!;
     expect(primaryClassification(classifyTheorem(theorem))!.payload.kind).toBe("unsupported");
+  });
+
+  it("leads with `limit` for a convergence statement", () => {
+    const theorem = math.theorems.find((t) => t.name.endsWith(".sequence_limit_example"))!;
+    expect(primaryClassification(classifyTheorem(theorem))!.payload.kind).toBe("limit");
   });
 
   it("leads with `positivity` rather than a bound for a sign fact", () => {
@@ -754,7 +759,11 @@ describe("primaryClassification", () => {
 // ---------------------------------------------------------------------------
 
 describe("the unsupported fixture", () => {
-  const theorem = math.theorems.find((t) => t.name.endsWith(".unsupported_tendsto_fixture"))!;
+  // `unsupported_tendsto_fixture` was renamed `sequence_limit_example` once the
+  // `limit` classifier could read it. `energy_cost_injective` replaced it as the
+  // deliberate can't-read-this fixture: `Function.Injective` is kept out of the
+  // tables on purpose so the corpus always exercises graceful degradation.
+  const theorem = math.theorems.find((t) => t.name.endsWith(".energy_cost_injective"))!;
   const cs = classifyTheorem(theorem);
   const unsupported = cs.find((c) => c.payload.kind === "unsupported")!;
 
@@ -765,18 +774,17 @@ describe("the unsupported fixture", () => {
 
   it("names the structure it could not read in its rationale", () => {
     expect(unsupported.rationale).toContain(theorem.conclusionDisplay);
-    expect(unsupported.rationale).toContain("Tendsto");
+    expect(unsupported.rationale).toContain("landauerCost");
   });
 
   it("names the unrecognised head constant in its payload", () => {
     const data = find(cs, "unsupported");
-    expect(data.head).toBe("Filter.Tendsto");
-    expect(data.reason).toContain("Filter.Tendsto");
+    expect(data.head).toBe("Function.Injective");
+    expect(data.reason).toContain("Function.Injective");
   });
 
   it("claims nothing about the mathematics it could not read", () => {
     const text = `${unsupported.rationale} ${find(cs, "unsupported").reason}`;
-    // It must not assert a bound, a direction, or a truth value.
     for (const forbidden of [
       "upper bound",
       "lower bound",
@@ -795,14 +803,16 @@ describe("the unsupported fixture", () => {
     expect(unsupported.rationale).toMatch(/still available/);
   });
 
-  it("is now the only unsupported declaration in the corpus", () => {
-    // `switching_coefficient_ne_zero` used to land here too; the `distinctness`
-    // classifier reads it properly now.
-    const unsupported = math.theorems.filter((t) =>
+  it("is the only unsupported declaration in the corpus", () => {
+    const unreadable = math.theorems.filter((t) =>
       kinds(classifyTheorem(t)).includes("unsupported"),
     );
-    expect(unsupported.map((t) => t.name.split(".").pop())).toEqual([
-      "unsupported_tendsto_fixture",
-    ]);
+    expect(unreadable.map((t) => t.name.split(".").pop())).toEqual(["energy_cost_injective"]);
+  });
+
+  it("keeps its assumption-sensitivity analysis, unreadable conclusion or not", () => {
+    // Graceful degradation is not the same as giving up: the hypotheses are
+    // still analysable even when the conclusion is not.
+    expect(kinds(cs)).toContain("assumption-sensitivity");
   });
 });

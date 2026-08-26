@@ -39,6 +39,7 @@ import {
   layoutExpressionTree,
   layoutGeneric,
   layoutLayeredGraph,
+  layoutLimit,
   layoutMonotonicity,
   layoutNumberLine,
   WEAK_LEGEND_ROW,
@@ -197,6 +198,8 @@ function dispatch(type: VisualType | string, spec: VisualSpec, ctx: RenderContex
       return layoutNumberLine(spec, ctx);
     case "monotonicity-plot":
       return layoutMonotonicity(spec, ctx);
+    case "limit-plot":
+      return layoutLimit(spec, ctx);
     case "assumption-sensitivity":
       return layoutAssumptionSensitivity(spec, ctx);
     case "dependency-graph":
@@ -220,6 +223,8 @@ const TYPE_DESCRIPTION: Record<string, string> = {
     "a horizontal number line with the marked value and the regions on either side of it",
   "monotonicity-plot":
     "a schematic curve illustrating the direction in which the function's output moves as its input increases",
+  "limit-plot":
+    "a schematic plot of what the function's values do along the given filter: either a dotted line at the limit value with a curve that closes on it without ever meeting it, or, for a divergence, a curve leaving the frame under an arrowhead",
   "assumption-sensitivity":
     "two columns of boxes: the theorem's stated hypotheses on the left, the conclusion on the right, with a connector drawn for each hypothesis the proof term actually uses",
   "dependency-graph":

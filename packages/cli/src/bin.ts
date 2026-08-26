@@ -17,7 +17,8 @@ import {
   summarise,
   type Stage,
 } from "./commands.js";
-import { findAnalysis } from "@prooflens/pipeline";
+import { coverageReport, findAnalysis } from "@prooflens/pipeline";
+import { renderCoverageMarkdown, renderCoverageText } from "./coverage-report.js";
 
 const USAGE = `prooflens — visual interpretability for formal mathematics
 
@@ -26,6 +27,7 @@ USAGE
   prooflens summary  <formal-ir.json>
   prooflens explain  <formal-ir.json> <declaration>
   prooflens render   <formal-ir.json> [declaration] [--out-dir <dir>] [--format svg|text|both]
+  prooflens coverage <formal-ir.json> [--format text|markdown|json] [--out <file>]
   prooflens inspect  <formal-ir.json> [declaration] --stage formal|math|classifier|visual|explain|bundle [--out <file>]
   prooflens pipeline --project <dir> --module <Mod> [...] [--out-dir <dir>]
 
@@ -36,6 +38,8 @@ COMMANDS
             warnings (unused hypotheses, sorry, unusual axioms).
   explain   Print the layered explanation and text figures for one declaration.
   render    Write SVG and/or text figures to disk.
+  coverage  Measure what fraction of a body of mathematics ProofLens can read,
+            and print a ranked backlog of what would improve it.
   inspect   Dump one pipeline stage as JSON. Every stage is inspectable.
   pipeline  extract, then render everything, in one step.
 
@@ -130,6 +134,31 @@ async function main(argv: string[]): Promise<number> {
         format,
         log,
       });
+      return 0;
+    }
+
+    case "coverage": {
+      const bundle = await loadBundle(requirePositional(parsed, 0, "path to Formal IR JSON"));
+      const report = coverageReport(bundle);
+      const format = one(parsed.flags, "format") ?? "text";
+      const rendered =
+        format === "json"
+          ? JSON.stringify(report, null, 2)
+          : format === "markdown"
+            ? renderCoverageMarkdown(report)
+            : format === "text"
+              ? renderCoverageText(report)
+              : null;
+      if (rendered === null) {
+        throw new Error(`--format must be text, markdown, or json (got ${format}).`);
+      }
+      const out = one(parsed.flags, "out");
+      if (out) {
+        await writeFile(resolve(out), `${rendered}\n`, "utf8");
+        log(`Wrote coverage report to ${out}`);
+      } else {
+        process.stdout.write(`${rendered}\n`);
+      }
       return 0;
     }
 

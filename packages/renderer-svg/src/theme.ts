@@ -176,6 +176,12 @@ export function buildStylesheet(theme: Theme, fontFamily: string): string {
     `.pl-edge{stroke:var(--pl-edge);stroke-width:1.4;fill:none}`,
     `.pl-edge-used{stroke:var(--pl-accent);stroke-width:1.75;fill:none}`,
     `.pl-curve{stroke:var(--pl-accent);stroke-width:2.25;fill:none;stroke-linecap:round}`,
+    // The asymptote of a convergent limit. Deliberately a fine dot pattern
+    // rather than the 5/3 of `pl-weak-stroke` or the 7/4 of `pl-schematic`, so
+    // that "this is the limit" and "this is illustrative" stay distinguishable
+    // at a glance. When the limit itself is weak, `pl-weak-stroke` is declared
+    // later and wins — the epistemic encoding outranks the drawing convention.
+    `.pl-asymptote{stroke:var(--pl-accent);stroke-width:1.5;fill:none;stroke-dasharray:1 4;stroke-linecap:round}`,
     `.pl-rule{stroke:var(--pl-border);stroke-width:1}`,
     `.pl-rationale-bar{fill:var(--pl-accent);stroke:none}`,
     `.pl-rationale{font-size:12px;fill:var(--pl-fg)}`,

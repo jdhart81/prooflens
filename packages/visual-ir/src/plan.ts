@@ -191,6 +191,130 @@ function planBound(
   };
 }
 
+/**
+ * A limit: a curve settling onto a value, or running away.
+ *
+ * Convergence and divergence get visibly different figures. Drawing an
+ * asymptote for a function that grows without bound would be a picture of a
+ * different theorem.
+ */
+function planLimit(theorem: TheoremIR, classification: Classification): VisualSpec | null {
+  if (classification.payload.kind !== "limit") return null;
+  const { subject, source, target, convergent } = classification.payload.data;
+  const status = classification.claim.status;
+  const label = renderExpression(subject);
+
+  const entities: VisualSpec["entities"] = [
+    {
+      id: "function",
+      kind: "function",
+      label,
+      detail: convergent ? `approaches ${target.display}` : target.label,
+      position: { x: 0.5, y: convergent ? 0.35 : 0.5 },
+      emphasis: "primary",
+      epistemic: status,
+      sourceRef: refFor(theorem, subject.path),
+    },
+    {
+      id: "direction",
+      kind: "label",
+      label: source.display,
+      detail: `input ${source.label}`,
+      position: { x: 0.95, y: 0 },
+      emphasis: "secondary",
+      epistemic: status,
+      sourceRef: refFor(theorem, "conclusion"),
+    },
+  ];
+
+  if (!convergent) {
+    // Where the values run off to, as a *position* rather than as prose. A
+    // renderer that had to substring-match "decreases without bound" would draw
+    // upward the day a new at-bot-flavoured filter is worded differently.
+    entities.push({
+      id: "divergence",
+      kind: "label",
+      label: target.display,
+      detail: target.label,
+      position: { x: 0.5, y: target.kind === "at-bot" ? 0 : 1 },
+      emphasis: "primary",
+      epistemic: status,
+      sourceRef: refFor(theorem, "conclusion"),
+    });
+  }
+
+  if (convergent) {
+    entities.push({
+      id: "limit-value",
+      kind: "bound",
+      label: target.display,
+      detail: "the limit",
+      position: { x: 0.5, y: 0.3 },
+      emphasis: "primary",
+      state: "permitted",
+      epistemic: status,
+      sourceRef: refFor(theorem, target.point?.path ?? "conclusion"),
+    });
+  }
+
+  return {
+    id: `${theorem.id}:limit`,
+    type: "limit-plot",
+    title: convergent ? `${label} ⟶ ${target.display}` : `${label} ${target.label}`,
+    subtitle: theorem.concept ?? theorem.name.split(".").pop(),
+    entities,
+    relationships: convergent
+      ? [
+          {
+            id: "approaches",
+            kind: "maps-to",
+            from: "function",
+            to: "limit-value",
+            label: `as the input ${source.label}`,
+            epistemic: status,
+            sourceRef: refFor(theorem, "conclusion"),
+          },
+        ]
+      : [],
+    axes: [
+      {
+        id: "input",
+        orientation: "horizontal",
+        label: `input (${source.label})`,
+        scale: "schematic",
+        ticks: [],
+        epistemic: "illustrative",
+      },
+      {
+        id: "output",
+        orientation: "vertical",
+        label: "value",
+        scale: "schematic",
+        ticks: convergent ? [{ at: 0.3, label: target.display, emphasis: "primary" }] : [],
+        epistemic: "illustrative",
+      },
+    ],
+    annotations: [
+      { id: "rationale", kind: "rationale", text: classification.rationale, epistemic: status },
+      {
+        id: "shape-notice",
+        kind: "legend",
+        text: convergent
+          ? "The drawn curve is one arbitrary function with the proved limit. The theorem constrains where the values end up, not the path they take to get there."
+          : "The theorem says the values leave every bound. The drawn curve is illustrative; no rate of growth is claimed.",
+        epistemic: "illustrative",
+      },
+    ],
+    epistemic: weakest(status, "illustrative"),
+    provenance: {
+      sources: [refFor(theorem, "conclusion")],
+      rule: classification.rule,
+      inputs: [theorem.id],
+    },
+    rationale: classification.rationale,
+  };
+}
+
 /** `0 < e`: a number line with zero marked and the quantity on one side of it. */
 function planPositivity(theorem: TheoremIR, classification: Classification): VisualSpec | null {
   if (classification.payload.kind !== "positivity") return null;
@@ -765,6 +889,11 @@ export function planVisuals(
 
   for (const classification of classifications) {
     switch (classification.payload.kind) {
+      case "limit": {
+        const spec = planLimit(theorem, classification);
+        if (spec) specs.push(spec);
+        break;
+      }
       case "positivity": {
         const spec = planPositivity(theorem, classification);
         if (spec) specs.push(spec);
@@ -852,6 +981,9 @@ const VISUAL_HINT_ALIASES: Record<string, VisualType> = {
   "monotone-curve": "monotonicity-plot",
   "antitone-curve": "monotonicity-plot",
   "monotonicity-curve": "monotonicity-plot",
+  limit: "limit-plot",
+  convergence: "limit-plot",
+  asymptote: "limit-plot",
   "positivity-fact": "number-line",
   "sign-fact": "number-line",
   "iff-equivalence": "implication-graph",
@@ -872,6 +1004,7 @@ export function resolveVisualHint(hint: string): VisualType | null {
     "lower-bound-plot",
     "number-line",
     "monotonicity-plot",
+    "limit-plot",
     "relationship-diagram",
     "dependency-graph",
     "implication-graph",

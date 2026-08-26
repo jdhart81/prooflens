@@ -14,6 +14,7 @@ import {
   emptySpec,
   expressionTreeSpec,
   graphSpec,
+  limitSpec,
   monotonicitySpec,
   unknownTypeSpec,
   upperBoundSpec,
@@ -27,6 +28,9 @@ const ALL_SPECS: VisualSpec[] = [
   graphSpec("implication-graph"),
   monotonicitySpec("increasing"),
   monotonicitySpec("decreasing"),
+  limitSpec("convergent"),
+  limitSpec("grows"),
+  limitSpec("decreases"),
   expressionTreeSpec(),
   unknownTypeSpec(),
   emptySpec(),
@@ -123,7 +127,7 @@ describe("ascii mode", () => {
       const out = renderText(spec, { unicode: false });
       // Mathematical content from the spec may still be non-ASCII; the drawing
       // characters the renderer chooses must not be.
-      for (const ch of "═─━┄├┤│└┬○●◆✔•…→") {
+      for (const ch of "═─━┄├┤│└┬○●◆✔•…→╲╱┈↑↓") {
         expect(out, `${spec.type} contains ${ch}`).not.toContain(ch);
       }
     }
@@ -342,6 +346,123 @@ describe("monotonicity", () => {
   });
 });
 
+describe("limit plots", () => {
+  it("draws a limit line, and only when the limit is finite", () => {
+    expect(renderText(limitSpec("convergent"))).toMatch(/│┈+/);
+    expect(renderText(limitSpec("grows"))).not.toContain("┈");
+    expect(renderText(limitSpec("decreases"))).not.toContain("┈");
+  });
+
+  it("reads convergence from the limit-value entity, not from the title", () => {
+    const spec = limitSpec("grows");
+    spec.title = "n ↦ 1 / (n + 1) ⟶ 0";
+    expect(renderText(spec)).not.toContain("┈");
+
+    const other = limitSpec("convergent");
+    other.title = "n ↦ 1 / (n + 1) grows without bound";
+    expect(renderText(other)).toMatch(/│┈+/);
+  });
+
+  it("labels the limit line with the limit value and says it is never reached", () => {
+    const out = renderText(limitSpec("convergent"));
+    const line = out.split("\n").find((l) => /┈/.test(l)) as string;
+    expect(line.trimStart().startsWith("0 │")).toBe(true);
+    expect(line).toContain("the limit");
+    expect(out).toContain("never touches");
+  });
+
+  it("keeps the trace clear of the limit line", () => {
+    const rows = plotRows(renderText(limitSpec("convergent")));
+    const limitRow = rows.findIndex((l) => l.includes("┈"));
+    expect(limitRow).toBeGreaterThan(0);
+    // Everything drawn is above the limit line, and the row directly above it
+    // carries the levelled-off tail.
+    for (let i = limitRow + 1; i < rows.length; i += 1) {
+      expect(rows[i]).not.toMatch(/[╲╱─]/);
+    }
+    expect(rows[limitRow - 1]).toMatch(/─{4,}$/);
+  });
+
+  it("sends a divergent trace off the top for a function that grows", () => {
+    const rows = plotRows(renderText(limitSpec("grows")));
+    expect(rows[0]).toContain("↑");
+    expect(rows[rows.length - 1]).toMatch(/─/); // starts low on the left
+    expect(renderText(limitSpec("grows"))).toContain("leaves every bound");
+  });
+
+  it("sends it off the bottom for a function that decreases", () => {
+    const rows = plotRows(renderText(limitSpec("decreases")));
+    expect(rows[rows.length - 1]).toContain("↓");
+    expect(rows[0]).toMatch(/─/); // starts high on the left
+  });
+
+  it("falls back to leaving through the top when the detail says neither", () => {
+    const spec = limitSpec("grows");
+    spec.entities[0]!.detail = "tends along an unnamed filter";
+    expect(renderText(spec)).toContain("↑");
+    expect(renderText(spec)).not.toContain("↓");
+  });
+
+  it("marks the direction of travel at the end of the input axis", () => {
+    const out = renderText(limitSpec("convergent"));
+    expect(out).toMatch(/└─+→ \+∞/);
+    expect(out).toContain("input grows without bound (+∞)");
+  });
+
+  it("uses pure ASCII substitutes that carry the same meaning", () => {
+    const convergent = renderText(limitSpec("convergent"), { unicode: false });
+    expect(convergent).toMatch(/\|\.+/); // the limit line
+    expect(convergent).toContain("\\"); // the falling trace
+    expect(convergent).toMatch(/\+-+-> \+∞/);
+
+    expect(renderText(limitSpec("grows"), { unicode: false })).toContain("^");
+    expect(renderText(limitSpec("decreases"), { unicode: false })).toContain("v");
+  });
+
+  it("shows the function, its detail and the relationship", () => {
+    const out = renderText(limitSpec("convergent"));
+    expect(out).toContain("n ↦ 1 / (n + 1): approaches 0");
+    expect(out).toContain("as the input grows without bound");
+    expect(out).toContain("value against input (grows without bound)");
+  });
+
+  it("does not throw on a limit-plot with no limit value at all", () => {
+    const spec = limitSpec("convergent");
+    spec.entities = spec.entities.filter((e) => e.id !== "limit-value");
+    spec.axes[1]!.ticks = [];
+    expect(() => renderText(spec)).not.toThrow();
+    const out = renderText(spec);
+    expect(out).not.toContain("┈");
+    expect(out).toContain("leaves every bound");
+  });
+
+  it("survives a spec stripped down to nothing but its type", () => {
+    const bare: VisualSpec = {
+      ...limitSpec("convergent"),
+      entities: [],
+      relationships: [],
+      axes: [],
+    };
+    expect(() => renderText(bare)).not.toThrow();
+    for (const line of renderText(bare, { width: 40 }).split("\n")) {
+      expect(displayWidth(line)).toBeLessThanOrEqual(40);
+    }
+  });
+
+  it("is identical across repeated renders", () => {
+    for (const variant of ["convergent", "grows", "decreases"] as const) {
+      for (const width of WIDTHS) {
+        for (const unicode of [true, false]) {
+          const options = { width, unicode };
+          expect(renderText(limitSpec(variant), options)).toBe(
+            renderText(limitSpec(variant), options),
+          );
+        }
+      }
+    }
+  });
+});
+
 // ---------------------------------------------------------------------------
 // Annotations
 // ---------------------------------------------------------------------------
@@ -404,6 +525,7 @@ describe("graceful degradation", () => {
       "lower-bound-plot",
       "number-line",
       "monotonicity-plot",
+      "limit-plot",
       "relationship-diagram",
       "dependency-graph",
       "implication-graph",
@@ -519,7 +641,11 @@ function axisLine(out: string): string {
 }
 
 function plotRows(out: string): string[] {
-  return out.split("\n").filter((line) => line.includes("◆"));
+  const monotone = out.split("\n").filter((line) => line.includes("◆"));
+  if (monotone.length > 0) return monotone;
+  // The limit plot has no marker glyph: its rows are the ones that hang off the
+  // vertical axis, which is everything between the header and the corner.
+  return out.split("\n").filter((line) => /^\s*\S*\s?│/.test(line));
 }
 
 function firstMarkColumn(row: string): number {

@@ -25,7 +25,7 @@ import { lowerDocument } from "@prooflens/math-ir";
 import { classifyTheorem, RULES } from "@prooflens/classifier";
 import { planVisuals } from "@prooflens/visual-ir";
 import { MATH_IR_RULES } from "@prooflens/math-ir";
-import { corpus } from "../../pipeline/test/helpers.js";
+import { corpus, CORPUS_DECLARATION_COUNT } from "../../pipeline/test/helpers.js";
 
 const ALL: readonly EpistemicStatus[] = EPISTEMIC_ORDER;
 
@@ -505,7 +505,7 @@ describe("the real corpus", () => {
   const claims = findClaims(analysed);
 
   it("finds a large number of claims to check (the walk is not vacuous)", () => {
-    expect(analysed.length).toBe(34);
+    expect(analysed.length).toBe(CORPUS_DECLARATION_COUNT);
     expect(claims.length).toBeGreaterThan(100);
   });
 

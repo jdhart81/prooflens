@@ -1,0 +1,669 @@
+{
+  "modules": [
+    "Mathlib.Order.Monotone.Basic",
+    "Mathlib.Algebra.Order.Field.Basic",
+    "Mathlib.Analysis.SpecialFunctions.Log.Basic",
+    "Mathlib.Analysis.MeanInequalities",
+    "Mathlib.Analysis.SpecificLimits.Basic",
+    "Mathlib.Data.Real.Sqrt",
+    "Mathlib.Analysis.SpecialFunctions.BinaryEntropy"
+  ],
+  "notationFidelity": "notation",
+  "totals": {
+    "declarations": 679,
+    "theorems": 662,
+    "definitions": 17,
+    "classified": 653,
+    "unsupported": 26,
+    "classifiedWithOpaqueTerms": 101,
+    "fullyReadable": 552
+  },
+  "rates": {
+    "classified": 0.9617083946980854,
+    "fullyReadable": 0.812960235640648
+  },
+  "byClassification": [
+    {
+      "kind": "equivalence",
+      "declarations": 165
+    },
+    {
+      "kind": "upper-bound",
+      "declarations": 108
+    },
+    {
+      "kind": "equality",
+      "declarations": 104
+    },
+    {
+      "kind": "monotonicity",
+      "declarations": 72
+    },
+    {
+      "kind": "property",
+      "declarations": 52
+    },
+    {
+      "kind": "limit",
+      "declarations": 44
+    },
+    {
+      "kind": "positivity",
+      "declarations": 36
+    },
+    {
+      "kind": "existence",
+      "declarations": 22
+    },
+    {
+      "kind": "lower-bound",
+      "declarations": 20
+    },
+    {
+      "kind": "functional-relationship",
+      "declarations": 13
+    },
+    {
+      "kind": "distinctness",
+      "declarations": 7
+    },
+    {
+      "kind": "definition",
+      "declarations": 6
+    },
+    {
+      "kind": "conjunction",
+      "declarations": 4
+    }
+  ],
+  "unrecognisedShapes": [
+    {
+      "head": null,
+      "declarations": 6,
+      "examples": [
+        "Int.rel_of_forall_rel_succ_of_le",
+        "Int.rel_of_forall_rel_succ_of_lt",
+        "Nat.rel_of_forall_rel_succ_of_le",
+        "Nat.rel_of_forall_rel_succ_of_le_of_le",
+        "Nat.rel_of_forall_rel_succ_of_le_of_lt"
+      ]
+    },
+    {
+      "head": "Asymptotics.IsLittleO",
+      "declarations": 3,
+      "examples": [
+        "Real.isLittleO_const_log_atTop",
+        "Real.isLittleO_log_id_atTop",
+        "Real.isLittleO_pow_log_id_atTop"
+      ]
+    },
+    {
+      "head": "Filter.EventuallyEq",
+      "declarations": 2,
+      "examples": [
+        "Filter.EventuallyEq.div_mul_cancel",
+        "Filter.EventuallyEq.div_mul_cancel_atTop"
+      ]
+    },
+    {
+      "head": "Function.Injective",
+      "declarations": 2,
+      "examples": [
+        "StrictAnti.injective",
+        "StrictMono.injective"
+      ]
+    },
+    {
+      "head": "Not",
+      "declarations": 2,
+      "examples": [
+        "Real.not_continuousAt_deriv_qaryEntropy_one",
+        "Real.not_continuousAt_deriv_qaryEntropy_zero"
+      ]
+    },
+    {
+      "head": "StrictConcaveOn",
+      "declarations": 2,
+      "examples": [
+        "Real.strictConcaveOn_qaryEntropy",
+        "Real.strictConcave_binEntropy"
+      ]
+    },
+    {
+      "head": "WellFoundedGT",
+      "declarations": 2,
+      "examples": [
+        "StrictAnti.wellFoundedGT",
+        "StrictMono.wellFoundedGT"
+      ]
+    },
+    {
+      "head": "WellFoundedLT",
+      "declarations": 2,
+      "examples": [
+        "StrictAnti.wellFoundedLT",
+        "StrictMono.wellFoundedLT"
+      ]
+    },
+    {
+      "head": "DenselyOrdered",
+      "declarations": 1,
+      "examples": [
+        "LinearOrderedSemiField.toDenselyOrdered"
+      ]
+    },
+    {
+      "head": "Filter.HasBasis",
+      "declarations": 1,
+      "examples": [
+        "uniformity_basis_dist_pow_of_lt_one"
+      ]
+    },
+    {
+      "head": "Function.Surjective",
+      "declarations": 1,
+      "examples": [
+        "Real.log_surjective"
+      ]
+    },
+    {
+      "head": "IsGreatest",
+      "declarations": 1,
+      "examples": [
+        "NNReal.isGreatest_Lp"
+      ]
+    },
+    {
+      "head": "IsSquare",
+      "declarations": 1,
+      "examples": [
+        "NNReal.isSquare"
+      ]
+    }
+  ],
+  "opaqueConstants": [
+    {
+      "head": "SummationFilter.unconditional",
+      "declarations": 44,
+      "examples": [
+        "ENNReal.exists_pos_sum_of_countable",
+        "ENNReal.exists_pos_sum_of_countable'",
+        "ENNReal.exists_pos_tsum_mul_lt_of_countable",
+        "ENNReal.tsum_geometric",
+        "ENNReal.tsum_geometric_add_one"
+      ]
+    },
+    {
+      "head": "LT.lt",
+      "declarations": 4,
+      "examples": [
+        "Mathlib.Meta.Positivity.log_nz_of_isNNRat",
+        "Mathlib.Meta.Positivity.log_nz_of_isRat_neg",
+        "Mathlib.Meta.Positivity.log_pos_of_isNNRat",
+        "Mathlib.Meta.Positivity.log_pos_of_isRat_neg"
+      ]
+    },
+    {
+      "head": "Set.image",
+      "declarations": 4,
+      "examples": [
+        "IsGLB.mul_left",
+        "IsGLB.mul_right",
+        "IsLUB.mul_left",
+        "IsLUB.mul_right"
+      ]
+    },
+    {
+      "head": "Top.top",
+      "declarations": 4,
+      "examples": [
+        "EReal.tendsto_const_div_atTop_nhds_zero_nat",
+        "cauchySeq_of_edist_le_geometric",
+        "cauchySeq_of_edist_le_geometric_two",
+        "tsum_geometric_encode_lt_top"
+      ]
+    },
+    {
+      "head": "setOf",
+      "declarations": 4,
+      "examples": [
+        "Nat.pow_monotoneOn",
+        "Nat.pow_self_strictMonoOn",
+        "antitoneOn_nat_Ici_of_succ_le",
+        "monotoneOn_nat_Ici_of_le_succ"
+      ]
+    },
+    {
+      "head": "Asymptotics.IsLittleO",
+      "declarations": 3,
+      "examples": [
+        "Real.isLittleO_const_log_atTop",
+        "Real.isLittleO_log_id_atTop",
+        "Real.isLittleO_pow_log_id_atTop"
+      ],
+      "alsoUnrecognised": true
+    },
+    {
+      "head": "Filter.EventuallyEq",
+      "declarations": 2,
+      "examples": [
+        "Filter.EventuallyEq.div_mul_cancel",
+        "Filter.EventuallyEq.div_mul_cancel_atTop"
+      ],
+      "alsoUnrecognised": true
+    },
+    {
+      "head": "Finset.Nonempty",
+      "declarations": 2,
+      "examples": [
+        "Real.harm_mean_le_geom_mean",
+        "Real.harm_mean_le_geom_mean_weighted"
+      ]
+    },
+    {
+      "head": "Finsupp.sum",
+      "declarations": 2,
+      "examples": [
+        "Finsupp.log_prod",
+        "Real.log_nat_eq_sum_factorization"
+      ]
+    },
+    {
+      "head": "Function.Injective",
+      "declarations": 2,
+      "examples": [
+        "StrictAnti.injective",
+        "StrictMono.injective"
+      ],
+      "alsoUnrecognised": true
+    },
+    {
+      "head": "List.foldl",
+      "declarations": 2,
+      "examples": [
+        "List.foldl_monotone",
+        "List.foldl_strictMono"
+      ]
+    },
+    {
+      "head": "List.foldr",
+      "declarations": 2,
+      "examples": [
+        "List.foldr_monotone",
+        "List.foldr_strictMono"
+      ]
+    },
+    {
+      "head": "Mathlib.Meta.NormNum.IsInt",
+      "declarations": 2,
+      "examples": [
+        "Mathlib.Meta.Positivity.log_nonneg_of_isNegNat",
+        "Mathlib.Meta.Positivity.log_pos_of_isNegNat"
+      ]
+    },
+    {
+      "head": "Mathlib.Meta.NormNum.IsNNRat",
+      "declarations": 2,
+      "examples": [
+        "Mathlib.Meta.Positivity.log_nz_of_isNNRat",
+        "Mathlib.Meta.Positivity.log_pos_of_isNNRat"
+      ]
+    },
+    {
+      "head": "Mathlib.Meta.NormNum.IsNat",
+      "declarations": 2,
+      "examples": [
+        "Mathlib.Meta.Positivity.log_nonneg_of_isNat",
+        "Mathlib.Meta.Positivity.log_pos_of_isNat"
+      ]
+    },
+    {
+      "head": "Mathlib.Meta.NormNum.IsRat",
+      "declarations": 2,
+      "examples": [
+        "Mathlib.Meta.Positivity.log_nz_of_isRat_neg",
+        "Mathlib.Meta.Positivity.log_pos_of_isRat_neg"
+      ]
+    },
+    {
+      "head": "Mathlib.Meta.Positivity.PositivityExt.mk",
+      "declarations": 2,
+      "examples": [
+        "Mathlib.Meta.Positivity.evalLogIntCast",
+        "Mathlib.Meta.Positivity.evalLogNatCast"
+      ]
+    },
+    {
+      "head": "Nat.blt",
+      "declarations": 2,
+      "examples": [
+        "Mathlib.Meta.Positivity.log_pos_of_isNat",
+        "Mathlib.Meta.Positivity.log_pos_of_isNegNat"
+      ]
+    },
+    {
+      "head": "Nat.iterate",
+      "declarations": 2,
+      "examples": [
+        "Real.deriv2_binEntropy",
+        "Real.deriv2_qaryEntropy"
+      ]
+    },
+    {
+      "head": "Not",
+      "declarations": 2,
+      "examples": [
+        "Real.not_continuousAt_deriv_qaryEntropy_one",
+        "Real.not_continuousAt_deriv_qaryEntropy_zero"
+      ],
+      "alsoUnrecognised": true
+    },
+    {
+      "head": "OpenPartialHomeomorph.toFun'",
+      "declarations": 2,
+      "examples": [
+        "Real.expPartialHomeomorph_apply",
+        "Real.expPartialHomeomorph_symm_apply"
+      ]
+    },
+    {
+      "head": "Real.negMulLog",
+      "declarations": 2,
+      "examples": [
+        "Real.binEntropy_eq_negMulLog_add_negMulLog_one_sub",
+        "Real.binEntropy_eq_negMulLog_add_negMulLog_one_sub'"
+      ]
+    },
+    {
+      "head": "Set.Countable",
+      "declarations": 2,
+      "examples": [
+        "Set.Countable.exists_pos_forall_sum_le",
+        "Set.Countable.exists_pos_hasSum_le"
+      ]
+    },
+    {
+      "head": "StrictConcaveOn",
+      "declarations": 2,
+      "examples": [
+        "Real.strictConcaveOn_qaryEntropy",
+        "Real.strictConcave_binEntropy"
+      ],
+      "alsoUnrecognised": true
+    },
+    {
+      "head": "Subtype.mk",
+      "declarations": 2,
+      "examples": [
+        "Real.log_of_ne_zero",
+        "Real.log_of_pos"
+      ]
+    },
+    {
+      "head": "Subtype.val",
+      "declarations": 2,
+      "examples": [
+        "Real.continuous_log",
+        "Real.continuous_log'"
+      ]
+    },
+    {
+      "head": "WellFoundedGT",
+      "declarations": 2,
+      "examples": [
+        "StrictAnti.wellFoundedGT",
+        "StrictMono.wellFoundedGT"
+      ],
+      "alsoUnrecognised": true
+    },
+    {
+      "head": "WellFoundedLT",
+      "declarations": 2,
+      "examples": [
+        "StrictAnti.wellFoundedLT",
+        "StrictMono.wellFoundedLT"
+      ],
+      "alsoUnrecognised": true
+    },
+    {
+      "head": "algebraMap",
+      "declarations": 2,
+      "examples": [
+        "NNReal.tendsto_algebraMap_inverse_atTop_nhds_zero_nat",
+        "tendsto_algebraMap_inverse_atTop_nhds_zero_nat"
+      ]
+    },
+    {
+      "head": "deriv",
+      "declarations": 2,
+      "examples": [
+        "Real.deriv_binEntropy",
+        "Real.deriv_qaryEntropy"
+      ]
+    },
+    {
+      "head": "Bot.bot",
+      "declarations": 1,
+      "examples": [
+        "EReal.tendsto_const_div_atTop_nhds_zero_nat"
+      ]
+    },
+    {
+      "head": "DenselyOrdered",
+      "declarations": 1,
+      "examples": [
+        "LinearOrderedSemiField.toDenselyOrdered"
+      ],
+      "alsoUnrecognised": true
+    },
+    {
+      "head": "ENNReal.ofReal",
+      "declarations": 1,
+      "examples": [
+        "ENNReal.young_inequality"
+      ]
+    },
+    {
+      "head": "Filter.HasBasis",
+      "declarations": 1,
+      "examples": [
+        "uniformity_basis_dist_pow_of_lt_one"
+      ],
+      "alsoUnrecognised": true
+    },
+    {
+      "head": "Finset.expect",
+      "declarations": 1,
+      "examples": [
+        "Real.compact_inner_le_weight_mul_Lp_of_nonneg"
+      ]
+    },
+    {
+      "head": "Finset.range",
+      "declarations": 1,
+      "examples": [
+        "sum_geometric_two_le"
+      ]
+    },
+    {
+      "head": "Finsupp.prod",
+      "declarations": 1,
+      "examples": [
+        "Finsupp.log_prod"
+      ]
+    },
+    {
+      "head": "Function.Surjective",
+      "declarations": 1,
+      "examples": [
+        "Real.log_surjective"
+      ],
+      "alsoUnrecognised": true
+    },
+    {
+      "head": "HasCompl.compl",
+      "declarations": 1,
+      "examples": [
+        "Real.continuousOn_log"
+      ]
+    },
+    {
+      "head": "IsGreatest",
+      "declarations": 1,
+      "examples": [
+        "NNReal.isGreatest_Lp"
+      ],
+      "alsoUnrecognised": true
+    },
+    {
+      "head": "IsSquare",
+      "declarations": 1,
+      "examples": [
+        "NNReal.isSquare"
+      ],
+      "alsoUnrecognised": true
+    },
+    {
+      "head": "Lean.ParserDescr.node",
+      "declarations": 1,
+      "examples": [
+        "Real.«term√_»"
+      ]
+    },
+    {
+      "head": "MonoidWithZeroHom.mk",
+      "declarations": 1,
+      "examples": [
+        "NNReal.sqrtHom"
+      ]
+    },
+    {
+      "head": "NNReal.HolderConjugate",
+      "declarations": 1,
+      "examples": [
+        "NNReal.young_inequality"
+      ]
+    },
+    {
+      "head": "OpenPartialHomeomorph.mk",
+      "declarations": 1,
+      "examples": [
+        "Real.expPartialHomeomorph"
+      ]
+    },
+    {
+      "head": "OrderIso.symm",
+      "declarations": 1,
+      "examples": [
+        "NNReal.sqrt"
+      ]
+    },
+    {
+      "head": "PartialEquiv.source",
+      "declarations": 1,
+      "examples": [
+        "Real.expPartialHomeomorph_source"
+      ]
+    },
+    {
+      "head": "PartialEquiv.target",
+      "declarations": 1,
+      "examples": [
+        "Real.expPartialHomeomorph_target"
+      ]
+    },
+    {
+      "head": "Prod.fst",
+      "declarations": 1,
+      "examples": [
+        "Nat.pow_monotoneOn"
+      ]
+    },
+    {
+      "head": "Prod.snd",
+      "declarations": 1,
+      "examples": [
+        "Nat.pow_monotoneOn"
+      ]
+    },
+    {
+      "head": "Set.range",
+      "declarations": 1,
+      "examples": [
+        "Real.range_log"
+      ]
+    },
+    {
+      "head": "dite",
+      "declarations": 1,
+      "examples": [
+        "Real.log"
+      ]
+    }
+  ],
+  "assumptionSensitivity": {
+    "analysed": 437,
+    "withUnusedHypotheses": 0,
+    "unusedHypotheses": 0,
+    "examples": []
+  },
+  "trust": {
+    "usesSorry": [],
+    "unusualAxioms": []
+  },
+  "figures": {
+    "planned": 1490,
+    "byType": [
+      {
+        "type": "dependency-graph",
+        "count": 527
+      },
+      {
+        "type": "assumption-sensitivity",
+        "count": 437
+      },
+      {
+        "type": "implication-graph",
+        "count": 165
+      },
+      {
+        "type": "upper-bound-plot",
+        "count": 121
+      },
+      {
+        "type": "monotonicity-plot",
+        "count": 72
+      },
+      {
+        "type": "limit-plot",
+        "count": 44
+      },
+      {
+        "type": "lower-bound-plot",
+        "count": 43
+      },
+      {
+        "type": "expression-tree",
+        "count": 42
+      },
+      {
+        "type": "number-line",
+        "count": 36
+      },
+      {
+        "type": "relationship-diagram",
+        "count": 3
+      }
+    ],
+    "byEpistemicStatus": [
+      {
+        "status": "derived",
+        "count": 1174
+      },
+      {
+        "status": "illustrative",
+        "count": 316
+      }
+    ]
+  }
+}

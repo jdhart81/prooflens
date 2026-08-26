@@ -15,4 +15,5 @@ export * from "./types.js";
 export * from "./tables.js";
 export * from "./annotations.js";
 export * from "./render.js";
+export * from "./traverse.js";
 export * from "./lower.js";

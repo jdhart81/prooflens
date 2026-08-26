@@ -48,7 +48,7 @@ def extractFocused (declName : Name) : MetaM Json := do
   let names := (localClosure env declName).qsort (fun a b => a.toString < b.toString)
   let mut decls : Array Json := #[]
   for n in names do
-    if let some j ← extractDeclaration n (moduleOf? env n) then
+    if let some j ← extractOneResilient n (moduleOf? env n) then
       decls := decls.push j
   let fidelity ← probeNotationFidelity
   let home := (moduleOf? env declName).getD Name.anonymous

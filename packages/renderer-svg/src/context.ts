@@ -48,7 +48,8 @@ export type SwatchKind =
   | "used-box"
   | "unused-box"
   | "arrow"
-  | "curve";
+  | "curve"
+  | "asymptote";
 
 export interface LegendRow {
   swatch: SwatchKind;

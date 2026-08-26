@@ -16,6 +16,7 @@ export type VisualType =
   | "lower-bound-plot"
   | "number-line"
   | "monotonicity-plot"
+  | "limit-plot"
   | "relationship-diagram"
   | "dependency-graph"
   | "implication-graph"
@@ -30,9 +31,15 @@ export type Emphasis = "primary" | "secondary" | "muted";
 export type EntityState = "neutral" | "used" | "unused" | "warning" | "excluded" | "permitted";
 
 export interface LogicalPosition {
-  /** Normalised horizontal placement in [0,1], for plot-like visuals. */
+  /** Normalised horizontal placement in [0,1], left to right. */
   x?: number;
-  /** Normalised vertical placement in [0,1]. */
+  /**
+   * Normalised vertical placement in [0,1], **bottom-origin**: 0 sits on the
+   * horizontal axis and 1 is the top of the plot area.
+   *
+   * Stated explicitly because renderers otherwise have to guess, and two
+   * renderers guessing differently would silently flip a figure upside down.
+   */
   y?: number;
   /** Layer index for layered graph layouts (0 = deepest dependency). */
   layer?: number;

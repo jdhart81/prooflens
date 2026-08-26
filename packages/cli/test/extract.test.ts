@@ -186,13 +186,13 @@ describe("summarise", () => {
   const text = summarise(bundle);
 
   it("reports the declaration count", () => {
-    expect(text).toMatch(/declarations\s+34/);
+    expect(text).toMatch(/declarations\s+35/);
     expect(text).toContain(`ProofLens ${bundle.prooflensVersion}`);
     expect(text).toContain("lean4");
   });
 
   it("reports every summary counter", () => {
-    expect(text).toMatch(/structurally classified\s+33/);
+    expect(text).toMatch(/structurally classified\s+34/);
     expect(text).toMatch(/unsupported structure\s+1/);
     expect(text).toMatch(/with unused hypotheses\s+2/);
     expect(text).toMatch(/proved with sorry\s+0/);
@@ -241,8 +241,16 @@ describe("summarise", () => {
   });
 
   it("flags the unsupported fixture", () => {
-    const line = text.split("\n").find((l) => l.trim().startsWith("unsupported_tendsto_fixture"))!;
+    const line = text.split("\n").find((l) => l.trim().startsWith("energy_cost_injective"))!;
+    expect(line).toBeDefined();
     expect(line).toContain("unsupported");
+  });
+
+  it("lists the limit fixture by its classification rather than as unsupported", () => {
+    const line = text.split("\n").find((l) => l.trim().startsWith("sequence_limit_example"))!;
+    expect(line).toBeDefined();
+    expect(line).toContain("limit");
+    expect(line).not.toContain("unsupported");
   });
 
   it("does not flag a declaration whose hypotheses are all used", () => {

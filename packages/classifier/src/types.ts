@@ -1,8 +1,18 @@
 import type { Claim, Rule } from "@prooflens/epistemics";
-import type { MathExpression, MathHypothesis, MathProposition } from "@prooflens/math-ir";
+import type {
+  FilterSpec,
+  MathExpression,
+  MathHypothesis,
+  MathProposition,
+} from "@prooflens/math-ir";
 import type { Direction } from "./signs.js";
 
 export type ClassificationKind =
+  | "property"
+  | "conjunction"
+  | "membership"
+  | "limit"
+  | "existence"
   | "positivity"
   | "distinctness"
   | "upper-bound"
@@ -69,6 +79,37 @@ export interface MonotonicityPayload {
   predicateName: string;
 }
 
+export interface LimitPayload {
+  subject: MathExpression;
+  source: FilterSpec;
+  target: FilterSpec;
+  /** True when the limit is a finite value rather than a divergence. */
+  convergent: boolean;
+}
+
+export interface PropertyPayload {
+  /** The Lean constant, e.g. `Continuous`. */
+  name: string;
+  /** ProofLens's phrasing for it, e.g. "continuous". */
+  label: string;
+  subject: MathExpression | null;
+  args: MathExpression[];
+}
+
+export interface ConjunctionPayload {
+  conjuncts: MathProposition[];
+}
+
+export interface MembershipPayload {
+  element: MathExpression;
+  collection: MathExpression;
+}
+
+export interface ExistencePayload {
+  binder: string;
+  body: MathProposition;
+}
+
 export interface ImplicationPayload {
   antecedent: MathProposition;
   consequent: MathProposition;
@@ -92,6 +133,11 @@ export interface UnsupportedPayload {
 }
 
 export type ClassificationPayload =
+  | { kind: "property"; data: PropertyPayload }
+  | { kind: "conjunction"; data: ConjunctionPayload }
+  | { kind: "membership"; data: MembershipPayload }
+  | { kind: "limit"; data: LimitPayload }
+  | { kind: "existence"; data: ExistencePayload }
   | { kind: "positivity"; data: PositivityPayload }
   | { kind: "distinctness"; data: DistinctnessPayload }
   | { kind: "upper-bound"; data: UpperBoundPayload }

@@ -26,8 +26,10 @@ internal structure: `landauerCost` and `energyBudget` appear as concept nodes,
 and `log_two_pos → landauerCost_pos → ops_le_of_energy_le → energy_ops_bound →
 information_rate_bound` is a genuine path through it.
 
-The file closes with `unsupported_tendsto_fixture`, a statement deliberately
-outside what ProofLens v0.1 is expected to visualise.
+The file closes with two fixtures for ProofLens's behaviour at the edge of its
+competence: `sequence_limit_example`, which was once unreadable and is now a
+supported convergence example, and `energy_cost_injective`, which is the current
+deliberate unsupported-mathematics fixture.
 -/
 
 namespace ProofLens.Examples
@@ -202,23 +204,86 @@ theorem information_rate_bound
   rw [div_le_div_iff₀ ht hc]
   nlinarith [hmul]
 
-/-- **Deliberate "unsupported mathematics" fixture.**
+/-- **A convergence example — and a record of how ProofLens learned to read one.**
 
-ProofLens v0.1 is *not* expected to visualise this. The statement is a
-convergence claim: a filter-level assertion that the sequence `1 / (n + 1)` tends
-to `0` along `atTop`. There is no bounded quantity, no bound expression, and no
-monotone function to plot; the content lives in the interaction between two
-filters, which the v0.1 renderer has no vocabulary for.
+The sequence `n ↦ 1 / (n + 1)` converges to `0` as `n` grows without bound.
 
-It is included precisely so that the corpus contains a case where the correct
-behaviour is a clean "cannot visualise this" rather than a wrong picture. It
-still compiles and is fully proved.
+This declaration entered the corpus as the deliberate *unsupported mathematics*
+fixture. Its original docstring asserted that the content "lives in the
+interaction between two filters, which the v0.1 renderer has no vocabulary for",
+and at the time that was true.
 
-@prooflens.var n meaning="sequence index" units="dimensionless" domain="natural numbers"
+It is no longer true. Measuring ProofLens against a 679-declaration slice of
+mathlib found `Filter.Tendsto` to be the single most common shape it could not
+read — 44 declarations, more than any other unrecognised head constant — and
+that finding motivated first-class limit support: a `limit` proposition kind, a
+`Filter.Tendsto` classifier that separates convergence from divergence, and a
+`limit-plot` figure. ProofLens now reads this statement as "`n ↦ 1 / (n + 1)`
+approaches 0 as its input grows without bound" and classifies it as establishing
+a limit.
+
+The history is recorded here rather than deleted because it is the corpus's one
+worked example of a coverage gap being measured and then closed. The statement
+and its proof are unchanged from the day it was unreadable; only the tooling
+moved. The declaration was renamed from `unsupported_tendsto_fixture`, whose name
+had become a false description of what it tests.
+
+For the fixture that plays the unsupported role today, see
+`energy_cost_injective` below.
+
+@prooflens.var n meaning="sequence index" units="dimensionless" domain="natural numbers" axis="x"
+@prooflens.visual limit-plot
 @prooflens.concept "convergence of a harmonic sequence"
 -/
-theorem unsupported_tendsto_fixture :
+theorem sequence_limit_example :
     Filter.Tendsto (fun n : ℕ => (1 : ℝ) / (n + 1)) Filter.atTop (nhds 0) :=
   tendsto_one_div_add_atTop_nhds_zero_nat
+
+/-- **Deliberate "unsupported mathematics" fixture.**
+
+The map sending an operation count `N` to the energy that many operations cost,
+`N ↦ N * landauerCost kB T D`, is injective: because the per-operation cost is
+strictly positive, two workloads of different sizes can never present the same
+energy bill. Physically this is what makes the bill a faithful measurement of
+the work done — reading the joules back tells you the operation count exactly.
+
+**ProofLens is expected to fail on this, and to fail cleanly.** The head constant
+of the proposition is `Function.Injective`, for which no classifier exists today.
+There is no bounded quantity, no bound expression, no monotone function and no
+filter; the content is a universally quantified implication between equalities,
+hidden behind a definition that unfolds to a `∀`. It is not a limit, and it is
+not a bound, so none of the supported proposition kinds apply.
+
+The correct behaviour is a clean report that no classifier supports this
+statement, accompanied by the full formal structure — the statement, its
+hypotheses, its dependencies — so that a reader still gets everything ProofLens
+does know. What is *not* acceptable is a plausible-looking wrong picture: the
+underlying function here is affine, so a renderer that ignored the
+`Function.Injective` head and pattern-matched on the body could easily emit a
+monotone-curve figure, which would be answering a question nobody asked.
+
+`Function.Injective` was chosen over the other unrecognised shapes the mathlib
+coverage sweep reported because it is adjacent to things ProofLens *does*
+support — `strictMono_affine` in `Monotonicity.lean` is one implication away —
+which makes it a sharper test of whether classification keys on the proposition's
+head or merely on the shape of what is inside it.
+
+No visual annotation is given for this declaration, deliberately: there is no
+correct figure to suggest. (The annotation keyword is spelled out nowhere in
+this docstring on purpose, so that even a parser matching on substrings rather
+than on line starts cannot mistake this paragraph for a request to draw
+something.)
+
+@prooflens.var kB meaning="Boltzmann constant" units="J/K" domain="positive reals"
+@prooflens.var T meaning="operating temperature of the heat bath" units="K" domain="positive reals"
+@prooflens.var D meaning="useful operations extracted per erased bit" units="dimensionless" domain="positive reals"
+@prooflens.var N meaning="number of logical operations performed" units="ops" domain="reals"
+@prooflens.concept "energy cost determines operation count"
+-/
+theorem energy_cost_injective (kB T D : ℝ) (hkB : 0 < kB) (hT : 0 < T) (hD : 0 < D) :
+    Function.Injective fun N : ℝ => N * landauerCost kB T D := by
+  intro a b h
+  dsimp only at h
+  exact mul_right_cancel₀ (ne_of_gt (landauerCost_pos kB T D hkB hT hD)) h
 
 end ProofLens.Examples

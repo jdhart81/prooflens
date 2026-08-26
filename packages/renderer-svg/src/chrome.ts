@@ -102,6 +102,8 @@ function swatch(kind: LegendRow["swatch"], x: number, cy: number, arrowId: strin
         `M ${num(x)} ${num(cy + 5)} C ${num(x + 8)} ${num(cy + 5)} ${num(x + 14)} ${num(cy - 5)} ${num(x + 22)} ${num(cy - 5)}`,
         "pl-curve",
       );
+    case "asymptote":
+      return line(x, cy, x + 22, cy, "pl-asymptote");
     default:
       return "";
   }

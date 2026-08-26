@@ -38,6 +38,19 @@ export interface Glyphs {
   lastBranch: string;
   trunk: string;
   gap: string;
+  /** Falling and rising segments of a schematic curve. */
+  curveFall: string;
+  curveRise: string;
+  /** A stretch of curve that has levelled off. */
+  curveFlat: string;
+  /**
+   * The limit line a convergent curve closes on. Distinct from `excluded`: this
+   * one is a value being approached, not a region being ruled out.
+   */
+  asymptote: string;
+  /** A curve leaving the top or the bottom of the frame. */
+  arrowUp: string;
+  arrowDown: string;
   /** Inline arrow, e.g. in an edge listing. */
   arrow: string;
   /** Checkbox states for the hypothesis list. */
@@ -65,6 +78,12 @@ export const UNICODE_GLYPHS: Glyphs = {
   lastBranch: "└─ ",
   trunk: "│  ",
   gap: "   ",
+  curveFall: "╲",
+  curveRise: "╱",
+  curveFlat: "─",
+  asymptote: "┈",
+  arrowUp: "↑",
+  arrowDown: "↓",
   arrow: "→",
   checked: "✔",
   unchecked: "·",
@@ -90,6 +109,12 @@ export const ASCII_GLYPHS: Glyphs = {
   lastBranch: "`- ",
   trunk: "|  ",
   gap: "   ",
+  curveFall: "\\",
+  curveRise: "/",
+  curveFlat: "-",
+  asymptote: ".",
+  arrowUp: "^",
+  arrowDown: "v",
   arrow: "->",
   checked: "x",
   unchecked: " ",

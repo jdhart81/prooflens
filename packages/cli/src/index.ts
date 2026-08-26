@@ -8,3 +8,4 @@
  */
 export * from "./extract.js";
 export * from "./commands.js";
+export * from "./coverage-report.js";

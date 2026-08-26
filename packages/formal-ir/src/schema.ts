@@ -121,8 +121,15 @@ export const FormalBinderSchema = z.object({
   rawName: z.string().optional(),
   fvarId: z.string(),
   binderInfo: z.enum(["default", "implicit", "strictImplicit", "instImplicit"]),
-  /** `hypothesis` when the binder's type is a `Prop`, `parameter` otherwise. */
-  role: z.enum(["hypothesis", "parameter"]),
+  /**
+   * `instance` for typeclass instance binders, `hypothesis` for other
+   * `Prop`-valued binders, `parameter` otherwise.
+   *
+   * Instances are separated because they are plumbing rather than mathematics:
+   * counting `[IsStrictOrderedRing α]` as a stated assumption would distort
+   * assumption sensitivity and fill figures with noise.
+   */
+  role: z.enum(["hypothesis", "parameter", "instance"]),
   type: FormalExprSchema,
   usage: BinderUsageSchema,
 });
@@ -169,6 +176,12 @@ export const FormalDeclarationSchema = z.object({
   /** The trust base: axioms this declaration ultimately rests on. */
   axioms: z.array(z.string()),
   proofTermAvailable: z.boolean(),
+  /**
+   * Set when extraction of this declaration failed. The row is kept rather than
+   * dropped, so a sweep reports what it could not read instead of quietly
+   * returning fewer declarations than the module contains.
+   */
+  extractionError: z.string().nullable().default(null),
   /** True if the "proof" bottoms out in `sorryAx`. Such a declaration is NOT proved. */
   usesSorry: z.boolean(),
 });

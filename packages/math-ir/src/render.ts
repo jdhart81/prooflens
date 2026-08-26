@@ -11,6 +11,7 @@ const PRECEDENCE: Record<string, number> = {
   neg: 75,
   pow: 80,
   inv: 85,
+  comp: 88,
   abs: 90,
 };
 
@@ -42,10 +43,17 @@ export function renderExpression(expr: MathExpression): string {
       return `${expr.parameter} ↦ ${renderExpression(expr.body)}`;
     case "opaque":
       return expr.display;
-    case "application":
-      return expr.args.length === 0
-        ? expr.display
-        : `${expr.display}(${expr.args.map(renderExpression).join(", ")})`;
+    case "application": {
+      if (expr.args.length === 0) return expr.display;
+      // Interval displays carry their own placeholders (`[·,·)`), so they are
+      // filled in rather than called: `[0, 1)`, not `[·,·)(0, 1)`.
+      if (expr.display.includes("·")) {
+        let filled = expr.display;
+        for (const arg of expr.args) filled = filled.replace("·", renderExpression(arg));
+        return filled;
+      }
+      return `${expr.display}(${expr.args.map(renderExpression).join(", ")})`;
+    }
     case "operator": {
       const p = PRECEDENCE[expr.op] ?? 50;
       if (expr.op === "neg") return `−${wrap(expr.args[0]!, p, false)}`;
@@ -71,6 +79,14 @@ export function renderProposition(prop: MathProposition): string {
     }
     case "implication":
       return `${renderProposition(prop.antecedent)} → ${renderProposition(prop.consequent)}`;
+    case "limit":
+      return `${renderExpression(prop.subject)} ⟶ ${prop.target.display} (along ${prop.source.display})`;
+    case "existential":
+      return `∃ ${prop.binder}, ${renderProposition(prop.body)}`;
+    case "conjunction":
+      return prop.conjuncts.map(renderProposition).join(" ∧ ");
+    case "membership":
+      return `${renderExpression(prop.element)} ∈ ${renderExpression(prop.collection)}`;
     case "opaque":
       return prop.display;
   }
@@ -112,6 +128,21 @@ export function variablesInProposition(
     case "implication":
       variablesInProposition(prop.antecedent, into);
       variablesInProposition(prop.consequent, into);
+      break;
+    case "limit":
+      variablesIn(prop.subject, into);
+      if (prop.source.point) variablesIn(prop.source.point, into);
+      if (prop.target.point) variablesIn(prop.target.point, into);
+      break;
+    case "existential":
+      variablesInProposition(prop.body, into);
+      break;
+    case "conjunction":
+      for (const conjunct of prop.conjuncts) variablesInProposition(conjunct, into);
+      break;
+    case "membership":
+      variablesIn(prop.element, into);
+      variablesIn(prop.collection, into);
       break;
     default:
       break;

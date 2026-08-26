@@ -42,7 +42,9 @@ export function parseFormalIRJson(text: string): FormalIRDocument {
  * is allowed to be labelled `verified`. A declaration whose proof reaches
  * `sorryAx` gets `null`, and every claim ProofLens later makes about it will be
  * marked `derived` or weaker — which is exactly right, because nothing about it
- * was actually proved.
+ * was actually proved. The same applies to a declaration whose extraction
+ * failed: a stub row is a record of what ProofLens could not read, not evidence
+ * of what Lean accepted.
  */
 export function kernelWitness(
   doc: FormalIRDocument,
@@ -53,7 +55,10 @@ export function kernelWitness(
     declaration: decl.name,
     module: decl.source?.module ?? null,
     axioms: decl.axioms,
-    provedWithoutSorry: !decl.usesSorry,
+    // A stub row means extraction failed, so ProofLens never saw the real
+    // declaration. `usesSorry: false` records that no `sorry` was *observed* —
+    // which is not evidence the kernel accepted anything.
+    provedWithoutSorry: !decl.usesSorry && decl.extractionError === null,
   });
 }
 

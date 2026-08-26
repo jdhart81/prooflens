@@ -36,6 +36,50 @@ def probeNotationFidelity : MetaM String := do
   let rendered ← try ppString e catch _ => pure ""
   return if rendered.contains '≤' then "notation" else "raw"
 
+/--
+Extract one declaration without letting it take the run down with it.
+
+Two things go wrong at mathlib scale, and neither should be fatal:
+
+* **Heartbeats.** The whole extraction loop otherwise shares a single budget, so
+  declaration 400 fails not because it is expensive but because the 399 before
+  it were. `withCurrHeartbeats` gives each declaration a fresh allowance.
+* **Individual failures.** A pathological declaration — a deeply nested
+  instance, a term the pretty printer chokes on — should be reported as one
+  failed row, not silently drop 600 others.
+
+A failed declaration still appears in the Formal IR, carrying its name and the
+error. Losing a theorem without saying so is the outcome ProofLens is not
+allowed to have, and that applies to extraction as much as to visualization.
+-/
+def extractOneResilient (declName : Name) (moduleName : Option Name) :
+    MetaM (Option Json) := do
+  try
+    Core.withCurrHeartbeats <| extractDeclaration declName moduleName
+  catch e =>
+    let message ← e.toMessageData.toString
+    return some <| Json.mkObj
+      [ ("name", Json.str declName.toString)
+      , ("namespace", Json.str declName.getPrefix.toString)
+      , ("kind", Json.str "theorem")
+      , ("docstring", Json.null)
+      , ("source", Json.null)
+      , ("binders", Json.arr #[])
+      , ("conclusion", Json.mkObj
+          [ ("pretty", Json.str "<extraction failed>")
+          , ("tree", Json.mkObj [("kind", Json.str "sort"), ("level", Json.str "0")])
+          , ("constants", Json.arr #[]) ])
+      , ("definitionBody", Json.null)
+      , ("statement", Json.mkObj
+          [ ("pretty", Json.str "<extraction failed>")
+          , ("tree", Json.mkObj [("kind", Json.str "sort"), ("level", Json.str "0")])
+          , ("constants", Json.arr #[]) ])
+      , ("dependencies", Json.arr #[])
+      , ("axioms", Json.arr #[])
+      , ("proofTermAvailable", Lean.toJson false)
+      , ("usesSorry", Lean.toJson false)
+      , ("extractionError", Json.str message) ]
+
 /-- Extract every user-facing declaration originating in `modules`. -/
 def extractModules (modules : Array Name) : MetaM Json := do
   let env ← getEnv
@@ -49,7 +93,7 @@ def extractModules (modules : Array Name) : MetaM Json := do
   let sorted := names.qsort (fun a b => a.toString < b.toString)
   let mut decls : Array Json := #[]
   for n in sorted do
-    if let some j ← extractDeclaration n (moduleOf? env n) then
+    if let some j ← extractOneResilient n (moduleOf? env n) then
       decls := decls.push j
   let fidelity ← probeNotationFidelity
   return Json.mkObj

@@ -167,6 +167,9 @@ function pushBody(lines: string[], spec: VisualSpec, ctx: Ctx): void {
     case "monotonicity-plot":
       pushMonotonicity(lines, spec, ctx);
       return;
+    case "limit-plot":
+      pushLimit(lines, spec, ctx);
+      return;
     default:
       pushGeneric(lines, spec, ctx);
   }
@@ -514,6 +517,158 @@ function pushMonotonicity(lines: string[], spec: VisualSpec, ctx: Ctx): void {
   lines.push("");
   for (const line of wrapText(
     "The plotted points are one arbitrary function with the proved order property. The theorem constrains the ordering, not the shape.",
+    ctx.inner,
+  )) {
+    lines.push(`${INDENT}${line}`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Limit
+// ---------------------------------------------------------------------------
+
+/** Rows in the schematic plots. Eight is enough for a direction, not a shape. */
+const PLOT_ROWS = 8;
+
+/**
+ * A miniature limit plot.
+ *
+ * Which of the two pictures is drawn is read from the spec — the planner emits
+ * a `limit-value` entity exactly when the limit is a finite value — and never
+ * from the wording of the title.
+ *
+ * Convergent limits get a dotted line at the limit value with the trace
+ * levelling off one row above it. That row is never closed: `Tendsto f l
+ * (nhds L)` says the values get arbitrarily close to `L`, not that any of them
+ * is `L`, and a trace drawn sitting on its own limit would claim more than the
+ * theorem does. Divergences get no limit line at all and an arrow marking the
+ * trace leaving the frame, in the direction the function's own detail names.
+ */
+function pushLimit(lines: string[], spec: VisualSpec, ctx: Ctx): void {
+  const g = ctx.glyphs;
+  const fn = spec.entities.find((e) => e.kind === "function");
+  const limit =
+    spec.entities.find((e) => e.id === "limit-value") ??
+    spec.entities.find((e) => e.kind === "bound");
+  const direction =
+    spec.entities.find((e) => e.id === "direction") ??
+    spec.entities.find((e) => e.kind === "label");
+  const convergent = limit !== undefined;
+  const downward =
+    !convergent && (fn?.detail ?? "").toLowerCase().includes("decreases without bound");
+
+  // The gutter carries the limit value, in the position an axis tick label
+  // would occupy. It is the one number in this figure that was proved.
+  const limitLabel = convergent ? clip(limit.label, 10, ctx.unicode) : "";
+  const gutter = displayWidth(limitLabel);
+  // The 18 columns held back are for the trailing note ("the limit", "leaves
+  // every bound"), which names what the drawing is doing and must not be the
+  // thing that gets clipped on a narrow terminal.
+  const cols = Math.max(8, Math.min(48, ctx.inner - 18 - gutter));
+
+  const asymRow = convergent
+    ? Math.max(
+        2,
+        Math.min(
+          PLOT_ROWS - 1,
+          Math.round((1 - clamp01(limit.position?.y, 0.3)) * (PLOT_ROWS - 1)),
+        ),
+      )
+    : -1;
+  const settleRow = asymRow - 1;
+
+  const grid: string[][] = [];
+  for (let r = 0; r < PLOT_ROWS; r += 1) grid.push(new Array<string>(cols).fill(" "));
+
+  const rowAt = (t: number): number => {
+    if (convergent) return Math.round(settleRow * (1 - Math.pow(1 - t, 3)));
+    // Flat for most of the frame and then steep: the shape of leaving, with no
+    // rate claimed by either the theorem or the picture.
+    return downward
+      ? Math.round((PLOT_ROWS - 1) * Math.pow(t, 3))
+      : Math.round((PLOT_ROWS - 1) * (1 - Math.pow(t, 3)));
+  };
+
+  let previous = -1;
+  for (let c = 0; c < cols; c += 1) {
+    const t = cols === 1 ? 0 : c / (cols - 1);
+    const r = Math.max(0, Math.min(PLOT_ROWS - 1, rowAt(t)));
+    const row = grid[r] as string[];
+    row[c] =
+      previous === -1 || r === previous ? g.curveFlat : r > previous ? g.curveFall : g.curveRise;
+    previous = r;
+  }
+
+  const exitRow = convergent ? -1 : downward ? PLOT_ROWS - 1 : 0;
+  if (!convergent) {
+    (grid[exitRow] as string[])[cols - 1] = downward ? g.arrowDown : g.arrowUp;
+  }
+  if (convergent) {
+    for (let c = 0; c < cols; c += 1) (grid[asymRow] as string[])[c] = g.asymptote;
+  }
+
+  const pad = (label: string): string =>
+    `${" ".repeat(Math.max(0, gutter - displayWidth(label)))}${label}${gutter > 0 ? " " : ""}`;
+
+  /** Append a trailing note to a row, but only when it will fit legibly. */
+  const withNote = (row: string, note: string): string => {
+    const tail = ctx.width - displayWidth(row) - 2;
+    return tail >= 12 ? `${row}  ${clip(note, tail, ctx.unicode)}` : row;
+  };
+
+  // Blank rows below the last drawn feature say nothing, so they are dropped —
+  // all but one, which keeps the limit line off the input axis.
+  let lastRow = 0;
+  for (let r = 0; r < PLOT_ROWS; r += 1) {
+    if ((grid[r] as string[]).some((cell) => cell !== " ")) lastRow = r;
+  }
+  const drawnRows = Math.min(PLOT_ROWS - 1, lastRow + 1);
+
+  for (let r = 0; r <= drawnRows; r += 1) {
+    const label = convergent && r === asymRow ? limitLabel : "";
+    let row = `${INDENT}${pad(label)}${g.vAxis}${(grid[r] as string[]).join("")}`;
+    row = row.replace(/\s+$/, "");
+    if (r === exitRow) row = withNote(row, "leaves every bound");
+    if (convergent && r === asymRow) row = withNote(row, "the limit");
+    lines.push(row);
+  }
+
+  const xAxis = spec.axes.find((a) => a.orientation === "horizontal");
+  const yAxis = spec.axes.find((a) => a.orientation === "vertical");
+  const axisRow = `${INDENT}${" ".repeat(displayWidth(pad("")))}${g.corner}${g.axis.repeat(cols)}${g.arrow}`;
+  lines.push(clip(direction ? `${axisRow} ${direction.label}` : axisRow, ctx.width, ctx.unicode));
+
+  lines.push(
+    clip(
+      `${INDENT}${yAxis?.label ?? "value"} against ${xAxis?.label ?? "input"} — both scales schematic`,
+      ctx.width,
+      ctx.unicode,
+    ),
+  );
+
+  if (fn) {
+    lines.push("");
+    lines.push(
+      clip(
+        `${INDENT}${fn.label}: ${fn.detail ?? (convergent ? "converges" : "leaves every bound")}`,
+        ctx.width,
+        ctx.unicode,
+      ),
+    );
+  }
+  for (const relationship of spec.relationships) {
+    if (!relationship.label) continue;
+    lines.push(clip(`${INDENT}${relationship.label}`, ctx.width, ctx.unicode));
+  }
+  if (direction?.detail) {
+    lines.push(clip(`${INDENT}${direction.detail} (${direction.label})`, ctx.width, ctx.unicode));
+  }
+
+  lines.push("");
+  for (const line of wrapText(
+    convergent
+      ? `The ${g.asymptote.repeat(3)} line is the limit value. The trace closes on it and never touches it, which is exactly what the theorem claims: the values get arbitrarily close, not equal.`
+      : `The ${downward ? g.arrowDown : g.arrowUp} marks the trace leaving the frame and continuing past it. There is no limit line to draw, and no rate of growth is claimed.`,
     ctx.inner,
   )) {
     lines.push(`${INDENT}${line}`);

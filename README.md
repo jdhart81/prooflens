@@ -156,6 +156,7 @@ pnpm prooflens extract --project corpus \
 pnpm prooflens summary  formal-ir.json
 pnpm prooflens explain  formal-ir.json information_rate_bound
 pnpm prooflens render   formal-ir.json --out-dir figures --format both
+pnpm prooflens coverage formal-ir.json
 pnpm prooflens inspect  formal-ir.json information_rate_bound --stage math
 ```
 
@@ -208,17 +209,36 @@ If you hit one, [please report it](.github/ISSUE_TEMPLATE/unsupported_mathematic
 
 ## Status
 
-v0.1. It works end to end and it is small.
+v0.1. It works end to end, and it has been measured.
 
-Against its own 34-declaration corpus: 33 declarations classified, 1 unsupported,
-72 figures planned, 2 theorems found to state hypotheses their proofs never use.
-736 tests.
+Against a **679-declaration slice of real mathlib** — order theory, real
+analysis, inequalities, binary entropy — ProofLens structurally classifies
+**96.2%** of declarations and reads **81.3%** of them end to end, meaning the
+conclusion classified *and* every term inside it has a name. 1,490 figures
+render without a failure.
 
-The constant table is deliberately modest, so coverage of mathlib at large is
-low. Only the final proof term is analysed, not tactic structure. Plots are
-schematic rather than numeric, and they say so. See
-[the roadmap](docs/roadmap.md) for what is honest about the limitations and
-what comes next.
+Those numbers started at 76.0% and 33.9%. They moved because ProofLens measures
+itself: `prooflens coverage` emits a ranked backlog of exactly which Lean
+constants and statement shapes are costing coverage, and two rounds of work
+against that backlog produced the difference. Nothing was guessed at. The full
+report, including what remains, is in [docs/coverage.md](docs/coverage.md).
+
+```bash
+pnpm prooflens coverage formal-ir.json
+```
+
+One calibration result is worth stating plainly: assumption sensitivity analysed
+437 mathlib declarations and found **zero** stated-but-unused hypotheses. Not
+one. That is not a bug — all 770 hypothesis binders in the slice occur in their
+proof term, later binder types, or conclusion. Mathlib is curated and linted, and
+a redundant hypothesis has to survive both machinery and review to reach it. The tool's value is for drafts, reformalizations, and above all
+machine-generated proofs, where redundant hypotheses accumulate because nothing
+is grooming them. ProofLens's own hand-written corpus has two.
+
+Remaining limits: only the final proof term is analysed, not tactic structure;
+plots are schematic rather than numeric, and they say so; coverage is untested
+outside order theory and analysis; dependency graphs are single-module. 1,116
+tests. See [the roadmap](docs/roadmap.md).
 
 ## Documentation
 
@@ -226,6 +246,7 @@ what comes next.
 - [The epistemic model](docs/epistemic-model.md) — start here
 - [MathIR](docs/math-ir.md) — the semantic representation, and how to teach it a new constant
 - [VisualIR](docs/visual-ir.md) — the visualization representation, and how to add a renderer
+- [Coverage against mathlib](docs/coverage.md) — the measured numbers and the ranked backlog
 - [Roadmap](docs/roadmap.md)
 - ADR [0001](docs/adr/0001-lean-extraction.md) — how extraction works, and why we do not build a tracer
 - ADR [0002](docs/adr/0002-first-rendering-surface.md) — why the infoview came first

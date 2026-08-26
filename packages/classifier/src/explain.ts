@@ -1,6 +1,11 @@
 import { derive, transcribe, type Claim, type EpistemicStatus } from "@prooflens/epistemics";
 import { kernelWitness, type FormalDeclaration, type FormalIRDocument } from "@prooflens/formal-ir";
-import { renderExpression, RELATION_PHRASE, type TheoremIR } from "@prooflens/math-ir";
+import {
+  renderExpression,
+  renderProposition,
+  RELATION_PHRASE,
+  type TheoremIR,
+} from "@prooflens/math-ir";
 import { RULES } from "./rules.js";
 import { DIRECTION_PHRASE } from "./signs.js";
 import type { Classification } from "./types.js";
@@ -91,6 +96,18 @@ export function explain(
     mathematical = `${renderExpression(prop.lhs)} ${RELATION_PHRASE[prop.relation]} ${renderExpression(prop.rhs)}.`;
   } else if (prop.kind === "predicate") {
     mathematical = `${prop.subject ? renderExpression(prop.subject) : "the subject"} satisfies ${prop.name}.`;
+  } else if (prop.kind === "limit") {
+    mathematical = `${renderExpression(prop.subject)} ${
+      prop.target.kind === "neighbourhood" || prop.target.kind === "punctured"
+        ? `approaches ${prop.target.display}`
+        : prop.target.label
+    } as its input ${prop.source.label}.`;
+  } else if (prop.kind === "conjunction") {
+    mathematical = `The conclusion asserts ${prop.conjuncts.length} things at once.`;
+  } else if (prop.kind === "membership") {
+    mathematical = `${renderExpression(prop.element)} lies in ${renderExpression(prop.collection)}.`;
+  } else if (prop.kind === "existential") {
+    mathematical = `Some ${prop.binder} exists for which ${renderProposition(prop.body)}.`;
   } else if (prop.kind === "implication") {
     mathematical = "The conclusion asserts that one proposition follows from another.";
   } else if (isDefinition && theorem.definitionBody) {
@@ -111,6 +128,7 @@ export function explain(
   );
   const lower = classifications.find((c) => c.payload.kind === "lower-bound");
   const mono = classifications.find((c) => c.payload.kind === "monotonicity");
+  const limit = classifications.find((c) => c.payload.kind === "limit");
   const functional = classifications.find((c) => c.payload.kind === "functional-relationship");
   const unsupported = classifications.find((c) => c.payload.kind === "unsupported");
 
@@ -127,6 +145,11 @@ export function explain(
     structural = `The theorem establishes a lower bound: \`${renderExpression(
       boundedQuantity,
     )}\` is at least \`${renderExpression(boundExpr)}\`.`;
+  } else if (limit && limit.payload.kind === "limit") {
+    const { subject, source, target, convergent } = limit.payload.data;
+    structural = convergent
+      ? `The theorem establishes a limit: \`${renderExpression(subject)}\` converges to \`${target.display}\` as its input ${source.label}.`
+      : `The theorem establishes a divergence: \`${renderExpression(subject)}\` ${target.label} as its input ${source.label}.`;
   } else if (mono && mono.payload.kind === "monotonicity") {
     const { direction, strict, subject } = mono.payload.data;
     structural = `The theorem establishes that ${

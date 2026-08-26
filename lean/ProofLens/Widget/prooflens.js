@@ -4116,8 +4116,15 @@ var FormalBinderSchema = external_exports.object({
   rawName: external_exports.string().optional(),
   fvarId: external_exports.string(),
   binderInfo: external_exports.enum(["default", "implicit", "strictImplicit", "instImplicit"]),
-  /** `hypothesis` when the binder's type is a `Prop`, `parameter` otherwise. */
-  role: external_exports.enum(["hypothesis", "parameter"]),
+  /**
+   * `instance` for typeclass instance binders, `hypothesis` for other
+   * `Prop`-valued binders, `parameter` otherwise.
+   *
+   * Instances are separated because they are plumbing rather than mathematics:
+   * counting `[IsStrictOrderedRing α]` as a stated assumption would distort
+   * assumption sensitivity and fill figures with noise.
+   */
+  role: external_exports.enum(["hypothesis", "parameter", "instance"]),
   type: FormalExprSchema,
   usage: BinderUsageSchema
 });
@@ -4158,6 +4165,12 @@ var FormalDeclarationSchema = external_exports.object({
   /** The trust base: axioms this declaration ultimately rests on. */
   axioms: external_exports.array(external_exports.string()),
   proofTermAvailable: external_exports.boolean(),
+  /**
+   * Set when extraction of this declaration failed. The row is kept rather than
+   * dropped, so a sweep reports what it could not read instead of quietly
+   * returning fewer declarations than the module contains.
+   */
+  extractionError: external_exports.string().nullable().default(null),
   /** True if the "proof" bottoms out in `sorryAx`. Such a declaration is NOT proved. */
   usesSorry: external_exports.boolean()
 });
@@ -4257,7 +4270,10 @@ function kernelWitness(doc, decl) {
     declaration: decl.name,
     module: decl.source?.module ?? null,
     axioms: decl.axioms,
-    provedWithoutSorry: !decl.usesSorry
+    // A stub row means extraction failed, so ProofLens never saw the real
+    // declaration. `usesSorry: false` records that no `sorry` was *observed* —
+    // which is not evidence the kernel accepted anything.
+    provedWithoutSorry: !decl.usesSorry && decl.extractionError === null
   });
 }
 function sourceRefFor(doc, decl, path2) {
@@ -4337,8 +4353,67 @@ var NAMED_FUNCTIONS = {
   "Real.exp": { display: "exp", valueArity: 1 },
   "Real.sin": { display: "sin", valueArity: 1 },
   "Real.cos": { display: "cos", valueArity: 1 },
+  "Real.tan": { display: "tan", valueArity: 1 },
+  "Real.sinh": { display: "sinh", valueArity: 1 },
+  "Real.cosh": { display: "cosh", valueArity: 1 },
+  "Real.tanh": { display: "tanh", valueArity: 1 },
+  "Real.arctan": { display: "arctan", valueArity: 1 },
   "Real.rpow": { display: "rpow", valueArity: 2 },
-  "Nat.succ": { display: "succ", valueArity: 1 }
+  "Real.toNNReal": { display: "toNNReal", valueArity: 1 },
+  "Real.nnabs": { display: "nnabs", valueArity: 1 },
+  "NNReal.sqrt": { display: "\u221A", valueArity: 1 },
+  "Nat.succ": { display: "succ", valueArity: 1 },
+  "Nat.sqrt": { display: "\u230A\u221A\u230B", valueArity: 1 },
+  "Nat.factorial": { display: "factorial", valueArity: 1 },
+  // Aggregations. Rendered as named applications rather than big-operator
+  // notation: `∑(s, i ↦ f i)` is honest about the two arguments, where a bare
+  // `∑` would hide which set is being summed over.
+  "Finset.sum": { display: "\u2211", valueArity: 2 },
+  "Finset.prod": { display: "\u220F", valueArity: 2 },
+  "Finset.card": { display: "card", valueArity: 1 },
+  tsum: { display: "\u2211'", valueArity: 1 },
+  "Max.max": { display: "max", valueArity: 2 },
+  "Min.min": { display: "min", valueArity: 2 },
+  "Dist.dist": { display: "dist", valueArity: 2 },
+  "EDist.edist": { display: "edist", valueArity: 2 },
+  "Set.indicator": { display: "indicator", valueArity: 2 },
+  "Nat.floor": { display: "\u230A\xB7\u230B", valueArity: 1 },
+  "Nat.ceil": { display: "\u2308\xB7\u2309", valueArity: 1 },
+  "Int.floor": { display: "\u230A\xB7\u230B", valueArity: 1 },
+  "Int.ceil": { display: "\u2308\xB7\u2309", valueArity: 1 },
+  cmp: { display: "cmp", valueArity: 2 },
+  ite: { display: "if", valueArity: 3 },
+  // Order duality is a genuine change of viewpoint, not a no-op, so it is named
+  // rather than made transparent. Hiding it would silently turn a statement
+  // about the dual order into a statement about the original.
+  "OrderDual.toDual": { display: "toDual", valueArity: 1 },
+  "OrderDual.ofDual": { display: "ofDual", valueArity: 1 },
+  // Intervals. They appear constantly as the set argument of `MonotoneOn` and
+  // friends, so leaving them opaque made otherwise-readable statements unreadable.
+  "Set.Icc": { display: "[\xB7, \xB7]", valueArity: 2 },
+  "Set.Ico": { display: "[\xB7, \xB7)", valueArity: 2 },
+  "Set.Ioc": { display: "(\xB7, \xB7]", valueArity: 2 },
+  "Set.Ioo": { display: "(\xB7, \xB7)", valueArity: 2 },
+  "Set.Iic": { display: "(\u2212\u221E,\xB7]", valueArity: 1 },
+  "Set.Iio": { display: "(\u2212\u221E,\xB7)", valueArity: 1 },
+  "Set.Ici": { display: "[\xB7,\u221E)", valueArity: 1 },
+  "Set.Ioi": { display: "(\xB7,\u221E)", valueArity: 1 },
+  "Set.univ": { display: "univ", valueArity: 0 }
+};
+var POSITIONAL = {
+  // `DFunLike.coe {F α β} [inst] (f : F) : ∀ a, β a`
+  "DFunLike.coe": { kind: "coercion", index: 4 },
+  "FunLike.coe": { kind: "coercion", index: 4 },
+  // `Function.comp {α β γ} (f : β → γ) (g : α → β) : α → γ`
+  "Function.comp": { kind: "composition", index: 3 }
+};
+var FILTERS = {
+  "Filter.atTop": { kind: "at-top", label: "grows without bound", pointIndex: null },
+  "Filter.atBot": { kind: "at-bot", label: "decreases without bound", pointIndex: null },
+  nhds: { kind: "neighbourhood", label: "approaches", pointIndex: -1 },
+  nhdsWithin: { kind: "punctured", label: "approaches within a set", pointIndex: -2 },
+  "Filter.cofinite": { kind: "other", label: "outside any finite set", pointIndex: null },
+  "Filter.cocompact": { kind: "other", label: "outside any compact set", pointIndex: null }
 };
 var TRANSPARENT = {
   "Nat.cast": { argIndex: -1 },
@@ -4346,7 +4421,9 @@ var TRANSPARENT = {
   "Rat.cast": { argIndex: -1 },
   "NNReal.toReal": { argIndex: -1 },
   "OfNat.ofNat": { argIndex: 1 },
-  "OfScientific.ofScientific": { argIndex: 1 }
+  "OfScientific.ofScientific": { argIndex: 1 },
+  // `decide p` is `p` wearing a `Decidable` hat.
+  "Decidable.decide": { argIndex: 0 }
 };
 var PREDICATES = {
   Monotone: { predicate: "monotone", label: "monotone", valueArity: 1 },
@@ -4354,7 +4431,38 @@ var PREDICATES = {
   Antitone: { predicate: "antitone", label: "antitone", valueArity: 1 },
   StrictAnti: { predicate: "strictly-antitone", label: "strictly decreasing", valueArity: 1 },
   MonotoneOn: { predicate: "monotone", label: "monotone on a set", valueArity: 2 },
-  AntitoneOn: { predicate: "antitone", label: "antitone on a set", valueArity: 2 }
+  AntitoneOn: { predicate: "antitone", label: "antitone on a set", valueArity: 2 },
+  StrictMonoOn: {
+    predicate: "strictly-monotone",
+    label: "strictly increasing on a set",
+    valueArity: 2
+  },
+  StrictAntiOn: {
+    predicate: "strictly-antitone",
+    label: "strictly decreasing on a set",
+    valueArity: 2
+  },
+  // Named properties ProofLens can *read* without claiming to interpret. Being
+  // in this table is an explicit statement that ProofLens recognises the
+  // property; anything absent stays `unsupported`, which is the honest answer
+  // and keeps the unsupported-mathematics backlog meaningful.
+  Summable: { predicate: "other", label: "summable", valueArity: 1 },
+  HasSum: { predicate: "other", label: "has a sum", valueArity: 2 },
+  Continuous: { predicate: "other", label: "continuous", valueArity: 1 },
+  ContinuousAt: { predicate: "other", label: "continuous at a point", valueArity: 2 },
+  ContinuousOn: { predicate: "other", label: "continuous on a set", valueArity: 2 },
+  ContinuousWithinAt: { predicate: "other", label: "continuous within a set", valueArity: 3 },
+  CauchySeq: { predicate: "other", label: "a Cauchy sequence", valueArity: 1 },
+  Differentiable: { predicate: "other", label: "differentiable", valueArity: 1 },
+  DifferentiableAt: { predicate: "other", label: "differentiable at a point", valueArity: 2 },
+  HasDerivAt: { predicate: "other", label: "has a derivative at a point", valueArity: 3 },
+  "Real.HolderConjugate": { predicate: "other", label: "H\xF6lder conjugate", valueArity: 2 },
+  "Set.InjOn": { predicate: "other", label: "injective on a set", valueArity: 2 },
+  "Set.SurjOn": { predicate: "other", label: "surjective onto a set", valueArity: 3 },
+  IsLUB: { predicate: "other", label: "a least upper bound", valueArity: 2 },
+  IsGLB: { predicate: "other", label: "a greatest lower bound", valueArity: 2 },
+  IsMax: { predicate: "other", label: "a maximum", valueArity: 1 },
+  IsMin: { predicate: "other", label: "a minimum", valueArity: 1 }
 };
 var RELATION_PHRASE = {
   equal: "is equal to",
@@ -4462,6 +4570,7 @@ var PRECEDENCE = {
   neg: 75,
   pow: 80,
   inv: 85,
+  comp: 88,
   abs: 90
 };
 function precedenceOf(expr) {
@@ -4489,8 +4598,17 @@ function renderExpression(expr) {
       return `${expr.parameter} \u21A6 ${renderExpression(expr.body)}`;
     case "opaque":
       return expr.display;
-    case "application":
-      return expr.args.length === 0 ? expr.display : `${expr.display}(${expr.args.map(renderExpression).join(", ")})`;
+    case "application": {
+      if (expr.args.length === 0)
+        return expr.display;
+      if (expr.display.includes("\xB7")) {
+        let filled = expr.display;
+        for (const arg of expr.args)
+          filled = filled.replace("\xB7", renderExpression(arg));
+        return filled;
+      }
+      return `${expr.display}(${expr.args.map(renderExpression).join(", ")})`;
+    }
     case "operator": {
       const p = PRECEDENCE[expr.op] ?? 50;
       if (expr.op === "neg")
@@ -4515,6 +4633,14 @@ function renderProposition(prop) {
     }
     case "implication":
       return `${renderProposition(prop.antecedent)} \u2192 ${renderProposition(prop.consequent)}`;
+    case "limit":
+      return `${renderExpression(prop.subject)} \u27F6 ${prop.target.display} (along ${prop.source.display})`;
+    case "existential":
+      return `\u2203 ${prop.binder}, ${renderProposition(prop.body)}`;
+    case "conjunction":
+      return prop.conjuncts.map(renderProposition).join(" \u2227 ");
+    case "membership":
+      return `${renderExpression(prop.element)} \u2208 ${renderExpression(prop.collection)}`;
     case "opaque":
       return prop.display;
   }
@@ -4596,7 +4722,7 @@ function mathematicalArgs(args) {
 function shortName(name) {
   return name.split(".").pop() ?? name;
 }
-function opaqueDisplay(node, path2, scope) {
+function opaqueDisplay(node, path2, scope, locals = NO_LOCALS) {
   switch (node.kind) {
     case "const":
       return shortName(node.name);
@@ -4611,26 +4737,24 @@ function opaqueDisplay(node, path2, scope) {
     case "mvar":
       return "?m";
     case "lam":
-      return `${node.binderName} \u21A6 ${renderExpression(lowerExpression(node.body, `${path2}.body`, [...scope, node.binderName]))}`;
+      return `${node.binderName} \u21A6 ${renderExpression(lowerExpression(node.body, `${path2}.body`, [...scope, node.binderName], locals))}`;
     case "forall":
-      return `\u2200 ${node.binderName}, ${opaqueDisplay(node.body, `${path2}.body`, [
-        ...scope,
-        node.binderName
-      ])}`;
+      return `\u2200 ${node.binderName}, ${opaqueDisplay(node.body, `${path2}.body`, [...scope, node.binderName], locals)}`;
     case "let":
       return `let ${node.binderName} := \u2026`;
     case "proj":
-      return `${opaqueDisplay(node.struct, `${path2}.struct`, scope)}.${node.index}`;
+      return `${opaqueDisplay(node.struct, `${path2}.struct`, scope, locals)}.${node.index}`;
     case "app": {
       const head = headConstant(node);
       const { args, offset } = mathematicalArgs(node.args);
-      const rendered = args.map((a, i) => renderExpression(lowerExpression(a, argPath(path2, offset + i), scope)));
-      const name = head ? shortName(head) : opaqueDisplay(node.fn, `${path2}.fn`, scope);
+      const rendered = args.map((a, i) => renderExpression(lowerExpression(a, argPath(path2, offset + i), scope, locals)));
+      const name = head ? shortName(head) : opaqueDisplay(node.fn, `${path2}.fn`, scope, locals);
       return rendered.length === 0 ? name : `${name}(${rendered.join(", ")})`;
     }
   }
 }
-function lowerExpression(node, path2, scope = []) {
+var NO_LOCALS = /* @__PURE__ */ new Map();
+function lowerExpression(node, path2, scope = [], locals = NO_LOCALS) {
   switch (node.kind) {
     case "fvar":
       return { kind: "variable", id: node.fvarId, symbol: node.name, path: path2 };
@@ -4646,7 +4770,7 @@ function lowerExpression(node, path2, scope = []) {
       return {
         kind: "lambda",
         parameter: node.binderName,
-        body: lowerExpression(node.body, `${path2}.body`, [...scope, node.binderName]),
+        body: lowerExpression(node.body, `${path2}.body`, [...scope, node.binderName], locals),
         path: path2
       };
     case "app": {
@@ -4657,7 +4781,7 @@ function lowerExpression(node, path2, scope = []) {
           const idx = transparent.argIndex === -1 ? node.args.length - 1 : transparent.argIndex;
           const inner = node.args[idx];
           if (inner)
-            return lowerExpression(inner, argPath(path2, idx), scope);
+            return lowerExpression(inner, argPath(path2, idx), scope, locals);
         }
         const binary = BINARY_OPERATORS[head];
         if (binary && node.args.length >= binary.valueArity) {
@@ -4666,7 +4790,7 @@ function lowerExpression(node, path2, scope = []) {
             kind: "operator",
             op: binary.op,
             symbol: binary.symbol,
-            args: node.args.slice(start).map((a, i) => lowerExpression(a, argPath(path2, start + i), scope)),
+            args: node.args.slice(start).map((a, i) => lowerExpression(a, argPath(path2, start + i), scope, locals)),
             path: path2
           };
         }
@@ -4677,7 +4801,7 @@ function lowerExpression(node, path2, scope = []) {
             kind: "operator",
             op: unary.op,
             symbol: unary.symbol,
-            args: node.args.slice(start).map((a, i) => lowerExpression(a, argPath(path2, start + i), scope)),
+            args: node.args.slice(start).map((a, i) => lowerExpression(a, argPath(path2, start + i), scope, locals)),
             path: path2
           };
         }
@@ -4688,7 +4812,58 @@ function lowerExpression(node, path2, scope = []) {
             kind: "application",
             head,
             display: named.display,
-            args: node.args.slice(start).map((a, i) => lowerExpression(a, argPath(path2, start + i), scope)),
+            args: node.args.slice(start).map((a, i) => lowerExpression(a, argPath(path2, start + i), scope, locals)),
+            path: path2
+          };
+        }
+        const positional = POSITIONAL[head];
+        if (positional && node.args.length > positional.index) {
+          const primary = node.args[positional.index];
+          if (positional.kind === "coercion") {
+            const applied = node.args.slice(positional.index + 1);
+            const fn = lowerExpression(primary, argPath(path2, positional.index), scope, locals);
+            if (applied.length === 0)
+              return fn;
+            return {
+              kind: "application",
+              head,
+              display: renderExpression(fn),
+              args: applied.map((a, i) => lowerExpression(a, argPath(path2, positional.index + 1 + i), scope, locals)),
+              path: path2
+            };
+          }
+          const second = node.args[positional.index + 1];
+          if (second) {
+            const composed = {
+              kind: "operator",
+              op: "comp",
+              symbol: "\u2218",
+              args: [
+                lowerExpression(primary, argPath(path2, positional.index), scope, locals),
+                lowerExpression(second, argPath(path2, positional.index + 1), scope, locals)
+              ],
+              path: path2
+            };
+            const applied = node.args.slice(positional.index + 2);
+            if (applied.length === 0)
+              return composed;
+            return {
+              kind: "application",
+              head,
+              display: renderExpression(composed),
+              args: applied.map((a, i) => lowerExpression(a, argPath(path2, positional.index + 2 + i), scope, locals)),
+              path: path2
+            };
+          }
+        }
+        const local = locals.get(head);
+        if (local) {
+          const { args: values, offset } = mathematicalArgs(node.args);
+          return {
+            kind: "application",
+            head,
+            display: local.display,
+            args: values.map((a, i) => lowerExpression(a, argPath(path2, offset + i), scope, locals)),
             path: path2
           };
         }
@@ -4697,7 +4872,7 @@ function lowerExpression(node, path2, scope = []) {
       return {
         kind: "opaque",
         head: head ?? null,
-        display: opaqueDisplay(node, path2, scope),
+        display: opaqueDisplay(node, path2, scope, locals),
         arity: args.length,
         path: path2
       };
@@ -4706,23 +4881,45 @@ function lowerExpression(node, path2, scope = []) {
       return {
         kind: "opaque",
         head: null,
-        display: opaqueDisplay(node, path2, scope),
+        display: opaqueDisplay(node, path2, scope, locals),
         arity: 0,
         path: path2
       };
   }
 }
-function lowerProposition(node, path2, scope = []) {
+function lowerFilter(node, path2, scope, locals) {
+  const head = headConstant(node);
+  const entry = head === void 0 ? void 0 : FILTERS[head];
+  if (!entry) {
+    return {
+      kind: "unknown",
+      display: opaqueDisplay(node, path2, scope, locals),
+      label: "an unnamed filter",
+      point: null
+    };
+  }
+  let point = null;
+  if (entry.pointIndex !== null && node.kind === "app") {
+    const { args, offset } = mathematicalArgs(node.args);
+    const index = entry.pointIndex < 0 ? args.length + entry.pointIndex : entry.pointIndex;
+    const chosen = args[index];
+    if (chosen)
+      point = lowerExpression(chosen, argPath(path2, offset + index), scope, locals);
+  }
+  const display = entry.kind === "at-top" ? "+\u221E" : entry.kind === "at-bot" ? "\u2212\u221E" : point ? renderExpression(point) : shortName(head);
+  return { kind: entry.kind, display, label: entry.label, point };
+}
+function lowerProposition(node, path2, scope = [], locals = NO_LOCALS) {
   if (node.kind === "forall") {
     if (!mentionsBVar(node.body, 0)) {
       return {
         kind: "implication",
-        antecedent: lowerProposition(node.binderType, `${path2}.binderType`, scope),
-        consequent: lowerProposition(node.body, `${path2}.body`, [...scope, node.binderName]),
+        antecedent: lowerProposition(node.binderType, `${path2}.binderType`, scope, locals),
+        consequent: lowerProposition(node.body, `${path2}.body`, [...scope, node.binderName], locals),
         path: path2
       };
     }
-    return { kind: "opaque", head: null, display: opaqueDisplay(node, path2, scope), path: path2 };
+    return { kind: "opaque", head: null, display: opaqueDisplay(node, path2, scope, locals), path: path2 };
   }
   if (node.kind === "app") {
     const head = headConstant(node);
@@ -4731,8 +4928,8 @@ function lowerProposition(node, path2, scope = []) {
       if (relation && node.args.length >= relation.valueArity) {
         const start = node.args.length - relation.valueArity;
         if (head === "Iff") {
-          const left = lowerProposition(node.args[start], argPath(path2, start), scope);
-          const right = lowerProposition(node.args[start + 1], argPath(path2, start + 1), scope);
+          const left = lowerProposition(node.args[start], argPath(path2, start), scope, locals);
+          const right = lowerProposition(node.args[start + 1], argPath(path2, start + 1), scope, locals);
           return {
             kind: "relation",
             relation: "equivalent",
@@ -4756,15 +4953,58 @@ function lowerProposition(node, path2, scope = []) {
         return {
           kind: "relation",
           relation: relation.relation,
-          lhs: lowerExpression(node.args[start], argPath(path2, start), scope),
-          rhs: lowerExpression(node.args[start + 1], argPath(path2, start + 1), scope),
+          lhs: lowerExpression(node.args[start], argPath(path2, start), scope, locals),
+          rhs: lowerExpression(node.args[start + 1], argPath(path2, start + 1), scope, locals),
           path: path2
         };
+      }
+      if (head === "Filter.Tendsto" && node.args.length >= 5) {
+        return {
+          kind: "limit",
+          subject: lowerExpression(node.args[2], argPath(path2, 2), scope, locals),
+          source: lowerFilter(node.args[3], argPath(path2, 3), scope, locals),
+          target: lowerFilter(node.args[4], argPath(path2, 4), scope, locals),
+          path: path2
+        };
+      }
+      if (head === "And" && node.args.length >= 2) {
+        const conjuncts = [];
+        const collect = (n, p) => {
+          if (headConstant(n) === "And" && n.kind === "app" && n.args.length >= 2) {
+            collect(n.args[n.args.length - 2], argPath(p, n.args.length - 2));
+            collect(n.args[n.args.length - 1], argPath(p, n.args.length - 1));
+            return;
+          }
+          conjuncts.push(lowerProposition(n, p, scope, locals));
+        };
+        collect(node, path2);
+        return { kind: "conjunction", conjuncts, path: path2 };
+      }
+      if (head === "Membership.mem" && node.args.length >= 2) {
+        const collectionIndex = node.args.length - 2;
+        const elementIndex = node.args.length - 1;
+        return {
+          kind: "membership",
+          element: lowerExpression(node.args[elementIndex], argPath(path2, elementIndex), scope, locals),
+          collection: lowerExpression(node.args[collectionIndex], argPath(path2, collectionIndex), scope, locals),
+          path: path2
+        };
+      }
+      if (head === "Exists" && node.args.length >= 2) {
+        const predicateArg = node.args[node.args.length - 1];
+        if (predicateArg.kind === "lam") {
+          return {
+            kind: "existential",
+            binder: predicateArg.binderName,
+            body: lowerProposition(predicateArg.body, `${argPath(path2, node.args.length - 1)}.body`, [...scope, predicateArg.binderName], locals),
+            path: path2
+          };
+        }
       }
       const predicate = PREDICATES[head];
       if (predicate && node.args.length >= predicate.valueArity) {
         const start = node.args.length - predicate.valueArity;
-        const values = node.args.slice(start).map((a, i) => lowerExpression(a, argPath(path2, start + i), scope));
+        const values = node.args.slice(start).map((a, i) => lowerExpression(a, argPath(path2, start + i), scope, locals));
         return {
           kind: "predicate",
           predicate: predicate.predicate,
@@ -4779,11 +5019,11 @@ function lowerProposition(node, path2, scope = []) {
   return {
     kind: "opaque",
     head: headConstant(node) ?? null,
-    display: opaqueDisplay(node, path2, scope),
+    display: opaqueDisplay(node, path2, scope, locals),
     path: path2
   };
 }
-function lowerDeclaration(doc, decl) {
+function lowerDeclaration(doc, decl, locals = NO_LOCALS) {
   const witness = kernelWitness(doc, decl);
   const parsed = parseDocstring(decl.docstring);
   const ref = sourceRefFor(doc, decl);
@@ -4795,8 +5035,9 @@ function lowerDeclaration(doc, decl) {
     binderInfo: b.binderInfo,
     annotation: annotationFor(parsed.annotations, b.name)
   }));
+  const instances = decl.binders.filter((b) => b.role === "instance").map((b) => ({ id: b.fvarId, symbol: b.name, typeDisplay: b.type.pretty }));
   const hypotheses = decl.binders.filter((b) => b.role === "hypothesis").map((b) => {
-    const proposition = lowerProposition(b.type.tree, `binders[${b.index}].type`);
+    const proposition = lowerProposition(b.type.tree, `binders[${b.index}].type`, [], locals);
     return {
       id: b.fvarId,
       symbol: b.name,
@@ -4806,10 +5047,10 @@ function lowerDeclaration(doc, decl) {
     };
   });
   const definitionBody = decl.definitionBody ? (() => {
-    const expression = lowerExpression(decl.definitionBody.tree, "definitionBody");
+    const expression = lowerExpression(decl.definitionBody.tree, "definitionBody", [], locals);
     return { expression, display: renderExpression(expression) };
   })() : null;
-  const conclusionProp = lowerProposition(decl.conclusion.tree, "conclusion");
+  const conclusionProp = lowerProposition(decl.conclusion.tree, "conclusion", [], locals);
   const conclusion = derive(conclusionProp, conclusionProp.kind === "opaque" ? MATH_IR_RULES.unrecognised : MATH_IR_RULES.lowerProposition, [statementClaim], { sources: [sourceRefFor(doc, decl, "conclusion")] });
   const ceiling = witness ? "verified" : "derived";
   return {
@@ -4820,6 +5061,7 @@ function lowerDeclaration(doc, decl) {
     documentation: parsed.prose,
     variables,
     hypotheses,
+    instances,
     conclusion,
     conclusionDisplay: renderProposition(conclusionProp),
     definitionBody,
@@ -4838,12 +5080,22 @@ function lowerDeclaration(doc, decl) {
     provenance: { sources: [ref] }
   };
 }
+function localConstantsOf(doc) {
+  const locals = /* @__PURE__ */ new Map();
+  for (const decl of doc.declarations) {
+    if (decl.kind === "definition" || decl.kind === "opaque" || decl.kind === "axiom") {
+      locals.set(decl.name, { display: decl.name.split(".").pop() ?? decl.name });
+    }
+  }
+  return locals;
+}
 function lowerDocument(doc) {
+  const locals = localConstantsOf(doc);
   return {
     mathIRVersion: MATH_IR_VERSION,
     system: doc.system,
     notationFidelity: doc.notationFidelity,
-    theorems: doc.declarations.map((d) => lowerDeclaration(doc, d))
+    theorems: doc.declarations.map((d) => lowerDeclaration(doc, d, locals))
   };
 }
 
@@ -4882,6 +5134,31 @@ var RULES = {
   MONOTONICITY: {
     id: "PREDICATE_MONOTONICITY_001",
     description: "The conclusion asserts a monotonicity property.",
+    produces: "derived"
+  },
+  LIMIT: {
+    id: "PREDICATE_LIMIT_001",
+    description: "The conclusion asserts a limit along a filter.",
+    produces: "derived"
+  },
+  PROPERTY: {
+    id: "PREDICATE_PROPERTY_001",
+    description: "The conclusion asserts a named property of a subject.",
+    produces: "derived"
+  },
+  CONJUNCTION: {
+    id: "PROPOSITION_CONJUNCTION_001",
+    description: "The conclusion asserts several facts at once.",
+    produces: "derived"
+  },
+  MEMBERSHIP: {
+    id: "RELATION_MEMBERSHIP_001",
+    description: "The conclusion asserts that a value lies in a collection.",
+    produces: "derived"
+  },
+  EXISTENCE: {
+    id: "PROPOSITION_EXISTENCE_001",
+    description: "The conclusion asserts that something exists.",
     produces: "derived"
   },
   IMPLICATION: {
@@ -5317,6 +5594,59 @@ function classifyMonotonicity(theorem) {
     }, `The conclusion applies \`${prop.name}\`, which asserts a ${entry.strict ? "strictly " : ""}${entry.direction === "increasing" ? "increasing" : "decreasing"} relationship.`, prop.path)
   ];
 }
+function classifyLimit(theorem) {
+  const prop = theorem.conclusion.value;
+  if (prop.kind !== "limit")
+    return [];
+  const convergent = prop.target.kind === "neighbourhood" || prop.target.kind === "punctured";
+  return [
+    makeClassification(theorem, RULES.LIMIT, {
+      kind: "limit",
+      data: {
+        subject: prop.subject,
+        source: prop.source,
+        target: prop.target,
+        convergent
+      }
+    }, `The conclusion is a \`Filter.Tendsto\`: \`${renderExpression(prop.subject)}\` ${convergent ? `approaches \`${prop.target.display}\`` : `${prop.target.label}`} as its input ${prop.source.label}.`, prop.path)
+  ];
+}
+function classifyExistence(theorem) {
+  const prop = theorem.conclusion.value;
+  if (prop.kind !== "existential")
+    return [];
+  return [
+    makeClassification(theorem, RULES.EXISTENCE, { kind: "existence", data: { binder: prop.binder, body: prop.body } }, `The conclusion is an existential: it asserts that some \`${prop.binder}\` satisfying \`${renderProposition(prop.body)}\` exists, without ProofLens knowing which one the proof produces.`, prop.path)
+  ];
+}
+function classifyProperty(theorem) {
+  const prop = theorem.conclusion.value;
+  if (prop.kind !== "predicate" || prop.predicate !== "other")
+    return [];
+  const label = PREDICATES[prop.name]?.label ?? prop.name;
+  return [
+    makeClassification(theorem, RULES.PROPERTY, {
+      kind: "property",
+      data: { name: prop.name, label, subject: prop.subject, args: prop.args }
+    }, `The conclusion applies \`${prop.name}\`, which ProofLens reads as "${prop.subject ? renderExpression(prop.subject) : "the subject"} is ${label}". ProofLens recognises the property but does not interpret what it means.`, prop.path)
+  ];
+}
+function classifyConjunction(theorem) {
+  const prop = theorem.conclusion.value;
+  if (prop.kind !== "conjunction")
+    return [];
+  return [
+    makeClassification(theorem, RULES.CONJUNCTION, { kind: "conjunction", data: { conjuncts: prop.conjuncts } }, `The conclusion asserts ${prop.conjuncts.length} facts at once: ${prop.conjuncts.map((c) => `\`${renderProposition(c)}\``).join(" and ")}.`, prop.path)
+  ];
+}
+function classifyMembership(theorem) {
+  const prop = theorem.conclusion.value;
+  if (prop.kind !== "membership")
+    return [];
+  return [
+    makeClassification(theorem, RULES.MEMBERSHIP, { kind: "membership", data: { element: prop.element, collection: prop.collection } }, `The conclusion places \`${renderExpression(prop.element)}\` inside \`${renderExpression(prop.collection)}\`.`, prop.path)
+  ];
+}
 function classifyImplication(theorem) {
   const prop = theorem.conclusion.value;
   if (prop.kind === "implication") {
@@ -5401,6 +5731,11 @@ function classifyDefinition(theorem) {
 function classifyTheorem(theorem) {
   const structural = [
     ...classifyDefinition(theorem),
+    ...classifyLimit(theorem),
+    ...classifyProperty(theorem),
+    ...classifyConjunction(theorem),
+    ...classifyMembership(theorem),
+    ...classifyExistence(theorem),
     ...classifyPositivity(theorem),
     ...classifyDistinctness(theorem),
     ...classifyBounds(theorem),
@@ -5425,6 +5760,7 @@ function classifyTheorem(theorem) {
 function primaryClassification(classifications) {
   const naturalBound = classifications.find((c) => (c.payload.kind === "upper-bound" || c.payload.kind === "lower-bound") && c.payload.data.natural);
   const priority = [
+    "limit",
     "positivity",
     "monotonicity",
     "distinctness",
@@ -5434,6 +5770,10 @@ function primaryClassification(classifications) {
     "equality",
     "implication",
     "equivalence",
+    "existence",
+    "property",
+    "membership",
+    "conjunction",
     "definition",
     "unsupported"
   ];
@@ -5483,6 +5823,14 @@ function explain(theorem, classifications, options = {}) {
     mathematical = `${renderExpression(prop.lhs)} ${RELATION_PHRASE[prop.relation]} ${renderExpression(prop.rhs)}.`;
   } else if (prop.kind === "predicate") {
     mathematical = `${prop.subject ? renderExpression(prop.subject) : "the subject"} satisfies ${prop.name}.`;
+  } else if (prop.kind === "limit") {
+    mathematical = `${renderExpression(prop.subject)} ${prop.target.kind === "neighbourhood" || prop.target.kind === "punctured" ? `approaches ${prop.target.display}` : prop.target.label} as its input ${prop.source.label}.`;
+  } else if (prop.kind === "conjunction") {
+    mathematical = `The conclusion asserts ${prop.conjuncts.length} things at once.`;
+  } else if (prop.kind === "membership") {
+    mathematical = `${renderExpression(prop.element)} lies in ${renderExpression(prop.collection)}.`;
+  } else if (prop.kind === "existential") {
+    mathematical = `Some ${prop.binder} exists for which ${renderProposition(prop.body)}.`;
   } else if (prop.kind === "implication") {
     mathematical = "The conclusion asserts that one proposition follows from another.";
   } else if (isDefinition && theorem.definitionBody) {
@@ -5496,6 +5844,7 @@ function explain(theorem, classifications, options = {}) {
   const bound = classifications.find((c) => c.payload.kind === "upper-bound" && c.payload.data.natural);
   const lower = classifications.find((c) => c.payload.kind === "lower-bound");
   const mono = classifications.find((c) => c.payload.kind === "monotonicity");
+  const limit = classifications.find((c) => c.payload.kind === "limit");
   const functional = classifications.find((c) => c.payload.kind === "functional-relationship");
   const unsupported = classifications.find((c) => c.payload.kind === "unsupported");
   let structural;
@@ -5505,6 +5854,9 @@ function explain(theorem, classifications, options = {}) {
   } else if (lower && lower.payload.kind === "lower-bound") {
     const { boundedQuantity, bound: boundExpr } = lower.payload.data;
     structural = `The theorem establishes a lower bound: \`${renderExpression(boundedQuantity)}\` is at least \`${renderExpression(boundExpr)}\`.`;
+  } else if (limit && limit.payload.kind === "limit") {
+    const { subject, source, target, convergent } = limit.payload.data;
+    structural = convergent ? `The theorem establishes a limit: \`${renderExpression(subject)}\` converges to \`${target.display}\` as its input ${source.label}.` : `The theorem establishes a divergence: \`${renderExpression(subject)}\` ${target.label} as its input ${source.label}.`;
   } else if (mono && mono.payload.kind === "monotonicity") {
     const { direction, strict, subject } = mono.payload.data;
     structural = `The theorem establishes that ${subject ? `\`${renderExpression(subject)}\`` : "the function"} is ${strict ? "strictly " : ""}${direction}.`;
@@ -5740,6 +6092,112 @@ function planBound(theorem, classification, direction) {
       }
     ],
     annotations,
+    epistemic: weakest(status, "illustrative"),
+    provenance: {
+      sources: [refFor(theorem, "conclusion")],
+      rule: classification.rule,
+      inputs: [theorem.id]
+    },
+    rationale: classification.rationale
+  };
+}
+function planLimit(theorem, classification) {
+  if (classification.payload.kind !== "limit")
+    return null;
+  const { subject, source, target, convergent } = classification.payload.data;
+  const status = classification.claim.status;
+  const label = renderExpression(subject);
+  const entities = [
+    {
+      id: "function",
+      kind: "function",
+      label,
+      detail: convergent ? `approaches ${target.display}` : target.label,
+      position: { x: 0.5, y: convergent ? 0.35 : 0.5 },
+      emphasis: "primary",
+      epistemic: status,
+      sourceRef: refFor(theorem, subject.path)
+    },
+    {
+      id: "direction",
+      kind: "label",
+      label: source.display,
+      detail: `input ${source.label}`,
+      position: { x: 0.95, y: 0 },
+      emphasis: "secondary",
+      epistemic: status,
+      sourceRef: refFor(theorem, "conclusion")
+    }
+  ];
+  if (!convergent) {
+    entities.push({
+      id: "divergence",
+      kind: "label",
+      label: target.display,
+      detail: target.label,
+      position: { x: 0.5, y: target.kind === "at-bot" ? 0 : 1 },
+      emphasis: "primary",
+      epistemic: status,
+      sourceRef: refFor(theorem, "conclusion")
+    });
+  }
+  if (convergent) {
+    entities.push({
+      id: "limit-value",
+      kind: "bound",
+      label: target.display,
+      detail: "the limit",
+      position: { x: 0.5, y: 0.3 },
+      emphasis: "primary",
+      state: "permitted",
+      epistemic: status,
+      sourceRef: refFor(theorem, target.point?.path ?? "conclusion")
+    });
+  }
+  return {
+    id: `${theorem.id}:limit`,
+    type: "limit-plot",
+    title: convergent ? `${label} \u27F6 ${target.display}` : `${label} ${target.label}`,
+    subtitle: theorem.concept ?? theorem.name.split(".").pop(),
+    entities,
+    relationships: convergent ? [
+      {
+        id: "approaches",
+        kind: "maps-to",
+        from: "function",
+        to: "limit-value",
+        label: `as the input ${source.label}`,
+        epistemic: status,
+        sourceRef: refFor(theorem, "conclusion")
+      }
+    ] : [],
+    axes: [
+      {
+        id: "input",
+        orientation: "horizontal",
+        label: `input (${source.label})`,
+        scale: "schematic",
+        ticks: [],
+        epistemic: "illustrative"
+      },
+      {
+        id: "output",
+        orientation: "vertical",
+        label: "value",
+        scale: "schematic",
+        ticks: convergent ? [{ at: 0.3, label: target.display, emphasis: "primary" }] : [],
+        epistemic: "illustrative"
+      }
+    ],
+    annotations: [
+      { id: "rationale", kind: "rationale", text: classification.rationale, epistemic: status },
+      {
+        id: "shape-notice",
+        kind: "legend",
+        text: convergent ? "The drawn curve is one arbitrary function with the proved limit. The theorem constrains where the values end up, not the path they take to get there." : "The theorem says the values leave every bound. The drawn curve is illustrative; no rate of growth is claimed.",
+        epistemic: "illustrative"
+      }
+    ],
     epistemic: weakest(status, "illustrative"),
     provenance: {
       sources: [refFor(theorem, "conclusion")],
@@ -6244,6 +6702,12 @@ function planVisuals(theorem, classifications, context = {}) {
   }
   for (const classification of classifications) {
     switch (classification.payload.kind) {
+      case "limit": {
+        const spec = planLimit(theorem, classification);
+        if (spec)
+          specs.push(spec);
+        break;
+      }
       case "positivity": {
         const spec = planPositivity(theorem, classification);
         if (spec)
@@ -6314,6 +6778,9 @@ var VISUAL_HINT_ALIASES = {
   "monotone-curve": "monotonicity-plot",
   "antitone-curve": "monotonicity-plot",
   "monotonicity-curve": "monotonicity-plot",
+  limit: "limit-plot",
+  convergence: "limit-plot",
+  asymptote: "limit-plot",
   "positivity-fact": "number-line",
   "sign-fact": "number-line",
   "iff-equivalence": "implication-graph",
@@ -6333,6 +6800,7 @@ function resolveVisualHint(hint) {
     "lower-bound-plot",
     "number-line",
     "monotonicity-plot",
+    "limit-plot",
     "relationship-diagram",
     "dependency-graph",
     "implication-graph",
@@ -6801,6 +7269,8 @@ function swatch(kind, x, cy, arrowId) {
         `M ${num(x)} ${num(cy + 5)} C ${num(x + 8)} ${num(cy + 5)} ${num(x + 14)} ${num(cy - 5)} ${num(x + 22)} ${num(cy - 5)}`,
         "pl-curve"
       );
+    case "asymptote":
+      return line(x, cy, x + 22, cy, "pl-asymptote");
     default:
       return "";
   }
@@ -7304,6 +7774,225 @@ function solveCubicT(p0, p1, p2, p3, target) {
     else hi = mid;
   }
   return (lo + hi) / 2;
+}
+var LM_TOP = 14;
+var LM_BASE = 200;
+function layoutLimit(spec, ctx) {
+  const legend = [];
+  const px0 = ctx.pad + 46;
+  const available = ctx.width - ctx.pad - px0;
+  const plotWidth = Math.min(340, Math.max(150, available * 0.62));
+  const px1 = px0 + plotWidth;
+  const py0 = LM_TOP;
+  const py1 = LM_BASE;
+  const fn = spec.entities.find((e) => e.kind === "function");
+  const limit = spec.entities.find((e) => e.id === "limit-value") ?? entitiesOfKind(spec, "bound")[0];
+  const direction = spec.entities.find((e) => e.id === "direction" || e.kind === "label");
+  const convergent = limit !== void 0;
+  const detail = (fn?.detail ?? "").toLowerCase();
+  const downward = !convergent && detail.includes("decreases without bound");
+  const status = fn?.epistemic ?? spec.epistemic;
+  const xAxis = spec.axes.find((a) => a.orientation === "horizontal");
+  const yAxis = spec.axes.find((a) => a.orientation === "vertical");
+  const schematic = (xAxis?.scale ?? "schematic") === "schematic";
+  const axisClass = `pl-axis${schematic ? " pl-schematic" : ""}`;
+  const Y = (v2) => py1 - v2 * (py1 - py0);
+  let svg = "";
+  svg += line(
+    px0,
+    py0 - 6,
+    px0,
+    py1,
+    `${axisClass}${weakStrokeClass(yAxis?.epistemic ?? "illustrative")}`,
+    yAxis ? `${yAxis.label} \u2014 ${yAxis.scale} axis, ${statusPhrase(yAxis.epistemic)}` : "value \u2014 schematic axis"
+  );
+  svg += path(
+    `M ${num(px0)} ${num(py1)} L ${num(px1 + 10)} ${num(py1)}`,
+    `${axisClass}${weakStrokeClass(xAxis?.epistemic ?? "illustrative")}`,
+    { "marker-end": `url(#${ctx.id("arrow-muted")})` },
+    xAxis ? `${xAxis.label} \u2014 ${xAxis.scale} axis, ${statusPhrase(xAxis.epistemic)}` : "input \u2014 schematic axis"
+  );
+  const limitY = Math.max(py0 + 24, Math.min(py1 - 30, Y(clamp01(limit?.position?.y, 0.3))));
+  for (const tick of yAxis?.ticks ?? []) {
+    const ty = Math.max(py0, Math.min(py1, Y(clamp01(tick.at, 0.3))));
+    svg += line(px0 - 5, ty, px0, ty, "pl-axis", tick.label);
+    svg += text(tick.label, {
+      x: px0 - 8,
+      y: ty + 3.5,
+      className: "pl-tick",
+      anchor: "end",
+      fontSize: 10,
+      maxWidth: Math.max(0, px0 - ctx.pad - 10),
+      title: `${tick.label} on the ${yAxis?.label ?? "value"} axis`
+    });
+  }
+  if (limit) {
+    svg += path(
+      `M ${num(px0)} ${num(limitY)} L ${num(px1 + 6)} ${num(limitY)}`,
+      `pl-asymptote${weakStrokeClass(limit.epistemic)}`,
+      {},
+      `${entityTooltip(limit)} \u2014 the curve approaches this line and never meets it`
+    );
+    svg += text(limit.label, {
+      x: px1 + 8,
+      y: limitY + 14,
+      className: `pl-label-strong pl-mono${isWeak(limit.epistemic) ? " pl-weak-text" : ""}`,
+      anchor: "end",
+      fontSize: 12.5,
+      maxWidth: Math.max(0, plotWidth * 0.6),
+      title: entityTooltip(limit)
+    });
+  }
+  const ax = px0 + 12;
+  const bx = px1 - 12;
+  const dx = bx - ax;
+  let curveEnd = py1;
+  let d;
+  if (convergent) {
+    const yEnd = limitY - 4;
+    const yStart = Math.max(py0 + 6, Math.min(py0 + 16, yEnd - 36));
+    const dy = yEnd - yStart;
+    d = `M ${num(ax)} ${num(yStart)} C ${num(ax + dx * 0.18)} ${num(yStart + dy * 0.72)} ${num(ax + dx * 0.48)} ${num(yEnd)} ${num(bx)} ${num(yEnd)}`;
+    curveEnd = yEnd;
+  } else {
+    const yStart = downward ? py0 + 22 : py1 - 22;
+    const yEnd = downward ? py1 + 18 : py0 - 8;
+    const dy = yEnd - yStart;
+    d = `M ${num(ax)} ${num(yStart)} C ${num(ax + dx * 0.55)} ${num(yStart)} ${num(ax + dx * 0.86)} ${num(yStart + dy * 0.55)} ${num(bx)} ${num(yEnd)}`;
+    curveEnd = yEnd;
+  }
+  svg += path(
+    d,
+    `pl-curve${weakStrokeClass(status)}`,
+    convergent ? {} : { "marker-end": `url(#${ctx.id("arrow")})` },
+    `${fn?.label ?? "the function"} \u2014 ${fn?.detail ?? (convergent ? "converges" : "diverges")} \u2014 ${statusPhrase(status)}`
+  );
+  if (!convergent) {
+    const noticeY = downward ? py1 - 12 : py0 + 12;
+    svg += text("the values leave every bound", {
+      x: px0 + 10,
+      y: noticeY,
+      className: "pl-label",
+      fontSize: 12,
+      maxWidth: Math.max(0, bx - px0 - 24),
+      title: `${fn?.label ?? "the function"} ${fn?.detail ?? "leaves every bound"}`
+    });
+  }
+  if (direction) {
+    svg += text(direction.label, {
+      x: px1 + 16,
+      y: py1 + 4,
+      className: `pl-label-strong pl-mono${isWeak(direction.epistemic) ? " pl-weak-text" : ""}`,
+      fontSize: 12.5,
+      maxWidth: Math.max(0, ctx.width - ctx.pad - (px1 + 16)),
+      title: entityTooltip(direction)
+    });
+  }
+  const axisTitleY = downward ? py1 + 36 : py1 + 20;
+  if (xAxis) {
+    const units = xAxis.units ? ` (${xAxis.units})` : "";
+    const suffix = schematic ? " \xB7 schematic scale" : "";
+    svg += text(`${xAxis.label}${units}${suffix}`, {
+      x: px0,
+      y: axisTitleY,
+      className: "pl-axis-title",
+      fontSize: 10.5,
+      maxWidth: Math.max(0, ctx.width - ctx.pad - px0),
+      title: `${xAxis.label}${units} \u2014 ${xAxis.scale} axis`
+    });
+  }
+  svg += el(
+    "text",
+    {
+      x: ctx.pad + 8,
+      y: (py0 + py1) / 2,
+      class: "pl-axis-title",
+      "text-anchor": "middle",
+      transform: `rotate(-90 ${num(ctx.pad + 8)} ${num((py0 + py1) / 2)})`
+    },
+    escapeXml(yAxis?.label ?? "value")
+  );
+  const capX = px1 + 34;
+  const capWidth = ctx.width - ctx.pad - capX;
+  if (capWidth > 90) {
+    let capY = py0 + 22;
+    svg += text(fn?.label ?? "the function", {
+      x: capX,
+      y: capY,
+      className: "pl-label-strong pl-mono",
+      fontSize: 13,
+      maxWidth: capWidth,
+      title: fn ? entityTooltip(fn) : void 0
+    });
+    capY += 18;
+    if (fn?.detail) {
+      const para = paragraph(fn.detail, {
+        x: capX,
+        y: capY,
+        className: "pl-detail",
+        maxWidth: capWidth,
+        fontSize: 10.5,
+        lineHeight: 13,
+        maxLines: 2
+      });
+      svg += para.svg;
+      capY += para.height + 20;
+    }
+    for (const relationship of spec.relationships) {
+      if (!relationship.label) continue;
+      const para = paragraph(relationship.label, {
+        x: capX,
+        y: capY,
+        className: `pl-label pl-mono${isWeak(relationship.epistemic) ? " pl-weak-text" : ""}`,
+        maxWidth: capWidth,
+        fontSize: 12,
+        lineHeight: 16,
+        maxLines: 3
+      });
+      svg += para.svg;
+      capY += para.height + 22;
+    }
+    if (direction?.detail) {
+      svg += text(direction.detail, {
+        x: capX,
+        y: capY,
+        className: "pl-detail",
+        fontSize: 10.5,
+        maxWidth: capWidth,
+        title: entityTooltip(direction)
+      });
+    }
+  }
+  if (convergent) {
+    legend.push({
+      swatch: "asymptote",
+      text: "Dotted horizontal line: the limit value. The curve closes on it and never meets it \u2014 the theorem says the values get arbitrarily close, not that any of them is the limit."
+    });
+    legend.push({
+      swatch: "curve",
+      text: "The curve is one arbitrary function with the proved limit. The theorem constrains where the values end up, not the path they take to get there."
+    });
+    legend.push({
+      swatch: "arrow",
+      text: `Arrowhead on the input axis: the direction the input travels${xAxis ? ` (${xAxis.label})` : ""}. There is no arrowhead on the curve, because the values settle rather than leave.`
+    });
+  } else {
+    legend.push({
+      swatch: "curve",
+      text: `The curve leaves the frame ${downward ? "through the bottom" : "through the top"} and the arrowhead says it keeps going. There is no limit line to draw: the values leave every bound.`
+    });
+    legend.push({
+      swatch: "arrow",
+      text: `Arrowheads mark direction of travel: along the input axis${xAxis ? ` (${xAxis.label})` : ""}, and past the edge of the frame for the values themselves.`
+    });
+  }
+  if (schematic) {
+    legend.push({
+      swatch: "dashed-line",
+      text: "Broken axes: both scales are schematic. No magnitude shown here was measured, and neither the steepness of the curve nor how quickly it flattens means anything."
+    });
+  }
+  return { svg, height: Math.max(axisTitleY + 14, curveEnd + 16), legend };
 }
 function layoutAssumptionSensitivity(spec, ctx) {
   const legend = [];
@@ -7862,6 +8551,12 @@ function buildStylesheet(theme, fontFamily) {
     `.pl-edge{stroke:var(--pl-edge);stroke-width:1.4;fill:none}`,
     `.pl-edge-used{stroke:var(--pl-accent);stroke-width:1.75;fill:none}`,
     `.pl-curve{stroke:var(--pl-accent);stroke-width:2.25;fill:none;stroke-linecap:round}`,
+    // The asymptote of a convergent limit. Deliberately a fine dot pattern
+    // rather than the 5/3 of `pl-weak-stroke` or the 7/4 of `pl-schematic`, so
+    // that "this is the limit" and "this is illustrative" stay distinguishable
+    // at a glance. When the limit itself is weak, `pl-weak-stroke` is declared
+    // later and wins — the epistemic encoding outranks the drawing convention.
+    `.pl-asymptote{stroke:var(--pl-accent);stroke-width:1.5;fill:none;stroke-dasharray:1 4;stroke-linecap:round}`,
     `.pl-rule{stroke:var(--pl-border);stroke-width:1}`,
     `.pl-rationale-bar{fill:var(--pl-accent);stroke:none}`,
     `.pl-rationale{font-size:12px;fill:var(--pl-fg)}`,
@@ -7959,6 +8654,8 @@ function dispatch(type, spec, ctx) {
       return layoutNumberLine(spec, ctx);
     case "monotonicity-plot":
       return layoutMonotonicity(spec, ctx);
+    case "limit-plot":
+      return layoutLimit(spec, ctx);
     case "assumption-sensitivity":
       return layoutAssumptionSensitivity(spec, ctx);
     case "dependency-graph":
@@ -7976,6 +8673,7 @@ var TYPE_DESCRIPTION = {
   "lower-bound-plot": "a horizontal number line showing which values the bounded quantity is permitted to take and which the theorem rules out",
   "number-line": "a horizontal number line with the marked value and the regions on either side of it",
   "monotonicity-plot": "a schematic curve illustrating the direction in which the function's output moves as its input increases",
+  "limit-plot": "a schematic plot of what the function's values do along the given filter: either a dotted line at the limit value with a curve that closes on it without ever meeting it, or, for a divergence, a curve leaving the frame under an arrowhead",
   "assumption-sensitivity": "two columns of boxes: the theorem's stated hypotheses on the left, the conclusion on the right, with a connector drawn for each hypothesis the proof term actually uses",
   "dependency-graph": "a layered graph of the declarations this proof references, with arrows pointing from each declaration to what it depends on",
   "implication-graph": "a layered graph showing which statement follows from which",

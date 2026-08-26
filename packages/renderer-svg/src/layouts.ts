@@ -495,6 +495,304 @@ function solveCubicT(p0: number, p1: number, p2: number, p3: number, target: num
 }
 
 // ---------------------------------------------------------------------------
+// Limit
+// ---------------------------------------------------------------------------
+
+/*
+ * Vertical budget for the limit plot. The input axis sits at `LM_BASE` and the
+ * frame is everything above it. Normalised y runs bottom-up — y = 0 is the
+ * axis, y = 1 the top of the frame — which is the orientation a reader already
+ * brings to a graph, and the one the planner's `direction` entity (y = 0, on
+ * the axis) and `limit-value` entity (y = 0.3, low in the frame) assume.
+ */
+const LM_TOP = 14;
+const LM_BASE = 200;
+
+/**
+ * A schematic limit plot.
+ *
+ * Two pictures share one layout, and which one is drawn is read from the spec
+ * rather than from the title: the planner emits a `limit-value` entity exactly
+ * when the limit is a finite value.
+ *
+ *  - **Convergent.** A dotted asymptote at the limit value, and a curve that
+ *    flattens onto it from above without ever meeting it. Not touching is the
+ *    whole point: `Tendsto f l (nhds L)` says the values get arbitrarily close
+ *    to `L`, not that any of them equals `L`, and a curve drawn crossing its own
+ *    limit would assert something the theorem does not.
+ *  - **Divergent.** No asymptote, and a curve that leaves the frame under an
+ *    arrowhead. Which edge it leaves by is taken from the function's own detail
+ *    text, because drawing a divergence to +∞ as one to −∞ would be exactly the
+ *    kind of confident wrong picture this project exists to prevent.
+ */
+export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult {
+  const legend: LegendRow[] = [];
+
+  // The y axis needs a gutter wide enough for a tick label; the plot then takes
+  // most of what is left, leaving room for the direction marker past its end.
+  const px0 = ctx.pad + 46;
+  const available = ctx.width - ctx.pad - px0;
+  const plotWidth = Math.min(340, Math.max(150, available * 0.62));
+  const px1 = px0 + plotWidth;
+  const py0 = LM_TOP;
+  const py1 = LM_BASE;
+
+  const fn = spec.entities.find((e) => e.kind === "function");
+  // Presence of the limit value — not the wording of the title — is what says
+  // this is a convergence.
+  const limit =
+    spec.entities.find((e) => e.id === "limit-value") ?? entitiesOfKind(spec, "bound")[0];
+  const direction = spec.entities.find((e) => e.id === "direction" || e.kind === "label");
+  const convergent = limit !== undefined;
+  const detail = (fn?.detail ?? "").toLowerCase();
+  const downward = !convergent && detail.includes("decreases without bound");
+  const status = fn?.epistemic ?? spec.epistemic;
+
+  const xAxis = spec.axes.find((a) => a.orientation === "horizontal");
+  const yAxis = spec.axes.find((a) => a.orientation === "vertical");
+  const schematic = (xAxis?.scale ?? "schematic") === "schematic";
+  const axisClass = `pl-axis${schematic ? " pl-schematic" : ""}`;
+
+  /** Normalised height (0 = the input axis, 1 = the top of the frame) to y. */
+  const Y = (v: number): number => py1 - v * (py1 - py0);
+
+  let svg = "";
+
+  // --- axes ----------------------------------------------------------------
+  svg += line(
+    px0,
+    py0 - 6,
+    px0,
+    py1,
+    `${axisClass}${weakStrokeClass(yAxis?.epistemic ?? "illustrative")}`,
+    yAxis
+      ? `${yAxis.label} — ${yAxis.scale} axis, ${statusPhrase(yAxis.epistemic)}`
+      : "value — schematic axis",
+  );
+  // Drawn as a path rather than a line so the direction of travel can carry an
+  // arrowhead: the reader has to know which way "the input" moves.
+  svg += path(
+    `M ${num(px0)} ${num(py1)} L ${num(px1 + 10)} ${num(py1)}`,
+    `${axisClass}${weakStrokeClass(xAxis?.epistemic ?? "illustrative")}`,
+    { "marker-end": `url(#${ctx.id("arrow-muted")})` },
+    xAxis
+      ? `${xAxis.label} — ${xAxis.scale} axis, ${statusPhrase(xAxis.epistemic)}`
+      : "input — schematic axis",
+  );
+
+  // --- the limit value -----------------------------------------------------
+  // Kept clear of both ends of the frame so the curve has somewhere to come
+  // from and the asymptote's label has somewhere to sit.
+  const limitY = Math.max(py0 + 24, Math.min(py1 - 30, Y(clamp01(limit?.position?.y, 0.3))));
+
+  for (const tick of yAxis?.ticks ?? []) {
+    const ty = Math.max(py0, Math.min(py1, Y(clamp01(tick.at, 0.3))));
+    svg += line(px0 - 5, ty, px0, ty, "pl-axis", tick.label);
+    svg += text(tick.label, {
+      x: px0 - 8,
+      y: ty + 3.5,
+      className: "pl-tick",
+      anchor: "end",
+      fontSize: 10,
+      maxWidth: Math.max(0, px0 - ctx.pad - 10),
+      title: `${tick.label} on the ${yAxis?.label ?? "value"} axis`,
+    });
+  }
+
+  if (limit) {
+    svg += path(
+      `M ${num(px0)} ${num(limitY)} L ${num(px1 + 6)} ${num(limitY)}`,
+      `pl-asymptote${weakStrokeClass(limit.epistemic)}`,
+      {},
+      `${entityTooltip(limit)} — the curve approaches this line and never meets it`,
+    );
+    svg += text(limit.label, {
+      x: px1 + 8,
+      y: limitY + 14,
+      className: `pl-label-strong pl-mono${isWeak(limit.epistemic) ? " pl-weak-text" : ""}`,
+      anchor: "end",
+      fontSize: 12.5,
+      maxWidth: Math.max(0, plotWidth * 0.6),
+      title: entityTooltip(limit),
+    });
+  }
+
+  // --- the curve -----------------------------------------------------------
+  const ax = px0 + 12;
+  const bx = px1 - 12;
+  const dx = bx - ax;
+  let curveEnd = py1;
+  let d: string;
+
+  if (convergent) {
+    // Flat at the right-hand end and steep on the left: the shape of settling
+    // down. The gap below the asymptote is deliberate and is never closed.
+    const yEnd = limitY - 4;
+    const yStart = Math.max(py0 + 6, Math.min(py0 + 16, yEnd - 36));
+    const dy = yEnd - yStart;
+    d =
+      `M ${num(ax)} ${num(yStart)} C ${num(ax + dx * 0.18)} ${num(yStart + dy * 0.72)}` +
+      ` ${num(ax + dx * 0.48)} ${num(yEnd)} ${num(bx)} ${num(yEnd)}`;
+    curveEnd = yEnd;
+  } else {
+    // Flat on the left and steep at the right: the shape of leaving.
+    const yStart = downward ? py0 + 22 : py1 - 22;
+    const yEnd = downward ? py1 + 18 : py0 - 8;
+    const dy = yEnd - yStart;
+    d =
+      `M ${num(ax)} ${num(yStart)} C ${num(ax + dx * 0.55)} ${num(yStart)}` +
+      ` ${num(ax + dx * 0.86)} ${num(yStart + dy * 0.55)} ${num(bx)} ${num(yEnd)}`;
+    curveEnd = yEnd;
+  }
+
+  svg += path(
+    d,
+    `pl-curve${weakStrokeClass(status)}`,
+    convergent ? {} : { "marker-end": `url(#${ctx.id("arrow")})` },
+    `${fn?.label ?? "the function"} — ${fn?.detail ?? (convergent ? "converges" : "diverges")} — ${statusPhrase(status)}`,
+  );
+
+  if (!convergent) {
+    // Said in words as well as drawn: an arrowhead alone is a convention, and
+    // "the values leave every bound" is the actual content of the theorem.
+    const noticeY = downward ? py1 - 12 : py0 + 12;
+    svg += text("the values leave every bound", {
+      x: px0 + 10,
+      y: noticeY,
+      className: "pl-label",
+      fontSize: 12,
+      maxWidth: Math.max(0, bx - px0 - 24),
+      title: `${fn?.label ?? "the function"} ${fn?.detail ?? "leaves every bound"}`,
+    });
+  }
+
+  // --- direction of travel -------------------------------------------------
+  if (direction) {
+    svg += text(direction.label, {
+      x: px1 + 16,
+      y: py1 + 4,
+      className: `pl-label-strong pl-mono${isWeak(direction.epistemic) ? " pl-weak-text" : ""}`,
+      fontSize: 12.5,
+      maxWidth: Math.max(0, ctx.width - ctx.pad - (px1 + 16)),
+      title: entityTooltip(direction),
+    });
+  }
+
+  // The input axis title drops a row when the curve leaves through the bottom,
+  // so the two never share space.
+  const axisTitleY = downward ? py1 + 36 : py1 + 20;
+  if (xAxis) {
+    const units = xAxis.units ? ` (${xAxis.units})` : "";
+    const suffix = schematic ? " · schematic scale" : "";
+    svg += text(`${xAxis.label}${units}${suffix}`, {
+      x: px0,
+      y: axisTitleY,
+      className: "pl-axis-title",
+      fontSize: 10.5,
+      maxWidth: Math.max(0, ctx.width - ctx.pad - px0),
+      title: `${xAxis.label}${units} — ${xAxis.scale} axis`,
+    });
+  }
+  svg += el(
+    "text",
+    {
+      x: ctx.pad + 8,
+      y: (py0 + py1) / 2,
+      class: "pl-axis-title",
+      "text-anchor": "middle",
+      transform: `rotate(-90 ${num(ctx.pad + 8)} ${num((py0 + py1) / 2)})`,
+    },
+    escapeXml(yAxis?.label ?? "value"),
+  );
+
+  // --- caption column ------------------------------------------------------
+  const capX = px1 + 34;
+  const capWidth = ctx.width - ctx.pad - capX;
+  if (capWidth > 90) {
+    let capY = py0 + 22;
+    svg += text(fn?.label ?? "the function", {
+      x: capX,
+      y: capY,
+      className: "pl-label-strong pl-mono",
+      fontSize: 13,
+      maxWidth: capWidth,
+      title: fn ? entityTooltip(fn) : undefined,
+    });
+    capY += 18;
+    if (fn?.detail) {
+      const para = paragraph(fn.detail, {
+        x: capX,
+        y: capY,
+        className: "pl-detail",
+        maxWidth: capWidth,
+        fontSize: 10.5,
+        lineHeight: 13,
+        maxLines: 2,
+      });
+      svg += para.svg;
+      capY += para.height + 20;
+    }
+    for (const relationship of spec.relationships) {
+      if (!relationship.label) continue;
+      const para = paragraph(relationship.label, {
+        x: capX,
+        y: capY,
+        className: `pl-label pl-mono${isWeak(relationship.epistemic) ? " pl-weak-text" : ""}`,
+        maxWidth: capWidth,
+        fontSize: 12,
+        lineHeight: 16,
+        maxLines: 3,
+      });
+      svg += para.svg;
+      capY += para.height + 22;
+    }
+    if (direction?.detail) {
+      svg += text(direction.detail, {
+        x: capX,
+        y: capY,
+        className: "pl-detail",
+        fontSize: 10.5,
+        maxWidth: capWidth,
+        title: entityTooltip(direction),
+      });
+    }
+  }
+
+  // --- legend --------------------------------------------------------------
+  if (convergent) {
+    legend.push({
+      swatch: "asymptote",
+      text: "Dotted horizontal line: the limit value. The curve closes on it and never meets it — the theorem says the values get arbitrarily close, not that any of them is the limit.",
+    });
+    legend.push({
+      swatch: "curve",
+      text: "The curve is one arbitrary function with the proved limit. The theorem constrains where the values end up, not the path they take to get there.",
+    });
+    legend.push({
+      swatch: "arrow",
+      text: `Arrowhead on the input axis: the direction the input travels${xAxis ? ` (${xAxis.label})` : ""}. There is no arrowhead on the curve, because the values settle rather than leave.`,
+    });
+  } else {
+    legend.push({
+      swatch: "curve",
+      text: `The curve leaves the frame ${downward ? "through the bottom" : "through the top"} and the arrowhead says it keeps going. There is no limit line to draw: the values leave every bound.`,
+    });
+    legend.push({
+      swatch: "arrow",
+      text: `Arrowheads mark direction of travel: along the input axis${xAxis ? ` (${xAxis.label})` : ""}, and past the edge of the frame for the values themselves.`,
+    });
+  }
+  if (schematic) {
+    legend.push({
+      swatch: "dashed-line",
+      text: "Broken axes: both scales are schematic. No magnitude shown here was measured, and neither the steepness of the curve nor how quickly it flattens means anything.",
+    });
+  }
+
+  return { svg, height: Math.max(axisTitleY + 14, curveEnd + 16), legend };
+}
+
+// ---------------------------------------------------------------------------
 // Assumption sensitivity — the flagship figure
 // ---------------------------------------------------------------------------
 

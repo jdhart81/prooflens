@@ -34,7 +34,15 @@ export function corpus(): FormalIRDocument {
 }
 
 /** How many declarations the checked-in corpus contains. */
-export const CORPUS_DECLARATION_COUNT = 34;
+export const CORPUS_DECLARATION_COUNT = 35;
+
+/** Absolute path to the committed 679-declaration mathlib coverage report. */
+export const MATHLIB_COVERAGE_PATH = resolve(HERE, "../../../examples/mathlib-coverage.json");
+
+/** The committed mathlib coverage report, as JSON. */
+export function mathlibCoverage(): unknown {
+  return JSON.parse(readFileSync(MATHLIB_COVERAGE_PATH, "utf8")) as unknown;
+}
 
 /** Look a declaration up by its short name, e.g. `simple_upper_bound`. */
 export function decl(shortName: string): FormalDeclaration {

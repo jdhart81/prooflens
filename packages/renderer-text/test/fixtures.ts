@@ -304,6 +304,110 @@ export function monotonicitySpec(
   };
 }
 
+/**
+ * A limit plot, shaped exactly as `planLimit` emits one.
+ *
+ * `"convergent"` carries the `limit-value` entity and the output-axis tick;
+ * the two divergent variants carry neither, and differ only in the function's
+ * `detail` — which is the only thing that says which way the values leave.
+ */
+export function limitSpec(
+  variant: "convergent" | "grows" | "decreases" = "convergent",
+): VisualSpec {
+  const convergent = variant === "convergent";
+  const divergenceLabel =
+    variant === "decreases" ? "decreases without bound" : "grows without bound";
+  const entities: VisualSpec["entities"] = [
+    {
+      id: "function",
+      kind: "function",
+      label: "n ↦ 1 / (n + 1)",
+      detail: convergent ? "approaches 0" : divergenceLabel,
+      position: { x: 0.5, y: convergent ? 0.35 : 0.5 },
+      emphasis: "primary",
+      epistemic: "derived",
+    },
+    {
+      id: "direction",
+      kind: "label",
+      label: "+∞",
+      detail: "input grows without bound",
+      position: { x: 0.95, y: 0 },
+      emphasis: "secondary",
+      epistemic: "derived",
+    },
+  ];
+  if (convergent) {
+    entities.push({
+      id: "limit-value",
+      kind: "bound",
+      label: "0",
+      detail: "the limit",
+      position: { x: 0.5, y: 0.3 },
+      emphasis: "primary",
+      state: "permitted",
+      epistemic: "derived",
+    });
+  }
+
+  return {
+    id: `Test.thm:limit-${variant}`,
+    type: "limit-plot",
+    title: convergent ? "n ↦ 1 / (n + 1) ⟶ 0" : `n ↦ 1 / (n + 1) ${divergenceLabel}`,
+    subtitle: "convergence of a harmonic sequence",
+    entities,
+    relationships: convergent
+      ? [
+          {
+            id: "approaches",
+            kind: "maps-to",
+            from: "function",
+            to: "limit-value",
+            label: "as the input grows without bound",
+            epistemic: "derived",
+          },
+        ]
+      : [],
+    axes: [
+      {
+        id: "input",
+        orientation: "horizontal",
+        label: "input (grows without bound)",
+        scale: "schematic",
+        ticks: [],
+        epistemic: "illustrative",
+      },
+      {
+        id: "output",
+        orientation: "vertical",
+        label: "value",
+        scale: "schematic",
+        ticks: convergent ? [{ at: 0.3, label: "0", emphasis: "primary" }] : [],
+        epistemic: "illustrative",
+      },
+    ],
+    annotations: [
+      {
+        id: "rationale",
+        kind: "rationale",
+        text: "The conclusion is a `Filter.Tendsto` along `atTop`.",
+        epistemic: "derived",
+      },
+      {
+        id: "shape-notice",
+        kind: "legend",
+        text: convergent
+          ? "The drawn curve is one arbitrary function with the proved limit."
+          : "The theorem says the values leave every bound.",
+        epistemic: "illustrative",
+      },
+    ],
+    epistemic: "illustrative",
+    provenance: PROVENANCE,
+    rationale: "The conclusion is a `Filter.Tendsto` along `atTop`.",
+  };
+}
+
 /** The structural fallback. */
 export function expressionTreeSpec(): VisualSpec {
   return {

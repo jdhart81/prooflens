@@ -42,6 +42,31 @@ export const RULES = {
     description: "The conclusion asserts a monotonicity property.",
     produces: "derived",
   },
+  LIMIT: {
+    id: "PREDICATE_LIMIT_001",
+    description: "The conclusion asserts a limit along a filter.",
+    produces: "derived",
+  },
+  PROPERTY: {
+    id: "PREDICATE_PROPERTY_001",
+    description: "The conclusion asserts a named property of a subject.",
+    produces: "derived",
+  },
+  CONJUNCTION: {
+    id: "PROPOSITION_CONJUNCTION_001",
+    description: "The conclusion asserts several facts at once.",
+    produces: "derived",
+  },
+  MEMBERSHIP: {
+    id: "RELATION_MEMBERSHIP_001",
+    description: "The conclusion asserts that a value lies in a collection.",
+    produces: "derived",
+  },
+  EXISTENCE: {
+    id: "PROPOSITION_EXISTENCE_001",
+    description: "The conclusion asserts that something exists.",
+    produces: "derived",
+  },
   IMPLICATION: {
     id: "PROPOSITION_IMPLICATION_001",
     description: "The conclusion is an implication between two propositions.",

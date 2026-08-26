@@ -165,6 +165,153 @@ describe("notationFidelity", () => {
 });
 
 // ---------------------------------------------------------------------------
+// extractionError — resilient extraction
+// ---------------------------------------------------------------------------
+
+/** A declaration the Lean extractor failed on, kept rather than dropped. */
+function stubDeclaration(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  const failed = {
+    pretty: "<extraction failed>",
+    tree: { kind: "sort", level: "0" },
+    constants: [],
+  };
+  return {
+    name: "Broken.Module.exploded",
+    namespace: "Broken.Module",
+    kind: "theorem",
+    docstring: null,
+    source: null,
+    binders: [],
+    conclusion: failed,
+    definitionBody: null,
+    statement: failed,
+    dependencies: [],
+    axioms: [],
+    proofTermAvailable: false,
+    extractionError: "(deterministic) maximum recursion depth has been reached",
+    usesSorry: false,
+    ...overrides,
+  };
+}
+
+/** A whole document containing one stub row. */
+function stubDocument(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    formalIRVersion: "0.1.0",
+    system: "lean4",
+    toolchain: "4.24.0",
+    notationFidelity: "notation",
+    modules: ["Broken.Module"],
+    declarations: [stubDeclaration(overrides)],
+  };
+}
+
+describe("extractionError", () => {
+  it("defaults to null when absent, so an older extraction still parses", () => {
+    const older = parseMutated((raw) => {
+      for (const d of raw["declarations"] as Array<Record<string, unknown>>) {
+        delete d["extractionError"];
+      }
+    });
+    expect(older.declarations).toHaveLength(CORPUS_DECLARATION_COUNT);
+    for (const d of older.declarations) expect(d.extractionError).toBeNull();
+  });
+
+  it("is null on every declaration in the real corpus", () => {
+    for (const d of corpus().declarations) {
+      expect(d.extractionError, `${d.name} reports an extraction failure`).toBeNull();
+    }
+  });
+
+  it("parses a document containing a stub row", () => {
+    const doc = parseFormalIR(stubDocument());
+    expect(doc.declarations).toHaveLength(1);
+    const stub = doc.declarations[0]!;
+    expect(stub.name).toBe("Broken.Module.exploded");
+    expect(stub.extractionError).toBe("(deterministic) maximum recursion depth has been reached");
+    expect(stub.conclusion.pretty).toBe("<extraction failed>");
+    expect(stub.conclusion.tree.kind).toBe("sort");
+    expect(stub.binders).toEqual([]);
+  });
+
+  it("keeps a stub row alongside real declarations rather than dropping either", () => {
+    const raw = corpusRaw() as Record<string, unknown>;
+    const declarations = [
+      ...(raw["declarations"] as unknown[]),
+      stubDeclaration({ name: "Broken.Module.other" }),
+    ];
+    const doc = parseFormalIR({ ...raw, declarations });
+    expect(doc.declarations).toHaveLength(CORPUS_DECLARATION_COUNT + 1);
+    expect(doc.declarations.filter((d) => d.extractionError !== null)).toHaveLength(1);
+  });
+
+  it("accepts an explicit null", () => {
+    const doc = parseFormalIR(stubDocument({ extractionError: null }));
+    expect(doc.declarations[0]!.extractionError).toBeNull();
+  });
+
+  it("rejects a non-string, non-null extraction error", () => {
+    for (const bad of [42, true, { message: "boom" }, ["boom"]]) {
+      expect(() => parseFormalIR(stubDocument({ extractionError: bad }))).toThrow(
+        FormalIRParseError,
+      );
+    }
+  });
+
+  it("mints no kernel witness for a declaration whose extraction failed", () => {
+    // A stub row records that ProofLens could not read the declaration. It is
+    // not evidence that Lean accepted anything, so `verified` must be
+    // unreachable for it — `usesSorry: false` only means no `sorry` was
+    // *observed*, which is a different statement entirely.
+    const doc = parseFormalIR(stubDocument());
+    expect(kernelWitness(doc, doc.declarations[0]!)).toBeNull();
+  });
+
+  it("still mints a witness for a declaration that extracted cleanly", () => {
+    const doc = corpus();
+    expect(kernelWitness(doc, decl("simple_upper_bound"))).not.toBeNull();
+  });
+
+  it("does not appear on BinderUsage, where it would mean nothing", () => {
+    // It was briefly pasted onto `BinderUsageSchema` as well, which gave every
+    // binder a meaningless `extractionError: null` in the public type and in
+    // every serialised bundle. A per-binder occurrence record has no extraction
+    // of its own to fail.
+    const usage = decl("simple_upper_bound").binders[0]!.usage as Record<string, unknown>;
+    expect("extractionError" in usage).toBe(false);
+    expect(Object.keys(usage).sort()).toEqual([
+      "occursInConclusion",
+      "occursInLaterBinderTypes",
+      "occursInProofTerm",
+      "proofTermAvailable",
+      "unusedInProof",
+    ]);
+  });
+
+  it("appears on no binder anywhere in the corpus", () => {
+    for (const d of corpus().declarations) {
+      for (const binder of d.binders) {
+        expect(
+          "extractionError" in (binder.usage as Record<string, unknown>),
+          `${d.name} / ${binder.name}`,
+        ).toBe(false);
+      }
+    }
+  });
+
+  it("keeps BinderUsage to exactly the five occurrence booleans", () => {
+    for (const d of corpus().declarations) {
+      for (const binder of d.binders) {
+        expect(Object.keys(binder.usage)).toHaveLength(5);
+        for (const value of Object.values(binder.usage)) {
+          expect(typeof value).toBe("boolean");
+        }
+      }
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
 // definitionBody
 // ---------------------------------------------------------------------------
 
@@ -494,8 +641,11 @@ describe("expression paths on a real corpus tree", () => {
     expect(childPath("conclusion", "body")).toBe("conclusion.body");
     expect(argPath("conclusion", 2)).toBe("conclusion.args[2]");
 
+    // Compare against the declaration's own binder rather than a literal
+    // `_uniq.N`, which is regenerated whenever the corpus is re-extracted.
+    const xBinder = d.binders.find((b) => b.name === "x")!;
     const lhs = resolvePath(tree, argPath("conclusion", 2));
-    expect(lhs).toEqual({ kind: "fvar", name: "x", fvarId: "_uniq.129" });
+    expect(lhs).toEqual({ kind: "fvar", name: "x", fvarId: xBinder.fvarId });
 
     const numerator = resolvePath(tree, "conclusion.args[3].args[4]");
     expect(numerator?.kind).toBe("fvar");

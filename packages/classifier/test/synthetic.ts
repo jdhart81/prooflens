@@ -12,6 +12,7 @@ import {
   renderProposition,
   type MathExpression,
   type MathHypothesis,
+  type MathInstance,
   type MathProposition,
   type MathVariable,
   type RelationKind,
@@ -38,6 +39,7 @@ const OPERATOR_SYMBOL: Record<OperatorKind, string> = {
   neg: "−",
   inv: "⁻¹",
   abs: "abs",
+  comp: "∘",
 };
 
 export function op(kind: OperatorKind, ...args: MathExpression[]): MathExpression {
@@ -89,6 +91,8 @@ export interface SyntheticOptions {
   suggestedVisual?: string | null;
   /** What a definition unfolds to. Only meaningful with `kind: "definition"`. */
   definitionBody?: MathExpression | null;
+  /** Typeclass instances the declaration requires, as `symbol: typeDisplay`. */
+  instances?: Array<{ symbol: string; typeDisplay: string }>;
 }
 
 /** Build a TheoremIR around a conclusion, with as little ceremony as possible. */
@@ -123,6 +127,12 @@ export function synthetic(conclusion: MathProposition, options: SyntheticOptions
     },
   }));
 
+  const instances: MathInstance[] = (options.instances ?? []).map((i) => ({
+    id: `inst:${i.symbol}`,
+    symbol: i.symbol,
+    typeDisplay: i.typeDisplay,
+  }));
+
   return {
     id: name,
     name,
@@ -131,6 +141,7 @@ export function synthetic(conclusion: MathProposition, options: SyntheticOptions
     documentation: null,
     variables,
     hypotheses,
+    instances,
     conclusion: claim,
     conclusionDisplay: renderProposition(conclusion),
     definitionBody: options.definitionBody

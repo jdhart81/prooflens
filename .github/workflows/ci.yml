@@ -108,6 +108,12 @@ jobs:
           lake update -R
           lake exe cache get
 
+      # Jobs do not share build artifacts. The corpus target itself does not
+      # import ProofLens, but the generated extraction driver does.
+      - name: Build the extractor for this job
+        working-directory: lean
+        run: lake build
+
       - name: Build the example corpus
         working-directory: corpus
         run: lake build ProofLensExamples

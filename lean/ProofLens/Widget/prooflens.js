@@ -6978,6 +6978,62 @@ function clamp01(n, fallback = 0.5) {
   return n < 0 ? 0 : n > 1 ? 1 : n;
 }
 
+// packages/renderer-svg/src/animate.ts
+var STAGE_STEP = 0.55;
+var ENTER_DURATION = 0.45;
+var TRACE_DURATION = 2;
+var CHROME_FADE_DURATION = 0.35;
+function stageDelay(stage) {
+  return stage * STAGE_STEP;
+}
+function afterStage(stage) {
+  return stageDelay(stage) + ENTER_DURATION;
+}
+var ANIMATION_LEGEND_ROW = {
+  swatch: "none",
+  text: "Order of appearance follows the proof's dependency structure. The pacing is a display choice."
+};
+function buildAnimationStylesheet(ctx) {
+  const targets = ctx.animTargets;
+  if (targets.length === 0) return "";
+  let css = "";
+  if (targets.some((t) => t.kind === "enter")) {
+    css += `@keyframes ${ctx.id("enter")}{from{opacity:0;transform:translateY(6px)}}`;
+  }
+  if (targets.some((t) => t.kind === "fade")) {
+    css += `@keyframes ${ctx.id("fade")}{from{opacity:0}}`;
+  }
+  const drawLengths = [];
+  for (const target of targets) {
+    if (target.kind === "draw" && !drawLengths.includes(target.length)) {
+      drawLengths.push(target.length);
+    }
+  }
+  for (const length of drawLengths) {
+    css += `@keyframes ${ctx.id(`draw-${length}`)}{from{stroke-dashoffset:${num(length)}}}`;
+  }
+  if (targets.some((t) => t.kind === "draw" && t.revealMarker !== void 0)) {
+    css += `@keyframes ${ctx.id("marker")}{from{marker-end:none}}`;
+  }
+  for (const target of targets) {
+    const name = target.kind === "enter" ? ctx.id("enter") : target.kind === "fade" ? ctx.id("fade") : ctx.id(`draw-${target.length}`);
+    const delay = `${num(target.delay)}s`;
+    let declarations = "";
+    let animations = `${name} ${num(target.duration)}s ease-out both`;
+    let delays = delay;
+    if (target.kind === "draw") {
+      declarations += `stroke-dasharray:${num(target.length)};`;
+      if (target.revealMarker !== void 0) {
+        animations += `,${ctx.id("marker")} ${num(target.duration)}s step-end both`;
+        delays += `,${delay}`;
+      }
+    }
+    css += `.${target.className}{${declarations}animation:${animations};animation-delay:${delays}}`;
+  }
+  css += `@media (prefers-reduced-motion:reduce){[class*="pl-anim-"]{animation:none !important}}`;
+  return css;
+}
+
 // packages/renderer-svg/src/measure.ts
 var NARROW = new Set(" .,:;!|'`ijlt()[]{}/\\-\xAC\u2032".split(""));
 var WIDE = new Set("mwMW@%\u27F9\u27FA\u27F6\u2192\u2194\u2264\u2265\u2200\u2203\u222B\u2211\u220F".split(""));
@@ -7091,13 +7147,47 @@ function clampCenter(x, textWidth, min, max) {
 }
 
 // packages/renderer-svg/src/context.ts
-function createContext(spec, width, pad, prefix) {
+function createContext(spec, width, pad, prefix, animate = false) {
   const base = sanitizeId(`${prefix}-${spec.id}`);
+  const targets = [];
+  const byShape = /* @__PURE__ */ new Map();
   return {
     spec,
     width,
     pad,
-    id: (suffix) => `${base}-${sanitizeId(suffix)}`
+    animate,
+    animTargets: targets,
+    id: (suffix) => `${base}-${sanitizeId(suffix)}`,
+    anim(options) {
+      if (!animate) return "";
+      const duration = options.duration ?? 0.45;
+      const length = Math.max(1, Math.ceil(options.length ?? 0));
+      const shape = [
+        options.kind,
+        options.delay,
+        duration,
+        options.kind === "draw" ? length : "",
+        options.revealMarker ?? ""
+      ].join("|");
+      let className = byShape.get(shape);
+      if (className === void 0) {
+        className = `pl-anim-${base}-a${targets.length}`;
+        byShape.set(shape, className);
+        targets.push({
+          className,
+          kind: options.kind,
+          delay: options.delay,
+          duration,
+          length,
+          revealMarker: options.revealMarker
+        });
+      }
+      return ` ${className}`;
+    },
+    resetAnim() {
+      targets.length = 0;
+      byShape.clear();
+    }
   };
 }
 function isWeak(status) {
@@ -7437,6 +7527,7 @@ var NL_AXIS_TITLE_Y = 136;
 var NL_HEIGHT = 148;
 function layoutNumberLine(spec, ctx) {
   const legend = [];
+  const fadeAt = (stage) => ctx.anim({ kind: "fade", delay: stageDelay(stage) });
   const x0 = ctx.pad + 12;
   const x1 = ctx.width - ctx.pad - 12;
   const span = x1 - x0;
@@ -7476,12 +7567,13 @@ function layoutNumberLine(spec, ctx) {
     const right = at <= boundX ? X(boundX) : x1;
     const excluded = region.state === "excluded";
     const cls = excluded ? "pl-region-exclude" : "pl-region-permit";
+    const regionAnim = fadeAt(excluded ? 3 : 2);
     svg += box({
       x: left,
       y: NL_BAND_TOP,
       width: right - left,
       height: NL_BAND_BOTTOM - NL_BAND_TOP,
-      className: `${cls}${weakStrokeClass(region.epistemic)}${weakFillClass(region.epistemic)}`,
+      className: `${cls}${weakStrokeClass(region.epistemic)}${weakFillClass(region.epistemic)}${regionAnim}`,
       radius: 3,
       tooltip: entityTooltip(region)
     });
@@ -7496,7 +7588,8 @@ function layoutNumberLine(spec, ctx) {
           rx: 3,
           ry: 3,
           fill: `url(#${hatchId})`,
-          stroke: "none"
+          stroke: "none",
+          class: regionAnim === "" ? void 0 : regionAnim.trimStart()
         },
         ""
       );
@@ -7505,7 +7598,7 @@ function layoutNumberLine(spec, ctx) {
     svg += text(region.label, {
       x: (left + right) / 2,
       y: NL_REGION_LABEL_Y,
-      className: excluded ? "pl-exclude-text" : "pl-permit-text",
+      className: `${excluded ? "pl-exclude-text" : "pl-permit-text"}${regionAnim}`,
       anchor: "middle",
       fontSize: 10.5,
       maxWidth: Math.max(20, labelWidth),
@@ -7513,7 +7606,7 @@ function layoutNumberLine(spec, ctx) {
     });
   }
   const axisStatus = axis?.epistemic ?? "illustrative";
-  const axisClass = `pl-axis${schematic ? " pl-schematic" : ""}${weakStrokeClass(axisStatus)}`;
+  const axisClass = `pl-axis${schematic ? " pl-schematic" : ""}${weakStrokeClass(axisStatus)}${fadeAt(0)}`;
   svg += line(
     x0 - 8,
     NL_AXIS_Y,
@@ -7524,12 +7617,12 @@ function layoutNumberLine(spec, ctx) {
   );
   for (const tick of axis?.ticks ?? []) {
     const tx = X(tick.at);
-    svg += line(tx, NL_BAND_BOTTOM, tx, NL_BAND_BOTTOM + 6, "pl-axis", tick.label);
+    svg += line(tx, NL_BAND_BOTTOM, tx, NL_BAND_BOTTOM + 6, `pl-axis${fadeAt(0)}`, tick.label);
     const width = measureText(tick.label, 10);
     svg += text(tick.label, {
       x: clampCenter(tx, width, ctx.pad, ctx.width - ctx.pad),
       y: NL_TICK_LABEL_Y,
-      className: "pl-tick",
+      className: `pl-tick${fadeAt(0)}`,
       anchor: "middle",
       fontSize: 10,
       maxWidth: ctx.width - ctx.pad * 2
@@ -7541,7 +7634,7 @@ function layoutNumberLine(spec, ctx) {
     svg += text(`${axis.label}${units}${suffix}`, {
       x: x0 - 8,
       y: NL_AXIS_TITLE_Y,
-      className: "pl-axis-title",
+      className: `pl-axis-title${fadeAt(0)}`,
       fontSize: 10.5,
       maxWidth: ctx.width - ctx.pad * 2,
       title: `${axis.label}${units} \u2014 ${axis.scale} axis`
@@ -7553,7 +7646,7 @@ function layoutNumberLine(spec, ctx) {
       qx,
       NL_AXIS_Y,
       5,
-      `pl-dot${weakFillClass(quantity.epistemic)}`,
+      `pl-dot${weakFillClass(quantity.epistemic)}${fadeAt(4)}`,
       entityTooltip(quantity)
     );
     const label = quantity.detail ? `${quantity.label}  \xB7  ${quantity.detail}` : quantity.label;
@@ -7561,7 +7654,7 @@ function layoutNumberLine(spec, ctx) {
     svg += text(label, {
       x: clampCenter(qx, width, ctx.pad, ctx.width - ctx.pad),
       y: NL_QTY_LABEL_Y,
-      className: `pl-label pl-mono${isWeak(quantity.epistemic) ? " pl-weak-text" : ""}`,
+      className: `pl-label pl-mono${isWeak(quantity.epistemic) ? " pl-weak-text" : ""}${fadeAt(4)}`,
       anchor: "middle",
       fontSize: 12,
       maxWidth: ctx.width - ctx.pad * 2,
@@ -7572,6 +7665,11 @@ function layoutNumberLine(spec, ctx) {
   if (bound) {
     strict = bound.state === "excluded";
     const bx = X(bound.position?.x);
+    const markerAnim = isWeak(bound.epistemic) ? fadeAt(1) : ctx.anim({
+      kind: "draw",
+      delay: stageDelay(1),
+      length: NL_MARKER_BOTTOM - NL_MARKER_TOP
+    });
     svg += line(
       bx,
       NL_MARKER_TOP,
@@ -7579,21 +7677,21 @@ function layoutNumberLine(spec, ctx) {
       NL_MARKER_BOTTOM,
       // Strictness is carried by the open circle alone. A dash here would
       // collide with the epistemic encoding, where dashed means "illustrative".
-      `pl-marker${weakStrokeClass(bound.epistemic)}`,
+      `pl-marker${weakStrokeClass(bound.epistemic)}${markerAnim}`,
       entityTooltip(bound)
     );
     svg += circle(
       bx,
       NL_AXIS_Y,
       5.5,
-      strict ? "pl-dot-open" : "pl-dot",
+      `${strict ? "pl-dot-open" : "pl-dot"}${fadeAt(1)}`,
       `${entityTooltip(bound)} \u2014 ${strict ? "open circle: the bound is excluded (strict)" : "filled circle: the bound is included (non-strict)"}`
     );
     const width = measureText(bound.label, 12.5);
     svg += text(bound.label, {
       x: clampCenter(bx, width, ctx.pad, ctx.width - ctx.pad),
       y: NL_BOUND_LABEL_Y,
-      className: "pl-label-strong pl-mono",
+      className: `pl-label-strong pl-mono${fadeAt(1)}`,
       anchor: "middle",
       fontSize: 12.5,
       maxWidth: ctx.width - ctx.pad * 2,
@@ -7629,6 +7727,8 @@ function layoutNumberLine(spec, ctx) {
 }
 function layoutMonotonicity(spec, ctx) {
   const legend = [];
+  const axesAnim = ctx.anim({ kind: "fade", delay: stageDelay(0) });
+  const afterTrace = () => ctx.anim({ kind: "fade", delay: stageDelay(1) + TRACE_DURATION });
   const px0 = ctx.pad + 30;
   const py0 = 14;
   const py1 = 200;
@@ -7641,7 +7741,7 @@ function layoutMonotonicity(spec, ctx) {
   const xAxis = spec.axes.find((a) => a.orientation === "horizontal");
   const yAxis = spec.axes.find((a) => a.orientation === "vertical");
   const schematic = (xAxis?.scale ?? "schematic") === "schematic";
-  const axisClass = `pl-axis${schematic ? " pl-schematic" : ""}`;
+  const axisClass = `pl-axis${schematic ? " pl-schematic" : ""}${axesAnim}`;
   let svg = "";
   svg += line(
     px0,
@@ -7665,10 +7765,16 @@ function layoutMonotonicity(spec, ctx) {
   const by = decreasing ? py1 - 16 : py0 + 16;
   const c1x = ax + (bx - ax) * 0.45;
   const c2x = ax + (bx - ax) * 0.55;
+  const curveAnim = isWeak(status) ? ctx.anim({ kind: "fade", delay: stageDelay(1), duration: TRACE_DURATION }) : ctx.anim({
+    kind: "draw",
+    delay: stageDelay(1),
+    duration: TRACE_DURATION,
+    length: cubicLength(ax, ay, c1x, ay, c2x, by, bx, by)
+  });
   const d = `M ${num(ax)} ${num(ay)} C ${num(c1x)} ${num(ay)} ${num(c2x)} ${num(by)} ${num(bx)} ${num(by)}`;
   svg += path(
     d,
-    `pl-curve${weakStrokeClass(status)}`,
+    `pl-curve${weakStrokeClass(status)}${curveAnim}`,
     {},
     `${fn?.label ?? "f"} \u2014 ${fn?.detail ?? "monotone"} \u2014 ${statusPhrase(status)}`
   );
@@ -7677,13 +7783,13 @@ function layoutMonotonicity(spec, ctx) {
     const t = solveCubicT(ax, c1x, c2x, bx, ax + clamp01(sample.position?.x) * (bx - ax));
     const sx = cubic(ax, c1x, c2x, bx, t);
     const sy = cubic(ay, ay, by, by, t);
-    svg += line(sx, py1, sx, sy, "pl-guide");
-    svg += line(px0, sy, sx, sy, "pl-guide");
-    svg += circle(sx, sy, 3.5, "pl-dot", entityTooltip(sample));
+    svg += line(sx, py1, sx, sy, `pl-guide${afterTrace()}`);
+    svg += line(px0, sy, sx, sy, `pl-guide${afterTrace()}`);
+    svg += circle(sx, sy, 3.5, `pl-dot${afterTrace()}`, entityTooltip(sample));
     svg += text(sample.label, {
       x: sx,
       y: py1 + 15,
-      className: "pl-label pl-mono",
+      className: `pl-label pl-mono${afterTrace()}`,
       anchor: "middle",
       fontSize: 11.5,
       maxWidth: 60,
@@ -7693,7 +7799,7 @@ function layoutMonotonicity(spec, ctx) {
   svg += text(xAxis?.label ?? "input", {
     x: px1 + 12,
     y: py1 + 15,
-    className: "pl-axis-title",
+    className: `pl-axis-title${axesAnim}`,
     fontSize: 10.5,
     maxWidth: 90
   });
@@ -7702,7 +7808,9 @@ function layoutMonotonicity(spec, ctx) {
     {
       x: px0 - 14,
       y: (py0 + py1) / 2,
-      class: "pl-axis-title",
+      // Fade, never enter: a CSS transform would displace the rotation this
+      // label carries in its own `transform` attribute mid-animation.
+      class: `pl-axis-title${axesAnim}`,
       "text-anchor": "middle",
       transform: `rotate(-90 ${num(px0 - 14)} ${num((py0 + py1) / 2)})`
     },
@@ -7715,7 +7823,7 @@ function layoutMonotonicity(spec, ctx) {
     svg += text(fn?.label ?? "f", {
       x: capX,
       y: capY,
-      className: "pl-label-strong pl-mono",
+      className: `pl-label-strong pl-mono${afterTrace()}`,
       fontSize: 13,
       maxWidth: capWidth,
       title: fn ? entityTooltip(fn) : void 0
@@ -7725,7 +7833,7 @@ function layoutMonotonicity(spec, ctx) {
       const para = paragraph(fn.detail, {
         x: capX,
         y: capY,
-        className: "pl-detail",
+        className: `pl-detail${afterTrace()}`,
         maxWidth: capWidth,
         fontSize: 10.5,
         lineHeight: 13,
@@ -7739,7 +7847,7 @@ function layoutMonotonicity(spec, ctx) {
       const para = paragraph(relationship.label, {
         x: capX,
         y: capY,
-        className: `pl-label pl-mono${isWeak(relationship.epistemic) ? " pl-weak-text" : ""}`,
+        className: `pl-label pl-mono${isWeak(relationship.epistemic) ? " pl-weak-text" : ""}${afterTrace()}`,
         maxWidth: capWidth,
         fontSize: 12,
         lineHeight: 16,
@@ -7775,10 +7883,29 @@ function solveCubicT(p0, p1, p2, p3, target) {
   }
   return (lo + hi) / 2;
 }
+function cubicLength(x0, y0, x1, y1, x2, y2, x3, y3) {
+  let length = 0;
+  let px = x0;
+  let py = y0;
+  for (let i = 1; i <= 24; i += 1) {
+    const t = i / 24;
+    const x = cubic(x0, x1, x2, x3, t);
+    const y = cubic(y0, y1, y2, y3, t);
+    length += Math.hypot(x - px, y - py);
+    px = x;
+    py = y;
+  }
+  return Math.ceil(length + 2);
+}
+function edgeLength(x1, y1, x2, y2) {
+  return Math.ceil(Math.abs(x2 - x1) + Math.abs(y2 - y1)) + 100;
+}
 var LM_TOP = 14;
 var LM_BASE = 200;
 function layoutLimit(spec, ctx) {
   const legend = [];
+  const axesAnim = ctx.anim({ kind: "fade", delay: stageDelay(0) });
+  const afterTrace = () => ctx.anim({ kind: "fade", delay: stageDelay(1) + TRACE_DURATION });
   const px0 = ctx.pad + 46;
   const available = ctx.width - ctx.pad - px0;
   const plotWidth = Math.min(340, Math.max(150, available * 0.62));
@@ -7803,23 +7930,23 @@ function layoutLimit(spec, ctx) {
     py0 - 6,
     px0,
     py1,
-    `${axisClass}${weakStrokeClass(yAxis?.epistemic ?? "illustrative")}`,
+    `${axisClass}${weakStrokeClass(yAxis?.epistemic ?? "illustrative")}${axesAnim}`,
     yAxis ? `${yAxis.label} \u2014 ${yAxis.scale} axis, ${statusPhrase(yAxis.epistemic)}` : "value \u2014 schematic axis"
   );
   svg += path(
     `M ${num(px0)} ${num(py1)} L ${num(px1 + 10)} ${num(py1)}`,
-    `${axisClass}${weakStrokeClass(xAxis?.epistemic ?? "illustrative")}`,
+    `${axisClass}${weakStrokeClass(xAxis?.epistemic ?? "illustrative")}${axesAnim}`,
     { "marker-end": `url(#${ctx.id("arrow-muted")})` },
     xAxis ? `${xAxis.label} \u2014 ${xAxis.scale} axis, ${statusPhrase(xAxis.epistemic)}` : "input \u2014 schematic axis"
   );
   const limitY = Math.max(py0 + 24, Math.min(py1 - 30, Y(clamp01(limit?.position?.y, 0.3))));
   for (const tick of yAxis?.ticks ?? []) {
     const ty = Math.max(py0, Math.min(py1, Y(clamp01(tick.at, 0.3))));
-    svg += line(px0 - 5, ty, px0, ty, "pl-axis", tick.label);
+    svg += line(px0 - 5, ty, px0, ty, `pl-axis${axesAnim}`, tick.label);
     svg += text(tick.label, {
       x: px0 - 8,
       y: ty + 3.5,
-      className: "pl-tick",
+      className: `pl-tick${axesAnim}`,
       anchor: "end",
       fontSize: 10,
       maxWidth: Math.max(0, px0 - ctx.pad - 10),
@@ -7829,14 +7956,14 @@ function layoutLimit(spec, ctx) {
   if (limit) {
     svg += path(
       `M ${num(px0)} ${num(limitY)} L ${num(px1 + 6)} ${num(limitY)}`,
-      `pl-asymptote${weakStrokeClass(limit.epistemic)}`,
+      `pl-asymptote${weakStrokeClass(limit.epistemic)}${axesAnim}`,
       {},
       `${entityTooltip(limit)} \u2014 the curve approaches this line and never meets it`
     );
     svg += text(limit.label, {
       x: px1 + 8,
       y: limitY + 14,
-      className: `pl-label-strong pl-mono${isWeak(limit.epistemic) ? " pl-weak-text" : ""}`,
+      className: `pl-label-strong pl-mono${isWeak(limit.epistemic) ? " pl-weak-text" : ""}${axesAnim}`,
       anchor: "end",
       fontSize: 12.5,
       maxWidth: Math.max(0, plotWidth * 0.6),
@@ -7847,23 +7974,41 @@ function layoutLimit(spec, ctx) {
   const bx = px1 - 12;
   const dx = bx - ax;
   let curveEnd = py1;
+  let curveLen;
   let d;
   if (convergent) {
     const yEnd = limitY - 4;
     const yStart = Math.max(py0 + 6, Math.min(py0 + 16, yEnd - 36));
     const dy = yEnd - yStart;
-    d = `M ${num(ax)} ${num(yStart)} C ${num(ax + dx * 0.18)} ${num(yStart + dy * 0.72)} ${num(ax + dx * 0.48)} ${num(yEnd)} ${num(bx)} ${num(yEnd)}`;
+    const c1x = ax + dx * 0.18;
+    const c1y = yStart + dy * 0.72;
+    const c2x = ax + dx * 0.48;
+    d = `M ${num(ax)} ${num(yStart)} C ${num(c1x)} ${num(c1y)} ${num(c2x)} ${num(yEnd)} ${num(bx)} ${num(yEnd)}`;
+    curveLen = cubicLength(ax, yStart, c1x, c1y, c2x, yEnd, bx, yEnd);
     curveEnd = yEnd;
   } else {
     const yStart = downward ? py0 + 22 : py1 - 22;
     const yEnd = downward ? py1 + 18 : py0 - 8;
     const dy = yEnd - yStart;
-    d = `M ${num(ax)} ${num(yStart)} C ${num(ax + dx * 0.55)} ${num(yStart)} ${num(ax + dx * 0.86)} ${num(yStart + dy * 0.55)} ${num(bx)} ${num(yEnd)}`;
+    const c1x = ax + dx * 0.55;
+    const c2x = ax + dx * 0.86;
+    const c2y = yStart + dy * 0.55;
+    d = `M ${num(ax)} ${num(yStart)} C ${num(c1x)} ${num(yStart)} ${num(c2x)} ${num(c2y)} ${num(bx)} ${num(yEnd)}`;
+    curveLen = cubicLength(ax, yStart, c1x, yStart, c2x, c2y, bx, yEnd);
     curveEnd = yEnd;
   }
+  const curveAnim = isWeak(status) ? ctx.anim({ kind: "fade", delay: stageDelay(1), duration: TRACE_DURATION }) : ctx.anim({
+    kind: "draw",
+    delay: stageDelay(1),
+    duration: TRACE_DURATION,
+    length: curveLen,
+    // The divergence arrowhead appears only as the trace reaches the edge
+    // of the frame; a convergent curve never carries one.
+    revealMarker: convergent ? void 0 : ctx.id("arrow")
+  });
   svg += path(
     d,
-    `pl-curve${weakStrokeClass(status)}`,
+    `pl-curve${weakStrokeClass(status)}${curveAnim}`,
     convergent ? {} : { "marker-end": `url(#${ctx.id("arrow")})` },
     `${fn?.label ?? "the function"} \u2014 ${fn?.detail ?? (convergent ? "converges" : "diverges")} \u2014 ${statusPhrase(status)}`
   );
@@ -7872,7 +8017,7 @@ function layoutLimit(spec, ctx) {
     svg += text("the values leave every bound", {
       x: px0 + 10,
       y: noticeY,
-      className: "pl-label",
+      className: `pl-label${afterTrace()}`,
       fontSize: 12,
       maxWidth: Math.max(0, bx - px0 - 24),
       title: `${fn?.label ?? "the function"} ${fn?.detail ?? "leaves every bound"}`
@@ -7882,7 +8027,7 @@ function layoutLimit(spec, ctx) {
     svg += text(direction.label, {
       x: px1 + 16,
       y: py1 + 4,
-      className: `pl-label-strong pl-mono${isWeak(direction.epistemic) ? " pl-weak-text" : ""}`,
+      className: `pl-label-strong pl-mono${isWeak(direction.epistemic) ? " pl-weak-text" : ""}${axesAnim}`,
       fontSize: 12.5,
       maxWidth: Math.max(0, ctx.width - ctx.pad - (px1 + 16)),
       title: entityTooltip(direction)
@@ -7895,7 +8040,7 @@ function layoutLimit(spec, ctx) {
     svg += text(`${xAxis.label}${units}${suffix}`, {
       x: px0,
       y: axisTitleY,
-      className: "pl-axis-title",
+      className: `pl-axis-title${axesAnim}`,
       fontSize: 10.5,
       maxWidth: Math.max(0, ctx.width - ctx.pad - px0),
       title: `${xAxis.label}${units} \u2014 ${xAxis.scale} axis`
@@ -7906,7 +8051,9 @@ function layoutLimit(spec, ctx) {
     {
       x: ctx.pad + 8,
       y: (py0 + py1) / 2,
-      class: "pl-axis-title",
+      // Fade, never enter: a CSS transform would displace this label's own
+      // rotation mid-animation.
+      class: `pl-axis-title${axesAnim}`,
       "text-anchor": "middle",
       transform: `rotate(-90 ${num(ctx.pad + 8)} ${num((py0 + py1) / 2)})`
     },
@@ -7919,7 +8066,7 @@ function layoutLimit(spec, ctx) {
     svg += text(fn?.label ?? "the function", {
       x: capX,
       y: capY,
-      className: "pl-label-strong pl-mono",
+      className: `pl-label-strong pl-mono${afterTrace()}`,
       fontSize: 13,
       maxWidth: capWidth,
       title: fn ? entityTooltip(fn) : void 0
@@ -7929,7 +8076,7 @@ function layoutLimit(spec, ctx) {
       const para = paragraph(fn.detail, {
         x: capX,
         y: capY,
-        className: "pl-detail",
+        className: `pl-detail${afterTrace()}`,
         maxWidth: capWidth,
         fontSize: 10.5,
         lineHeight: 13,
@@ -7943,7 +8090,7 @@ function layoutLimit(spec, ctx) {
       const para = paragraph(relationship.label, {
         x: capX,
         y: capY,
-        className: `pl-label pl-mono${isWeak(relationship.epistemic) ? " pl-weak-text" : ""}`,
+        className: `pl-label pl-mono${isWeak(relationship.epistemic) ? " pl-weak-text" : ""}${afterTrace()}`,
         maxWidth: capWidth,
         fontSize: 12,
         lineHeight: 16,
@@ -7956,7 +8103,7 @@ function layoutLimit(spec, ctx) {
       svg += text(direction.detail, {
         x: capX,
         y: capY,
-        className: "pl-detail",
+        className: `pl-detail${afterTrace()}`,
         fontSize: 10.5,
         maxWidth: capWidth,
         title: entityTooltip(direction)
@@ -8004,15 +8151,20 @@ function layoutAssumptionSensitivity(spec, ctx) {
   const used = hypotheses.filter((h) => h.state !== "unused");
   const unused = hypotheses.filter((h) => h.state === "unused");
   const conclusion = entitiesOfKind(spec, "conclusion")[0];
+  const usedAnim = ctx.anim({ kind: "enter", delay: stageDelay(0) });
+  const unusedAnim = () => ctx.anim({ kind: "fade", delay: stageDelay(1) });
+  const conclusionStage = unused.length > 0 ? 2 : 1;
+  const conclusionAnim = () => ctx.anim({ kind: "enter", delay: stageDelay(conclusionStage) });
   const boxes = [];
   let svg = "";
   let y = 12;
   const layoutGroup = (group2, heading, isUsed) => {
     if (group2.length === 0) return;
+    const anim = isUsed ? usedAnim : unusedAnim();
     svg += text(heading, {
       x: leftX,
       y,
-      className: "pl-heading",
+      className: `pl-heading${anim}`,
       fontSize: 10,
       maxWidth: colWidth
     });
@@ -8020,14 +8172,14 @@ function layoutAssumptionSensitivity(spec, ctx) {
     for (const entity of group2) {
       const height = hypothesisBoxHeight(entity, colWidth, isUsed);
       boxes.push({ entity, x: leftX, y, width: colWidth, height, used: isUsed });
-      svg += renderHypothesisBox(entity, leftX, y, colWidth, isUsed);
+      svg += renderHypothesisBox(entity, leftX, y, colWidth, isUsed, anim);
       y += height + 10;
     }
     y += 8;
   };
   layoutGroup(used, `USED BY THE PROOF TERM (${used.length})`, true);
   if (unused.length > 0) {
-    svg += line(leftX, y - 4, leftX + colWidth, y - 4, "pl-rule");
+    svg += line(leftX, y - 4, leftX + colWidth, y - 4, `pl-rule${unusedAnim()}`);
     y += 8;
     layoutGroup(unused, `STATED BUT NEVER USED (${unused.length})`, false);
   }
@@ -8049,7 +8201,7 @@ function layoutAssumptionSensitivity(spec, ctx) {
     rightSvg += text("CONCLUSION", {
       x: rightX,
       y: top - 10,
-      className: "pl-heading",
+      className: `pl-heading${conclusionAnim()}`,
       fontSize: 10,
       maxWidth: colWidth
     });
@@ -8058,13 +8210,13 @@ function layoutAssumptionSensitivity(spec, ctx) {
       y: top,
       width: colWidth,
       height,
-      className: `pl-box-primary${weakStrokeClass(conclusion.epistemic)}`,
+      className: `pl-box-primary${weakStrokeClass(conclusion.epistemic)}${conclusionAnim()}`,
       tooltip: entityTooltip(conclusion)
     });
     const para = paragraph(label, {
       x: rightX + 10,
       y: top + 22,
-      className: "pl-label pl-mono",
+      className: `pl-label pl-mono${conclusionAnim()}`,
       maxWidth: colWidth - 20,
       fontSize: 12,
       lineHeight: 16,
@@ -8078,15 +8230,18 @@ function layoutAssumptionSensitivity(spec, ctx) {
       if (relationship.to !== conclusion.id) continue;
       const source = byId.get(relationship.from);
       if (!source || !source.used) continue;
-      const d = connector(
-        source.x + source.width,
-        source.y + source.height / 2,
-        rightX,
-        conclusionCy
-      );
+      const x1 = source.x + source.width;
+      const y1 = source.y + source.height / 2;
+      const d = connector(x1, y1, rightX, conclusionCy);
+      const wireAnim = isWeak(relationship.epistemic) ? ctx.anim({ kind: "fade", delay: afterStage(conclusionStage) }) : ctx.anim({
+        kind: "draw",
+        delay: afterStage(conclusionStage),
+        length: edgeLength(x1, y1, rightX, conclusionCy),
+        revealMarker: ctx.id("arrow")
+      });
       svg += path(
         d,
-        `pl-edge-used${weakStrokeClass(relationship.epistemic)}`,
+        `pl-edge-used${weakStrokeClass(relationship.epistemic)}${wireAnim}`,
         { "marker-end": `url(#${ctx.id("arrow")})` },
         `${source.entity.label} is used to prove the conclusion \u2014 ${statusPhrase(relationship.epistemic)}`
       );
@@ -8113,15 +8268,15 @@ function hypothesisBoxHeight(entity, width, used) {
   const detailLines = entity.detail ? wrapToWidth(entity.detail, width - 20, 10.5, 2).lines.length : 0;
   return 12 + 16 + detailLines * 13 + (used ? 0 : 14) + 8;
 }
-function renderHypothesisBox(entity, x, y, width, used) {
+function renderHypothesisBox(entity, x, y, width, used, anim = "") {
   const height = hypothesisBoxHeight(entity, width, used);
-  const className = used ? `pl-box${weakStrokeClass(entity.epistemic)}` : `pl-box-unused${weakFillClass(entity.epistemic)}`;
+  const className = used ? `pl-box${weakStrokeClass(entity.epistemic)}${anim}` : `pl-box-unused${weakFillClass(entity.epistemic)}${anim}`;
   let svg = box({ x, y, width, height, className, tooltip: entityTooltip(entity) });
   let cursor = y + 22;
   svg += text(entity.label, {
     x: x + 10,
     y: cursor,
-    className: `pl-label-strong pl-mono${used ? "" : " pl-unused-text"}`,
+    className: `pl-label-strong pl-mono${used ? "" : " pl-unused-text"}${anim}`,
     fontSize: 12.5,
     maxWidth: width - 20,
     title: entityTooltip(entity)
@@ -8131,7 +8286,7 @@ function renderHypothesisBox(entity, x, y, width, used) {
     const para = paragraph(entity.detail, {
       x: x + 10,
       y: cursor,
-      className: `pl-detail pl-mono${used ? "" : " pl-unused-text"}`,
+      className: `pl-detail pl-mono${used ? "" : " pl-unused-text"}${anim}`,
       maxWidth: width - 20,
       fontSize: 10.5,
       lineHeight: 13,
@@ -8144,7 +8299,7 @@ function renderHypothesisBox(entity, x, y, width, used) {
     svg += text("NEVER USED IN THIS PROOF", {
       x: x + 10,
       y: cursor,
-      className: "pl-badge",
+      className: `pl-badge${anim}`,
       fontSize: 9,
       maxWidth: width - 20
     });
@@ -8166,6 +8321,10 @@ function layoutLayeredGraph(spec, ctx) {
     const bucket = layers.get(key);
     bucket.sort((a, b) => (a.position?.order ?? 0) - (b.position?.order ?? 0));
   }
+  const stageOf = (entity) => {
+    const index = layerKeys.indexOf(entity.position?.layer ?? 0);
+    return index < 0 ? 0 : index;
+  };
   const hasDetail = spec.entities.some((e) => e.detail);
   const nodeHeight = hasDetail ? 42 : 30;
   const columnWidth = layerKeys.length > 0 ? inner / layerKeys.length : inner;
@@ -8208,15 +8367,32 @@ function layoutLayeredGraph(spec, ctx) {
     });
     height = layerKeys.length * rowHeight + 12;
   }
+  const entityById = new Map(spec.entities.map((e) => [e.id, e]));
   for (const relationship of spec.relationships) {
     const from = rects.get(relationship.from);
     const to = rects.get(relationship.to);
     if (!from || !to) continue;
     const d = routeEdge(from, to, horizontal);
     const weak = isWeak(relationship.epistemic);
+    const fromEntity = entityById.get(relationship.from);
+    const toEntity = entityById.get(relationship.to);
+    const readyAt = afterStage(
+      Math.max(fromEntity ? stageOf(fromEntity) : 0, toEntity ? stageOf(toEntity) : 0)
+    );
+    const edgeAnim = weak ? ctx.anim({ kind: "fade", delay: readyAt }) : ctx.anim({
+      kind: "draw",
+      delay: readyAt,
+      length: edgeLength(
+        from.x + from.width / 2,
+        from.y + from.height / 2,
+        to.x + to.width / 2,
+        to.y + to.height / 2
+      ),
+      revealMarker: ctx.id("arrow-muted")
+    });
     svg += path(
       d,
-      `pl-edge${weak ? " pl-weak-stroke" : ""}`,
+      `pl-edge${weak ? " pl-weak-stroke" : ""}${edgeAnim}`,
       { "marker-end": `url(#${ctx.id("arrow-muted")})` },
       `${labelFor(spec, relationship.from)} ${relationship.kind} ${labelFor(spec, relationship.to)} \u2014 ${statusPhrase(relationship.epistemic)}`
     );
@@ -8225,7 +8401,7 @@ function layoutLayeredGraph(spec, ctx) {
       svg += text(relationship.label, {
         x: mid.x,
         y: mid.y - 5,
-        className: "pl-detail",
+        className: `pl-detail${ctx.anim({ kind: "fade", delay: readyAt })}`,
         anchor: "middle",
         fontSize: 10.5,
         maxWidth: 120,
@@ -8237,18 +8413,19 @@ function layoutLayeredGraph(spec, ctx) {
     const rect = rects.get(entity.id);
     if (!rect) continue;
     const primary = entity.emphasis === "primary";
+    const nodeAnim = ctx.anim({ kind: "enter", delay: stageDelay(stageOf(entity)) });
     svg += box({
       x: rect.x,
       y: rect.y,
       width: rect.width,
       height: rect.height,
-      className: `${primary ? "pl-box-primary" : "pl-box"}${weakStrokeClass(entity.epistemic)}`,
+      className: `${primary ? "pl-box-primary" : "pl-box"}${weakStrokeClass(entity.epistemic)}${nodeAnim}`,
       tooltip: entityTooltip(entity)
     });
     svg += text(entity.label, {
       x: rect.x + 9,
       y: rect.y + (entity.detail ? 19 : 19),
-      className: `pl-label pl-mono${isWeak(entity.epistemic) ? " pl-weak-text" : ""}`,
+      className: `pl-label pl-mono${isWeak(entity.epistemic) ? " pl-weak-text" : ""}${nodeAnim}`,
       fontSize: 11.5,
       maxWidth: rect.width - 18,
       title: entityTooltip(entity)
@@ -8257,7 +8434,7 @@ function layoutLayeredGraph(spec, ctx) {
       svg += text(entity.detail, {
         x: rect.x + 9,
         y: rect.y + 33,
-        className: "pl-detail",
+        className: `pl-detail${nodeAnim}`,
         fontSize: 10.5,
         maxWidth: rect.width - 18
       });
@@ -8297,6 +8474,8 @@ function layoutExpressionTree(spec, ctx) {
   const inner = ctx.width - ctx.pad * 2;
   const conclusion = entitiesOfKind(spec, "conclusion")[0];
   const hypotheses = entitiesOfKind(spec, "hypothesis");
+  const conclusionAnim = () => ctx.anim({ kind: "enter", delay: stageDelay(0) });
+  const spineAt = afterStage(1);
   let svg = "";
   let y = 12;
   let spineTop = y;
@@ -8304,7 +8483,7 @@ function layoutExpressionTree(spec, ctx) {
     svg += text("CONCLUSION", {
       x: ctx.pad,
       y,
-      className: "pl-heading",
+      className: `pl-heading${conclusionAnim()}`,
       fontSize: 10,
       maxWidth: inner
     });
@@ -8316,13 +8495,13 @@ function layoutExpressionTree(spec, ctx) {
       y,
       width: inner,
       height,
-      className: `pl-box-primary${weakStrokeClass(conclusion.epistemic)}`,
+      className: `pl-box-primary${weakStrokeClass(conclusion.epistemic)}${conclusionAnim()}`,
       tooltip: entityTooltip(conclusion)
     });
     svg += paragraph(conclusion.label, {
       x: ctx.pad + 10,
       y: y + 21,
-      className: "pl-label pl-mono",
+      className: `pl-label pl-mono${conclusionAnim()}`,
       maxWidth: inner - 20,
       fontSize: 12.5,
       lineHeight: 16,
@@ -8336,7 +8515,7 @@ function layoutExpressionTree(spec, ctx) {
     svg += text(`HYPOTHESES (${hypotheses.length})`, {
       x: ctx.pad + 26,
       y,
-      className: "pl-heading",
+      className: `pl-heading${ctx.anim({ kind: "fade", delay: stageDelay(1) })}`,
       fontSize: 10,
       maxWidth: inner - 26
     });
@@ -8348,18 +8527,32 @@ function layoutExpressionTree(spec, ctx) {
     for (const entity of hypotheses) {
       const used = entity.state !== "unused";
       const height = hypothesisBoxHeight(entity, boxWidth, used);
-      svg += renderHypothesisBox(entity, boxX, y, boxWidth, used);
+      const hypAnim = ctx.anim({
+        kind: used ? "enter" : "fade",
+        delay: stageDelay(1)
+      });
+      svg += renderHypothesisBox(entity, boxX, y, boxWidth, used, hypAnim);
       lastCenter = y + height / 2;
       svg += line(
         spineX,
         lastCenter,
         boxX,
         lastCenter,
-        used ? "pl-edge-used" : "pl-edge pl-weak-stroke"
+        used ? `pl-edge-used${ctx.anim({ kind: "draw", delay: spineAt, length: boxX - spineX })}` : `pl-edge pl-weak-stroke${ctx.anim({ kind: "fade", delay: spineAt })}`
       );
       y += height + 10;
     }
-    svg += line(spineX, spineTop, spineX, lastCenter, "pl-edge");
+    svg += line(
+      spineX,
+      spineTop,
+      spineX,
+      lastCenter,
+      `pl-edge${ctx.anim({
+        kind: "draw",
+        delay: spineAt,
+        length: Math.max(1, lastCenter - spineTop)
+      })}`
+    );
   }
   legend.push({
     swatch: "used-box",
@@ -8580,14 +8773,21 @@ function renderSvg(spec, options = {}) {
   const width = clampWidth(options.width ?? DEFAULT_WIDTH);
   const theme = options.theme ?? "auto";
   const prefix = sanitizeId(options.idPrefix ?? "pl");
-  const ctx = createContext(spec, width, PAD, prefix);
+  const ctx = createContext(spec, width, PAD, prefix, options.animate === true);
   const body = safeLayout(spec, ctx);
+  const animated = ctx.animTargets.length > 0;
   const legendRows = [...body.legend];
   if (specHasWeakElement(spec)) legendRows.push(WEAK_LEGEND_ROW);
   legendRows.push({
     swatch: "none",
     text: `This figure as a whole is ${spec.epistemic}. ${EPISTEMIC_GLOSS[spec.epistemic]}`
   });
+  if (animated) legendRows.push(ANIMATION_LEGEND_ROW);
+  let chromeAnim = "";
+  if (animated) {
+    const settled = ctx.animTargets.reduce((t, a) => Math.max(t, a.delay + a.duration), 0);
+    chromeAnim = ctx.anim({ kind: "fade", delay: settled, duration: CHROME_FADE_DURATION });
+  }
   const header = renderHeader(spec, ctx);
   const headerH = headerHeight(spec);
   const legend = renderLegend(legendRows, ctx, ctx.id("arrow"));
@@ -8597,11 +8797,11 @@ function renderSvg(spec, options = {}) {
   content += group(y, body.svg);
   y += body.height + BLOCK_GAP;
   if (legend.height > 0) {
-    content += group(y, legend.svg);
+    content += group(y, legend.svg, chromeAnim);
     y += legend.height + BLOCK_GAP;
   }
   if (annotations.height > 0) {
-    content += group(y, annotations.svg);
+    content += group(y, annotations.svg, chromeAnim);
     y += annotations.height;
   }
   const totalHeight = Math.max(120, Math.ceil(y + PAD));
@@ -8622,14 +8822,15 @@ function renderSvg(spec, options = {}) {
     "data-prooflens-type": spec.type,
     "data-prooflens-epistemic": spec.epistemic
   });
-  const style = `<style>${buildStylesheet(theme, options.fontFamily ?? DEFAULT_FONT_FAMILY)}</style>`;
+  const style = `<style>${buildStylesheet(theme, options.fontFamily ?? DEFAULT_FONT_FAMILY)}${buildAnimationStylesheet(ctx)}</style>`;
   const label = `<title id="${titleId}">${escapeXml(spec.title)}</title><desc id="${descId}">${escapeXml(describe(spec))}</desc>`;
   const background = `<rect x="0" y="0" width="${num(width)}" height="${num(totalHeight)}" class="pl-bg"/>`;
   return `<svg${rootAttrs}>${label}${style}${arrowDefs(ctx)}${background}${content}</svg>`;
 }
-function group(y, inner) {
+function group(y, inner, animClass = "") {
   if (inner === "") return "";
-  return `<g transform="translate(0 ${num(y)})">${inner}</g>`;
+  const cls = animClass === "" ? "" : ` class="${animClass.trimStart()}"`;
+  return `<g transform="translate(0 ${num(y)})"${cls}>${inner}</g>`;
 }
 function clampWidth(width) {
   if (!Number.isFinite(width)) return DEFAULT_WIDTH;
@@ -8639,9 +8840,11 @@ function safeLayout(spec, ctx) {
   try {
     return dispatch(spec.type, spec, ctx);
   } catch {
+    ctx.resetAnim();
     try {
       return layoutGeneric(spec, ctx);
     } catch {
+      ctx.resetAnim();
       return { svg: "", height: 40, legend: [] };
     }
   }

@@ -5758,7 +5758,7 @@ function classifyTheorem(theorem) {
   return [...structural, ...analytical];
 }
 function primaryClassification(classifications) {
-  const naturalBound = classifications.find((c) => (c.payload.kind === "upper-bound" || c.payload.kind === "lower-bound") && c.payload.data.natural);
+  const naturalBound2 = classifications.find((c) => (c.payload.kind === "upper-bound" || c.payload.kind === "lower-bound") && c.payload.data.natural);
   const priority = [
     "limit",
     "positivity",
@@ -5778,8 +5778,8 @@ function primaryClassification(classifications) {
     "unsupported"
   ];
   for (const kind of priority) {
-    if ((kind === "upper-bound" || kind === "lower-bound") && naturalBound)
-      return naturalBound;
+    if ((kind === "upper-bound" || kind === "lower-bound") && naturalBound2)
+      return naturalBound2;
     const found = classifications.find((c) => c.payload.kind === kind);
     if (found)
       return found;
@@ -5874,10 +5874,10 @@ function explain(theorem, classifications, options = {}) {
     const text2 = unusedInProof.length === 0 ? `All ${used.length} stated hypotheses are used by this proof.` : `${unusedInProof.map((h) => `\`${h.symbol} : ${h.display}\``).join(" and ")} ${unusedInProof.length === 1 ? "is" : "are"} stated but never used by this proof term. That does not mean the hypothesis is mathematically unnecessary \u2014 only that this particular proof does not touch it.`;
     layers.push(layer("assumptions", "Which assumptions did the work", text2, "derived", RULES.ASSUMPTION_SENSITIVITY, theorem));
   }
-  const naturalBound = classifications.find((c) => (c.payload.kind === "upper-bound" || c.payload.kind === "lower-bound") && c.payload.data.natural);
-  if (naturalBound && (naturalBound.payload.kind === "upper-bound" || naturalBound.payload.kind === "lower-bound")) {
-    const { sensitivity: directions, bound: boundExpr } = naturalBound.payload.data;
-    const which = naturalBound.payload.kind === "upper-bound" ? "upper bound" : "lower bound";
+  const naturalBound2 = classifications.find((c) => (c.payload.kind === "upper-bound" || c.payload.kind === "lower-bound") && c.payload.data.natural);
+  if (naturalBound2 && (naturalBound2.payload.kind === "upper-bound" || naturalBound2.payload.kind === "lower-bound")) {
+    const { sensitivity: directions, bound: boundExpr } = naturalBound2.payload.data;
+    const which = naturalBound2.payload.kind === "upper-bound" ? "upper bound" : "lower bound";
     if (directions.length > 0) {
       const clauses = directions.map((d) => `increasing \`${d.symbol}\` ${DIRECTION_PHRASE[d.direction]} it`);
       layers.push(layer("parameters", `How the ${which} responds`, `The ${which} is \`${renderExpression(boundExpr)}\`. Holding the other quantities fixed, and using only the sign hypotheses this theorem states: ${clauses.join("; ")}.`, "derived", RULES.SENSITIVITY, theorem));
@@ -6841,6 +6841,175 @@ function applyAuthorHint(theorem, specs) {
   return specs;
 }
 
+// packages/visual-ir/dist/semantic.js
+var SEMANTIC_SCENE_RULE = {
+  id: "SEMANTIC_NUMERIC_BOUND_001",
+  description: "Compiled a supported bound into a numeric, parameterised scene using author-declared meanings and domains.",
+  produces: "interpreted"
+};
+var SEMANTIC_SCENE_VERSION = "0.1.0";
+var DOMAIN_RANGES = [
+  {
+    test: /^(strictly )?positive reals?$/i,
+    range: { min: 0.1, max: 10, step: 0.1, initial: 1, integer: false }
+  },
+  {
+    test: /^nonnegative reals?$/i,
+    range: { min: 0, max: 10, step: 0.1, initial: 1, integer: false }
+  },
+  {
+    test: /^reals?$/i,
+    range: { min: -10, max: 10, step: 0.1, initial: 1, integer: false }
+  },
+  {
+    test: /^(natural numbers?|naturals?|nonnegative integers?)$/i,
+    range: { min: 0, max: 20, step: 1, initial: 1, integer: true }
+  }
+];
+function sourceFor(theorem, path2 = "conclusion") {
+  const base = theorem.provenance.sources[0];
+  return base ? { ...base, path: path2 } : { system: "lean4", declaration: theorem.name, path: path2 };
+}
+function naturalBound(classifications) {
+  return classifications.find((classification) => (classification.payload.kind === "upper-bound" || classification.payload.kind === "lower-bound") && classification.payload.data.natural);
+}
+function unsupportedHead(expr) {
+  switch (expr.kind) {
+    case "number":
+    case "variable":
+      return null;
+    case "constant":
+    case "opaque":
+    case "lambda":
+      return expr.kind;
+    case "operator": {
+      if (!["add", "sub", "mul", "div", "pow", "neg", "inv", "abs"].includes(expr.op)) {
+        return `operator:${expr.op}`;
+      }
+      for (const arg of expr.args) {
+        const unsupported = unsupportedHead(arg);
+        if (unsupported)
+          return unsupported;
+      }
+      return null;
+    }
+    case "application": {
+      if (!["Real.log", "Real.exp", "Real.sqrt"].includes(expr.head))
+        return expr.head;
+      for (const arg of expr.args) {
+        const unsupported = unsupportedHead(arg);
+        if (unsupported)
+          return unsupported;
+      }
+      return null;
+    }
+  }
+}
+function rangeFor(variable) {
+  const domain = variable.annotation?.domain;
+  if (!domain)
+    return null;
+  const match = DOMAIN_RANGES.find((candidate) => candidate.test.test(domain));
+  return match ? { ...match.range } : null;
+}
+function boundedUnits(theorem, bounded) {
+  if (bounded.kind !== "variable")
+    return void 0;
+  return theorem.variables.find((variable) => variable.id === bounded.id)?.annotation?.units;
+}
+function compileSemanticScene(theorem, classifications) {
+  const classification = naturalBound(classifications);
+  if (!classification) {
+    return {
+      status: "blocked",
+      code: "NO_NATURAL_BOUND",
+      reason: "This declaration has no natural upper or lower bound to turn into a numeric scene."
+    };
+  }
+  const payload = classification.payload;
+  if (payload.kind !== "upper-bound" && payload.kind !== "lower-bound") {
+    throw new Error("naturalBound returned a non-bound classification");
+  }
+  const unsupported = unsupportedHead(payload.data.bound);
+  if (unsupported) {
+    return {
+      status: "blocked",
+      code: "UNSUPPORTED_EXPRESSION",
+      reason: `The bound contains ${unsupported}, which the numeric evaluator does not support.`
+    };
+  }
+  const variableIds = variablesIn(payload.data.bound);
+  const variables = theorem.variables.filter((variable) => variableIds.has(variable.id));
+  const missing = variables.filter((variable) => !variable.annotation?.meaning || !variable.annotation.domain);
+  if (missing.length > 0) {
+    return {
+      status: "blocked",
+      code: "MISSING_SEMANTICS",
+      reason: `Numeric rendering needs meaning and domain annotations for: ${missing.map((variable) => variable.symbol).join(", ")}.`
+    };
+  }
+  const unsupportedDomains = variables.filter((variable) => rangeFor(variable) === null);
+  if (unsupportedDomains.length > 0) {
+    return {
+      status: "blocked",
+      code: "UNSUPPORTED_DOMAIN",
+      reason: `No safe slider range is defined for: ${unsupportedDomains.map((variable) => `${variable.symbol} (${variable.annotation.domain})`).join(", ")}.`
+    };
+  }
+  const parameters = variables.map((variable) => ({
+    id: variable.id,
+    symbol: variable.symbol,
+    label: variable.annotation.meaning,
+    units: variable.annotation.units,
+    domain: variable.annotation.domain,
+    axis: variable.annotation.axis === "x" ? "x" : "parameter",
+    role: variable.annotation.role,
+    range: rangeFor(variable),
+    epistemic: "interpreted"
+  }));
+  const xParameter = parameters.find((parameter) => parameter.axis === "x") ?? parameters[0];
+  if (!xParameter) {
+    return {
+      status: "blocked",
+      code: "MISSING_SEMANTICS",
+      reason: "The bound has no free numeric parameter to place on an axis."
+    };
+  }
+  const boundedLabel = renderExpression(payload.data.boundedQuantity);
+  const boundLabel = renderExpression(payload.data.bound);
+  const direction = payload.kind === "upper-bound" ? "upper" : "lower";
+  return {
+    status: "ready",
+    scene: {
+      version: SEMANTIC_SCENE_VERSION,
+      id: `${theorem.id}:semantic-bound`,
+      type: "numeric-bound",
+      theoremName: theorem.name,
+      title: theorem.concept ?? `${boundedLabel} ${direction === "upper" ? "ceiling" : "floor"}`,
+      direction,
+      strict: payload.data.strict,
+      bounded: payload.data.boundedQuantity,
+      bound: payload.data.bound,
+      boundedLabel,
+      boundLabel,
+      targetLabel: `target ${boundedLabel}`,
+      targetUnits: boundedUnits(theorem, payload.data.boundedQuantity),
+      parameters,
+      xParameterId: xParameter.id,
+      sensitivity: payload.data.sensitivity,
+      constraintStatus: classification.claim.status,
+      epistemic: "illustrative",
+      provenance: {
+        sources: [sourceFor(theorem, payload.data.bound.path)],
+        rule: SEMANTIC_SCENE_RULE,
+        inputs: [theorem.id, classification.rule.id],
+        note: "The inequality comes from Lean. Meanings and domains come from author annotations. Slider defaults and plot ranges are illustrative."
+      },
+      caveat: "Lean verifies the inequality, not the author-supplied physical meanings or the illustrative parameter values."
+    }
+  };
+}
+
 // packages/pipeline/src/index.ts
 var PROOFLENS_VERSION = "0.1.0";
 function runPipeline(formal) {
@@ -6855,6 +7024,7 @@ function runPipeline(formal) {
       formalDeclaration: declaration
     });
     const visuals = planVisuals(theorem, classifications, { dependencies: graph.value });
+    const semanticScene = compileSemanticScene(theorem, classifications);
     return {
       formal: declaration,
       math: theorem,
@@ -6862,6 +7032,7 @@ function runPipeline(formal) {
       primary: primaryClassification(classifications),
       explanations,
       visuals,
+      semanticScene,
       unsupported: classifications.some((c) => c.payload.kind === "unsupported")
     };
   });

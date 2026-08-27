@@ -133,6 +133,32 @@ export interface RenderCommandOptions {
   log: (line: string) => void;
 }
 
+/**
+ * Encode a fully-qualified Lean declaration name as one portable file stem.
+ *
+ * The qualification is essential: different namespaces routinely generate
+ * declarations with the same short name (`mk`, `rec`, `casesOn`, …). Using
+ * only the final name component silently overwrote figures in large corpora.
+ * Percent is encoded too, so this byte-wise encoding is reversible and cannot
+ * create a second collision while escaping punctuation or Unicode.
+ */
+export function renderFileStem(declarationName: string): string {
+  let stem = "";
+  for (const byte of Buffer.from(declarationName, "utf8")) {
+    const safe =
+      (byte >= 0x30 && byte <= 0x39) ||
+      (byte >= 0x41 && byte <= 0x5a) ||
+      (byte >= 0x61 && byte <= 0x7a) ||
+      byte === 0x2d ||
+      byte === 0x2e ||
+      byte === 0x5f;
+    stem += safe
+      ? String.fromCharCode(byte)
+      : `%${byte.toString(16).toUpperCase().padStart(2, "0")}`;
+  }
+  return stem;
+}
+
 export async function commandRender(options: RenderCommandOptions): Promise<void> {
   const bundle = await loadBundle(options.formalIr);
   const analyses = options.declaration
@@ -148,19 +174,30 @@ export async function commandRender(options: RenderCommandOptions): Promise<void
   }
 
   let written = 0;
+  const destinations = new Set<string>();
   for (const analysis of analyses) {
-    const short = analysis.math.name.split(".").pop() ?? analysis.math.name;
+    const declaration = renderFileStem(analysis.math.name);
     for (const visual of analysis.visuals) {
-      const base = `${short}.${visual.type}`;
+      const base = `${declaration}.${visual.type}`;
       if (options.format === "svg" || options.format === "both") {
+        const destination = join(options.outDir, `${base}.svg`);
+        if (destinations.has(destination)) {
+          throw new Error(`Duplicate render destination: ${destination}`);
+        }
+        destinations.add(destination);
         await writeOut(
-          join(options.outDir, `${base}.svg`),
+          destination,
           renderSvgDocument(visual, { animate: options.animate === true }),
         );
         written += 1;
       }
       if (options.format === "text" || options.format === "both") {
-        await writeOut(join(options.outDir, `${base}.txt`), renderText(visual));
+        const destination = join(options.outDir, `${base}.txt`);
+        if (destinations.has(destination)) {
+          throw new Error(`Duplicate render destination: ${destination}`);
+        }
+        destinations.add(destination);
+        await writeOut(destination, renderText(visual));
         written += 1;
       }
     }

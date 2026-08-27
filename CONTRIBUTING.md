@@ -67,7 +67,7 @@ pnpm --version
 ### First build
 
 ```bash
-git clone https://github.com/prooflens/prooflens
+git clone https://github.com/jdhart81/prooflens
 cd prooflens
 
 # TypeScript side — install once at the repo root, never inside a package
@@ -899,6 +899,7 @@ issue with the declaration, its module, and the emitted Formal IR. Those reports
 drive the classifier roadmap.
 
 Questions that are not bug reports are welcome in
-[Discussions](https://github.com/prooflens/prooflens/discussions).
-Suspected security issues go to <security@prooflens.dev> — see
+[Discussions](https://github.com/jdhart81/prooflens/discussions).
+Suspected security issues go through GitHub's private vulnerability reporting
+(Security → Report a vulnerability) — see
 [SECURITY.md](SECURITY.md), and please do not open a public issue for those.

@@ -11,7 +11,7 @@ not a bug — please use the "Unsupported mathematics" template instead. It goes
 a different place in our roadmap and we want those reports.
 
 If this is a security issue, please do NOT file it here. Email
-security@prooflens.dev instead. See SECURITY.md.
+GitHub's private vulnerability reporting (Security → Report a vulnerability) instead. See SECURITY.md.
 -->
 
 ## What happened

@@ -16,6 +16,16 @@ machine-verifiable mathematics
 human mathematical understanding
 ```
 
+<p align="center">
+  <img src="docs/media/prooflens-proof-animation.gif" width="640"
+       alt="Animated dependency graph: the Landauer information-rate bound's proof assembling itself, foundations first, ending at the theorem." />
+  <br/>
+  <em>A real proof building itself in its own dependency order — the Landauer
+  information-rate bound, extracted from Lean, animated by
+  <code>prooflens render --animate</code>. The order is derived from the proof
+  term; only the pacing is a display choice.</em>
+</p>
+
 ---
 
 ## Why this exists
@@ -51,6 +61,9 @@ your code:
 - a generated figure — optionally **animated**: dependency graphs build
   foundations-first to the conclusion in the proof's own dependency order,
   limit curves trace onto their asymptote (`prooflens render --animate`);
+
+  <img src="docs/media/prooflens-limit.gif" width="420" alt="A limit curve tracing onto its asymptote" /> <img src="docs/media/prooflens-assumption-sensitivity.gif" width="420" alt="Assumption-sensitivity figure animating: used hypotheses connect to the conclusion, unused ones stay detached" />
+
 - what the proof rests on: its local dependency graph, its axioms, and whether
   it reaches `sorry`;
 - and, for every one of the above, why ProofLens is telling you it.
@@ -121,7 +134,7 @@ Requirements: [elan](https://github.com/leanprover/elan) (Lean 4.24.0), Node 22,
 pnpm 10.
 
 ```bash
-git clone https://github.com/prooflens/prooflens
+git clone https://github.com/jdhart81/prooflens
 cd prooflens
 pnpm install
 pnpm build

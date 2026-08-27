@@ -14,7 +14,9 @@ track the latest `0.1.x` patch.
 
 ## Reporting a vulnerability
 
-Email **<security@prooflens.dev>** with the details.
+Use GitHub's private vulnerability reporting: on the repository page, open
+**Security → Report a vulnerability**. This reaches the maintainers privately
+without depending on an email domain.
 
 **Please do not open a public issue, pull request, or discussion thread for a
 suspected vulnerability.** Public reports expose users before a fix exists. Use

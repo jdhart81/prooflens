@@ -261,6 +261,7 @@ tests. See [the roadmap](docs/roadmap.md).
 - [The epistemic model](docs/epistemic-model.md) — start here
 - [MathIR](docs/math-ir.md) — the semantic representation, and how to teach it a new constant
 - [VisualIR](docs/visual-ir.md) — the visualization representation, and how to add a renderer
+- [Semantic scenes](docs/semantic-scenes.md) — numeric, interactive explanations of what supported theorems represent
 - [Coverage against mathlib](docs/coverage.md) — the measured numbers and the ranked backlog
 - [Roadmap](docs/roadmap.md)
 - ADR [0001](docs/adr/0001-lean-extraction.md) — how extraction works, and why we do not build a tracer

@@ -674,6 +674,241 @@ body {
 
 /* ---------------------------------------------------------------- figure */
 
+.semantic-scene {
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid var(--ep-interpreted-bd);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  box-shadow: var(--shadow);
+}
+
+.semantic-scene__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.semantic-scene__eyebrow {
+  margin: 0 0 2px;
+  color: var(--ep-interpreted-fg);
+  font-size: 10.5px;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.semantic-scene__title {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+}
+
+.semantic-scene__formula {
+  margin: 3px 0 0;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.semantic-scene__status {
+  padding: 8px 11px;
+  border: 1px solid;
+  border-radius: var(--radius-sm);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.semantic-scene__status--feasible {
+  color: var(--ep-verified-fg);
+  background: var(--ep-verified-bg);
+  border-color: var(--ep-verified-bd);
+}
+
+.semantic-scene__status--infeasible {
+  color: var(--danger-fg);
+  background: var(--danger-bg);
+  border-color: var(--danger-bd);
+}
+
+.semantic-scene__controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 9px 12px;
+  margin: 12px 0;
+}
+
+.scene-control {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.scene-control--target {
+  padding-left: 10px;
+  border-left: 2px solid var(--ep-illustrative-bd);
+}
+
+.scene-control__label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11.5px;
+}
+
+.scene-control__label span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scene-control__label strong {
+  flex: none;
+  font-family: var(--mono);
+}
+
+.scene-control__exact {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+  overflow: visible !important;
+}
+
+.scene-control__exact input {
+  width: 76px;
+  padding: 1px 4px;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-family: var(--mono);
+  text-align: right;
+}
+
+.scene-control input[type="range"] {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--ep-interpreted-bd);
+}
+
+.scene-control__meta {
+  color: var(--text-faint);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.semantic-scene__chart {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.semantic-scene__chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 260px;
+}
+
+.scene-grid {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.scene-tick,
+.scene-callout,
+.scene-target-label,
+.scene-axis-title {
+  fill: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+.scene-axis-title {
+  fill: var(--text);
+  font-size: 11px;
+}
+
+.scene-region {
+  fill: var(--ep-derived-bg);
+  opacity: 0.8;
+  stroke: none;
+}
+
+.scene-bound {
+  fill: none;
+  stroke: var(--ep-derived-bd);
+  stroke-width: 3;
+}
+
+.scene-target {
+  stroke-width: 2;
+  stroke-dasharray: 7 5;
+}
+
+.scene-target--feasible {
+  stroke: var(--ep-verified-bd);
+}
+
+.scene-target--infeasible {
+  stroke: var(--danger-bd);
+}
+
+.scene-current {
+  fill: var(--ep-derived-bd);
+  stroke: var(--surface);
+  stroke-width: 2;
+}
+
+.semantic-scene__description {
+  margin-top: 10px;
+  font-size: 12.5px;
+}
+
+.semantic-scene__description p {
+  margin: 0;
+}
+
+.semantic-scene__caveat {
+  margin-top: 6px !important;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-strong);
+  color: var(--text-dim);
+  font-size: 11.5px;
+}
+
+@media (max-width: 600px) {
+  .semantic-scene {
+    padding: 10px;
+  }
+
+  .semantic-scene__header {
+    display: grid;
+  }
+
+  .semantic-scene__controls {
+    grid-template-columns: 1fr;
+  }
+
+  .scene-control--target {
+    padding-top: 8px;
+    padding-left: 0;
+    border-top: 2px solid var(--ep-illustrative-bd);
+    border-left: none;
+  }
+}
+
 .trust-banner {
   display: flex;
   gap: 10px;

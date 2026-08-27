@@ -1,4 +1,5 @@
 import { defineConfig } from "vitest/config";
+import { fileURLToPath } from "node:url";
 
 export default defineConfig({
   test: {
@@ -8,7 +9,12 @@ export default defineConfig({
   },
   resolve: {
     alias: [
-      { find: /^@prooflens\/(.*)$/, replacement: new URL("./packages/$1/src/index.ts", import.meta.url).pathname },
+      {
+        find: /^@prooflens\/(.*)$/,
+        // URL.pathname leaves spaces percent-encoded, which breaks resolution
+        // when the checkout lives in a directory such as "Cowork /...".
+        replacement: fileURLToPath(new URL("./packages/$1/src/index.ts", import.meta.url)),
+      },
     ],
   },
 });

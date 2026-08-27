@@ -4,11 +4,12 @@ import { prettyJson } from "../lib/format.js";
 import { ProvenanceTable } from "./ProvenanceTable.js";
 import { Tabs, type TabItem } from "./Tabs.js";
 
-export type StageId = "provenance" | "math" | "visual" | "formal" | "classifier";
+export type StageId = "provenance" | "math" | "semantic" | "visual" | "formal" | "classifier";
 
 const STAGE_TABS: readonly TabItem<StageId>[] = [
   { id: "provenance", label: "Provenance" },
   { id: "math", label: "MathIR" },
+  { id: "semantic", label: "Semantic scene" },
   { id: "visual", label: "VisualIR" },
   { id: "formal", label: "Formal IR" },
   { id: "classifier", label: "Classifier" },
@@ -17,6 +18,8 @@ const STAGE_TABS: readonly TabItem<StageId>[] = [
 const STAGE_NOTE: Record<StageId, string> = {
   provenance: "Every mark in the selected figure, and what put it there.",
   math: "Stage 2 — the structured reading of the declaration, before any classifier ran.",
+  semantic:
+    "Stage 4a — the numeric meaning scene, or the exact reason ProofLens refused to build one.",
   visual: "Stage 4 — what to show, never how to draw it. The renderer consumes only this.",
   formal: "Stage 1 — exactly what came out of Lean. Nothing above it can be stronger than this.",
   classifier: "Stage 3 — which structural rules fired, with the evidence that made them fire.",
@@ -79,11 +82,13 @@ function StageJson({
   const value =
     stage === "math"
       ? analysis.math
-      : stage === "visual"
-        ? analysis.visuals
-        : stage === "formal"
-          ? analysis.formal
-          : { primary: analysis.primary ?? null, classifications: analysis.classifications };
+      : stage === "semantic"
+        ? analysis.semanticScene
+        : stage === "visual"
+          ? analysis.visuals
+          : stage === "formal"
+            ? analysis.formal
+            : { primary: analysis.primary ?? null, classifications: analysis.classifications };
 
   const text = prettyJson(value);
   return (

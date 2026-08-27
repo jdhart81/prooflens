@@ -26,7 +26,12 @@ import {
   type DependencyGraph,
   type ExplanationLayer,
 } from "@prooflens/classifier";
-import { planVisuals, type VisualSpec } from "@prooflens/visual-ir";
+import {
+  compileSemanticScene,
+  planVisuals,
+  type SemanticSceneResult,
+  type VisualSpec,
+} from "@prooflens/visual-ir";
 import type { EpistemicStatus } from "@prooflens/epistemics";
 
 export * from "./coverage.js";
@@ -38,6 +43,8 @@ export interface TheoremAnalysis {
   primary: Classification | undefined;
   explanations: ExplanationLayer[];
   visuals: VisualSpec[];
+  /** Numeric meaning scene, or an explicit reason this theorem cannot safely produce one. */
+  semanticScene: SemanticSceneResult;
   /** True when no structural classifier recognised the conclusion. */
   unsupported: boolean;
 }
@@ -85,6 +92,7 @@ export function runPipeline(formal: FormalIRDocument): PipelineBundle {
       formalDeclaration: declaration,
     });
     const visuals = planVisuals(theorem, classifications, { dependencies: graph.value });
+    const semanticScene = compileSemanticScene(theorem, classifications);
     return {
       formal: declaration,
       math: theorem,
@@ -92,6 +100,7 @@ export function runPipeline(formal: FormalIRDocument): PipelineBundle {
       primary: primaryClassification(classifications),
       explanations,
       visuals,
+      semanticScene,
       unsupported: classifications.some((c) => c.payload.kind === "unsupported"),
     };
   });

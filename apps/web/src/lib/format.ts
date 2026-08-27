@@ -16,6 +16,13 @@ export function namespaceOf(name: string): string {
 
 /** Compact human label for a classification kind, used on list badges. */
 export const KIND_LABEL: Record<ClassificationKind, string> = {
+  property: "property",
+  conjunction: "conjunction",
+  membership: "membership",
+  limit: "limit",
+  existence: "existence",
+  positivity: "positivity",
+  distinctness: "distinctness",
   "upper-bound": "upper bound",
   "lower-bound": "lower bound",
   equality: "equality",

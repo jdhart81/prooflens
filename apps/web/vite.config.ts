@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { fileURLToPath } from "node:url";
 
 /**
  * The workspace packages are consumed straight from TypeScript source, so the
@@ -12,7 +13,7 @@ export default defineConfig({
     alias: [
       {
         find: /^@prooflens\/(.*)$/,
-        replacement: new URL("../../packages/$1/src/index.ts", import.meta.url).pathname,
+        replacement: fileURLToPath(new URL("../../packages/$1/src/index.ts", import.meta.url)),
       },
     ],
   },

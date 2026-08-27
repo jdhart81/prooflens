@@ -6,6 +6,7 @@ import { EpistemicChip } from "./EpistemicChip.js";
 import { InlineMarkup } from "./InlineMarkup.js";
 import { Tabs, type TabItem } from "./Tabs.js";
 import { TrustBanner } from "./TrustBanner.js";
+import { SemanticScene } from "./SemanticScene.js";
 
 interface VisualizationPanelProps {
   analysis: TheoremAnalysis;
@@ -47,10 +48,14 @@ export function VisualizationPanel({
         <h2 id="visual-heading" className="panel__title">
           Visualization
         </h2>
-        {spec ? <EpistemicChip status={spec.epistemic} prefix="figure" /> : null}
+        {spec ? <EpistemicChip status={spec.epistemic} prefix="selected figure" /> : null}
       </header>
 
       <TrustBanner analysis={analysis} />
+
+      {analysis.semanticScene.status === "ready" ? (
+        <SemanticScene scene={analysis.semanticScene.scene} />
+      ) : null}
 
       {visuals.length === 0 || !spec ? (
         <p className="empty">

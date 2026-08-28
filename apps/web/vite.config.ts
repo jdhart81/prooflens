@@ -8,6 +8,9 @@ import { fileURLToPath } from "node:url";
  * ../../vitest.config.ts — keep the two in step.
  */
 export default defineConfig({
+  // Relative assets make the same build work at localhost and at the
+  // repository-scoped GitHub Pages URL (/prooflens/).
+  base: "./",
   plugins: [react()],
   resolve: {
     alias: [

@@ -183,6 +183,9 @@ importers:
       '@prooflens/formal-ir':
         specifier: workspace:*
         version: link:../formal-ir
+      '@prooflens/torchlean-adapter':
+        specifier: workspace:*
+        version: link:../torchlean-adapter
 
   packages/pipeline:
     dependencies:
@@ -225,6 +228,9 @@ importers:
       '@prooflens/epistemics':
         specifier: workspace:*
         version: link:../epistemics
+      '@prooflens/formal-ir':
+        specifier: workspace:*
+        version: link:../formal-ir
 
   packages/visual-ir:
     dependencies:

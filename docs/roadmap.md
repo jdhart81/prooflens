@@ -205,10 +205,12 @@ neighbourhood and not of the proof. `Extract/Focus.lean` has the same boundary b
 
 Ordered roughly by value per unit of work.
 
-- **Research-paper packet import (first slice landed).** The versioned packet validator binds
-  certificate-required claims to exact, hash-matched trusted Formal IR, fails closed to certificate
-  debt, and produces a downloadable READY/HOLD output. The next slice adds TorchLean enclosure
-  witness receipts and routes a reviewed Viridis paper extraction through the same envelope.
+- **Research-paper packet import (enclosure-receipt slice landed).** The versioned packet validator
+  binds certificate-required claims to exact, hash-matched trusted Formal IR, fails closed to
+  certificate debt, and produces a downloadable READY/HOLD output. Optional TorchLean model entries
+  now bind an enclosure request to the exact artifact and route missing or mismatched kernel receipts
+  into the same HOLD gate. The next slice proves and exports the first authoritative propagation
+  theorem for a complete model, then routes a reviewed Viridis paper that actually uses it.
 
 - **Figures for the classification kinds that have none.** `existence`, `conjunction` and
   `membership` all have obvious pictures (a witness box, a list of simultaneous facts, a point

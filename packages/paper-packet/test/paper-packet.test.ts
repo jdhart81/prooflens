@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { parseFormalIR } from "@prooflens/formal-ir";
+import { TORCHLEAN_DIGITS_MARGIN_FIXTURE } from "@prooflens/torchlean-adapter";
 import {
   compilePaperPacket,
   paperOutputPacket,
@@ -94,5 +95,46 @@ describe("paper packet compiler", () => {
     expect(output.format).toBe("prooflens_paper_output_v0_1");
     expect(output.claims[0]).not.toHaveProperty("provenance");
     expect(output.claims[0]!.status).toBe("verified");
+    expect(output.models).toEqual([]);
+  });
+
+  it("routes TorchLean enclosure debt through the paper READY/HOLD gate", () => {
+    const withModel = structuredClone(packet);
+    withModel.models = [
+      {
+        id: "digits-linear",
+        title: "Pinned TorchLean digits report",
+        requiresCertificate: true,
+        snapshot: structuredClone(TORCHLEAN_DIGITS_MARGIN_FIXTURE),
+      },
+    ];
+    const result = compilePaperPacket(withModel, {
+      trustedFormalIr: { document: corpus, sha256: CORPUS_SHA },
+    });
+    if (result.status !== "ready") throw new Error(result.reason);
+    expect(result.scene.gate).toBe("HOLD");
+    expect(result.scene.summary).toMatchObject({ models: 1, certificateDebt: 1 });
+    expect(result.scene.models[0]).toMatchObject({
+      status: "interpreted",
+      verification: "receipt-missing",
+    });
+  });
+
+  it("blocks a model result that tries to hide certificate debt", () => {
+    const withModel = structuredClone(packet) as ProofLensPaperPacket & {
+      models: Array<Record<string, unknown>>;
+    };
+    withModel.models = [
+      {
+        id: "digits-linear",
+        title: "Pinned TorchLean digits report",
+        requiresCertificate: false,
+        snapshot: structuredClone(TORCHLEAN_DIGITS_MARGIN_FIXTURE),
+      },
+    ];
+    expect(compilePaperPacket(withModel)).toMatchObject({
+      status: "blocked",
+      code: "INVALID_MODEL",
+    });
   });
 });

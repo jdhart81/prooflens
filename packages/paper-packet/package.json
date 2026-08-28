@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "@prooflens/epistemics": "workspace:*",
-    "@prooflens/formal-ir": "workspace:*"
+    "@prooflens/formal-ir": "workspace:*",
+    "@prooflens/torchlean-adapter": "workspace:*"
   }
 }

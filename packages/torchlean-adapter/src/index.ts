@@ -1,6 +1,12 @@
-import type { EpistemicStatus, Provenance } from "@prooflens/epistemics";
+import { transcribe, type EpistemicStatus, type Provenance } from "@prooflens/epistemics";
+import { kernelWitness, type FormalIRDocument } from "@prooflens/formal-ir";
 
 export const TORCHLEAN_ADAPTER_VERSION = "0.1.0";
+
+export const TORCHLEAN_ENCLOSURE_REQUEST_FORMAT =
+  "prooflens_torchlean_enclosure_request_v0_1" as const;
+export const TORCHLEAN_ENCLOSURE_RECEIPT_FORMAT =
+  "prooflens_torchlean_enclosure_receipt_v0_1" as const;
 
 export const TORCHLEAN_MARGIN_RULE = {
   id: "TORCHLEAN_MARGIN_REPORT_001",
@@ -58,6 +64,60 @@ export interface TorchLeanMarginSnapshot {
   };
 }
 
+export interface TorchLeanEnclosureBinding {
+  sourceRepository: string;
+  sourceCommit: string;
+  sourcePath: string;
+  sourceSha256: string;
+  modelId: string;
+  norm: "linf";
+  method: string;
+  epsilon: number;
+  inputDimension: number;
+  classCount: number;
+  exampleIds: number[];
+}
+
+/**
+ * Serializable request emitted before any enclosure proof exists. It is a
+ * specification of the evidence ProofLens needs, never evidence by itself.
+ */
+export interface TorchLeanEnclosureRequest {
+  format: typeof TORCHLEAN_ENCLOSURE_REQUEST_FORMAT;
+  binding: TorchLeanEnclosureBinding;
+  requiredClaim: "the listed logit intervals enclose the pinned model on the stated input regions";
+  acceptedAuthority: "lean-kernel";
+  note: string;
+}
+
+/** A receipt can name a theorem, but imported JSON cannot mint its witness. */
+export interface TorchLeanEnclosureReceipt {
+  format: typeof TORCHLEAN_ENCLOSURE_RECEIPT_FORMAT;
+  binding: TorchLeanEnclosureBinding;
+  proof: {
+    authority: "lean-kernel";
+    protocol: "prooflens-torchlean-enclosure-v0.1";
+    declaration: string;
+    module: string;
+    statement: string;
+    formalIrSha256: string;
+  };
+}
+
+export interface TrustedTorchLeanFormalIR {
+  document: FormalIRDocument;
+  sha256: string;
+}
+
+export interface TorchLeanEnclosureEvidence {
+  status: EpistemicStatus;
+  verification: "receipt-missing" | "receipt-mismatch" | "kernel-witness-matched";
+  reason: string;
+  request: TorchLeanEnclosureRequest;
+  receipt?: TorchLeanEnclosureReceipt;
+  provenance: Provenance;
+}
+
 export interface TorchLeanClassInterval {
   classId: number;
   lower: number;
@@ -102,6 +162,7 @@ export interface TorchLeanScene {
   sourceCompatibility: "isolated-toolchain";
   epistemic: "interpreted";
   provenance: Provenance;
+  enclosure: TorchLeanEnclosureEvidence;
   boundary: string;
 }
 
@@ -125,6 +186,194 @@ function finite(value: number): boolean {
 
 function validHash(value: string): boolean {
   return /^[a-f0-9]{64}$/u.test(value);
+}
+
+function record(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function bindingFor(snapshot: TorchLeanMarginSnapshot): TorchLeanEnclosureBinding {
+  return {
+    sourceRepository: snapshot.source.repository,
+    sourceCommit: snapshot.source.commit,
+    sourcePath: snapshot.source.path,
+    sourceSha256: snapshot.source.sha256,
+    modelId: snapshot.model.id,
+    norm: snapshot.report.norm,
+    method: snapshot.report.method,
+    epsilon: snapshot.report.epsilon,
+    inputDimension: snapshot.report.inputDimension,
+    classCount: snapshot.report.classCount,
+    exampleIds: snapshot.examples.map((example) => example.id),
+  };
+}
+
+export function exportTorchLeanEnclosureRequest(
+  snapshot: TorchLeanMarginSnapshot,
+): TorchLeanEnclosureRequest {
+  return {
+    format: TORCHLEAN_ENCLOSURE_REQUEST_FORMAT,
+    binding: bindingFor(snapshot),
+    requiredClaim:
+      "the listed logit intervals enclose the pinned model on the stated input regions",
+    acceptedAuthority: "lean-kernel",
+    note: "This request is certificate debt, not a certificate. Return a receipt naming an exact theorem in trusted Formal IR.",
+  };
+}
+
+function parseBinding(value: unknown): TorchLeanEnclosureBinding | null {
+  if (
+    !record(value) ||
+    typeof value.sourceRepository !== "string" ||
+    typeof value.sourceCommit !== "string" ||
+    typeof value.sourcePath !== "string" ||
+    !validHash(String(value.sourceSha256)) ||
+    typeof value.modelId !== "string" ||
+    value.norm !== "linf" ||
+    typeof value.method !== "string" ||
+    !finite(Number(value.epsilon)) ||
+    !Number.isSafeInteger(value.inputDimension) ||
+    !Number.isSafeInteger(value.classCount) ||
+    !Array.isArray(value.exampleIds) ||
+    value.exampleIds.some((id) => !Number.isSafeInteger(id))
+  ) {
+    return null;
+  }
+  return value as unknown as TorchLeanEnclosureBinding;
+}
+
+function parseReceipt(value: unknown): TorchLeanEnclosureReceipt | null {
+  if (!record(value) || value.format !== TORCHLEAN_ENCLOSURE_RECEIPT_FORMAT) return null;
+  const binding = parseBinding(value.binding);
+  const proof = value.proof;
+  if (
+    !binding ||
+    !record(proof) ||
+    proof.authority !== "lean-kernel" ||
+    proof.protocol !== "prooflens-torchlean-enclosure-v0.1" ||
+    typeof proof.declaration !== "string" ||
+    proof.declaration.length === 0 ||
+    typeof proof.module !== "string" ||
+    proof.module.length === 0 ||
+    typeof proof.statement !== "string" ||
+    proof.statement.length === 0 ||
+    !validHash(String(proof.formalIrSha256))
+  ) {
+    return null;
+  }
+  return {
+    format: TORCHLEAN_ENCLOSURE_RECEIPT_FORMAT,
+    binding,
+    proof,
+  } as TorchLeanEnclosureReceipt;
+}
+
+function sameBinding(left: TorchLeanEnclosureBinding, right: TorchLeanEnclosureBinding): boolean {
+  return (
+    left.sourceRepository === right.sourceRepository &&
+    left.sourceCommit === right.sourceCommit &&
+    left.sourcePath === right.sourcePath &&
+    left.sourceSha256 === right.sourceSha256 &&
+    left.modelId === right.modelId &&
+    left.norm === right.norm &&
+    left.method === right.method &&
+    Object.is(left.epsilon, right.epsilon) &&
+    left.inputDimension === right.inputDimension &&
+    left.classCount === right.classCount &&
+    left.exampleIds.length === right.exampleIds.length &&
+    left.exampleIds.every((id, index) => id === right.exampleIds[index])
+  );
+}
+
+function enclosureEvidence(
+  snapshot: TorchLeanMarginSnapshot,
+  receiptValue: unknown,
+  trusted: TrustedTorchLeanFormalIR | undefined,
+): TorchLeanEnclosureEvidence {
+  const request = exportTorchLeanEnclosureRequest(snapshot);
+  const source = {
+    system: "torchlean-receipt",
+    declaration: snapshot.model.id,
+    path: "enclosure",
+  };
+  const interpreted = (
+    verification: TorchLeanEnclosureEvidence["verification"],
+    reason: string,
+    receipt?: TorchLeanEnclosureReceipt,
+  ): TorchLeanEnclosureEvidence => ({
+    status: "interpreted",
+    verification,
+    reason,
+    request,
+    ...(receipt ? { receipt } : {}),
+    provenance: { sources: [source], inputs: [snapshot.source.sha256] },
+  });
+  if (receiptValue === undefined) {
+    return interpreted(
+      "receipt-missing",
+      "No enclosure receipt was supplied. The margin report remains interpreted.",
+    );
+  }
+  const receipt = parseReceipt(receiptValue);
+  if (!receipt || !sameBinding(receipt.binding, request.binding)) {
+    return interpreted(
+      "receipt-mismatch",
+      "The receipt is malformed or does not exactly bind the source, model, method, dimensions, and examples.",
+      receipt ?? undefined,
+    );
+  }
+  if (!trusted || receipt.proof.formalIrSha256 !== trusted.sha256) {
+    return interpreted(
+      "receipt-mismatch",
+      "The receipt has no matching trusted Formal IR, so its serialized proof reference cannot verify anything.",
+      receipt,
+    );
+  }
+  const declaration = trusted.document.declarations.find(
+    (candidate) => candidate.name === receipt.proof.declaration,
+  );
+  if (
+    !declaration ||
+    declaration.kind !== "theorem" ||
+    !declaration.docstring?.includes("@prooflens.torchlean-enclosure v0.1") ||
+    declaration.source?.module !== receipt.proof.module ||
+    declaration.statement.pretty !== receipt.proof.statement
+  ) {
+    return interpreted(
+      "receipt-mismatch",
+      "The receipt does not match a trusted theorem carrying the ProofLens TorchLean enclosure protocol marker.",
+      receipt,
+    );
+  }
+  const witness = kernelWitness(trusted.document, declaration);
+  if (!witness) {
+    return interpreted(
+      "receipt-mismatch",
+      "The matched declaration cannot mint a kernel witness because extraction failed or reached sorry.",
+      receipt,
+    );
+  }
+  const verified = transcribe(witness, receipt.proof.statement, {
+    sources: [
+      {
+        system: trusted.document.system,
+        declaration: declaration.name,
+        module: declaration.source?.module ?? null,
+        path: "statement",
+      },
+      source,
+    ],
+    inputs: [trusted.sha256, snapshot.source.sha256, snapshot.source.commit],
+    note: "The receipt binding matched the snapshot and its exact theorem matched trusted zero-sorry Formal IR.",
+  });
+  return {
+    status: verified.status,
+    verification: "kernel-witness-matched",
+    reason: "A hash-bound receipt matched an exact zero-sorry theorem in trusted Formal IR.",
+    request,
+    receipt,
+    provenance: verified.provenance,
+  };
 }
 
 function computeExample(example: TorchLeanMarginExample): TorchLeanExampleScene | null {
@@ -191,8 +440,9 @@ function computeExample(example: TorchLeanMarginExample): TorchLeanExampleScene 
  */
 export function compileTorchLeanMarginScene(
   snapshot: TorchLeanMarginSnapshot,
+  options: { receipt?: unknown; trustedFormalIr?: TrustedTorchLeanFormalIR } = {},
 ): TorchLeanSceneResult {
-  if (snapshot.format !== "prooflens_torchlean_margin_snapshot_v0_1") {
+  if (!record(snapshot) || snapshot.format !== "prooflens_torchlean_margin_snapshot_v0_1") {
     return {
       status: "blocked",
       code: "INVALID_FORMAT",
@@ -200,6 +450,7 @@ export function compileTorchLeanMarginScene(
     };
   }
   if (
+    !record(snapshot.source) ||
     snapshot.source.repository !== "https://github.com/lean-dojo/TorchLean" ||
     !/^[a-f0-9]{40}$/u.test(snapshot.source.commit) ||
     !validHash(snapshot.source.sha256) ||
@@ -212,14 +463,33 @@ export function compileTorchLeanMarginScene(
       reason: "The TorchLean source pin is incomplete or malformed.",
     };
   }
+  if (
+    !record(snapshot.model) ||
+    typeof snapshot.model.id !== "string" ||
+    snapshot.model.id.length === 0 ||
+    typeof snapshot.model.title !== "string" ||
+    snapshot.model.title.length === 0 ||
+    !Array.isArray(snapshot.model.architecture)
+  ) {
+    return {
+      status: "blocked",
+      code: "INVALID_ARCHITECTURE",
+      reason: "The model identity or architecture path is malformed.",
+    };
+  }
   const architecture = snapshot.model.architecture;
   if (
     architecture.length < 2 ||
     architecture.some(
       (node, index) =>
+        !record(node) ||
+        typeof node.id !== "string" ||
         node.id.length === 0 ||
+        typeof node.label !== "string" ||
         node.label.length === 0 ||
+        typeof node.detail !== "string" ||
         node.detail.length === 0 ||
+        !Array.isArray(node.shape) ||
         node.shape.some((dimension) => !Number.isSafeInteger(dimension) || dimension <= 0) ||
         (index === 0 && node.op !== "input") ||
         (index > 0 && node.op === "input"),
@@ -233,6 +503,8 @@ export function compileTorchLeanMarginScene(
   }
   const { report } = snapshot;
   if (
+    !record(report) ||
+    !record(report.summary) ||
     report.upstreamFormat !== "robust_margin_cert_v0_1" ||
     report.norm !== "linf" ||
     !finite(report.epsilon) ||
@@ -257,6 +529,19 @@ export function compileTorchLeanMarginScene(
     };
   }
   if (
+    !record(snapshot.upstreamBoundary) ||
+    !["not-replayed", "replayed"].includes(snapshot.upstreamBoundary.marginReportCheck) ||
+    !["not-established", "established-by-imported-kernel-witness"].includes(
+      snapshot.upstreamBoundary.enclosureProof,
+    )
+  ) {
+    return {
+      status: "blocked",
+      code: "INVALID_REPORT",
+      reason: "The upstream verification boundary is missing or malformed.",
+    };
+  }
+  if (
     architecture[0]!.shape.at(-1) !== report.inputDimension ||
     architecture.at(-2)?.shape.at(-1) !== report.classCount
   ) {
@@ -266,7 +551,7 @@ export function compileTorchLeanMarginScene(
       reason: "The architecture shapes do not match the report input and class dimensions.",
     };
   }
-  if (snapshot.examples.length === 0) {
+  if (!Array.isArray(snapshot.examples) || snapshot.examples.length === 0) {
     return {
       status: "blocked",
       code: "INVALID_EXAMPLE",
@@ -275,6 +560,13 @@ export function compileTorchLeanMarginScene(
   }
   const examples: TorchLeanExampleScene[] = [];
   for (const example of snapshot.examples) {
+    if (!record(example) || !Array.isArray(example.lower) || !Array.isArray(example.upper)) {
+      return {
+        status: "blocked",
+        code: "INVALID_EXAMPLE",
+        reason: "A report example is malformed.",
+      };
+    }
     const compiled = computeExample(example);
     if (!compiled || example.lower.length !== report.classCount) {
       return {
@@ -294,6 +586,7 @@ export function compileTorchLeanMarginScene(
   }
 
   const sourceUrl = `${snapshot.source.repository}/blob/${snapshot.source.commit}/${snapshot.source.path}`;
+  const enclosure = enclosureEvidence(snapshot, options.receipt, options.trustedFormalIr);
   return {
     status: "ready",
     scene: {
@@ -328,9 +621,10 @@ export function compileTorchLeanMarginScene(
         inputs: [snapshot.source.sha256, snapshot.source.commit],
         note: "The source artifact is pinned and the margin arithmetic is recomputed by ProofLens. TorchLean was not executed by this adapter build.",
       },
+      enclosure,
       boundary:
-        snapshot.upstreamBoundary.enclosureProof === "established-by-imported-kernel-witness"
-          ? "An imported kernel witness establishes enclosure; ProofLens recomputes only the displayed margin."
+        enclosure.status === "verified"
+          ? "A matching trusted Lean kernel witness establishes the receipt's enclosure theorem; ProofLens separately recomputes the displayed margin."
           : "This official TorchLean report excerpt is source-pinned and internally recomputed, but ProofLens has not established that its logit intervals enclose the model. TorchLean's own MarginCert documentation requires a separate verifier or propagation theorem for that claim.",
     },
   };

@@ -67,8 +67,18 @@ The current browser does not accept an arbitrary embedded Formal IR as trusted. 
 must first pass the normal Lean extraction and repository review path; only then can their packet
 bind to that committed extraction.
 
+## TorchLean model evidence
+
+A packet may include a `models` array. Each entry carries a source-pinned TorchLean margin snapshot,
+an optional enclosure receipt, and `requiresCertificate: true`. ProofLens adds missing or mismatched
+enclosure evidence to the packet's certificate debt. A model result can therefore move the entire
+paper from `READY` to `HOLD`; packet authors cannot hide the model certificate requirement.
+
+The downloadable output includes the model verification state without serializing a kernel-witness
+capability.
+
 ## Next gate
 
-Add a TorchLean exporter that attaches a model-enclosure witness receipt to this packet envelope.
-The margin-report adapter remains `interpreted` until that receipt is checked through an
-authoritative TorchLean propagation theorem or verifier.
+Route a reviewed Viridis paper whose actual method uses a TorchLean model through the optional
+`models` envelope, then discharge its HOLD with an authoritative propagation theorem and matching
+receipt. Papers without a neural-model claim should omit the field.

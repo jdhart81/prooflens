@@ -46,9 +46,26 @@ The interface therefore says “positive margin,” not “kernel-verified robus
 that “not certified” means the displayed bounds overlap, not that the model is necessarily wrong or
 vulnerable.
 
+## Enclosure receipt protocol
+
+The adapter now exports `prooflens_torchlean_enclosure_request_v0_1`. The request binds the source
+repository, commit, path and SHA-256; model ID; norm, method and epsilon; input and class dimensions;
+and exact example IDs. It is explicitly certificate debt, not a certificate.
+
+A returned `prooflens_torchlean_enclosure_receipt_v0_1` must repeat that binding exactly and name a
+Lean theorem in hash-matched trusted Formal IR. The declaration must be a theorem carrying the
+`@prooflens.torchlean-enclosure v0.1` protocol marker, and its name, module and statement must all
+match. Only `kernelWitness()` can then provide the private capability required for the enclosure
+claim to become `verified`. A serialized receipt, changed input, missing marker, theorem that reaches
+`sorry`, or unmatched Formal IR hash all remain `interpreted`.
+
+The web view displays source pin, margin replay, and model enclosure as a three-step evidence chain.
+The **Download enclosure request** control emits the exact JSON handoff for the isolated proof
+environment.
+
 ## Next gate
 
-The next integration milestone is a versioned TorchLean exporter that emits the normalized snapshot
-plus a ProofLens-importable witness receipt after TorchLean's authoritative propagation checker or
-theorem succeeds. Only that witness-bearing path may raise the relevant enclosure claim to
-`verified`.
+Produce the first authoritative TorchLean propagation theorem for a complete model artifact, export
+it through its native Lean 4.33 toolchain, and return a receipt that satisfies this protocol. The
+checked-in official margin report does not contain that theorem, so the public example correctly
+continues to show certificate debt.

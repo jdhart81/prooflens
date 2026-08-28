@@ -120,8 +120,8 @@ export function PaperPacketPanel({
         </div>
         <p>
           {scene.gate === "READY"
-            ? "Every claim that requires a certificate matched a trusted, zero-sorry Formal IR declaration."
-            : `${scene.summary.certificateDebt} required certificate${scene.summary.certificateDebt === 1 ? "" : "s"} did not match trusted Formal IR.`}
+            ? "Every required claim and model receipt matched trusted, zero-sorry Formal IR."
+            : `${scene.summary.certificateDebt} required certificate${scene.summary.certificateDebt === 1 ? "" : "s"} remain unmatched across the paper claims and model results.`}
         </p>
       </div>
 
@@ -129,6 +129,7 @@ export function PaperPacketPanel({
         <Summary value={scene.summary.claims} label="claims" />
         <Summary value={scene.summary.verified} label="kernel verified" />
         <Summary value={scene.summary.interpreted} label="interpreted" />
+        {scene.summary.models > 0 ? <Summary value={scene.summary.models} label="models" /> : null}
         <Summary value={scene.summary.certificateDebt} label="certificate debt" />
       </div>
 
@@ -149,6 +150,31 @@ export function PaperPacketPanel({
           </li>
         ))}
       </ol>
+
+      {scene.models.length > 0 ? (
+        <section className="paper-packet__models" aria-labelledby="paper-model-evidence-title">
+          <h3 id="paper-model-evidence-title">Model enclosure evidence</h3>
+          <ol className="paper-packet__claims">
+            {scene.models.map((model) => (
+              <li key={model.id}>
+                <div className="paper-packet__claim-topline">
+                  <code>{model.id}</code>
+                  <span className="paper-packet__evidence">torchlean enclosure</span>
+                  <EpistemicChip status={model.status} />
+                </div>
+                <h3>{model.title}</h3>
+                <p className="paper-packet__reason">
+                  <strong>{model.verification.replaceAll("-", " ")}</strong> · {model.reason}
+                </p>
+                <p className="paper-packet__note">
+                  Source <code>{model.source.commit.slice(0, 12)}</code> · SHA-256{" "}
+                  <code>{model.source.sha256.slice(0, 16)}…</code>
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
 
       <footer className="paper-packet__source">
         <div>

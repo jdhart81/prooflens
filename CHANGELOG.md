@@ -5,6 +5,18 @@ All notable changes to ProofLens are documented here. The format follows
 [SemVer](https://semver.org/) with a `0.x` caveat: minor versions may break
 IR schemas until 1.0.
 
+## [Unreleased]
+
+### Added
+
+- A versioned TorchLean enclosure-request and receipt protocol binding the exact source artifact,
+  model, propagation method, dimensions, perturbation radius, and examples to a marked theorem in
+  hash-matched, zero-sorry Formal IR.
+- A three-step visual evidence chain separating the pinned source, replayed margin arithmetic, and
+  still-owed model-enclosure theorem, with a downloadable proof request.
+- Optional TorchLean model evidence in research-paper packets. Missing or mismatched enclosure
+  receipts now contribute mandatory certificate debt and move the whole paper package to `HOLD`.
+
 ## [0.1.0] — 2026-08-26
 
 First public release. Everything below is new.

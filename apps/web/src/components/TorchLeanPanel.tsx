@@ -53,6 +53,44 @@ function TorchLeanSceneView({ scene }: { scene: TorchLeanScene }): JSX.Element {
         <span>{scene.boundary}</span>
       </div>
 
+      <section className="torchlean-receipt" aria-labelledby="torchlean-receipt-title">
+        <div className="torchlean-receipt__heading">
+          <div>
+            <p className="semantic-scene__eyebrow">Evidence chain</p>
+            <h3 id="torchlean-receipt-title">What is checked—and what is still owed</h3>
+          </div>
+          <button type="button" onClick={() => downloadEnclosureRequest(scene)}>
+            Download enclosure request
+          </button>
+        </div>
+        <ol className="torchlean-receipt__steps">
+          <ReceiptStep
+            number="1"
+            status="matched"
+            title="Source pinned"
+            description="Commit, artifact path, and complete SHA-256 identify the report."
+          />
+          <ReceiptStep
+            number="2"
+            status="matched"
+            title="Margin replayed"
+            description="ProofLens recomputes label floor minus strongest competitor ceiling."
+          />
+          <ReceiptStep
+            number="3"
+            status={scene.enclosure.status === "verified" ? "verified" : "owed"}
+            title="Model enclosure"
+            description={scene.enclosure.reason}
+          />
+        </ol>
+        <p className="torchlean-receipt__binding">
+          The request binds model <code>{scene.id}</code>, method <code>{scene.method}</code>, ε ={" "}
+          <code>{scene.epsilon}</code>, and examples{" "}
+          <code>{scene.enclosure.request.binding.exampleIds.join(", ")}</code>. Editing any field
+          invalidates a returned receipt.
+        </p>
+      </section>
+
       <div className="torchlean-summary" aria-label="TorchLean report summary">
         <div>
           <strong>{scene.summary.examples}</strong>
@@ -147,6 +185,43 @@ function TorchLeanSceneView({ scene }: { scene: TorchLeanScene }): JSX.Element {
       </footer>
     </section>
   );
+}
+
+function ReceiptStep({
+  number,
+  status,
+  title,
+  description,
+}: {
+  number: string;
+  status: "matched" | "owed" | "verified";
+  title: string;
+  description: string;
+}): JSX.Element {
+  return (
+    <li className={`torchlean-receipt-step torchlean-receipt-step--${status}`}>
+      <span className="torchlean-receipt-step__number">{number}</span>
+      <div>
+        <span className="torchlean-receipt-step__status">
+          {status === "owed" ? "CERTIFICATE DEBT" : status.toUpperCase()}
+        </span>
+        <strong>{title}</strong>
+        <p>{description}</p>
+      </div>
+    </li>
+  );
+}
+
+function downloadEnclosureRequest(scene: TorchLeanScene): void {
+  const blob = new Blob([`${JSON.stringify(scene.enclosure.request, null, 2)}\n`], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "torchlean-enclosure-request.json";
+  anchor.click();
+  URL.revokeObjectURL(url);
 }
 
 function MarginStory({

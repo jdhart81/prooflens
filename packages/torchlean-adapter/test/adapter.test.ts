@@ -1,13 +1,22 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import { parseFormalIR } from "@prooflens/formal-ir";
 import {
   compileTorchLeanMarginScene,
+  exportTorchLeanEnclosureRequest,
   TORCHLEAN_DIGITS_MARGIN_FIXTURE,
+  TORCHLEAN_ENCLOSURE_RECEIPT_FORMAT,
   type TorchLeanMarginSnapshot,
 } from "@prooflens/torchlean-adapter";
 
 function fixture(): TorchLeanMarginSnapshot {
   return structuredClone(TORCHLEAN_DIGITS_MARGIN_FIXTURE);
 }
+
+const corpus = parseFormalIR(
+  JSON.parse(readFileSync(resolve("examples/corpus.formal-ir.json"), "utf8")) as unknown,
+);
 
 describe("TorchLean margin-report adapter", () => {
   it("compiles the pinned official report excerpt and recomputes both outcomes", () => {
@@ -41,6 +50,113 @@ describe("TorchLean margin-report adapter", () => {
     expect(result.scene.epistemic).toBe("interpreted");
     expect(result.scene.boundary).toContain("has not established");
     expect(result.scene.provenance.note).toContain("TorchLean was not executed");
+    expect(result.scene.enclosure).toMatchObject({
+      status: "interpreted",
+      verification: "receipt-missing",
+    });
+  });
+
+  it("exports certificate debt bound to the exact report inputs", () => {
+    const request = exportTorchLeanEnclosureRequest(fixture());
+    expect(request).toMatchObject({
+      format: "prooflens_torchlean_enclosure_request_v0_1",
+      acceptedAuthority: "lean-kernel",
+      binding: {
+        sourceCommit: "12f5c651f03b3890ec012d0a6bb45e3ea698c8d3",
+        modelId: "torchlean:digits-linear-margin",
+        method: "ibp_linear",
+        exampleIds: [0, 7],
+      },
+    });
+    expect(request.note).toContain("not a certificate");
+  });
+
+  it("does not trust a serialized receipt without matching trusted Formal IR", () => {
+    const snapshot = fixture();
+    const receipt = {
+      format: TORCHLEAN_ENCLOSURE_RECEIPT_FORMAT,
+      binding: exportTorchLeanEnclosureRequest(snapshot).binding,
+      proof: {
+        authority: "lean-kernel",
+        protocol: "prooflens-torchlean-enclosure-v0.1",
+        declaration: "Example.encloses",
+        module: "Example",
+        statement: "True",
+        formalIrSha256: "0".repeat(64),
+      },
+    };
+    const result = compileTorchLeanMarginScene(snapshot, { receipt });
+    if (result.status !== "ready") throw new Error(result.reason);
+    expect(result.scene.enclosure).toMatchObject({
+      status: "interpreted",
+      verification: "receipt-mismatch",
+    });
+    expect(result.scene.enclosure.reason).toContain("no matching trusted Formal IR");
+  });
+
+  it("rejects a receipt whose report binding has changed", () => {
+    const snapshot = fixture();
+    const binding = exportTorchLeanEnclosureRequest(snapshot).binding;
+    const result = compileTorchLeanMarginScene(snapshot, {
+      receipt: {
+        format: TORCHLEAN_ENCLOSURE_RECEIPT_FORMAT,
+        binding: { ...binding, epsilon: 0.03 },
+        proof: {
+          authority: "lean-kernel",
+          protocol: "prooflens-torchlean-enclosure-v0.1",
+          declaration: "Example.encloses",
+          module: "Example",
+          statement: "True",
+          formalIrSha256: "0".repeat(64),
+        },
+      },
+    });
+    if (result.status !== "ready") throw new Error(result.reason);
+    expect(result.scene.enclosure.verification).toBe("receipt-mismatch");
+    expect(result.scene.enclosure.reason).toContain("exactly bind");
+  });
+
+  it("upgrades only through a matched protocol theorem and real kernel-witness capability", () => {
+    const snapshot = fixture();
+    const trustedDocument = structuredClone(corpus);
+    const theorem = trustedDocument.declarations.find(
+      (declaration) => declaration.name === "ProofLens.Examples.simple_upper_bound",
+    );
+    if (!theorem?.source?.module) throw new Error("Expected corpus theorem fixture");
+    theorem.docstring = `${theorem.docstring ?? ""}\n@prooflens.torchlean-enclosure v0.1`;
+    const formalIrSha256 = "1".repeat(64);
+    const receipt = {
+      format: TORCHLEAN_ENCLOSURE_RECEIPT_FORMAT,
+      binding: exportTorchLeanEnclosureRequest(snapshot).binding,
+      proof: {
+        authority: "lean-kernel" as const,
+        protocol: "prooflens-torchlean-enclosure-v0.1" as const,
+        declaration: theorem.name,
+        module: theorem.source.module,
+        statement: theorem.statement.pretty,
+        formalIrSha256,
+      },
+    };
+    const result = compileTorchLeanMarginScene(snapshot, {
+      receipt,
+      trustedFormalIr: { document: trustedDocument, sha256: formalIrSha256 },
+    });
+    if (result.status !== "ready") throw new Error(result.reason);
+    expect(result.scene.enclosure).toMatchObject({
+      status: "verified",
+      verification: "kernel-witness-matched",
+    });
+
+    theorem.docstring = theorem.docstring.replace(
+      "@prooflens.torchlean-enclosure v0.1",
+      "@prooflens.torchlean-enclosure missing",
+    );
+    const missingProtocol = compileTorchLeanMarginScene(snapshot, {
+      receipt,
+      trustedFormalIr: { document: trustedDocument, sha256: formalIrSha256 },
+    });
+    if (missingProtocol.status !== "ready") throw new Error(missingProtocol.reason);
+    expect(missingProtocol.scene.enclosure.verification).toBe("receipt-mismatch");
   });
 
   it("fails closed when the serialized certified flag disagrees with the margin", () => {
@@ -53,6 +169,12 @@ describe("TorchLean margin-report adapter", () => {
   });
 
   it("fails closed on malformed source pins, shapes, and intervals", () => {
+    expect(
+      compileTorchLeanMarginScene({
+        format: "prooflens_torchlean_margin_snapshot_v0_1",
+      } as TorchLeanMarginSnapshot),
+    ).toMatchObject({ status: "blocked", code: "INVALID_SOURCE" });
+
     const badSource = fixture();
     badSource.source.sha256 = "not-a-hash";
     expect(compileTorchLeanMarginScene(badSource)).toMatchObject({

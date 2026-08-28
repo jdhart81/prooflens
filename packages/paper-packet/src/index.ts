@@ -6,6 +6,11 @@ import {
   type Provenance,
 } from "@prooflens/epistemics";
 import { kernelWitness, type FormalDeclaration, type FormalIRDocument } from "@prooflens/formal-ir";
+import {
+  compileTorchLeanMarginScene,
+  type TorchLeanEnclosureReceipt,
+  type TorchLeanMarginSnapshot,
+} from "@prooflens/torchlean-adapter";
 
 export const PAPER_PACKET_VERSION = "0.1.0";
 
@@ -50,6 +55,15 @@ export interface ProofLensPaperPacket {
     source: PaperSourceReceipt;
   };
   claims: PaperPacketClaim[];
+  models?: PaperPacketModelEvidence[];
+}
+
+export interface PaperPacketModelEvidence {
+  id: string;
+  title: string;
+  requiresCertificate: true;
+  snapshot: TorchLeanMarginSnapshot;
+  receipt?: TorchLeanEnclosureReceipt;
 }
 
 export interface TrustedFormalIR {
@@ -77,16 +91,28 @@ export interface CompiledPaperClaim {
   note?: string;
 }
 
+export interface CompiledPaperModel {
+  id: string;
+  title: string;
+  requiresCertificate: true;
+  status: EpistemicStatus;
+  verification: "receipt-missing" | "receipt-mismatch" | "kernel-witness-matched";
+  reason: string;
+  source: TorchLeanMarginSnapshot["source"];
+}
+
 export interface PaperPacketScene {
   version: string;
   packet: ProofLensPaperPacket;
   claims: CompiledPaperClaim[];
+  models: CompiledPaperModel[];
   gate: "READY" | "HOLD";
   summary: {
     claims: number;
     verified: number;
     interpreted: number;
     certificateDebt: number;
+    models: number;
   };
 }
 
@@ -94,7 +120,8 @@ export type PaperPacketResult =
   | { status: "ready"; scene: PaperPacketScene }
   | {
       status: "blocked";
-      code: "INVALID_FORMAT" | "INVALID_PAPER" | "INVALID_CLAIM" | "DUPLICATE_CLAIM";
+      code:
+        "INVALID_FORMAT" | "INVALID_PAPER" | "INVALID_CLAIM" | "DUPLICATE_CLAIM" | "INVALID_MODEL";
       reason: string;
     };
 
@@ -119,6 +146,7 @@ export interface PaperOutputPacket {
       | "lean"
     >
   >;
+  models: CompiledPaperModel[];
 }
 
 function record(value: unknown): value is Record<string, unknown> {
@@ -246,6 +274,57 @@ function parsePacket(
       reason: "Every paper claim must have a unique id.",
     };
   }
+  const models: PaperPacketModelEvidence[] = [];
+  if (value.models !== undefined) {
+    if (!Array.isArray(value.models)) {
+      return {
+        status: "blocked",
+        code: "INVALID_MODEL",
+        reason: "Paper packet models must be an array.",
+      };
+    }
+    for (const rawModel of value.models) {
+      if (
+        !record(rawModel) ||
+        !text(rawModel.id) ||
+        !text(rawModel.title) ||
+        rawModel.requiresCertificate !== true
+      ) {
+        return {
+          status: "blocked",
+          code: "INVALID_MODEL",
+          reason: "Every model result must be named and expose mandatory certificate debt.",
+        };
+      }
+      const compiled = compileTorchLeanMarginScene(
+        rawModel.snapshot as TorchLeanMarginSnapshot,
+        rawModel.receipt === undefined ? {} : { receipt: rawModel.receipt },
+      );
+      if (compiled.status !== "ready") {
+        return {
+          status: "blocked",
+          code: "INVALID_MODEL",
+          reason: `Model ${rawModel.id} is invalid: ${compiled.reason}`,
+        };
+      }
+      models.push({
+        id: rawModel.id,
+        title: rawModel.title,
+        requiresCertificate: true,
+        snapshot: rawModel.snapshot as TorchLeanMarginSnapshot,
+        ...(rawModel.receipt !== undefined
+          ? { receipt: rawModel.receipt as TorchLeanEnclosureReceipt }
+          : {}),
+      });
+    }
+    if (new Set(models.map((model) => model.id)).size !== models.length) {
+      return {
+        status: "blocked",
+        code: "INVALID_MODEL",
+        reason: "Every paper model result must have a unique id.",
+      };
+    }
+  }
   return {
     format: value.format,
     paper: {
@@ -257,6 +336,7 @@ function parsePacket(
       source,
     },
     claims,
+    ...(models.length > 0 ? { models } : {}),
   };
 }
 
@@ -378,21 +458,43 @@ export function compilePaperPacket(
   const parsed = parsePacket(value);
   if (!("format" in parsed)) return parsed;
   const claims = parsed.claims.map((claim) => compileClaim(claim, options.trustedFormalIr));
-  const certificateDebt = claims.filter(
+  const models: CompiledPaperModel[] = (parsed.models ?? []).map((model) => {
+    const result = compileTorchLeanMarginScene(model.snapshot, {
+      ...(model.receipt ? { receipt: model.receipt } : {}),
+      ...(options.trustedFormalIr ? { trustedFormalIr: options.trustedFormalIr } : {}),
+    });
+    if (result.status !== "ready") {
+      throw new Error(`Validated model ${model.id} became invalid: ${result.reason}`);
+    }
+    return {
+      id: model.id,
+      title: model.title,
+      requiresCertificate: true,
+      status: result.scene.enclosure.status,
+      verification: result.scene.enclosure.verification,
+      reason: result.scene.enclosure.reason,
+      source: result.scene.source,
+    };
+  });
+  const claimCertificateDebt = claims.filter(
     (claim) => claim.requiresCertificate && claim.status !== "verified",
   ).length;
+  const modelCertificateDebt = models.filter((model) => model.status !== "verified").length;
+  const certificateDebt = claimCertificateDebt + modelCertificateDebt;
   return {
     status: "ready",
     scene: {
       version: PAPER_PACKET_VERSION,
       packet: parsed,
       claims,
+      models,
       gate: certificateDebt === 0 ? "READY" : "HOLD",
       summary: {
         claims: claims.length,
         verified: claims.filter((claim) => claim.status === "verified").length,
         interpreted: claims.filter((claim) => claim.status === "interpreted").length,
         certificateDebt,
+        models: models.length,
       },
     },
   };
@@ -408,6 +510,7 @@ export function paperOutputPacket(scene: PaperPacketScene): PaperOutputPacket {
     claims: scene.claims.map(
       ({ provenance: _provenance, ...claim }): PaperOutputPacket["claims"][number] => claim,
     ),
+    models: scene.models,
   };
 }
 
@@ -415,6 +518,6 @@ export function formatPaperPacketSummary(scene: PaperPacketScene): string {
   return [
     `PAPER ${scene.packet.paper.id} — ${scene.packet.paper.title}`,
     `PACKAGE ${scene.gate}`,
-    `CLAIMS ${scene.summary.claims} · VERIFIED ${scene.summary.verified} · CERTIFICATE DEBT ${scene.summary.certificateDebt}`,
+    `CLAIMS ${scene.summary.claims} · VERIFIED ${scene.summary.verified} · MODELS ${scene.summary.models} · CERTIFICATE DEBT ${scene.summary.certificateDebt}`,
   ].join("\n");
 }

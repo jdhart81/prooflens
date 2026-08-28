@@ -41,6 +41,44 @@ export interface SceneParameter {
   epistemic: "interpreted";
 }
 
+export type AnatomyRole =
+  "bounded-output" | "rate-normalizer" | "ceiling-amplifier" | "ceiling-limiter" | "fixed-cost";
+
+export interface EquationAnatomyTerm {
+  id: string;
+  symbol: string;
+  label: string;
+  units?: string;
+  domain: string;
+  side: "bounded" | "bound";
+  position: "numerator" | "denominator";
+  role: AnatomyRole;
+  effect: Direction | "normalizes-rate" | "fixed-positive";
+  explanation: string;
+  sourcePath: string;
+  epistemic: "interpreted" | "derived";
+}
+
+export interface ProofStoryStep {
+  id: string;
+  number: number;
+  equation: string;
+  title: string;
+  explanation: string;
+  termIds: string[];
+  epistemic: "verified" | "interpreted" | "derived";
+}
+
+export interface EquationAnatomy {
+  type: "quotient-bound";
+  terms: EquationAnatomyTerm[];
+  boundedNumeratorIds: string[];
+  boundedDenominatorIds: string[];
+  boundNumeratorIds: string[];
+  boundDenominatorIds: string[];
+  story: ProofStoryStep[];
+}
+
 export interface NumericBoundScene {
   version: string;
   id: string;
@@ -58,6 +96,7 @@ export interface NumericBoundScene {
   parameters: SceneParameter[];
   xParameterId: string;
   sensitivity: Array<{ variableId: string; symbol: string; direction: Direction }>;
+  equationAnatomy?: EquationAnatomy;
   /** Standing of the classifier's bound reading; normally derived from a verified conclusion. */
   constraintStatus: EpistemicStatus;
   /** Defaults and axis extents are display choices, so the scene is illustrative overall. */
@@ -161,6 +200,204 @@ function rangeFor(variable: MathVariable): SceneRange | null {
 function boundedUnits(theorem: TheoremIR, bounded: MathExpression): string | undefined {
   if (bounded.kind !== "variable") return undefined;
   return theorem.variables.find((variable) => variable.id === bounded.id)?.annotation?.units;
+}
+
+function multiplicativeFactors(expression: MathExpression): MathExpression[] {
+  return expression.kind === "operator" && expression.op === "mul"
+    ? expression.args.flatMap(multiplicativeFactors)
+    : [expression];
+}
+
+function quotientParts(
+  expression: MathExpression,
+): { numerator: MathExpression[]; denominator: MathExpression[] } | null {
+  if (expression.kind !== "operator" || expression.op !== "div") return null;
+  return {
+    numerator: multiplicativeFactors(expression.args[0]!),
+    denominator: multiplicativeFactors(expression.args[1]!),
+  };
+}
+
+function anatomyTermFor(
+  theorem: TheoremIR,
+  expression: MathExpression,
+  side: "bounded" | "bound",
+  position: "numerator" | "denominator",
+  sensitivity: NumericBoundScene["sensitivity"],
+): EquationAnatomyTerm | null {
+  if (expression.kind === "variable") {
+    const variable = theorem.variables.find((candidate) => candidate.id === expression.id);
+    if (!variable?.annotation?.meaning || !variable.annotation.domain) return null;
+    const direction = sensitivity.find((item) => item.variableId === expression.id)?.direction;
+    if (side === "bound" && direction !== "increasing" && direction !== "decreasing") return null;
+    const role: AnatomyRole =
+      side === "bounded"
+        ? position === "numerator"
+          ? "bounded-output"
+          : "rate-normalizer"
+        : direction === "increasing"
+          ? "ceiling-amplifier"
+          : "ceiling-limiter";
+    const effect =
+      side === "bounded"
+        ? position === "denominator"
+          ? "normalizes-rate"
+          : "constant"
+        : (direction ?? "unknown");
+    const explanation =
+      role === "bounded-output"
+        ? `${variable.annotation.meaning} is the quantity being counted.`
+        : role === "rate-normalizer"
+          ? `${variable.annotation.meaning} turns the count into a rate.`
+          : role === "ceiling-amplifier"
+            ? `${variable.annotation.meaning} is in the numerator, so increasing it raises the ceiling.`
+            : `${variable.annotation.meaning} is in the denominator, so increasing it lowers the ceiling.`;
+    return {
+      id: expression.id,
+      symbol: expression.symbol,
+      label: variable.annotation.meaning,
+      units: variable.annotation.units,
+      domain: variable.annotation.domain,
+      side,
+      position,
+      role,
+      effect,
+      explanation,
+      sourcePath: expression.path,
+      epistemic: "interpreted",
+    };
+  }
+
+  if (
+    expression.kind === "application" &&
+    expression.head === "Real.log" &&
+    expression.args.length === 1 &&
+    expression.args[0]?.kind === "number" &&
+    expression.args[0].value === 2
+  ) {
+    return {
+      id: `constant:${expression.path}`,
+      symbol: "ln 2",
+      label: "binary erasure cost factor",
+      units: "dimensionless",
+      domain: "fixed positive constant",
+      side,
+      position,
+      role: "fixed-cost",
+      effect: "fixed-positive",
+      explanation:
+        "ln 2 is the fixed positive factor that appears in the minimum thermodynamic cost of erasing one bit.",
+      sourcePath: expression.path,
+      epistemic: "derived",
+    };
+  }
+
+  return null;
+}
+
+function compileEquationAnatomy(
+  theorem: TheoremIR,
+  bounded: MathExpression,
+  bound: MathExpression,
+  sensitivity: NumericBoundScene["sensitivity"],
+  direction: BoundDirection,
+  strict: boolean,
+): EquationAnatomy | undefined {
+  if (direction !== "upper") return undefined;
+  const boundedParts = quotientParts(bounded);
+  const boundParts = quotientParts(bound);
+  if (!boundedParts || !boundParts) return undefined;
+
+  const groups = [
+    {
+      expressions: boundedParts.numerator,
+      side: "bounded" as const,
+      position: "numerator" as const,
+    },
+    {
+      expressions: boundedParts.denominator,
+      side: "bounded" as const,
+      position: "denominator" as const,
+    },
+    { expressions: boundParts.numerator, side: "bound" as const, position: "numerator" as const },
+    {
+      expressions: boundParts.denominator,
+      side: "bound" as const,
+      position: "denominator" as const,
+    },
+  ];
+  const compiled = groups.map((group) =>
+    group.expressions.map((expression) =>
+      anatomyTermFor(theorem, expression, group.side, group.position, sensitivity),
+    ),
+  );
+  if (compiled.some((terms) => terms.some((term) => term === null))) return undefined;
+  const [boundedNumerator, boundedDenominator, boundNumerator, boundDenominator] = compiled as [
+    EquationAnatomyTerm[],
+    EquationAnatomyTerm[],
+    EquationAnatomyTerm[],
+    EquationAnatomyTerm[],
+  ];
+  const terms = [
+    ...boundedNumerator,
+    ...boundedDenominator,
+    ...boundNumerator,
+    ...boundDenominator,
+  ];
+  const ids = (items: EquationAnatomyTerm[]): string[] => items.map((item) => item.id);
+  const show = (items: EquationAnatomyTerm[]): string =>
+    items.map((item) => item.symbol).join(" · ");
+  const boundedLabel = `${show(boundedNumerator)} / ${show(boundedDenominator)}`;
+  const numeratorLabel = show(boundNumerator);
+  const denominatorLabel = show(boundDenominator);
+
+  return {
+    type: "quotient-bound",
+    terms,
+    boundedNumeratorIds: ids(boundedNumerator),
+    boundedDenominatorIds: ids(boundedDenominator),
+    boundNumeratorIds: ids(boundNumerator),
+    boundDenominatorIds: ids(boundDenominator),
+    story: [
+      {
+        id: "rate",
+        number: 1,
+        equation: boundedLabel,
+        title: "Name the rate",
+        explanation: `${boundedNumerator[0]!.label} is divided by ${boundedDenominator[0]!.label}; this asks how much work happens per unit of time.`,
+        termIds: [...ids(boundedNumerator), ...ids(boundedDenominator)],
+        epistemic: "interpreted",
+      },
+      {
+        id: "supply",
+        number: 2,
+        equation: numeratorLabel,
+        title: "Build the useful supply",
+        explanation: `${boundNumerator.map((term) => term.label).join(" and ")} multiply together. Either one can raise the sustainable rate.`,
+        termIds: ids(boundNumerator),
+        epistemic: "derived",
+      },
+      {
+        id: "cost",
+        number: 3,
+        equation: denominatorLabel,
+        title: "Build the thermodynamic cost",
+        explanation: `${boundDenominator.map((term) => term.label).join(", ")} multiply into the cost paid per unit of useful work.`,
+        termIds: ids(boundDenominator),
+        epistemic: "derived",
+      },
+      {
+        id: "ceiling",
+        number: 4,
+        equation: `${boundedLabel} ${strict ? "<" : "≤"} ${numeratorLabel} / (${denominatorLabel})`,
+        title: "Compare rate with the ceiling",
+        explanation:
+          "Lean verifies that the operation rate cannot exceed useful supply divided by thermodynamic cost.",
+        termIds: terms.map((term) => term.id),
+        epistemic: "verified",
+      },
+    ],
+  };
 }
 
 /**
@@ -267,6 +504,14 @@ export function compileSemanticScene(
       parameters,
       xParameterId: xParameter.id,
       sensitivity: payload.data.sensitivity,
+      equationAnatomy: compileEquationAnatomy(
+        theorem,
+        payload.data.boundedQuantity,
+        payload.data.bound,
+        payload.data.sensitivity,
+        direction,
+        payload.data.strict,
+      ),
       constraintStatus: classification.claim.status,
       epistemic: "illustrative",
       provenance: {

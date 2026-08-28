@@ -714,6 +714,208 @@ body {
   overflow-wrap: anywhere;
 }
 
+.equation-anatomy {
+  margin: 12px 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.equation-anatomy__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.equation-anatomy__heading h4 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.equation-anatomy__heading > p {
+  max-width: 360px;
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 11px;
+  text-align: right;
+}
+
+.equation-anatomy__formula {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 18px 0 20px;
+  overflow-x: auto;
+  padding: 4px 2px 8px;
+}
+
+.equation-anatomy__relation {
+  flex: none;
+  color: var(--ep-verified-fg);
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.equation-anatomy__fraction {
+  display: inline-grid;
+  flex: none;
+  gap: 4px;
+  min-width: min-content;
+}
+
+.equation-anatomy__numerator {
+  padding: 0 8px 6px;
+  border-bottom: 2px solid var(--text);
+}
+
+.equation-anatomy__denominator {
+  padding: 4px 8px 0;
+}
+
+.equation-anatomy__row {
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+}
+
+.equation-anatomy__factor {
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+.equation-anatomy__times {
+  padding: 4px 4px 0;
+  color: var(--text-dim);
+  font: 18px var(--mono);
+}
+
+.equation-term {
+  display: grid;
+  grid-template-rows: auto 5px auto auto;
+  justify-items: center;
+  width: 112px;
+  min-width: 0;
+  padding: 2px 4px 4px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.equation-term:hover,
+.equation-term:focus-visible,
+.equation-term--active {
+  border-color: var(--ep-interpreted-bd);
+  background: var(--ep-interpreted-bg);
+  outline: none;
+}
+
+.equation-term__symbol {
+  font: 700 18px var(--mono);
+}
+
+.equation-term__brace {
+  width: 88%;
+  height: 4px;
+  border-right: 1.5px solid var(--ep-interpreted-bd);
+  border-bottom: 1.5px solid var(--ep-interpreted-bd);
+  border-left: 1.5px solid var(--ep-interpreted-bd);
+  border-radius: 0 0 4px 4px;
+}
+
+.equation-term__label {
+  margin-top: 3px;
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.equation-term__units {
+  margin-top: 2px;
+  color: var(--text-faint);
+  font: 8.5px var(--mono);
+  line-height: 1.15;
+  text-align: center;
+}
+
+.proof-story {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.proof-story__step {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 7px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+}
+
+.proof-story__step--active {
+  border-color: var(--ep-interpreted-bd);
+  box-shadow: inset 0 0 0 1px var(--ep-interpreted-bd);
+}
+
+.proof-story__number {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ep-derived-bg);
+  color: var(--ep-derived-fg);
+  font: 750 11px var(--mono);
+}
+
+.proof-story__title {
+  display: grid;
+  gap: 3px;
+  font-size: 10.5px;
+}
+
+.proof-story__title code {
+  color: var(--text-dim);
+  font-size: 9px;
+  overflow-wrap: anywhere;
+}
+
+.proof-story__step p {
+  margin: 5px 0;
+  color: var(--text-dim);
+  font-size: 9.5px;
+  line-height: 1.35;
+}
+
+.proof-story__trust {
+  display: inline-block;
+  color: var(--text-faint);
+  font: 750 8px var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.proof-story__trust--verified {
+  color: var(--ep-verified-fg);
+}
+
+.proof-story__trust--interpreted {
+  color: var(--ep-interpreted-fg);
+}
+
 .semantic-scene__status {
   padding: 8px 11px;
   border: 1px solid;
@@ -746,6 +948,13 @@ body {
   display: grid;
   gap: 4px;
   min-width: 0;
+  overflow: hidden;
+}
+
+.scene-control--active {
+  border-radius: 5px;
+  background: var(--ep-interpreted-bg);
+  box-shadow: inset 0 0 0 1px var(--ep-interpreted-bd);
 }
 
 .scene-control--target {
@@ -757,7 +966,12 @@ body {
   display: flex;
   justify-content: space-between;
   gap: 8px;
+  min-width: 0;
   font-size: 11.5px;
+}
+
+.scene-control__label > span:first-child {
+  flex: 1;
 }
 
 .scene-control__label span {
@@ -812,6 +1026,39 @@ body {
   border-radius: var(--radius-sm);
   background: var(--surface);
   overflow: hidden;
+}
+
+.semantic-scene__movement,
+.semantic-scene__chart-explainer {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: 1px solid var(--ep-interpreted-bd);
+  background: var(--ep-interpreted-bg);
+  font-size: 11px;
+}
+
+.semantic-scene__movement {
+  margin-bottom: 8px;
+  border-radius: var(--radius-sm);
+}
+
+.semantic-scene__movement strong,
+.semantic-scene__chart-explainer strong {
+  color: var(--ep-interpreted-fg);
+  font: 800 14px var(--mono);
+}
+
+.semantic-scene__movement-trust {
+  margin-left: auto;
+  color: var(--text-faint);
+  font: 9px var(--mono);
+  white-space: nowrap;
+}
+
+.semantic-scene__chart-explainer {
+  border-width: 0 0 1px;
 }
 
 .semantic-scene__chart svg {
@@ -895,6 +1142,62 @@ body {
 
   .semantic-scene__header {
     display: grid;
+  }
+
+  .equation-anatomy {
+    padding: 10px;
+  }
+
+  .equation-anatomy__heading {
+    display: grid;
+    gap: 4px;
+  }
+
+  .equation-anatomy__heading > p {
+    text-align: left;
+  }
+
+  .equation-anatomy__formula {
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    overflow: visible;
+  }
+
+  .equation-anatomy__fraction {
+    width: 100%;
+  }
+
+  .equation-term {
+    width: 72px;
+  }
+
+  .equation-term__label {
+    font-size: 8.5px;
+  }
+
+  .equation-anatomy__times {
+    padding-right: 2px;
+    padding-left: 2px;
+  }
+
+  .proof-story {
+    grid-template-columns: 1fr;
+  }
+
+  .proof-story__step {
+    font-size: 11px;
+  }
+
+  .semantic-scene__movement {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .semantic-scene__movement-trust {
+    width: 100%;
+    margin-left: 23px;
   }
 
   .semantic-scene__controls {

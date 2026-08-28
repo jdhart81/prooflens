@@ -4,6 +4,7 @@ import {
   formatNumber,
   initialSceneValues,
   sampleSemanticScene,
+  type EquationAnatomyTerm,
   type NumericBoundScene,
 } from "@prooflens/visual-ir";
 import { EpistemicChip } from "./EpistemicChip.js";
@@ -21,11 +22,15 @@ function initialTarget(scene: NumericBoundScene, values: Record<string, number>)
 export function SemanticScene({ scene }: SemanticSceneProps): JSX.Element {
   const [values, setValues] = useState<Record<string, number>>(() => initialSceneValues(scene));
   const [target, setTarget] = useState<number>(() => initialTarget(scene, values));
+  const [activeTermId, setActiveTermId] = useState<string | null>(
+    () => scene.equationAnatomy?.terms[0]?.id ?? null,
+  );
 
   useEffect(() => {
     const next = initialSceneValues(scene);
     setValues(next);
     setTarget(initialTarget(scene, next));
+    setActiveTermId(scene.equationAnatomy?.terms[0]?.id ?? null);
   }, [scene]);
 
   const evaluation = useMemo(
@@ -43,6 +48,7 @@ export function SemanticScene({ scene }: SemanticSceneProps): JSX.Element {
     evaluation.boundValue * 1.5,
     ...points.map((point) => point.bound * 1.2),
   );
+  const activeTerm = scene.equationAnatomy?.terms.find((term) => term.id === activeTermId);
 
   return (
     <section className="semantic-scene" aria-labelledby="semantic-scene-title">
@@ -61,6 +67,14 @@ export function SemanticScene({ scene }: SemanticSceneProps): JSX.Element {
         <EpistemicChip status={scene.epistemic} prefix="scene" />
       </header>
 
+      {scene.equationAnatomy ? (
+        <EquationAnatomyView
+          anatomy={scene.equationAnatomy}
+          activeTermId={activeTermId}
+          onSelect={setActiveTermId}
+        />
+      ) : null}
+
       <div
         className={`semantic-scene__status semantic-scene__status--${evaluation.feasible ? "feasible" : "infeasible"}`}
         role="status"
@@ -71,7 +85,12 @@ export function SemanticScene({ scene }: SemanticSceneProps): JSX.Element {
 
       <div className="semantic-scene__controls" aria-label="Illustrative mathematical parameters">
         {scene.parameters.map((parameter) => (
-          <label className="scene-control" key={parameter.id}>
+          <label
+            className={`scene-control${activeTermId === parameter.id ? " scene-control--active" : ""}`}
+            key={parameter.id}
+            onFocus={() => setActiveTermId(parameter.id)}
+            onMouseEnter={() => setActiveTermId(parameter.id)}
+          >
             <span className="scene-control__label">
               <span>{parameter.label}</span>
               <strong>{formatNumber(values[parameter.id]!)}</strong>
@@ -125,12 +144,23 @@ export function SemanticScene({ scene }: SemanticSceneProps): JSX.Element {
         </label>
       </div>
 
+      {activeTerm ? (
+        <div className="semantic-scene__movement" role="status" aria-live="polite">
+          <strong>{activeTerm.symbol}</strong>
+          <span>{activeTerm.explanation}</span>
+          <span className="semantic-scene__movement-trust">
+            {activeTerm.epistemic} · {activeTerm.position}
+          </span>
+        </div>
+      ) : null}
+
       <BoundChart
         scene={scene}
         values={values}
         target={target}
         points={points}
         feasible={evaluation.feasible}
+        activeTerm={activeTerm}
       />
 
       <div className="semantic-scene__description">
@@ -141,18 +171,126 @@ export function SemanticScene({ scene }: SemanticSceneProps): JSX.Element {
   );
 }
 
+function EquationAnatomyView({
+  anatomy,
+  activeTermId,
+  onSelect,
+}: {
+  anatomy: NonNullable<NumericBoundScene["equationAnatomy"]>;
+  activeTermId: string | null;
+  onSelect: (id: string) => void;
+}): JSX.Element {
+  const byIds = (ids: string[]): EquationAnatomyTerm[] =>
+    ids.map((id) => anatomy.terms.find((term) => term.id === id)!);
+  return (
+    <section className="equation-anatomy" aria-labelledby="equation-anatomy-title">
+      <div className="equation-anatomy__heading">
+        <div>
+          <p className="semantic-scene__eyebrow">Equation anatomy</p>
+          <h4 id="equation-anatomy-title">What every symbol does</h4>
+        </div>
+        <p>Select a symbol to follow its effect through the explanation and graph.</p>
+      </div>
+      <div className="equation-anatomy__formula" aria-label="Equation with every term described">
+        <AnatomyFraction
+          numerator={byIds(anatomy.boundedNumeratorIds)}
+          denominator={byIds(anatomy.boundedDenominatorIds)}
+          activeTermId={activeTermId}
+          onSelect={onSelect}
+        />
+        <span className="equation-anatomy__relation">≤</span>
+        <AnatomyFraction
+          numerator={byIds(anatomy.boundNumeratorIds)}
+          denominator={byIds(anatomy.boundDenominatorIds)}
+          activeTermId={activeTermId}
+          onSelect={onSelect}
+        />
+      </div>
+      <ol className="proof-story" aria-label="Why the equation works">
+        {anatomy.story.map((step) => {
+          const active = activeTermId !== null && step.termIds.includes(activeTermId);
+          return (
+            <li
+              className={
+                active ? "proof-story__step proof-story__step--active" : "proof-story__step"
+              }
+              key={step.id}
+            >
+              <span className="proof-story__number">{step.number}</span>
+              <div>
+                <div className="proof-story__title">
+                  <strong>{step.title}</strong>
+                  <code>{step.equation}</code>
+                </div>
+                <p>{step.explanation}</p>
+                <span className={`proof-story__trust proof-story__trust--${step.epistemic}`}>
+                  {step.epistemic}
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
+function AnatomyFraction({
+  numerator,
+  denominator,
+  activeTermId,
+  onSelect,
+}: {
+  numerator: EquationAnatomyTerm[];
+  denominator: EquationAnatomyTerm[];
+  activeTermId: string | null;
+  onSelect: (id: string) => void;
+}): JSX.Element {
+  const row = (terms: EquationAnatomyTerm[]) => (
+    <span className="equation-anatomy__row">
+      {terms.map((term, index) => (
+        <span className="equation-anatomy__factor" key={term.id}>
+          {index > 0 ? <span className="equation-anatomy__times">·</span> : null}
+          <button
+            type="button"
+            className={`equation-term${activeTermId === term.id ? " equation-term--active" : ""}`}
+            aria-pressed={activeTermId === term.id}
+            aria-label={`${term.symbol}: ${term.label}`}
+            onClick={() => onSelect(term.id)}
+            onFocus={() => onSelect(term.id)}
+            onMouseEnter={() => onSelect(term.id)}
+          >
+            <span className="equation-term__symbol">{term.symbol}</span>
+            <span className="equation-term__brace" aria-hidden="true" />
+            <span className="equation-term__label">{term.label}</span>
+            <span className="equation-term__units">{term.units ?? term.domain}</span>
+          </button>
+        </span>
+      ))}
+    </span>
+  );
+  return (
+    <span className="equation-anatomy__fraction">
+      <span className="equation-anatomy__numerator">{row(numerator)}</span>
+      <span className="equation-anatomy__denominator">{row(denominator)}</span>
+    </span>
+  );
+}
+
 function BoundChart({
   scene,
   values,
   target,
   points,
   feasible,
+  activeTerm,
 }: {
   scene: NumericBoundScene;
   values: Record<string, number>;
   target: number;
   points: ReturnType<typeof sampleSemanticScene>;
   feasible: boolean;
+  activeTerm?: EquationAnatomyTerm;
 }): JSX.Element {
   const width = 680;
   const height = 310;
@@ -188,6 +326,22 @@ function BoundChart({
 
   return (
     <div className="semantic-scene__chart">
+      {activeTerm ? (
+        <div className="semantic-scene__chart-explainer">
+          <strong>{activeTerm.symbol}</strong>
+          <span>
+            {activeTerm.effect === "increasing"
+              ? "More raises the ceiling ↑"
+              : activeTerm.effect === "decreasing"
+                ? "More lowers the ceiling ↓"
+                : activeTerm.effect === "normalizes-rate"
+                  ? "Dividing by time creates a rate"
+                  : activeTerm.effect === "fixed-positive"
+                    ? "Fixed positive cost factor"
+                    : "Quantity constrained by the ceiling"}
+          </span>
+        </div>
+      ) : null}
       <svg
         viewBox={`0 0 ${width} ${height}`}
         role="img"

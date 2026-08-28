@@ -6917,6 +6917,146 @@ function boundedUnits(theorem, bounded) {
     return void 0;
   return theorem.variables.find((variable) => variable.id === bounded.id)?.annotation?.units;
 }
+function multiplicativeFactors(expression) {
+  return expression.kind === "operator" && expression.op === "mul" ? expression.args.flatMap(multiplicativeFactors) : [expression];
+}
+function quotientParts(expression) {
+  if (expression.kind !== "operator" || expression.op !== "div")
+    return null;
+  return {
+    numerator: multiplicativeFactors(expression.args[0]),
+    denominator: multiplicativeFactors(expression.args[1])
+  };
+}
+function anatomyTermFor(theorem, expression, side, position, sensitivity) {
+  if (expression.kind === "variable") {
+    const variable = theorem.variables.find((candidate) => candidate.id === expression.id);
+    if (!variable?.annotation?.meaning || !variable.annotation.domain)
+      return null;
+    const direction = sensitivity.find((item) => item.variableId === expression.id)?.direction;
+    if (side === "bound" && direction !== "increasing" && direction !== "decreasing")
+      return null;
+    const role = side === "bounded" ? position === "numerator" ? "bounded-output" : "rate-normalizer" : direction === "increasing" ? "ceiling-amplifier" : "ceiling-limiter";
+    const effect = side === "bounded" ? position === "denominator" ? "normalizes-rate" : "constant" : direction ?? "unknown";
+    const explanation = role === "bounded-output" ? `${variable.annotation.meaning} is the quantity being counted.` : role === "rate-normalizer" ? `${variable.annotation.meaning} turns the count into a rate.` : role === "ceiling-amplifier" ? `${variable.annotation.meaning} is in the numerator, so increasing it raises the ceiling.` : `${variable.annotation.meaning} is in the denominator, so increasing it lowers the ceiling.`;
+    return {
+      id: expression.id,
+      symbol: expression.symbol,
+      label: variable.annotation.meaning,
+      units: variable.annotation.units,
+      domain: variable.annotation.domain,
+      side,
+      position,
+      role,
+      effect,
+      explanation,
+      sourcePath: expression.path,
+      epistemic: "interpreted"
+    };
+  }
+  if (expression.kind === "application" && expression.head === "Real.log" && expression.args.length === 1 && expression.args[0]?.kind === "number" && expression.args[0].value === 2) {
+    return {
+      id: `constant:${expression.path}`,
+      symbol: "ln 2",
+      label: "binary erasure cost factor",
+      units: "dimensionless",
+      domain: "fixed positive constant",
+      side,
+      position,
+      role: "fixed-cost",
+      effect: "fixed-positive",
+      explanation: "ln 2 is the fixed positive factor that appears in the minimum thermodynamic cost of erasing one bit.",
+      sourcePath: expression.path,
+      epistemic: "derived"
+    };
+  }
+  return null;
+}
+function compileEquationAnatomy(theorem, bounded, bound, sensitivity) {
+  const boundedParts = quotientParts(bounded);
+  const boundParts = quotientParts(bound);
+  if (!boundedParts || !boundParts)
+    return void 0;
+  const groups = [
+    {
+      expressions: boundedParts.numerator,
+      side: "bounded",
+      position: "numerator"
+    },
+    {
+      expressions: boundedParts.denominator,
+      side: "bounded",
+      position: "denominator"
+    },
+    { expressions: boundParts.numerator, side: "bound", position: "numerator" },
+    {
+      expressions: boundParts.denominator,
+      side: "bound",
+      position: "denominator"
+    }
+  ];
+  const compiled = groups.map((group2) => group2.expressions.map((expression) => anatomyTermFor(theorem, expression, group2.side, group2.position, sensitivity)));
+  if (compiled.some((terms2) => terms2.some((term) => term === null)))
+    return void 0;
+  const [boundedNumerator, boundedDenominator, boundNumerator, boundDenominator] = compiled;
+  const terms = [
+    ...boundedNumerator,
+    ...boundedDenominator,
+    ...boundNumerator,
+    ...boundDenominator
+  ];
+  const ids = (items) => items.map((item) => item.id);
+  const show = (items) => items.map((item) => item.symbol).join(" \xB7 ");
+  const boundedLabel = `${show(boundedNumerator)} / ${show(boundedDenominator)}`;
+  const numeratorLabel = show(boundNumerator);
+  const denominatorLabel = show(boundDenominator);
+  return {
+    type: "quotient-bound",
+    terms,
+    boundedNumeratorIds: ids(boundedNumerator),
+    boundedDenominatorIds: ids(boundedDenominator),
+    boundNumeratorIds: ids(boundNumerator),
+    boundDenominatorIds: ids(boundDenominator),
+    story: [
+      {
+        id: "rate",
+        number: 1,
+        equation: boundedLabel,
+        title: "Name the rate",
+        explanation: `${boundedNumerator[0].label} is divided by ${boundedDenominator[0].label}; this asks how much work happens per unit of time.`,
+        termIds: [...ids(boundedNumerator), ...ids(boundedDenominator)],
+        epistemic: "interpreted"
+      },
+      {
+        id: "supply",
+        number: 2,
+        equation: numeratorLabel,
+        title: "Build the useful supply",
+        explanation: `${boundNumerator.map((term) => term.label).join(" and ")} multiply together. Either one can raise the sustainable rate.`,
+        termIds: ids(boundNumerator),
+        epistemic: "derived"
+      },
+      {
+        id: "cost",
+        number: 3,
+        equation: denominatorLabel,
+        title: "Build the thermodynamic cost",
+        explanation: `${boundDenominator.map((term) => term.label).join(", ")} multiply into the cost paid per unit of useful work.`,
+        termIds: ids(boundDenominator),
+        epistemic: "derived"
+      },
+      {
+        id: "ceiling",
+        number: 4,
+        equation: `${boundedLabel} \u2264 ${numeratorLabel} / (${denominatorLabel})`,
+        title: "Compare rate with the ceiling",
+        explanation: "Lean verifies that the operation rate cannot exceed useful supply divided by thermodynamic cost.",
+        termIds: terms.map((term) => term.id),
+        epistemic: "verified"
+      }
+    ]
+  };
+}
 function compileSemanticScene(theorem, classifications) {
   const classification = naturalBound(classifications);
   if (!classification) {
@@ -6997,6 +7137,7 @@ function compileSemanticScene(theorem, classifications) {
       parameters,
       xParameterId: xParameter.id,
       sensitivity: payload.data.sensitivity,
+      equationAnatomy: compileEquationAnatomy(theorem, payload.data.boundedQuantity, payload.data.bound, payload.data.sensitivity),
       constraintStatus: classification.claim.status,
       epistemic: "illustrative",
       provenance: {

@@ -49,8 +49,24 @@ parameters. The author-selected `axis="x"` puts power on the horizontal axis. Th
 which parameters raise or lower the ceiling from the same conservative sensitivity analysis used
 by the existing explanations.
 
-The web interface provides sliders, an exact target input, a feasible/infeasible readout, a shaded
-permitted region, a numeric curve, a current operating point, and a plain-language description.
+The web interface leads with an **Equation Anatomy** view. Every term in the verified quotient is
+persistently underlined with its author-declared meaning and units. Selecting a term synchronises
+four views of the same idea:
+
+1. its position in the equation;
+2. its structural job (rate quantity, time normaliser, ceiling amplifier, ceiling limiter, or fixed
+   cost);
+3. the proof-story step in which that job matters; and
+4. the direction it moves the numeric ceiling.
+
+The four-step **Proof Story** explains the rate, useful-supply numerator, thermodynamic-cost
+denominator, and final verified comparison. Its labels preserve the epistemic boundary: physical
+names are interpreted from author annotations, numerator/denominator effects are derived, and only
+the final inequality is Lean-verified.
+
+The supporting graph then provides sliders, an exact target input, a feasible/infeasible readout, a
+shaded permitted region, a numeric curve, a current operating point, and a synchronized
+plain-language description of the selected term.
 
 ## Next shapes
 

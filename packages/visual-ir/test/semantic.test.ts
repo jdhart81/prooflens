@@ -45,6 +45,54 @@ describe("semantic scene compiler", () => {
     expect(result.scene.provenance.note).toContain("inequality comes from Lean");
   });
 
+  it("underscores every equation term with meaning, role, effect, and source", () => {
+    const theorem = informationRateBound();
+    const result = compileSemanticScene(theorem, classifyTheorem(theorem));
+    if (result.status !== "ready") throw new Error(result.reason);
+    const anatomy = result.scene.equationAnatomy;
+    expect(anatomy?.type).toBe("quotient-bound");
+    expect(anatomy?.terms.map((term) => term.symbol)).toEqual([
+      "N",
+      "t",
+      "P",
+      "D",
+      "kB",
+      "T",
+      "ln 2",
+    ]);
+    expect(
+      anatomy?.terms.every((term) => term.label.length > 0 && term.sourcePath.length > 0),
+    ).toBe(true);
+    expect(anatomy?.terms.find((term) => term.symbol === "P")).toMatchObject({
+      position: "numerator",
+      role: "ceiling-amplifier",
+      effect: "increasing",
+    });
+    expect(anatomy?.terms.find((term) => term.symbol === "T")).toMatchObject({
+      position: "denominator",
+      role: "ceiling-limiter",
+      effect: "decreasing",
+    });
+    expect(anatomy?.terms.find((term) => term.symbol === "ln 2")).toMatchObject({
+      role: "fixed-cost",
+      effect: "fixed-positive",
+      epistemic: "derived",
+    });
+  });
+
+  it("ends the proof story at the exact verified inequality", () => {
+    const theorem = informationRateBound();
+    const result = compileSemanticScene(theorem, classifyTheorem(theorem));
+    if (result.status !== "ready") throw new Error(result.reason);
+    const finalStep = result.scene.equationAnatomy?.story.at(-1);
+    expect(finalStep).toMatchObject({
+      number: 4,
+      epistemic: "verified",
+      equation: "N / t ≤ P · D / (kB · T · ln 2)",
+    });
+    expect(finalStep?.explanation).toContain("Lean verifies");
+  });
+
   it("evaluates the verified formula and flips feasibility at the boundary", () => {
     const theorem = informationRateBound();
     const result = compileSemanticScene(theorem, classifyTheorem(theorem));
@@ -90,5 +138,25 @@ describe("semantic scene compiler", () => {
     theorem.annotations = [annotation];
     const result = compileSemanticScene(theorem, classifyTheorem(theorem));
     expect(result).toMatchObject({ status: "blocked", code: "UNSUPPORTED_DOMAIN" });
+  });
+
+  it("omits equation anatomy when a variable effect cannot be proved", () => {
+    const theorem = synthetic(
+      rel("less-than-or-equal", op("div", v("N"), v("t")), op("div", v("P"), v("C"))),
+      {
+        variables: ["N", "t", "P", "C"],
+      },
+    );
+    for (const variable of theorem.variables) {
+      variable.annotation = {
+        target: variable.symbol,
+        meaning: `meaning of ${variable.symbol}`,
+        domain: "positive reals",
+      };
+    }
+    theorem.annotations = theorem.variables.map((variable) => variable.annotation!);
+    const result = compileSemanticScene(theorem, classifyTheorem(theorem));
+    if (result.status !== "ready") throw new Error(result.reason);
+    expect(result.scene.equationAnatomy).toBeUndefined();
   });
 });

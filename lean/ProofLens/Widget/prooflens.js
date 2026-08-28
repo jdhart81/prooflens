@@ -6972,7 +6972,9 @@ function anatomyTermFor(theorem, expression, side, position, sensitivity) {
   }
   return null;
 }
-function compileEquationAnatomy(theorem, bounded, bound, sensitivity) {
+function compileEquationAnatomy(theorem, bounded, bound, sensitivity, direction, strict) {
+  if (direction !== "upper")
+    return void 0;
   const boundedParts = quotientParts(bounded);
   const boundParts = quotientParts(bound);
   if (!boundedParts || !boundParts)
@@ -7048,7 +7050,7 @@ function compileEquationAnatomy(theorem, bounded, bound, sensitivity) {
       {
         id: "ceiling",
         number: 4,
-        equation: `${boundedLabel} \u2264 ${numeratorLabel} / (${denominatorLabel})`,
+        equation: `${boundedLabel} ${strict ? "<" : "\u2264"} ${numeratorLabel} / (${denominatorLabel})`,
         title: "Compare rate with the ceiling",
         explanation: "Lean verifies that the operation rate cannot exceed useful supply divided by thermodynamic cost.",
         termIds: terms.map((term) => term.id),
@@ -7137,7 +7139,7 @@ function compileSemanticScene(theorem, classifications) {
       parameters,
       xParameterId: xParameter.id,
       sensitivity: payload.data.sensitivity,
-      equationAnatomy: compileEquationAnatomy(theorem, payload.data.boundedQuantity, payload.data.bound, payload.data.sensitivity),
+      equationAnatomy: compileEquationAnatomy(theorem, payload.data.boundedQuantity, payload.data.bound, payload.data.sensitivity, direction, payload.data.strict),
       constraintStatus: classification.claim.status,
       epistemic: "illustrative",
       provenance: {

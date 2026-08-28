@@ -17,6 +17,7 @@
     "@prooflens/epistemics": "workspace:*",
     "@prooflens/formal-ir": "workspace:*",
     "@prooflens/math-ir": "workspace:*",
+    "@prooflens/paper-packet": "workspace:*",
     "@prooflens/pipeline": "workspace:*",
     "@prooflens/renderer-svg": "workspace:*",
     "@prooflens/torchlean-adapter": "workspace:*",

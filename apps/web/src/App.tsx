@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { runPipelineOnValue, type PipelineBundle, type TheoremAnalysis } from "@prooflens/pipeline";
 import { FormalPanel } from "./components/FormalPanel.js";
 import { InterpretationPanel } from "./components/InterpretationPanel.js";
+import { PaperPacketPanel } from "./components/PaperPacketPanel.js";
 import { StagePanels, type StageId } from "./components/StagePanels.js";
 import { SummaryStrip } from "./components/SummaryStrip.js";
 import { TheoremList, type ListFilters } from "./components/TheoremList.js";
@@ -14,7 +15,12 @@ const CORPUS_URL = "corpus.formal-ir.json";
 type LoadState =
   | { status: "loading" }
   | { status: "error"; message: string; detail?: string }
-  | { status: "ready"; bundle: PipelineBundle };
+  | { status: "ready"; bundle: PipelineBundle; formalIrSha256: string };
+
+async function sha256(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
 
 export function App(): JSX.Element {
   const [load, setLoad] = useState<LoadState>({ status: "loading" });
@@ -32,12 +38,15 @@ export function App(): JSX.Element {
 
     async function run(): Promise<void> {
       let raw: unknown;
+      let formalIrSha256: string;
       try {
         const response = await fetch(CORPUS_URL);
         if (!response.ok) {
           throw new Error(`the server answered ${response.status} ${response.statusText}`);
         }
-        raw = await response.json();
+        const text = await response.text();
+        raw = JSON.parse(text) as unknown;
+        formalIrSha256 = await sha256(text);
       } catch (error) {
         if (cancelled) return;
         setLoad({
@@ -51,7 +60,7 @@ export function App(): JSX.Element {
       try {
         const bundle = runPipelineOnValue(raw);
         if (cancelled) return;
-        setLoad({ status: "ready", bundle });
+        setLoad({ status: "ready", bundle, formalIrSha256 });
         const first = bundle.analyses[0];
         if (first) setSelectedName(first.math.name);
       } catch (error) {
@@ -152,6 +161,7 @@ export function App(): JSX.Element {
 
   return (
     <Shell summary={<SummaryStrip bundle={load.bundle} />}>
+      <PaperPacketPanel formalIr={load.bundle.formal} formalIrSha256={load.formalIrSha256} />
       <TorchLeanPanel />
       <main className="workspace">
         <TheoremList

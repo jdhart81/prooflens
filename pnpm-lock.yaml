@@ -47,6 +47,9 @@ importers:
       '@prooflens/math-ir':
         specifier: workspace:*
         version: link:../../packages/math-ir
+      '@prooflens/paper-packet':
+        specifier: workspace:*
+        version: link:../../packages/paper-packet
       '@prooflens/pipeline':
         specifier: workspace:*
         version: link:../../packages/pipeline
@@ -136,6 +139,9 @@ importers:
       '@prooflens/math-ir':
         specifier: workspace:*
         version: link:../math-ir
+      '@prooflens/paper-packet':
+        specifier: workspace:*
+        version: link:../paper-packet
       '@prooflens/pipeline':
         specifier: workspace:*
         version: link:../pipeline
@@ -161,6 +167,15 @@ importers:
         version: 3.25.76
 
   packages/math-ir:
+    dependencies:
+      '@prooflens/epistemics':
+        specifier: workspace:*
+        version: link:../epistemics
+      '@prooflens/formal-ir':
+        specifier: workspace:*
+        version: link:../formal-ir
+
+  packages/paper-packet:
     dependencies:
       '@prooflens/epistemics':
         specifier: workspace:*

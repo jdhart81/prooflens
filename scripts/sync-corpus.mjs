@@ -15,7 +15,13 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const source = resolve(root, "examples/corpus.formal-ir.json");
 const destination = resolve(root, "apps/web/public/corpus.formal-ir.json");
+const paperPacketSource = resolve(root, "examples/viridis-intelligence-bound.paper-packet.json");
+const paperPacketDestination = resolve(
+  root,
+  "apps/web/public/viridis-intelligence-bound.paper-packet.json",
+);
 
 await mkdir(dirname(destination), { recursive: true });
 await copyFile(source, destination);
-console.log("Synced examples/corpus.formal-ir.json -> apps/web/public/");
+await copyFile(paperPacketSource, paperPacketDestination);
+console.log("Synced Formal IR and paper packet examples -> apps/web/public/");

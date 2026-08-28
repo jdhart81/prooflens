@@ -6,7 +6,8 @@
  * justify a dependency, and "minimal dependencies" is one of this project's
  * stated development rules.
  */
-import { writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import {
   commandExtract,
@@ -18,6 +19,12 @@ import {
   type Stage,
 } from "./commands.js";
 import { coverageReport, findAnalysis } from "@prooflens/pipeline";
+import { parseFormalIRJson } from "@prooflens/formal-ir";
+import {
+  compilePaperPacket,
+  formatPaperPacketSummary,
+  paperOutputPacket,
+} from "@prooflens/paper-packet";
 import { renderCoverageMarkdown, renderCoverageText } from "./coverage-report.js";
 
 const USAGE = `prooflens — visual interpretability for formal mathematics
@@ -29,6 +36,7 @@ USAGE
   prooflens render   <formal-ir.json> [declaration] [--out-dir <dir>] [--format svg|text|both] [--animate]
   prooflens coverage <formal-ir.json> [--format text|markdown|json] [--out <file>]
   prooflens inspect  <formal-ir.json> [declaration] --stage formal|math|classifier|visual|explain|bundle [--out <file>]
+  prooflens paper-import <paper-packet.json> [--formal-ir <formal-ir.json>] [--out <file>]
   prooflens pipeline --project <dir> --module <Mod> [...] [--out-dir <dir>]
 
 COMMANDS
@@ -44,6 +52,8 @@ COMMANDS
   coverage  Measure what fraction of a body of mathematics ProofLens can read,
             and print a ranked backlog of what would improve it.
   inspect   Dump one pipeline stage as JSON. Every stage is inspectable.
+  paper-import Validate a research-paper claim packet, match certificate-required
+            claims against hash-bound Formal IR, and emit a portable output packet.
   pipeline  extract, then render everything, in one step.
 
 Declarations may be given by full name or by their final component.
@@ -182,6 +192,44 @@ async function main(argv: string[]): Promise<number> {
         process.stdout.write(`${json}\n`);
       }
       return 0;
+    }
+
+    case "paper-import": {
+      const packetPath = resolve(requirePositional(parsed, 0, "path to paper packet JSON"));
+      const packetText = await readFile(packetPath, "utf8");
+      let packetValue: unknown;
+      try {
+        packetValue = JSON.parse(packetText) as unknown;
+      } catch (error) {
+        throw new Error(
+          `Paper packet is not valid JSON: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+      const formalIrPath = one(parsed.flags, "formal-ir");
+      const formalIrText = formalIrPath ? await readFile(resolve(formalIrPath), "utf8") : null;
+      const result = compilePaperPacket(packetValue, {
+        ...(formalIrText
+          ? {
+              trustedFormalIr: {
+                document: parseFormalIRJson(formalIrText),
+                sha256: createHash("sha256").update(formalIrText).digest("hex"),
+              },
+            }
+          : {}),
+      });
+      if (result.status === "blocked") {
+        throw new Error(`Paper packet blocked (${result.code}): ${result.reason}`);
+      }
+      const out = one(parsed.flags, "out");
+      if (out) {
+        await writeFile(
+          resolve(out),
+          `${JSON.stringify(paperOutputPacket(result.scene), null, 2)}\n`,
+        );
+        log(`Wrote validated paper output packet to ${out}`);
+      }
+      process.stdout.write(`${formatPaperPacketSummary(result.scene)}\n`);
+      return result.scene.gate === "READY" ? 0 : 3;
     }
 
     case "pipeline": {

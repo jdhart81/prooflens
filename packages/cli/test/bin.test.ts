@@ -18,6 +18,10 @@ import { CORPUS_PATH } from "../../pipeline/test/helpers.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PACKAGES = resolve(HERE, "../..");
+const PAPER_PACKET_PATH = resolve(
+  HERE,
+  "../../../examples/viridis-intelligence-bound.paper-packet.json",
+);
 
 let cliPath: string;
 
@@ -176,11 +180,37 @@ describe("prooflens render --animate", () => {
   });
 });
 
+describe("prooflens paper-import", () => {
+  it("emits a READY output packet when the claim matches trusted Formal IR", () => {
+    const out = join(mkdtempSync(join(tmpdir(), "prooflens-paper-")), "output.json");
+    const result = run("paper-import", PAPER_PACKET_PATH, "--formal-ir", CORPUS_PATH, "--out", out);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("PACKAGE READY");
+    expect(result.stdout).toContain("VERIFIED 1");
+    const output = JSON.parse(readFileSync(out, "utf8")) as {
+      format: string;
+      gate: string;
+    };
+    expect(output).toMatchObject({
+      format: "prooflens_paper_output_v0_1",
+      gate: "READY",
+    });
+  });
+
+  it("returns the distinct HOLD exit code without trusted Formal IR", () => {
+    const result = run("paper-import", PAPER_PACKET_PATH);
+    expect(result.status).toBe(3);
+    expect(result.stdout).toContain("PACKAGE HOLD");
+    expect(result.stdout).toContain("CERTIFICATE DEBT 1");
+  });
+});
+
 describe("prooflens usage", () => {
-  it("lists the coverage command in its usage text", () => {
+  it("lists the coverage and paper import commands in its usage text", () => {
     const result = run("not-a-command");
     expect(result.status).toBe(2);
     expect(result.stderr).toContain("prooflens coverage");
+    expect(result.stderr).toContain("prooflens paper-import");
     expect(result.stderr).toContain("Unknown command");
   });
 

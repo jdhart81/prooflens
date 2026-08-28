@@ -1,0 +1,44 @@
+{
+  "format": "prooflens_paper_packet_v0_1",
+  "paper": {
+    "id": "viridis-intelligence-bound-demo",
+    "title": "Viridis Intelligence Bound — ProofLens demonstration packet",
+    "version": "0.1.0-demo",
+    "authors": ["Justin D. Hart"],
+    "stage": "public demonstration",
+    "source": {
+      "label": "ProofLens checked-in Intelligence Bound example",
+      "locator": "https://github.com/jdhart81/prooflens/blob/main/corpus/ProofLensExamples/IntelligenceBound.lean",
+      "sha256": "45c408e83c429f308c052e6ae330b6eea665f516db421a4ca0b3ddbb4b870d44"
+    }
+  },
+  "claims": [
+    {
+      "id": "IB-C1",
+      "title": "Energy budget implies an operation bound",
+      "statement": "∀ (P T kB D N t : ℝ),\n  0 < T →\n    0 < kB →\n      0 < D →\n        N * ProofLens.Examples.landauerCost kB T D ≤ ProofLens.Examples.energyBudget P t →\n          N ≤ ProofLens.Examples.energyBudget P t / ProofLens.Examples.landauerCost kB T D",
+      "evidenceClass": "lean-kernel",
+      "requiresCertificate": true,
+      "lean": {
+        "declaration": "ProofLens.Examples.energy_ops_bound",
+        "module": "ProofLensExamples.IntelligenceBound",
+        "formalIrSha256": "99423637c7e256800e514bb617ff44ffea7d0e92cf8507cfdd0fc568adf4a5d3"
+      }
+    },
+    {
+      "id": "IB-C2",
+      "title": "Variables carry physical interpretations",
+      "statement": "P, T, kB, D, N, and t are interpreted as physical or operational quantities through author annotations.",
+      "evidenceClass": "assumed",
+      "requiresCertificate": false,
+      "note": "These meanings are annotations, not part of the Lean theorem."
+    },
+    {
+      "id": "IB-C3",
+      "title": "External deployment claims are outside the theorem",
+      "statement": "No commercial, empirical, policy, or deployment outcome follows from this formal bound alone.",
+      "evidenceClass": "deferred",
+      "requiresCertificate": false
+    }
+  ]
+}

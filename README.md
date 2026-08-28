@@ -68,6 +68,8 @@ your code:
   it reaches `sorry`;
 - an optional, source-pinned [TorchLean adapter](docs/torchlean-adapter.md) that explains neural
   robustness margins without confusing report consistency with kernel verification;
+- a versioned [research-paper packet importer](docs/paper-packets.md) that binds certificate-required
+  claims to exact, hash-matched Formal IR and emits a downloadable READY/HOLD decision;
 - and, for every one of the above, why ProofLens is telling you it.
 
 Here is a real example, from ProofLens's own corpus:
@@ -264,6 +266,7 @@ tests. See [the roadmap](docs/roadmap.md).
 - [MathIR](docs/math-ir.md) — the semantic representation, and how to teach it a new constant
 - [VisualIR](docs/visual-ir.md) — the visualization representation, and how to add a renderer
 - [Semantic scenes](docs/semantic-scenes.md) — numeric, interactive explanations of what supported theorems represent
+- [Research-paper packets](docs/paper-packets.md) — claim inventories, witness matching, and downloadable gate decisions
 - [Coverage against mathlib](docs/coverage.md) — the measured numbers and the ranked backlog
 - [Roadmap](docs/roadmap.md)
 - ADR [0001](docs/adr/0001-lean-extraction.md) — how extraction works, and why we do not build a tracer

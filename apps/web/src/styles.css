@@ -225,6 +225,542 @@ body {
   font-weight: 450;
 }
 
+/* -------------------------------------------------------- TorchLean adapter */
+
+.panel.torchlean-panel {
+  padding: 18px;
+  border-color: var(--ep-interpreted-bd);
+  background:
+    radial-gradient(circle at 100% 0, var(--ep-interpreted-bg), transparent 36%), var(--surface);
+}
+
+.panel.torchlean-panel--blocked {
+  border-color: var(--danger-bd);
+}
+
+.torchlean-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.torchlean-panel__header h2 {
+  margin: 0;
+  font-size: 21px;
+  letter-spacing: -0.02em;
+}
+
+.torchlean-panel__header p:not(.semantic-scene__eyebrow) {
+  max-width: 720px;
+  margin: 4px 0 0;
+  color: var(--text-dim);
+}
+
+.torchlean-panel__chips {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+  flex: none;
+}
+
+.torchlean-panel__toolchain {
+  color: var(--text-faint);
+  font: 9px var(--mono);
+}
+
+.torchlean-boundary {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 12px;
+  margin: 14px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--warn-bd);
+  border-left-width: 4px;
+  border-radius: var(--radius-sm);
+  background: var(--warn-bg);
+  color: var(--warn-fg);
+  font-size: 11.5px;
+}
+
+.torchlean-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--border);
+}
+
+.torchlean-summary > div {
+  display: grid;
+  gap: 1px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+}
+
+.torchlean-summary strong {
+  font: 750 19px var(--mono);
+}
+
+.torchlean-summary span {
+  color: var(--text-dim);
+  font-size: 10px;
+}
+
+.torchlean-summary__track {
+  display: block;
+  height: 4px;
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface-3);
+}
+
+.torchlean-summary__track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ep-interpreted-bd);
+}
+
+.torchlean-view {
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.torchlean-panel > .torchlean-view {
+  margin-top: 12px;
+}
+
+.torchlean-view__heading {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 8px;
+  align-items: start;
+}
+
+.torchlean-view__heading > span {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ep-derived-bg);
+  color: var(--ep-derived-fg);
+  font: 800 11px var(--mono);
+}
+
+.torchlean-view__heading h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.torchlean-view__heading p {
+  margin: 1px 0 0;
+  color: var(--text-dim);
+  font-size: 10.5px;
+}
+
+.torchlean-architecture {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin: 13px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.torchlean-node {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  min-width: 0;
+  min-height: 92px;
+  padding: 10px;
+  border: 1px solid var(--ep-derived-bd);
+  border-radius: 6px;
+  background: var(--ep-derived-bg);
+}
+
+.torchlean-node:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 5px);
+  width: 14px;
+  color: var(--ep-derived-bd);
+  content: "→";
+  font: 800 16px var(--mono);
+  transform: translateY(-50%);
+}
+
+.torchlean-node--decision {
+  border-color: var(--ep-interpreted-bd);
+  background: var(--ep-interpreted-bg);
+}
+
+.torchlean-node__op {
+  color: var(--text-faint);
+  font: 750 8px var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.torchlean-node strong {
+  font-size: 11.5px;
+}
+
+.torchlean-node > span:not(.torchlean-node__op) {
+  color: var(--text-dim);
+  font-size: 9.5px;
+  line-height: 1.3;
+}
+
+.torchlean-node code {
+  align-self: end;
+  margin-top: 3px;
+  color: var(--text-faint);
+  font-size: 9px;
+}
+
+.torchlean-example-tabs {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.torchlean-example-tab {
+  padding: 6px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-dim);
+  font: 700 10px var(--mono);
+  cursor: pointer;
+}
+
+.torchlean-example-tab--active {
+  border-color: var(--ep-interpreted-bd);
+  background: var(--ep-interpreted-bg);
+  color: var(--ep-interpreted-fg);
+}
+
+.torchlean-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.torchlean-margin__perturbation {
+  margin-top: 12px;
+  padding: 7px 9px;
+  border-left: 3px solid var(--ep-illustrative-bd);
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 10.5px;
+}
+
+.torchlean-margin__equation {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  margin: 18px 0 13px;
+}
+
+.torchlean-margin__operator {
+  padding-top: 4px;
+  color: var(--text-dim);
+  font: 800 18px var(--mono);
+}
+
+.torchlean-term {
+  display: grid;
+  grid-template-rows: auto 5px auto;
+  justify-items: center;
+  width: 128px;
+  min-width: 0;
+  padding: 4px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.torchlean-term strong {
+  font: 800 16px var(--mono);
+}
+
+.torchlean-term > span:last-child {
+  margin-top: 3px;
+  color: var(--text-dim);
+  font-size: 8.5px;
+  line-height: 1.2;
+}
+
+.torchlean-term__brace {
+  width: 90%;
+  height: 4px;
+  border-right: 1.5px solid var(--ep-interpreted-bd);
+  border-bottom: 1.5px solid var(--ep-interpreted-bd);
+  border-left: 1.5px solid var(--ep-interpreted-bd);
+  border-radius: 0 0 4px 4px;
+}
+
+.torchlean-term--pass {
+  background: var(--ep-verified-bg);
+}
+
+.torchlean-term--fail {
+  background: var(--danger-bg);
+}
+
+.torchlean-margin__result {
+  display: grid;
+  gap: 2px;
+  padding: 9px 10px;
+  border: 1px solid;
+  border-radius: 5px;
+  font-size: 10.5px;
+}
+
+.torchlean-margin__result strong {
+  font: 800 10px var(--mono);
+  letter-spacing: 0.06em;
+}
+
+.torchlean-margin__result--pass {
+  border-color: var(--ep-verified-bd);
+  background: var(--ep-verified-bg);
+  color: var(--ep-verified-fg);
+}
+
+.torchlean-margin__result--fail {
+  border-color: var(--danger-bd);
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+}
+
+.torchlean-margin__note {
+  margin: 8px 0 0;
+  color: var(--text-faint);
+  font-size: 9.5px;
+}
+
+.torchlean-axis {
+  position: relative;
+  height: 19px;
+  margin: 13px 76px 0 24px;
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.torchlean-axis span {
+  position: absolute;
+  bottom: 2px;
+  color: var(--text-faint);
+  font: 8px var(--mono);
+  transform: translateX(-50%);
+}
+
+.torchlean-interval-list {
+  display: grid;
+  gap: 4px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.torchlean-interval {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) 70px;
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+}
+
+.torchlean-interval__class {
+  color: var(--text-dim);
+  font: 750 9px var(--mono);
+  text-align: right;
+}
+
+.torchlean-interval__track {
+  position: relative;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--surface-3);
+}
+
+.torchlean-interval__range {
+  position: absolute;
+  top: 1px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--ep-derived-bd);
+}
+
+.torchlean-interval--label .torchlean-interval__range {
+  height: 7px;
+  top: 0;
+  background: var(--ep-verified-bd);
+}
+
+.torchlean-interval--competitor .torchlean-interval__range {
+  height: 7px;
+  top: 0;
+  background: var(--warn-bd);
+}
+
+.torchlean-interval__values {
+  color: var(--text-faint);
+  font: 7.5px var(--mono);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.torchlean-intervals__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 9px 0 0 24px;
+  color: var(--text-dim);
+  font-size: 8.5px;
+}
+
+.torchlean-key {
+  display: inline-block;
+  width: 12px;
+  height: 4px;
+  margin-right: 3px;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.torchlean-key--label {
+  background: var(--ep-verified-bd);
+}
+
+.torchlean-key--competitor {
+  background: var(--warn-bd);
+}
+
+.torchlean-source {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px dashed var(--border-strong);
+  font-size: 9.5px;
+}
+
+.torchlean-source > div {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.torchlean-source span {
+  color: var(--text-faint);
+  overflow-wrap: anywhere;
+}
+
+.torchlean-source a {
+  flex: none;
+  color: var(--link);
+}
+
+@media (max-width: 900px) {
+  .torchlean-architecture {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .torchlean-node:nth-child(2)::after {
+    top: calc(100% + 1px);
+    left: 50%;
+    width: auto;
+    content: "↙";
+    transform: translateX(-50%);
+  }
+
+  .torchlean-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .panel.torchlean-panel {
+    padding: 12px;
+  }
+
+  .torchlean-panel__header,
+  .torchlean-source {
+    display: grid;
+  }
+
+  .torchlean-panel__chips {
+    justify-items: start;
+  }
+
+  .torchlean-boundary {
+    grid-template-columns: 1fr;
+  }
+
+  .torchlean-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .torchlean-architecture {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .torchlean-node:not(:last-child)::after,
+  .torchlean-node:nth-child(2)::after {
+    top: calc(100% + 1px);
+    left: 50%;
+    width: auto;
+    content: "↓";
+    transform: translateX(-50%);
+  }
+
+  .torchlean-example-tabs {
+    display: grid;
+  }
+
+  .torchlean-margin__equation {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .torchlean-margin__operator {
+    padding: 0;
+    line-height: 1;
+  }
+
+  .torchlean-term {
+    width: min(220px, 100%);
+  }
+
+  .torchlean-axis {
+    margin-right: 0;
+  }
+
+  .torchlean-interval {
+    grid-template-columns: 18px minmax(0, 1fr);
+  }
+
+  .torchlean-interval__values {
+    display: none;
+  }
+}
+
 .workspace {
   display: grid;
   gap: 12px;

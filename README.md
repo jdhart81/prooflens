@@ -66,6 +66,8 @@ your code:
 
 - what the proof rests on: its local dependency graph, its axioms, and whether
   it reaches `sorry`;
+- an optional, source-pinned [TorchLean adapter](docs/torchlean-adapter.md) that explains neural
+  robustness margins without confusing report consistency with kernel verification;
 - and, for every one of the above, why ProofLens is telling you it.
 
 Here is a real example, from ProofLens's own corpus:

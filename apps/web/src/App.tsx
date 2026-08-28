@@ -5,6 +5,7 @@ import { InterpretationPanel } from "./components/InterpretationPanel.js";
 import { StagePanels, type StageId } from "./components/StagePanels.js";
 import { SummaryStrip } from "./components/SummaryStrip.js";
 import { TheoremList, type ListFilters } from "./components/TheoremList.js";
+import { TorchLeanPanel } from "./components/TorchLeanPanel.js";
 import { VisualizationPanel } from "./components/VisualizationPanel.js";
 import { KIND_LABEL, primaryKind, unusedHypothesisCount } from "./lib/format.js";
 
@@ -151,6 +152,7 @@ export function App(): JSX.Element {
 
   return (
     <Shell summary={<SummaryStrip bundle={load.bundle} />}>
+      <TorchLeanPanel />
       <main className="workspace">
         <TheoremList
           total={load.bundle.analyses.length}

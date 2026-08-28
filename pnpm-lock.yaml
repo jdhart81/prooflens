@@ -53,6 +53,9 @@ importers:
       '@prooflens/renderer-svg':
         specifier: workspace:*
         version: link:../../packages/renderer-svg
+      '@prooflens/torchlean-adapter':
+        specifier: workspace:*
+        version: link:../../packages/torchlean-adapter
       '@prooflens/visual-ir':
         specifier: workspace:*
         version: link:../../packages/visual-ir
@@ -201,6 +204,12 @@ importers:
       '@prooflens/visual-ir':
         specifier: workspace:*
         version: link:../visual-ir
+
+  packages/torchlean-adapter:
+    dependencies:
+      '@prooflens/epistemics':
+        specifier: workspace:*
+        version: link:../epistemics
 
   packages/visual-ir:
     dependencies:

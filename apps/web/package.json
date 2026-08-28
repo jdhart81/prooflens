@@ -19,6 +19,7 @@
     "@prooflens/math-ir": "workspace:*",
     "@prooflens/pipeline": "workspace:*",
     "@prooflens/renderer-svg": "workspace:*",
+    "@prooflens/torchlean-adapter": "workspace:*",
     "@prooflens/visual-ir": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

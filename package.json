@@ -10,10 +10,10 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsc -b packages/epistemics packages/formal-ir packages/math-ir packages/classifier packages/visual-ir packages/pipeline packages/renderer-svg packages/renderer-text packages/cli",
+    "build": "tsc -b packages/epistemics packages/formal-ir packages/math-ir packages/classifier packages/visual-ir packages/torchlean-adapter packages/pipeline packages/renderer-svg packages/renderer-text packages/cli",
     "build:widget": "node scripts/build-widget.mjs",
-    "clean": "tsc -b --clean packages/epistemics packages/formal-ir packages/math-ir packages/classifier packages/visual-ir packages/pipeline packages/renderer-svg packages/renderer-text packages/cli && rm -rf packages/*/dist apps/web/dist",
-    "typecheck": "tsc -b packages/epistemics packages/formal-ir packages/math-ir packages/classifier packages/visual-ir packages/pipeline packages/renderer-svg packages/renderer-text packages/cli && tsc --noEmit -p lean/widget/tsconfig.json",
+    "clean": "tsc -b --clean packages/epistemics packages/formal-ir packages/math-ir packages/classifier packages/visual-ir packages/torchlean-adapter packages/pipeline packages/renderer-svg packages/renderer-text packages/cli && rm -rf packages/*/dist apps/web/dist",
+    "typecheck": "tsc -b packages/epistemics packages/formal-ir packages/math-ir packages/classifier packages/visual-ir packages/torchlean-adapter packages/pipeline packages/renderer-svg packages/renderer-text packages/cli && tsc --noEmit -p lean/widget/tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint packages apps --ext .ts,.tsx",

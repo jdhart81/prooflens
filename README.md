@@ -137,6 +137,10 @@ cannot be promoted.
 Requirements: [elan](https://github.com/leanprover/elan) (Lean 4.24.0), Node 22,
 pnpm 10.
 
+Want the smallest useful example first? Follow [**one theorem in five minutes**](docs/quickstart.md)
+to produce a layered explanation and animated SVG from the checked-in Formal IR without installing
+Lean.
+
 ```bash
 git clone https://github.com/jdhart81/prooflens
 cd prooflens
@@ -184,6 +188,10 @@ pnpm prooflens inspect  formal-ir.json information_rate_bound --stage math
 ```bash
 pnpm dev:web
 ```
+
+For a quick overview, watch the
+[45-second ProofLens community tour](docs/media/prooflens-community-tour.mp4), then open the
+[live application](https://jdhart81.github.io/prooflens/).
 
 ## How it works
 
@@ -256,11 +264,12 @@ is grooming them. ProofLens's own hand-written corpus has two.
 
 Remaining limits: only the final proof term is analysed, not tactic structure;
 plots are schematic rather than numeric, and they say so; coverage is untested
-outside order theory and analysis; dependency graphs are single-module. 1,116
+outside order theory and analysis; dependency graphs are single-module. 1,176
 tests. See [the roadmap](docs/roadmap.md).
 
 ## Documentation
 
+- [One theorem in five minutes](docs/quickstart.md) — the smallest complete Lean-to-visual path
 - [Architecture](docs/architecture.md) — stages, packages, and what each is forbidden to do
 - [The epistemic model](docs/epistemic-model.md) — start here
 - [MathIR](docs/math-ir.md) — the semantic representation, and how to teach it a new constant
@@ -289,6 +298,13 @@ round-trips to Lean.
 See [CONTRIBUTING.md](CONTRIBUTING.md). The short version: new information needs
 a correct epistemic tag, new classifiers need a stable rule id and a test, and
 `verified` may only originate from Lean.
+
+Three bounded contribution paths are ready:
+
+- [visualize `Function.Injective`](https://github.com/jdhart81/prooflens/issues/1) — labelled
+  `good first issue`;
+- [certify all 360 pinned TorchLean examples](https://github.com/jdhart81/prooflens/issues/2);
+- [prove generic `reshape` and `concat` enclosure](https://github.com/jdhart81/prooflens/issues/3).
 
 ## License
 

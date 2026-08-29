@@ -211,6 +211,12 @@ neighbourhood and not of the proof. `Extract/Focus.lean` has the same boundary b
 
 Ordered roughly by value per unit of work.
 
+- **Community adoption path (landed).** A copy-paste [one-theorem quickstart](./quickstart.md) and a
+  45-second visual tour now give a new contributor a bounded first success before asking them to
+  understand the full architecture. The remaining adoption gate is empirical: an external Lean
+  user must run the quickstart on their own theorem and report either a useful visual or a
+  reproducible unsupported shape.
+
 - **Research-paper packet import (enclosure-receipt slice landed).** The versioned packet validator
   binds certificate-required claims to exact, hash-matched trusted Formal IR, fails closed to
   certificate debt, and produces a downloadable READY/HOLD output. Optional TorchLean model entries
@@ -219,6 +225,18 @@ Ordered roughly by value per unit of work.
   through Lean 4.33 as hash-pinned, zero-sorry Formal IR. A direct exact-real certificate now binds
   the displayed digits model examples and outward-rounded intervals. The next slice expands that
   certificate beyond the two displayed examples and routes a reviewed Viridis paper that uses it.
+
+- **[TorchLean certificate expansion](https://github.com/jdhart81/prooflens/issues/2).** Generate
+  exact-real certificate data for all 360 pinned
+  digits examples, prove every outward-rounded output enclosure in Lean, and report label
+  robustness separately from output enclosure. A replayed aggregate must not be promoted to
+  kernel-verified until every row is covered by the trusted receipt.
+
+- **[TorchLean graph completeness](https://github.com/jdhart81/prooflens/issues/3).** Add
+  shape-preserving `reshape` and axis-checked `concat`
+  semantics to the generic graph evaluator and IBP theorem, with fail-closed dimension checks. The
+  direct exact-linear certificate remains the trusted path until the observed 16-node wrapper graph
+  is covered end to end.
 
 - **Figures for the classification kinds that have none.** `existence`, `conjunction` and
   `membership` all have obvious pictures (a witness box, a list of simultaneous facts, a point

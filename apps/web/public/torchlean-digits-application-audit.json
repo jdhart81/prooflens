@@ -77,6 +77,13 @@
     "theoremSemantics": "exact-real",
     "outwardRoundingBridge": false
   },
+  "resolution": {
+    "status": "verified",
+    "strategy": "direct-exact-linear-certificate",
+    "declaration": "ProofLens.Examples.TorchLeanDigits.digits_examples_enclosed",
+    "formalIrSha256": "2d0965c5c2198bde88f90a521ba39bb6e94dc8474094547a9c95b741348bc0e0",
+    "note": "The certificate uses exact scaled integers and proves outward-rounded endpoints directly; the unsupported generic wrapper-graph path is not used."
+  },
   "conclusion": {
     "status": "blocked",
     "reason": "The concrete graph contains reshape and concat, which the pinned theorem's Supported predicate rejects. The report also lacks a proved outward-rounding bridge from binary64 endpoints to exact-real boxes."

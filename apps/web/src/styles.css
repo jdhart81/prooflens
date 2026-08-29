@@ -720,6 +720,39 @@ body {
   background: var(--warn-bg);
 }
 
+.torchlean-application--verified {
+  border-color: var(--ep-verified-bd);
+  background: var(--ep-verified-bg);
+}
+
+.torchlean-application--verified > header span,
+.torchlean-application--verified > header code {
+  color: var(--ep-verified-fg);
+}
+
+.torchlean-exact-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 9px;
+  border: 1px solid var(--ep-verified-bd);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--text-dim);
+  font: 8px var(--mono);
+  text-align: center;
+}
+
+.torchlean-exact-flow i {
+  color: var(--ep-verified-fg);
+  font-style: normal;
+}
+
+.torchlean-exact-flow strong {
+  color: var(--ep-verified-fg);
+}
+
 .torchlean-application > header {
   display: flex;
   align-items: center;
@@ -781,6 +814,15 @@ body {
   color: var(--warn-fg);
 }
 
+.torchlean-variable--verified > code {
+  background: var(--ep-verified-bg);
+  color: var(--ep-verified-fg);
+}
+
+.torchlean-variable--not-used > code {
+  color: var(--text-faint);
+}
+
 .torchlean-variable strong {
   font-size: 9px;
 }
@@ -812,6 +854,16 @@ body {
 .torchlean-graph__node--blocked {
   border-top-color: var(--warn-fg);
   background: var(--warn-bg);
+}
+
+.torchlean-graph--verified .torchlean-graph__node--blocked {
+  border-top-color: var(--border-strong);
+  background: var(--surface-2);
+}
+
+.torchlean-graph--verified .torchlean-graph__node--blocked strong {
+  color: var(--text-dim);
+  text-decoration: line-through;
 }
 
 .torchlean-graph__node small,
@@ -857,6 +909,14 @@ body {
   border-left-color: var(--warn-fg);
 }
 
+.torchlean-application-gate--not-used {
+  border-left-color: var(--border-strong);
+}
+
+.torchlean-application-gate--verified {
+  border-left-color: var(--ep-verified-bd);
+}
+
 .torchlean-application-gate > span {
   color: var(--ep-verified-fg);
   font: 800 7px var(--mono);
@@ -866,6 +926,10 @@ body {
 .torchlean-application-gate--blocked > span,
 .torchlean-application-gate--owed > span {
   color: var(--warn-fg);
+}
+
+.torchlean-application-gate--not-used > span {
+  color: var(--text-faint);
 }
 
 .torchlean-application-gate strong {
@@ -1422,6 +1486,14 @@ body {
   .torchlean-application > header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .torchlean-exact-flow {
+    flex-direction: column;
+  }
+
+  .torchlean-exact-flow i {
+    transform: rotate(90deg);
   }
 
   .torchlean-application__variables,

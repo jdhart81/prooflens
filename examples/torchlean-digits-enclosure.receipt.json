@@ -1,0 +1,24 @@
+{
+  "format": "prooflens_torchlean_enclosure_receipt_v0_1",
+  "binding": {
+    "sourceRepository": "https://github.com/lean-dojo/TorchLean",
+    "sourceCommit": "12f5c651f03b3890ec012d0a6bb45e3ea698c8d3",
+    "sourcePath": "NN/Examples/Verification/Robustness/digits_linear_margin_cert.json",
+    "sourceSha256": "c517ffd45f2f9e7b844750fcc9e937c1c70509466b973f770644b5d7962aa060",
+    "modelId": "torchlean:digits-linear-margin",
+    "norm": "linf",
+    "method": "ibp_linear",
+    "epsilon": 0.02,
+    "inputDimension": 64,
+    "classCount": 10,
+    "exampleIds": [0, 7]
+  },
+  "proof": {
+    "authority": "lean-kernel",
+    "protocol": "prooflens-torchlean-enclosure-v0.1",
+    "declaration": "ProofLens.Examples.TorchLeanDigits.digits_examples_enclosed",
+    "module": "ProofLensExamples.TorchLeanDigits",
+    "statement": "∀ (sample : Fin 2) (x : Fin 64 → ℝ),\n  (∀ (i : Fin 64),\n      ProofLens.Examples.TorchLeanDigits.inputValue\n            (if sample = 0 then ProofLens.Examples.TorchLeanDigits.inputLo0Z\n            else ProofLens.Examples.TorchLeanDigits.inputLo7Z)\n            i ≤\n          x i ∧\n        x i ≤\n          ProofLens.Examples.TorchLeanDigits.inputValue\n            (if sample = 0 then ProofLens.Examples.TorchLeanDigits.inputHi0Z\n            else ProofLens.Examples.TorchLeanDigits.inputHi7Z)\n            i) →\n    ∀ (j : Fin 10),\n      ProofLens.Examples.TorchLeanDigits.certValue\n            (if sample = 0 then ProofLens.Examples.TorchLeanDigits.certLo0Z\n            else ProofLens.Examples.TorchLeanDigits.certLo7Z)\n            j ≤\n          ProofLens.Examples.TorchLeanDigits.eval x j ∧\n        ProofLens.Examples.TorchLeanDigits.eval x j ≤\n          ProofLens.Examples.TorchLeanDigits.certValue\n            (if sample = 0 then ProofLens.Examples.TorchLeanDigits.certHi0Z\n            else ProofLens.Examples.TorchLeanDigits.certHi7Z)\n            j",
+    "formalIrSha256": "2d0965c5c2198bde88f90a521ba39bb6e94dc8474094547a9c95b741348bc0e0"
+  }
+}

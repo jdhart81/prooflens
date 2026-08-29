@@ -26,6 +26,12 @@ deterministic classifiers over that, plans figures, and renders them as SVG or p
 is no language model anywhere in the core. Three surfaces run the identical TypeScript pipeline:
 a Lean infoview widget, a CLI, and a browser application.
 
+The optional TorchLean adapter additionally carries a standalone, zero-`sorry` exact-real
+certificate for the pinned 10×64 digits classifier on the two displayed source examples. It proves
+all 20 outward-rounded output intervals from exact decimal model constants and exact ±0.02 input
+boxes. The broader 360-example summary remains a source-pinned, replayed report rather than a
+kernel-verified aggregate.
+
 ### Measured against mathlib
 
 Seven modules, 679 declarations, at `notationFidelity: "notation"`:
@@ -98,7 +104,7 @@ the corpus keeps the history because it is the one worked example of a measured 
 - 8 proposition kinds, 7 expression kinds, 11 visual types, 2 renderers.
 - 7 explanation layers (`formal`, `mathematical`, `structural`, `assumptions`, `parameters`,
   `trust`, `domain`), each carrying its own `Claim` and its own status.
-- 1,116 tests across 24 files, run by `pnpm test` and by CI on every push.
+- 1,176 tests across 29 files, run by `pnpm test` and by CI on every push.
 
 ## Known limitations
 
@@ -210,9 +216,9 @@ Ordered roughly by value per unit of work.
   certificate debt, and produces a downloadable READY/HOLD output. Optional TorchLean model entries
   now bind an enclosure request to the exact artifact and route missing or mismatched kernel receipts
   into the same HOLD gate. TorchLean's generic `runIBP?` enclosure theorem is now built and exported
-  through Lean 4.33 as hash-pinned, zero-sorry Formal IR. The next slice binds a complete model
-  artifact to that theorem, discharges its graph/input premises, and then routes a reviewed Viridis
-  paper that actually uses it.
+  through Lean 4.33 as hash-pinned, zero-sorry Formal IR. A direct exact-real certificate now binds
+  the displayed digits model examples and outward-rounded intervals. The next slice expands that
+  certificate beyond the two displayed examples and routes a reviewed Viridis paper that uses it.
 
 - **Figures for the classification kinds that have none.** `existence`, `conjunction` and
   `membership` all have obvious pictures (a witness box, a list of simultaneous facts, a point

@@ -16,6 +16,17 @@ import {
 const applicationAudit = JSON.parse(
   readFileSync(resolve("examples/torchlean-digits-application-audit.json"), "utf8"),
 ) as unknown;
+const enclosureFormalIrBytes = readFileSync(
+  resolve("examples/torchlean-digits-enclosure.formal-ir.json"),
+);
+const enclosureFormalIr = parseFormalIR(JSON.parse(enclosureFormalIrBytes.toString("utf8")));
+const enclosureReceipt = JSON.parse(
+  readFileSync(resolve("examples/torchlean-digits-enclosure.receipt.json"), "utf8"),
+) as unknown;
+const trustedEnclosure = {
+  document: enclosureFormalIr,
+  sha256: createHash("sha256").update(enclosureFormalIrBytes).digest("hex"),
+};
 
 function fixture(): TorchLeanMarginSnapshot {
   return structuredClone(TORCHLEAN_DIGITS_MARGIN_FIXTURE);
@@ -122,6 +133,33 @@ describe("TorchLean margin-report adapter", () => {
     ]);
     expect(result.scene.epistemic).toBe("interpreted");
     expect(result.scene.enclosure.status).toBe("interpreted");
+  });
+
+  it("verifies the direct exact-real certificate and closes the concrete application gate", () => {
+    expect(trustedEnclosure.sha256).toBe(
+      "2d0965c5c2198bde88f90a521ba39bb6e94dc8474094547a9c95b741348bc0e0",
+    );
+    const result = compileTorchLeanMarginScene(fixture(), {
+      trustedSoundnessFormalIr: trustedSoundness,
+      applicationAudit,
+      receipt: enclosureReceipt,
+      trustedFormalIr: trustedEnclosure,
+    });
+    if (result.status !== "ready") throw new Error(result.reason);
+    expect(result.scene.enclosure).toMatchObject({
+      status: "verified",
+      verification: "kernel-witness-matched",
+    });
+    expect(result.scene.application).toMatchObject({
+      status: "verified",
+      gates: expect.arrayContaining([
+        expect.objectContaining({ id: "operations", status: "not-used" }),
+        expect.objectContaining({ id: "inputs", status: "verified" }),
+        expect.objectContaining({ id: "rounding", status: "verified" }),
+      ]),
+    });
+    expect(result.scene.epistemic).toBe("interpreted");
+    expect(result.scene.boundary).toContain("matching trusted Lean kernel witness");
   });
 
   it("rejects altered concrete application audits", () => {

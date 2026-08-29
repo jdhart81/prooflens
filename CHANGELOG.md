@@ -13,10 +13,11 @@ IR schemas until 1.0.
   model, propagation method, dimensions, perturbation radius, and examples to a marked theorem in
   hash-matched, zero-sorry Formal IR.
 - A four-step visual evidence chain separating the pinned source, replayed margin arithmetic,
-  generic IBP theorem, and still-owed model application, with a downloadable proof request.
+  generic IBP theorem, and concrete model application, with a downloadable evidence packet.
 - A native Lean 4.33 Formal IR extraction of TorchLean's zero-sorry generic IBP enclosure theorem,
-  displayed as a verified IF/THEN rule in a four-step evidence chain while the concrete artifact
-  binding and theorem premises remain explicit certificate debt.
+  displayed as a verified IF/THEN rule alongside the concrete certificate path.
+- A zero-sorry exact-real Lean certificate for the pinned 10×64 digits classifier on source examples
+  0 and 7, including exact ±0.02 input boxes and all 20 outward-rounded output intervals.
 - Optional TorchLean model evidence in research-paper packets. Missing or mismatched enclosure
   receipts now contribute mandatory certificate debt and move the whole paper package to `HOLD`.
 

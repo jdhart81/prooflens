@@ -10,6 +10,8 @@ import {
 } from "@prooflens/torchlean-adapter";
 import torchLeanSoundnessFormalIr from "../../../../examples/torchlean-ibp-soundness.formal-ir.json";
 import torchLeanApplicationAudit from "../../../../examples/torchlean-digits-application-audit.json";
+import torchLeanEnclosureFormalIr from "../../../../examples/torchlean-digits-enclosure.formal-ir.json";
+import torchLeanEnclosureReceipt from "../../../../examples/torchlean-digits-enclosure.receipt.json";
 import { EpistemicChip } from "./EpistemicChip.js";
 
 const RESULT = compileTorchLeanMarginScene(TORCHLEAN_DIGITS_MARGIN_FIXTURE, {
@@ -18,6 +20,11 @@ const RESULT = compileTorchLeanMarginScene(TORCHLEAN_DIGITS_MARGIN_FIXTURE, {
     sha256: TORCHLEAN_IBP_SOUNDNESS_PIN.formalIrSha256,
   },
   applicationAudit: torchLeanApplicationAudit,
+  receipt: torchLeanEnclosureReceipt,
+  trustedFormalIr: {
+    document: parseFormalIR(torchLeanEnclosureFormalIr as unknown),
+    sha256: "2d0965c5c2198bde88f90a521ba39bb6e94dc8474094547a9c95b741348bc0e0",
+  },
 });
 
 export function TorchLeanPanel(): JSX.Element {
@@ -125,8 +132,9 @@ function TorchLeanSceneView({ scene }: { scene: TorchLeanScene }): JSX.Element {
             </div>
           </div>
           <p>
-            The rule is proved. Applying it to this report still needs the concrete artifact binding
-            and the three displayed premises.
+            {scene.application?.status === "verified"
+              ? "This generic graph rule is proved but not used for the concrete receipt. The direct exact-linear theorem above closes the displayed-example enclosure without the unsupported wrapper operations."
+              : "The rule is proved. Applying it to this report still needs the concrete artifact binding and the three displayed premises."}
           </p>
         </div>
         <p className="torchlean-receipt__binding">
@@ -263,6 +271,10 @@ function downloadEvidencePacket(scene: TorchLeanScene): void {
     format: "prooflens_torchlean_evidence_packet_v0_1",
     applicationAudit: torchLeanApplicationAudit,
     genericTheorem: scene.soundness.theorem,
+    concreteCertificate: {
+      receipt: torchLeanEnclosureReceipt,
+      formalIr: torchLeanEnclosureFormalIr,
+    },
     enclosureRequest: scene.enclosure.request,
     conclusion: {
       status: scene.application?.status ?? "owed",
@@ -287,37 +299,69 @@ function ApplicationBridge({ scene }: { scene: TorchLeanScene }): JSX.Element | 
     {
       symbol: "g",
       name: "lowered graph",
-      detail: `${application.nodes.length} ordered operations from input node 0 to output node 15`,
-      status: "matched",
+      detail:
+        application.status === "verified"
+          ? "the observed 16-node wrapper graph is shown for provenance but is not the certificate path"
+          : `${application.nodes.length} ordered operations from input node 0 to output node 15`,
+      status: application.status === "verified" ? "not-used" : "matched",
     },
     {
       symbol: "ps",
       name: "parameter store",
-      detail: "weights and bias are hash-bound; their exact-real interpretation is not proved",
-      status: "owed",
+      detail:
+        application.status === "verified"
+          ? "pinned decimal weights and bias are interpreted as exact rationals in Lean"
+          : "weights and bias are hash-bound; their exact-real interpretation is not proved",
+      status: application.status === "verified" ? "verified" : "owed",
     },
     {
       symbol: "inputs",
       name: "admitted values",
-      detail: "64 pixels may move ±0.02; membership in every Lean input box remains owed",
-      status: "owed",
+      detail:
+        application.status === "verified"
+          ? "the theorem covers every 64-value input inside either exact ±0.02 box"
+          : "64 pixels may move ±0.02; membership in every Lean input box remains owed",
+      status: application.status === "verified" ? "verified" : "owed",
     },
     {
       symbol: "B",
-      name: "reported output boxes",
-      detail: "replayed binary64 endpoints are not yet outward-rounded exact-real bounds",
-      status: "blocked",
+      name: "output boxes",
+      detail:
+        application.status === "verified"
+          ? "exactLower and exactUpper are symbolic real sums, avoiding binary64 rounding"
+          : "replayed binary64 endpoints are not yet outward-rounded exact-real bounds",
+      status: application.status === "verified" ? "verified" : "blocked",
     },
   ] as const;
   return (
-    <div className="torchlean-application" aria-label="Concrete theorem application audit">
+    <div
+      className={`torchlean-application torchlean-application--${application.status}`}
+      aria-label="Concrete theorem application audit"
+    >
       <header>
         <div>
-          <span>CONCRETE APPLICATION · BLOCKED</span>
-          <strong>Why the proved rule cannot certify this model yet</strong>
+          <span>CONCRETE APPLICATION · {application.status.toUpperCase()}</span>
+          <strong>
+            {application.status === "verified"
+              ? "Why the exact-real certificate encloses this model"
+              : "Why the proved rule cannot certify this model yet"}
+          </strong>
         </div>
-        <code>16 nodes · 2 unsupported operations</code>
+        <code>
+          {application.status === "verified"
+            ? "zero sorry · 2 source examples"
+            : "16 nodes · 2 unsupported operations"}
+        </code>
       </header>
+      {application.status === "verified" ? (
+        <div className="torchlean-exact-flow" aria-label="Exact certificate flow">
+          <span>64 values inside x ± 0.02</span>
+          <i aria-hidden="true">→</i>
+          <span>exact decimal weights + bias</span>
+          <i aria-hidden="true">→</i>
+          <strong>exactLower ≤ score ≤ exactUpper</strong>
+        </div>
+      ) : null}
       <div className="torchlean-application__variables">
         {variables.map((variable) => (
           <div
@@ -332,7 +376,10 @@ function ApplicationBridge({ scene }: { scene: TorchLeanScene }): JSX.Element | 
           </div>
         ))}
       </div>
-      <div className="torchlean-graph" aria-label="Observed TorchLean lowering graph">
+      <div
+        className={`torchlean-graph torchlean-graph--${application.status}`}
+        aria-label="Observed TorchLean lowering graph"
+      >
         {application.nodes.map((node, index) => (
           <div
             key={node.id}
@@ -379,7 +426,11 @@ function MarginStory({
         <span>2</span>
         <div>
           <h3 id="torchlean-margin-title">Why this example passes or fails</h3>
-          <p>The strict margin test is recomputed from the displayed intervals.</p>
+          <p>
+            {example.intervalAuthority === "lean-exact-outward-certificate"
+              ? "The strict margin is recomputed from Lean-proved outward bounds."
+              : "The strict margin test is recomputed from the displayed report intervals."}
+          </p>
         </div>
       </div>
       <div className="torchlean-margin__perturbation">
@@ -398,14 +449,26 @@ function MarginStory({
         <span className="torchlean-margin__operator">=</span>
         <Term
           value={formatMargin(example.margin)}
-          label={example.margin > 0 ? "positive report margin" : "overlap · no certificate"}
+          label={
+            example.margin > 0
+              ? example.intervalAuthority === "lean-exact-outward-certificate"
+                ? "positive certified margin"
+                : "positive report margin"
+              : "overlap · no label certificate"
+          }
           outcome={example.margin > 0 ? "pass" : "fail"}
         />
       </div>
       <div
         className={`torchlean-margin__result torchlean-margin__result--${example.certified ? "pass" : "fail"}`}
       >
-        <strong>{example.certified ? "POSITIVE MARGIN" : "NOT CERTIFIED"}</strong>
+        <strong>
+          {example.certified && example.intervalAuthority === "lean-exact-outward-certificate"
+            ? "ROBUSTNESS CERTIFIED"
+            : example.certified
+              ? "POSITIVE MARGIN"
+              : "NOT CERTIFIED"}
+        </strong>
         <span>{example.explanation}</span>
       </div>
       <p className="torchlean-margin__note">
@@ -454,7 +517,11 @@ function IntervalChart({ example }: { example: TorchLeanExampleScene }): JSX.Ele
         <span>3</span>
         <div>
           <h3 id="torchlean-intervals-title">What the bound represents</h3>
-          <p>Every horizontal segment is a possible score interval under the input perturbation.</p>
+          <p>
+            {example.intervalAuthority === "lean-exact-outward-certificate"
+              ? "Every segment is an outward-rounded enclosure proved from exact model arithmetic."
+              : "Every horizontal segment is a reported score interval under the input perturbation."}
+          </p>
         </div>
       </div>
       <div className="torchlean-axis" aria-hidden="true">

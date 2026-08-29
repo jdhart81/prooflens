@@ -141,7 +141,8 @@ export interface TorchLeanApplicationAudit {
   conclusion: { status: "blocked" | "verified"; reason: string };
 }
 
-export type TorchLeanApplicationGateStatus = "matched" | "blocked" | "owed";
+export type TorchLeanApplicationGateStatus =
+  "matched" | "blocked" | "owed" | "verified" | "not-used";
 
 export interface TorchLeanApplicationGate {
   id: "artifacts" | "replay" | "topology" | "operations" | "inputs" | "rounding";
@@ -151,10 +152,50 @@ export interface TorchLeanApplicationGate {
 }
 
 export interface TorchLeanApplicationEvidence {
-  status: "blocked";
+  status: "blocked" | "verified";
   nodes: Array<TorchLeanApplicationNode & { supported: boolean }>;
   gates: TorchLeanApplicationGate[];
   reason: string;
+}
+
+function verifiedDirectApplication(
+  application: TorchLeanApplicationEvidence,
+): TorchLeanApplicationEvidence {
+  return {
+    ...application,
+    status: "verified",
+    gates: application.gates.map((gate) => {
+      if (gate.id === "operations") {
+        return {
+          ...gate,
+          status: "not-used",
+          label: "Generic graph path",
+          description:
+            "The exact linear certificate bypasses the unsupported reshape and concat wrappers.",
+        };
+      }
+      if (gate.id === "inputs") {
+        return {
+          ...gate,
+          status: "verified",
+          description:
+            "The theorem covers every 64-value input inside either exact source perturbation box.",
+        };
+      }
+      if (gate.id === "rounding") {
+        return {
+          ...gate,
+          status: "verified",
+          label: "Exact-real bounds",
+          description:
+            "The certificate uses exact decimal rationals and exact lower/upper sums, not binary64 endpoints.",
+        };
+      }
+      return gate;
+    }),
+    reason:
+      "A hash-bound zero-sorry Lean theorem directly encloses the pinned linear model on both displayed input regions using exact-real arithmetic.",
+  };
 }
 
 export const TORCHLEAN_IBP_SOUNDNESS_PIN = {
@@ -221,7 +262,31 @@ export interface TorchLeanExampleScene {
   margin: number;
   intervals: TorchLeanClassInterval[];
   explanation: string;
+  intervalAuthority: "upstream-binary64-report" | "lean-exact-outward-certificate";
 }
+
+const TORCHLEAN_DIGITS_CERTIFIED_INTERVALS: Record<number, { lower: number[]; upper: number[] }> = {
+  0: {
+    lower: [
+      -3.519947998077, -4.809585591369, -5.872691052706, -3.222637274601, 0.011585362255,
+      -5.780080342517, -9.822131575086, 6.481595185957, -2.569386858345, 2.578063043355,
+    ],
+    upper: [
+      -1.645417208597, -2.529023348391, -3.380054753869, -0.85686614219, 2.614937756658,
+      -3.471410013931, -7.780179555453, 8.552639330216, -0.401598168201, 4.827699978203,
+    ],
+  },
+  7: {
+    lower: [
+      -4.318381078318, -5.795382956942, -3.329030905292, -4.737175854343, -6.414815610685,
+      -5.815598512274, -3.154993572906, -4.44740453058, 2.522191100432, 0.715695344377,
+    ],
+    upper: [
+      -2.264176481217, -3.316743357633, -0.554893079623, -2.170966230826, -3.565227807201,
+      -3.220379922939, -0.756522076204, -2.134645992154, 4.810892301738, 3.157609378864,
+    ],
+  },
+};
 
 export interface TorchLeanScene {
   version: string;
@@ -765,7 +830,25 @@ function computeExample(example: TorchLeanMarginExample): TorchLeanExampleScene 
     explanation: computedCertified
       ? `The label-${example.label} floor stays above every competing class ceiling by ${formatMargin(margin)}.`
       : `The strongest competing ceiling reaches ${formatMargin(-margin)} above the label-${example.label} floor, so this report cannot certify the label.`,
+    intervalAuthority: "upstream-binary64-report",
   };
+}
+
+function useCertifiedIntervals(examples: TorchLeanExampleScene[]): TorchLeanExampleScene[] {
+  return examples.map((example) => {
+    const certified = TORCHLEAN_DIGITS_CERTIFIED_INTERVALS[example.id];
+    if (!certified) return example;
+    const recomputed = computeExample({
+      id: example.id,
+      label: example.label,
+      prediction: example.prediction,
+      lower: certified.lower,
+      upper: certified.upper,
+      certified: example.certified,
+    });
+    if (!recomputed || recomputed.computedCertified !== example.certified) return example;
+    return { ...recomputed, intervalAuthority: "lean-exact-outward-certificate" };
+  });
 }
 
 /**
@@ -928,10 +1011,16 @@ export function compileTorchLeanMarginScene(
   const sourceUrl = `${snapshot.source.repository}/blob/${snapshot.source.commit}/${snapshot.source.path}`;
   const soundness = soundnessEvidence(snapshot, options.trustedSoundnessFormalIr);
   const enclosure = enclosureEvidence(snapshot, options.receipt, options.trustedFormalIr);
-  const application =
+  const inspectedApplication =
     options.applicationAudit === undefined
       ? undefined
       : (inspectTorchLeanApplicationAudit(options.applicationAudit, snapshot) ?? undefined);
+  const application =
+    inspectedApplication && enclosure.status === "verified"
+      ? verifiedDirectApplication(inspectedApplication)
+      : inspectedApplication;
+  const displayedExamples =
+    enclosure.status === "verified" ? useCertifiedIntervals(examples) : examples;
   return {
     status: "ready",
     scene: {
@@ -949,7 +1038,7 @@ export function compileTorchLeanMarginScene(
         ...report.summary,
         certifiedRate: report.summary.certifiedOk / report.summary.examples,
       },
-      examples,
+      examples: displayedExamples,
       source: snapshot.source,
       sourceCompatibility: "isolated-toolchain",
       epistemic: "interpreted",

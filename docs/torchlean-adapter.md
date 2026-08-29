@@ -36,13 +36,17 @@ Any mismatch blocks the scene.
 
 ## Epistemic boundary
 
-The current scene is `interpreted`, not `verified`. ProofLens has a pinned official artifact and
-recomputes its margin arithmetic. ProofLens has now built and extracted TorchLean's generic
+The upstream 360-row summary remains `interpreted`: ProofLens has a pinned official artifact and
+recomputes its margin arithmetic. ProofLens has built and extracted TorchLean's generic
 `runIBP?_encloses_evalGraphRec` theorem with Lean 4.33, but that theorem is conditional: it requires
-a topologically sorted supported graph and enclosed inputs. The report does not yet bind its model,
-parameters, perturbation region, and serialized intervals to those premises. This follows the
+a topologically sorted supported graph and enclosed inputs. The upstream report does not bind its
+model, parameters, perturbation region, and serialized intervals to those premises. This follows the
 boundary stated in TorchLean's own `MarginCert` module: its report checker validates internal
 arithmetic and summary fields; model enclosure requires a separate verifier or theorem application.
+
+The two displayed source examples now also carry a separate `verified` exact-real enclosure
+receipt. That receipt covers the concrete 10×64 linear classifier, both exact ±0.02 input boxes, and
+all ten outward-rounded decimal output intervals for each example.
 
 The interface therefore says “positive margin,” not “kernel-verified robustness.” It also explains
 that “not certified” means the displayed bounds overlap, not that the model is necessarily wrong or
@@ -81,7 +85,7 @@ commit. The official Python exporter reproduced the 360-example report byte for 
 actual lowering produced a 16-node graph from input node 0 to output node 15, and every observed
 parent precedes its child.
 
-The audit also found two fail-closed blockers:
+The audit found two blockers in the generic graph-proof path:
 
 - the graph contains `reshape` and `concat`, while the pinned theorem's `Supported` predicate
   rejects both operations; and
@@ -89,15 +93,21 @@ The audit also found two fail-closed blockers:
   exact-real boxes. No outward-rounding bridge currently proves that the serialized endpoints are
   conservative exact-real bounds.
 
-The UI displays all 16 operations and marks the unsupported nodes. It separately describes the
-theorem variables `g`, `ps`, `inputs`, and `B`, so a reader can see which mathematical object each
-remaining obligation concerns. **Download evidence packet** emits the application audit, generic
-theorem pin, enclosure request, and blocked conclusion together.
+ProofLens resolves those blockers for the concrete linear model through a direct exact-real
+certificate in `corpus/ProofLensExamples/TorchLeanDigits.lean`. The certificate represents every
+pinned source decimal as an integer over a common scale, proves the general linear interval rule,
+checks all 20 rounded endpoints by decidable integer arithmetic, and contains no `sorry`. It does not
+claim that the generic graph theorem supports `reshape` or `concat`; that path is displayed as
+explicitly unused.
+
+The UI describes `g`, `ps`, `inputs`, and `B`, then shows the exact certificate path separately from
+the observed 16-node wrapper graph. **Download evidence packet** emits the application audit,
+generic theorem pin, exact theorem extraction, receipt, and verified conclusion together.
 
 ## Next gate
 
-Extend TorchLean's soundness proof to cover semantics-preserving `reshape` and `concat` nodes, then
-prove the concrete `InputsEnclosed` premise. Regenerate or bridge the report with conservative
-outward rounding, bind the resulting boxes to the digits parameters, and return a receipt satisfying
-the enclosure protocol. Until those application proofs exist, the public example correctly remains
-blocked rather than presenting the positive margins as verified robustness.
+The v0.1 displayed-example certificate is complete. Future work can extend the exact certificate to
+all 360 examples and upstream TorchLean's semantics-preserving `reshape` and `concat` cases so its
+generic graph theorem can certify the lowered wrapper directly. Until that broader certificate
+exists, the interface keeps the 360-row aggregate report distinct from the two kernel-verified
+example enclosures.

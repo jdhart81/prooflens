@@ -67,7 +67,7 @@ your code:
 - what the proof rests on: its local dependency graph, its axioms, and whether
   it reaches `sorry`;
 - an optional, source-pinned [TorchLean adapter](docs/torchlean-adapter.md) that explains neural
-  robustness margins without confusing report consistency with kernel verification;
+  robustness margins and carries an exact-real kernel certificate for its two displayed examples;
 - a versioned [research-paper packet importer](docs/paper-packets.md) that binds certificate-required
   claims to exact, hash-matched Formal IR and emits a downloadable READY/HOLD decision;
 - and, for every one of the above, why ProofLens is telling you it.

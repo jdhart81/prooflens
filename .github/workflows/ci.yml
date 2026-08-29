@@ -114,9 +114,9 @@ jobs:
         working-directory: lean
         run: lake build
 
-      - name: Build the example corpus
+      - name: Build the example corpus and TorchLean certificate
         working-directory: corpus
-        run: lake build ProofLensExamples
+        run: lake build ProofLensExamples ProofLensExamples.TorchLeanDigits
 
       - name: The corpus must be free of `sorry`
         run: |
@@ -141,6 +141,11 @@ jobs:
             --module ProofLensExamples.IntelligenceBound \
             --out /tmp/ci.formal-ir.json
 
+          node packages/cli/dist/bin.js extract \
+            --project corpus \
+            --module ProofLensExamples.TorchLeanDigits \
+            --out /tmp/ci.torchlean.formal-ir.json
+
       - name: The extraction must not be degraded
         run: |
           FIDELITY=$(node -e "console.log(JSON.parse(require('fs').readFileSync('/tmp/ci.formal-ir.json','utf8')).notationFidelity)")
@@ -162,6 +167,10 @@ jobs:
             const strip = (p) => { const d = JSON.parse(fs.readFileSync(p,'utf8')); delete d.toolchain; return JSON.stringify(d); };
             if (strip('/tmp/ci.formal-ir.json') !== strip('examples/corpus.formal-ir.json')) {
               console.error('examples/corpus.formal-ir.json is stale. Re-extract and commit it.');
+              process.exit(1);
+            }
+            if (strip('/tmp/ci.torchlean.formal-ir.json') !== strip('examples/torchlean-digits-enclosure.formal-ir.json')) {
+              console.error('examples/torchlean-digits-enclosure.formal-ir.json is stale. Re-extract and commit it.');
               process.exit(1);
             }
             console.log('Committed Formal IR matches a fresh extraction.');

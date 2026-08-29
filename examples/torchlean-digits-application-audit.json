@@ -1,0 +1,84 @@
+{
+  "format": "prooflens_torchlean_application_audit_v0_1",
+  "createdAt": "2026-08-28T00:00:00Z",
+  "source": {
+    "repository": "https://github.com/lean-dojo/TorchLean",
+    "commit": "12f5c651f03b3890ec012d0a6bb45e3ea698c8d3",
+    "leanToolchain": "4.33.0"
+  },
+  "artifacts": {
+    "report": {
+      "path": "NN/Examples/Verification/Robustness/digits_linear_margin_cert.json",
+      "sha256": "c517ffd45f2f9e7b844750fcc9e937c1c70509466b973f770644b5d7962aa060"
+    },
+    "weights": {
+      "path": "NN/Examples/Verification/Robustness/digits_linear_weights.json",
+      "sha256": "2da442779a3c368cdc5ca83358bfbe06783041d0b9516f3b0741bc95f09bf3cd"
+    },
+    "dataset": {
+      "path": "NN/Examples/Verification/Robustness/digits_test.json",
+      "sha256": "b381019f8564ab1255f717791075577857e7c4eb49325edd9a31421d292be513"
+    },
+    "exporter": {
+      "path": "scripts/verification/robustness/export_margin_cert.py",
+      "sha256": "1e825c12031a34c37eecf238c0de10f1c2b92ab56d3d45e5ab0ab6b3ed89f145"
+    }
+  },
+  "replay": {
+    "byteForByteMatch": true,
+    "sha256": "c517ffd45f2f9e7b844750fcc9e937c1c70509466b973f770644b5d7962aa060",
+    "examples": 360,
+    "nominalOk": 349,
+    "certifiedOk": 318
+  },
+  "lowering": {
+    "inputId": 0,
+    "outputId": 15,
+    "nodes": [
+      { "id": 0, "op": "input", "parents": [], "shape": "64" },
+      { "id": 1, "op": "reshape", "parents": [0], "shape": "1x64" },
+      { "id": 2, "op": "reshape", "parents": [1], "shape": "1x64" },
+      { "id": 3, "op": "const", "parents": [], "shape": "1x1" },
+      { "id": 4, "op": "matmul", "parents": [3, 2], "shape": "1x64" },
+      { "id": 5, "op": "reshape", "parents": [4], "shape": "1x64" },
+      { "id": 6, "op": "reshape", "parents": [5], "shape": "64" },
+      { "id": 7, "op": "linear", "parents": [6], "shape": "10" },
+      { "id": 8, "op": "reshape", "parents": [7], "shape": "1x10" },
+      { "id": 9, "op": "reshape", "parents": [1], "shape": "1x64" },
+      { "id": 10, "op": "const", "parents": [], "shape": "0x1" },
+      { "id": 11, "op": "matmul", "parents": [10, 9], "shape": "0x64" },
+      { "id": 12, "op": "reshape", "parents": [11], "shape": "0x64" },
+      { "id": 13, "op": "const", "parents": [], "shape": "0x10" },
+      { "id": 14, "op": "concat", "parents": [8, 13], "shape": "1x10" },
+      { "id": 15, "op": "reshape", "parents": [14], "shape": "10" }
+    ]
+  },
+  "theorem": {
+    "declaration": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?_encloses_evalGraphRec",
+    "supportedOps": [
+      "input",
+      "const",
+      "detach",
+      "add",
+      "sub",
+      "mul_elem",
+      "relu",
+      "linear",
+      "matmul",
+      "tanh",
+      "sigmoid",
+      "sin",
+      "cos"
+    ],
+    "unsupportedOpsObserved": ["reshape", "concat"]
+  },
+  "arithmetic": {
+    "reportProducer": "python-binary64-round-to-nearest",
+    "theoremSemantics": "exact-real",
+    "outwardRoundingBridge": false
+  },
+  "conclusion": {
+    "status": "blocked",
+    "reason": "The concrete graph contains reshape and concat, which the pinned theorem's Supported predicate rejects. The report also lacks a proved outward-rounding bridge from binary64 endpoints to exact-real boxes."
+  }
+}

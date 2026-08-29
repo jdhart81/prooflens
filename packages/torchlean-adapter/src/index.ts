@@ -109,6 +109,54 @@ export interface TrustedTorchLeanFormalIR {
   sha256: string;
 }
 
+export interface TorchLeanApplicationNode {
+  id: number;
+  op: string;
+  parents: number[];
+  shape: string;
+}
+
+export interface TorchLeanApplicationAudit {
+  format: "prooflens_torchlean_application_audit_v0_1";
+  source: { repository: string; commit: string; leanToolchain: string };
+  artifacts: Record<string, { path: string; sha256: string }>;
+  replay: {
+    byteForByteMatch: boolean;
+    sha256: string;
+    examples: number;
+    nominalOk: number;
+    certifiedOk: number;
+  };
+  lowering: { inputId: number; outputId: number; nodes: TorchLeanApplicationNode[] };
+  theorem: {
+    declaration: string;
+    supportedOps: string[];
+    unsupportedOpsObserved: string[];
+  };
+  arithmetic: {
+    reportProducer: string;
+    theoremSemantics: string;
+    outwardRoundingBridge: boolean;
+  };
+  conclusion: { status: "blocked" | "verified"; reason: string };
+}
+
+export type TorchLeanApplicationGateStatus = "matched" | "blocked" | "owed";
+
+export interface TorchLeanApplicationGate {
+  id: "artifacts" | "replay" | "topology" | "operations" | "inputs" | "rounding";
+  label: string;
+  status: TorchLeanApplicationGateStatus;
+  description: string;
+}
+
+export interface TorchLeanApplicationEvidence {
+  status: "blocked";
+  nodes: Array<TorchLeanApplicationNode & { supported: boolean }>;
+  gates: TorchLeanApplicationGate[];
+  reason: string;
+}
+
 export const TORCHLEAN_IBP_SOUNDNESS_PIN = {
   repository: "https://github.com/lean-dojo/TorchLean",
   commit: "12f5c651f03b3890ec012d0a6bb45e3ea698c8d3",
@@ -198,8 +246,151 @@ export interface TorchLeanScene {
   epistemic: "interpreted";
   provenance: Provenance;
   soundness: TorchLeanSoundnessEvidence;
+  application?: TorchLeanApplicationEvidence;
   enclosure: TorchLeanEnclosureEvidence;
   boundary: string;
+}
+
+/**
+ * Check a concrete lowering receipt without mistaking runtime observations for
+ * a kernel proof. Known incompatibilities block theorem application.
+ */
+export function inspectTorchLeanApplicationAudit(
+  value: unknown,
+  snapshot: TorchLeanMarginSnapshot,
+): TorchLeanApplicationEvidence | null {
+  if (!record(value) || value.format !== "prooflens_torchlean_application_audit_v0_1") return null;
+  const source = value.source;
+  const artifacts = value.artifacts;
+  const replay = value.replay;
+  const lowering = value.lowering;
+  const theorem = value.theorem;
+  const arithmetic = value.arithmetic;
+  const conclusion = value.conclusion;
+  if (
+    !record(source) ||
+    source.repository !== snapshot.source.repository ||
+    source.commit !== snapshot.source.commit ||
+    source.leanToolchain !== TORCHLEAN_IBP_SOUNDNESS_PIN.toolchain ||
+    !record(artifacts) ||
+    !record(artifacts.report) ||
+    artifacts.report.path !== snapshot.source.path ||
+    artifacts.report.sha256 !== snapshot.source.sha256 ||
+    !record(artifacts.weights) ||
+    artifacts.weights.sha256 !==
+      "2da442779a3c368cdc5ca83358bfbe06783041d0b9516f3b0741bc95f09bf3cd" ||
+    !record(artifacts.dataset) ||
+    artifacts.dataset.sha256 !==
+      "b381019f8564ab1255f717791075577857e7c4eb49325edd9a31421d292be513" ||
+    !record(artifacts.exporter) ||
+    artifacts.exporter.sha256 !==
+      "1e825c12031a34c37eecf238c0de10f1c2b92ab56d3d45e5ab0ab6b3ed89f145" ||
+    !record(replay) ||
+    replay.byteForByteMatch !== true ||
+    replay.sha256 !== snapshot.source.sha256 ||
+    replay.examples !== snapshot.report.summary.examples ||
+    replay.nominalOk !== snapshot.report.summary.nominalOk ||
+    replay.certifiedOk !== snapshot.report.summary.certifiedOk ||
+    !record(lowering) ||
+    !Number.isSafeInteger(lowering.inputId) ||
+    !Number.isSafeInteger(lowering.outputId) ||
+    !Array.isArray(lowering.nodes) ||
+    !record(theorem) ||
+    theorem.declaration !== TORCHLEAN_IBP_SOUNDNESS_PIN.declaration ||
+    !Array.isArray(theorem.supportedOps) ||
+    theorem.supportedOps.some((op) => typeof op !== "string") ||
+    !Array.isArray(theorem.unsupportedOpsObserved) ||
+    theorem.unsupportedOpsObserved.some((op) => typeof op !== "string") ||
+    !record(arithmetic) ||
+    typeof arithmetic.reportProducer !== "string" ||
+    arithmetic.theoremSemantics !== "exact-real" ||
+    typeof arithmetic.outwardRoundingBridge !== "boolean" ||
+    !record(conclusion) ||
+    conclusion.status !== "blocked" ||
+    typeof conclusion.reason !== "string"
+  ) {
+    return null;
+  }
+  const nodes: TorchLeanApplicationNode[] = [];
+  for (const candidate of lowering.nodes) {
+    if (
+      !record(candidate) ||
+      candidate.id !== nodes.length ||
+      typeof candidate.op !== "string" ||
+      !Array.isArray(candidate.parents) ||
+      candidate.parents.some((parent) => !Number.isSafeInteger(parent)) ||
+      typeof candidate.shape !== "string"
+    ) {
+      return null;
+    }
+    nodes.push(candidate as unknown as TorchLeanApplicationNode);
+  }
+  if (
+    nodes.length === 0 ||
+    lowering.inputId !== 0 ||
+    lowering.outputId !== nodes.length - 1 ||
+    nodes.some((node) => node.parents.some((parent) => parent < 0 || parent >= node.id))
+  ) {
+    return null;
+  }
+  const supported = new Set(theorem.supportedOps as string[]);
+  const unsupportedObserved = theorem.unsupportedOpsObserved as string[];
+  const decorated = nodes.map((node) => ({ ...node, supported: supported.has(node.op) }));
+  const unsupported = [
+    ...new Set(decorated.filter((node) => !node.supported).map((node) => node.op)),
+  ];
+  if (
+    unsupported.length === 0 ||
+    unsupported.length !== unsupportedObserved.length ||
+    unsupported.some((op) => !unsupportedObserved.includes(op)) ||
+    arithmetic.outwardRoundingBridge !== false
+  ) {
+    return null;
+  }
+  return {
+    status: "blocked",
+    nodes: decorated,
+    gates: [
+      {
+        id: "artifacts",
+        label: "Artifacts",
+        status: "matched",
+        description: "Report, weights, dataset, and exporter are identified by SHA-256.",
+      },
+      {
+        id: "replay",
+        label: "Report replay",
+        status: "matched",
+        description: "The official exporter reproduced all 360 rows byte for byte.",
+      },
+      {
+        id: "topology",
+        label: "Graph order",
+        status: "matched",
+        description: "Every observed parent node precedes its child in the 16-node lowering.",
+      },
+      {
+        id: "operations",
+        label: "Theorem coverage",
+        status: "blocked",
+        description: `The concrete graph uses ${unsupported.join(" and ")}, which the theorem rejects.`,
+      },
+      {
+        id: "inputs",
+        label: "Input enclosure",
+        status: "owed",
+        description: "A Lean proof must bind each admitted input to its concrete perturbation box.",
+      },
+      {
+        id: "rounding",
+        label: "Numeric bridge",
+        status: "blocked",
+        description:
+          "Python binary64 endpoints lack a proved outward-rounding bridge to exact reals.",
+      },
+    ],
+    reason: conclusion.reason as string,
+  };
 }
 
 export type TorchLeanSceneResult =
@@ -588,6 +779,7 @@ export function compileTorchLeanMarginScene(
     receipt?: unknown;
     trustedFormalIr?: TrustedTorchLeanFormalIR;
     trustedSoundnessFormalIr?: TrustedTorchLeanFormalIR;
+    applicationAudit?: unknown;
   } = {},
 ): TorchLeanSceneResult {
   if (!record(snapshot) || snapshot.format !== "prooflens_torchlean_margin_snapshot_v0_1") {
@@ -736,6 +928,10 @@ export function compileTorchLeanMarginScene(
   const sourceUrl = `${snapshot.source.repository}/blob/${snapshot.source.commit}/${snapshot.source.path}`;
   const soundness = soundnessEvidence(snapshot, options.trustedSoundnessFormalIr);
   const enclosure = enclosureEvidence(snapshot, options.receipt, options.trustedFormalIr);
+  const application =
+    options.applicationAudit === undefined
+      ? undefined
+      : (inspectTorchLeanApplicationAudit(options.applicationAudit, snapshot) ?? undefined);
   return {
     status: "ready",
     scene: {
@@ -771,6 +967,7 @@ export function compileTorchLeanMarginScene(
         note: "The source artifact is pinned and the margin arithmetic is recomputed by ProofLens. TorchLean was not executed by this adapter build.",
       },
       soundness,
+      ...(application ? { application } : {}),
       enclosure,
       boundary:
         enclosure.status === "verified"

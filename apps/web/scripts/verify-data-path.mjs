@@ -1,6 +1,6 @@
 /**
  * Verifies the exact data path the UI depends on:
- *   corpus JSON -> runPipelineOnValue -> 34 analyses -> renderSvg -> "<svg ..."
+ *   corpus JSON -> runPipelineOnValue -> 35 analyses -> renderSvg -> "<svg ..."
  *
  * Bundles the workspace packages from source with the same alias Vite uses,
  * so this exercises the code the browser bundle will actually contain.
@@ -87,10 +87,10 @@ const check = (name, ok, detail) => {
   console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? ` — ${detail}` : ""}`);
 };
 
-check("bundle has 34 analyses", bundle.analyses.length === 34, `got ${bundle.analyses.length}`);
+check("bundle has 35 analyses", bundle.analyses.length === 35, `got ${bundle.analyses.length}`);
 check(
-  "summary.declarations === 34",
-  bundle.summary.declarations === 34,
+  "summary.declarations === 35",
+  bundle.summary.declarations === 35,
   `classified=${bundle.summary.classified} unsupported=${bundle.summary.unsupported} unusedHyps=${bundle.summary.withUnusedHypotheses} sorry=${bundle.summary.withSorry} visuals=${bundle.summary.visualsPlanned}`,
 );
 
@@ -141,7 +141,7 @@ for (const analysis of bundle.analyses) {
 }
 markupChars += renderToStaticMarkup(createElement(SummaryStrip, { bundle })).length;
 check(
-  "every panel renders for all 34 declarations",
+  "every panel renders for all 35 declarations",
   renderFailure === null,
   renderFailure ?? `${markupChars.toLocaleString()} chars of markup`,
 );

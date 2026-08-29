@@ -72,13 +72,32 @@ module, toolchain, statement, source commit, and extraction hash are pinned in t
 The web view therefore displays a four-step evidence chain: source pin, margin replay, generic IBP
 rule, and concrete model enclosure. The generic rule is green. The final step stays certificate debt
 until the artifact binding, topological-order, supported-operation, and input-enclosure premises are
-proved for this report. The visual IF/THEN rule makes this distinction explicit. The **Download
-enclosure request** control emits the exact JSON handoff for the remaining isolated proof work.
+proved for this report. The visual IF/THEN rule makes this distinction explicit.
+
+## Concrete application audit
+
+`examples/torchlean-digits-application-audit.json` records a reproducible audit at the pinned
+commit. The official Python exporter reproduced the 360-example report byte for byte. TorchLean's
+actual lowering produced a 16-node graph from input node 0 to output node 15, and every observed
+parent precedes its child.
+
+The audit also found two fail-closed blockers:
+
+- the graph contains `reshape` and `concat`, while the pinned theorem's `Supported` predicate
+  rejects both operations; and
+- the report producer uses Python binary64 round-to-nearest arithmetic, while the theorem describes
+  exact-real boxes. No outward-rounding bridge currently proves that the serialized endpoints are
+  conservative exact-real bounds.
+
+The UI displays all 16 operations and marks the unsupported nodes. It separately describes the
+theorem variables `g`, `ps`, `inputs`, and `B`, so a reader can see which mathematical object each
+remaining obligation concerns. **Download evidence packet** emits the application audit, generic
+theorem pin, enclosure request, and blocked conclusion together.
 
 ## Next gate
 
-Bind the digits model artifact and its parameters to TorchLean's graph semantics, discharge the
-generic theorem's concrete graph and input premises, and prove that its computed final boxes are the
-same intervals serialized in the report. Then return a receipt satisfying the enclosure protocol.
-Until that application theorem exists, the public example correctly continues to show certificate
-debt.
+Extend TorchLean's soundness proof to cover semantics-preserving `reshape` and `concat` nodes, then
+prove the concrete `InputsEnclosed` premise. Regenerate or bridge the report with conservative
+outward rounding, bind the resulting boxes to the digits parameters, and return a receipt satisfying
+the enclosure protocol. Until those application proofs exist, the public example correctly remains
+blocked rather than presenting the positive margins as verified robustness.

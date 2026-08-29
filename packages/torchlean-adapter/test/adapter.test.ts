@@ -6,11 +6,16 @@ import { parseFormalIR } from "@prooflens/formal-ir";
 import {
   compileTorchLeanMarginScene,
   exportTorchLeanEnclosureRequest,
+  inspectTorchLeanApplicationAudit,
   TORCHLEAN_DIGITS_MARGIN_FIXTURE,
   TORCHLEAN_ENCLOSURE_RECEIPT_FORMAT,
   TORCHLEAN_IBP_SOUNDNESS_PIN,
   type TorchLeanMarginSnapshot,
 } from "@prooflens/torchlean-adapter";
+
+const applicationAudit = JSON.parse(
+  readFileSync(resolve("examples/torchlean-digits-application-audit.json"), "utf8"),
+) as unknown;
 
 function fixture(): TorchLeanMarginSnapshot {
   return structuredClone(TORCHLEAN_DIGITS_MARGIN_FIXTURE);
@@ -85,6 +90,54 @@ describe("TorchLean margin-report adapter", () => {
     });
     expect(result.scene.epistemic).toBe("interpreted");
     expect(result.scene.boundary).toContain("generic IBP enclosure theorem is kernel-verified");
+  });
+
+  it("fails the concrete theorem application closed on unsupported graph operations", () => {
+    const result = compileTorchLeanMarginScene(fixture(), {
+      trustedSoundnessFormalIr: trustedSoundness,
+      applicationAudit,
+    });
+    if (result.status !== "ready") throw new Error(result.reason);
+    expect(result.scene.application).toMatchObject({
+      status: "blocked",
+      gates: expect.arrayContaining([
+        expect.objectContaining({ id: "artifacts", status: "matched" }),
+        expect.objectContaining({ id: "topology", status: "matched" }),
+        expect.objectContaining({ id: "operations", status: "blocked" }),
+        expect.objectContaining({ id: "rounding", status: "blocked" }),
+      ]),
+    });
+    expect(
+      result.scene.application?.nodes.filter((node) => !node.supported).map((node) => node.op),
+    ).toEqual([
+      "reshape",
+      "reshape",
+      "reshape",
+      "reshape",
+      "reshape",
+      "reshape",
+      "reshape",
+      "concat",
+      "reshape",
+    ]);
+    expect(result.scene.epistemic).toBe("interpreted");
+    expect(result.scene.enclosure.status).toBe("interpreted");
+  });
+
+  it("rejects altered concrete application audits", () => {
+    const altered = structuredClone(applicationAudit) as Record<string, unknown>;
+    const lowering = altered.lowering as { nodes: Array<{ id: number; parents: number[] }> };
+    lowering.nodes[1]!.parents = [15];
+    expect(inspectTorchLeanApplicationAudit(altered, fixture())).toBeNull();
+
+    const falseGreen = structuredClone(applicationAudit) as Record<string, unknown>;
+    (falseGreen.conclusion as { status: string }).status = "verified";
+    expect(inspectTorchLeanApplicationAudit(falseGreen, fixture())).toBeNull();
+
+    const alteredArtifact = structuredClone(applicationAudit) as Record<string, unknown>;
+    const artifacts = alteredArtifact.artifacts as { weights: { sha256: string } };
+    artifacts.weights.sha256 = "0".repeat(64);
+    expect(inspectTorchLeanApplicationAudit(alteredArtifact, fixture())).toBeNull();
   });
 
   it("fails the generic theorem gate closed on altered extraction evidence", () => {

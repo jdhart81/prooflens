@@ -9,6 +9,7 @@ import {
   type TorchLeanScene,
 } from "@prooflens/torchlean-adapter";
 import torchLeanSoundnessFormalIr from "../../../../examples/torchlean-ibp-soundness.formal-ir.json";
+import torchLeanApplicationAudit from "../../../../examples/torchlean-digits-application-audit.json";
 import { EpistemicChip } from "./EpistemicChip.js";
 
 const RESULT = compileTorchLeanMarginScene(TORCHLEAN_DIGITS_MARGIN_FIXTURE, {
@@ -16,6 +17,7 @@ const RESULT = compileTorchLeanMarginScene(TORCHLEAN_DIGITS_MARGIN_FIXTURE, {
     document: parseFormalIR(torchLeanSoundnessFormalIr as unknown),
     sha256: TORCHLEAN_IBP_SOUNDNESS_PIN.formalIrSha256,
   },
+  applicationAudit: torchLeanApplicationAudit,
 });
 
 export function TorchLeanPanel(): JSX.Element {
@@ -67,8 +69,8 @@ function TorchLeanSceneView({ scene }: { scene: TorchLeanScene }): JSX.Element {
             <p className="semantic-scene__eyebrow">Evidence chain</p>
             <h3 id="torchlean-receipt-title">What is checked—and what is still owed</h3>
           </div>
-          <button type="button" onClick={() => downloadEnclosureRequest(scene)}>
-            Download enclosure request
+          <button type="button" onClick={() => downloadEvidencePacket(scene)}>
+            Download evidence packet
           </button>
         </div>
         <ol className="torchlean-receipt__steps">
@@ -97,6 +99,7 @@ function TorchLeanSceneView({ scene }: { scene: TorchLeanScene }): JSX.Element {
             description={scene.enclosure.reason}
           />
         </ol>
+        {scene.application ? <ApplicationBridge scene={scene} /> : null}
         <div className="torchlean-soundness" aria-label="TorchLean IBP theorem explained">
           <div className="torchlean-soundness__header">
             <span>LEAN THEOREM · {scene.soundness.status.toUpperCase()}</span>
@@ -255,16 +258,112 @@ function ReceiptStep({
   );
 }
 
-function downloadEnclosureRequest(scene: TorchLeanScene): void {
-  const blob = new Blob([`${JSON.stringify(scene.enclosure.request, null, 2)}\n`], {
+function downloadEvidencePacket(scene: TorchLeanScene): void {
+  const packet = {
+    format: "prooflens_torchlean_evidence_packet_v0_1",
+    applicationAudit: torchLeanApplicationAudit,
+    genericTheorem: scene.soundness.theorem,
+    enclosureRequest: scene.enclosure.request,
+    conclusion: {
+      status: scene.application?.status ?? "owed",
+      reason: scene.application?.reason ?? scene.enclosure.reason,
+    },
+  };
+  const blob = new Blob([`${JSON.stringify(packet, null, 2)}\n`], {
     type: "application/json",
   });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = "torchlean-enclosure-request.json";
+  anchor.download = "prooflens-torchlean-evidence-packet.json";
   anchor.click();
   URL.revokeObjectURL(url);
+}
+
+function ApplicationBridge({ scene }: { scene: TorchLeanScene }): JSX.Element | null {
+  const application = scene.application;
+  if (!application) return null;
+  const variables = [
+    {
+      symbol: "g",
+      name: "lowered graph",
+      detail: `${application.nodes.length} ordered operations from input node 0 to output node 15`,
+      status: "matched",
+    },
+    {
+      symbol: "ps",
+      name: "parameter store",
+      detail: "weights and bias are hash-bound; their exact-real interpretation is not proved",
+      status: "owed",
+    },
+    {
+      symbol: "inputs",
+      name: "admitted values",
+      detail: "64 pixels may move ±0.02; membership in every Lean input box remains owed",
+      status: "owed",
+    },
+    {
+      symbol: "B",
+      name: "reported output boxes",
+      detail: "replayed binary64 endpoints are not yet outward-rounded exact-real bounds",
+      status: "blocked",
+    },
+  ] as const;
+  return (
+    <div className="torchlean-application" aria-label="Concrete theorem application audit">
+      <header>
+        <div>
+          <span>CONCRETE APPLICATION · BLOCKED</span>
+          <strong>Why the proved rule cannot certify this model yet</strong>
+        </div>
+        <code>16 nodes · 2 unsupported operations</code>
+      </header>
+      <div className="torchlean-application__variables">
+        {variables.map((variable) => (
+          <div
+            key={variable.symbol}
+            className={`torchlean-variable torchlean-variable--${variable.status}`}
+          >
+            <code>{variable.symbol}</code>
+            <div>
+              <strong>{variable.name}</strong>
+              <span>{variable.detail}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="torchlean-graph" aria-label="Observed TorchLean lowering graph">
+        {application.nodes.map((node, index) => (
+          <div
+            key={node.id}
+            className={
+              node.supported
+                ? "torchlean-graph__node"
+                : "torchlean-graph__node torchlean-graph__node--blocked"
+            }
+            title={`node ${node.id}; parents ${node.parents.join(", ") || "none"}; shape ${node.shape}`}
+          >
+            <small>{node.id}</small>
+            <strong>{node.op}</strong>
+            <span>{node.shape}</span>
+            {index < application.nodes.length - 1 ? <i aria-hidden="true">→</i> : null}
+          </div>
+        ))}
+      </div>
+      <div className="torchlean-application__gates">
+        {application.gates.map((gate) => (
+          <div
+            key={gate.id}
+            className={`torchlean-application-gate torchlean-application-gate--${gate.status}`}
+          >
+            <span>{gate.status.toUpperCase()}</span>
+            <strong>{gate.label}</strong>
+            <p>{gate.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function MarginStory({

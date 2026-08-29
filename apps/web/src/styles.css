@@ -502,6 +502,15 @@ body {
 }
 
 @media (max-width: 900px) {
+  .torchlean-application__variables,
+  .torchlean-application__gates {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .torchlean-graph {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
   .paper-packet__claims {
     grid-template-columns: 1fr;
   }
@@ -699,6 +708,175 @@ body {
   margin-top: 9px;
   padding-top: 8px;
   border-top: 1px dashed var(--border);
+}
+
+.torchlean-application {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid var(--warn-bd);
+  border-radius: 6px;
+  background: var(--warn-bg);
+}
+
+.torchlean-application > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.torchlean-application > header > div,
+.torchlean-variable > div {
+  display: grid;
+  gap: 2px;
+}
+
+.torchlean-application > header span {
+  color: var(--warn-fg);
+  font: 800 8px var(--mono);
+  letter-spacing: 0.07em;
+}
+
+.torchlean-application > header strong {
+  font-size: 12px;
+}
+
+.torchlean-application > header code {
+  color: var(--warn-fg);
+  font-size: 8px;
+}
+
+.torchlean-application__variables {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.torchlean-variable {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 7px;
+  min-width: 0;
+  padding: 7px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+}
+
+.torchlean-variable > code {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 13px;
+}
+
+.torchlean-variable--blocked > code {
+  background: var(--warn-bg);
+  color: var(--warn-fg);
+}
+
+.torchlean-variable strong {
+  font-size: 9px;
+}
+
+.torchlean-variable span {
+  color: var(--text-dim);
+  font-size: 8px;
+  line-height: 1.35;
+}
+
+.torchlean-graph {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 12px 6px;
+  padding: 9px;
+  border-radius: 5px;
+  background: var(--surface);
+}
+
+.torchlean-graph__node {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  padding: 6px;
+  border-top: 3px solid var(--ep-verified-bd);
+  background: var(--surface-2);
+}
+
+.torchlean-graph__node--blocked {
+  border-top-color: var(--warn-fg);
+  background: var(--warn-bg);
+}
+
+.torchlean-graph__node small,
+.torchlean-graph__node span {
+  color: var(--text-dim);
+  font: 7px var(--mono);
+}
+
+.torchlean-graph__node strong {
+  overflow: hidden;
+  font: 800 8px var(--mono);
+  text-overflow: ellipsis;
+}
+
+.torchlean-graph__node--blocked strong {
+  color: var(--warn-fg);
+}
+
+.torchlean-graph__node i {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 2px);
+  color: var(--border-strong);
+  font: normal 8px var(--mono);
+  transform: translateY(-50%);
+}
+
+.torchlean-application__gates {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.torchlean-application-gate {
+  display: grid;
+  gap: 2px;
+  padding-left: 7px;
+  border-left: 3px solid var(--ep-verified-bd);
+}
+
+.torchlean-application-gate--blocked,
+.torchlean-application-gate--owed {
+  border-left-color: var(--warn-fg);
+}
+
+.torchlean-application-gate > span {
+  color: var(--ep-verified-fg);
+  font: 800 7px var(--mono);
+  letter-spacing: 0.06em;
+}
+
+.torchlean-application-gate--blocked > span,
+.torchlean-application-gate--owed > span {
+  color: var(--warn-fg);
+}
+
+.torchlean-application-gate strong {
+  font-size: 9px;
+}
+
+.torchlean-application-gate p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 8px;
+  line-height: 1.35;
 }
 
 .torchlean-soundness {
@@ -1239,6 +1417,20 @@ body {
   .torchlean-receipt__heading {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .torchlean-application > header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .torchlean-application__variables,
+  .torchlean-application__gates {
+    grid-template-columns: 1fr;
+  }
+
+  .torchlean-graph {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .torchlean-summary {

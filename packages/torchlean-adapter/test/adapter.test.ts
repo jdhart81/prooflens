@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -7,6 +8,7 @@ import {
   exportTorchLeanEnclosureRequest,
   TORCHLEAN_DIGITS_MARGIN_FIXTURE,
   TORCHLEAN_ENCLOSURE_RECEIPT_FORMAT,
+  TORCHLEAN_IBP_SOUNDNESS_PIN,
   type TorchLeanMarginSnapshot,
 } from "@prooflens/torchlean-adapter";
 
@@ -17,6 +19,12 @@ function fixture(): TorchLeanMarginSnapshot {
 const corpus = parseFormalIR(
   JSON.parse(readFileSync(resolve("examples/corpus.formal-ir.json"), "utf8")) as unknown,
 );
+const soundnessBytes = readFileSync(resolve("examples/torchlean-ibp-soundness.formal-ir.json"));
+const soundness = parseFormalIR(JSON.parse(soundnessBytes.toString("utf8")) as unknown);
+const trustedSoundness = {
+  document: soundness,
+  sha256: createHash("sha256").update(soundnessBytes).digest("hex"),
+};
 
 describe("TorchLean margin-report adapter", () => {
   it("compiles the pinned official report excerpt and recomputes both outcomes", () => {
@@ -54,6 +62,50 @@ describe("TorchLean margin-report adapter", () => {
       status: "interpreted",
       verification: "receipt-missing",
     });
+    expect(result.scene.soundness.verification).toBe("formal-ir-missing");
+  });
+
+  it("verifies the pinned generic IBP theorem without upgrading the concrete report", () => {
+    expect(trustedSoundness.sha256).toBe(TORCHLEAN_IBP_SOUNDNESS_PIN.formalIrSha256);
+    const result = compileTorchLeanMarginScene(fixture(), {
+      trustedSoundnessFormalIr: trustedSoundness,
+    });
+    if (result.status !== "ready") throw new Error(result.reason);
+    expect(result.scene.soundness).toMatchObject({
+      status: "verified",
+      verification: "kernel-theorem-verified",
+    });
+    expect(result.scene.soundness.premises).toHaveLength(4);
+    expect(result.scene.soundness.premises.every((premise) => premise.status === "owed")).toBe(
+      true,
+    );
+    expect(result.scene.enclosure).toMatchObject({
+      status: "interpreted",
+      verification: "receipt-missing",
+    });
+    expect(result.scene.epistemic).toBe("interpreted");
+    expect(result.scene.boundary).toContain("generic IBP enclosure theorem is kernel-verified");
+  });
+
+  it("fails the generic theorem gate closed on altered extraction evidence", () => {
+    const wrongHash = compileTorchLeanMarginScene(fixture(), {
+      trustedSoundnessFormalIr: { ...trustedSoundness, sha256: "0".repeat(64) },
+    });
+    if (wrongHash.status !== "ready") throw new Error(wrongHash.reason);
+    expect(wrongHash.scene.soundness.verification).toBe("formal-ir-mismatch");
+
+    const altered = structuredClone(soundness);
+    const theorem = altered.declarations.find(
+      (candidate) => candidate.name === TORCHLEAN_IBP_SOUNDNESS_PIN.declaration,
+    );
+    if (!theorem) throw new Error("Expected pinned TorchLean theorem");
+    theorem.usesSorry = true;
+    const sorry = compileTorchLeanMarginScene(fixture(), {
+      trustedSoundnessFormalIr: { document: altered, sha256: trustedSoundness.sha256 },
+    });
+    if (sorry.status !== "ready") throw new Error(sorry.reason);
+    expect(sorry.scene.soundness.verification).toBe("formal-ir-mismatch");
+    expect(sorry.scene.enclosure.status).toBe("interpreted");
   });
 
   it("exports certificate debt bound to the exact report inputs", () => {

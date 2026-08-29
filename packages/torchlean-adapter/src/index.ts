@@ -109,6 +109,41 @@ export interface TrustedTorchLeanFormalIR {
   sha256: string;
 }
 
+export const TORCHLEAN_IBP_SOUNDNESS_PIN = {
+  repository: "https://github.com/lean-dojo/TorchLean",
+  commit: "12f5c651f03b3890ec012d0a6bb45e3ea698c8d3",
+  toolchain: "4.33.0",
+  module: "NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd",
+  declaration: "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?_encloses_evalGraphRec",
+  formalIrSha256: "3aa4f293011dd4dcd30a6d280c8e2a63f7524c3aed7376254e8a1016f6800ae4",
+  statement: `∀ (g : NN.MLTheory.CROWN.Graph) (ps : NN.MLTheory.CROWN.Graph.ParamStore ℝ)
+  (inputs : Std.HashMap ℕ NN.MLTheory.CROWN.Graph.CertSoundness.Val),
+  NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted g →
+    NN.MLTheory.CROWN.Graph.CertSoundness.Supported g →
+      NN.MLTheory.CROWN.Graph.CertSoundness.InputsEnclosed g ps inputs →
+        ∀ id < g.nodes.size,
+          match (NN.MLTheory.CROWN.Graph.CertSoundness.runIBP? g ps)[id]!,
+            (NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec g ps inputs)[id]! with
+          | some B, some v => NN.MLTheory.CROWN.Graph.CertSoundness.EnclosesBox B v
+          | x, x_1 => True`,
+} as const;
+
+export interface TorchLeanSoundnessPremise {
+  id: "artifact-binding" | "topological-order" | "supported-operations" | "input-enclosure";
+  label: string;
+  status: "owed";
+  description: string;
+}
+
+export interface TorchLeanSoundnessEvidence {
+  status: EpistemicStatus;
+  verification: "formal-ir-missing" | "formal-ir-mismatch" | "kernel-theorem-verified";
+  reason: string;
+  theorem: typeof TORCHLEAN_IBP_SOUNDNESS_PIN;
+  premises: TorchLeanSoundnessPremise[];
+  provenance: Provenance;
+}
+
 export interface TorchLeanEnclosureEvidence {
   status: EpistemicStatus;
   verification: "receipt-missing" | "receipt-mismatch" | "kernel-witness-matched";
@@ -162,6 +197,7 @@ export interface TorchLeanScene {
   sourceCompatibility: "isolated-toolchain";
   epistemic: "interpreted";
   provenance: Provenance;
+  soundness: TorchLeanSoundnessEvidence;
   enclosure: TorchLeanEnclosureEvidence;
   boundary: string;
 }
@@ -376,6 +412,114 @@ function enclosureEvidence(
   };
 }
 
+function soundnessEvidence(
+  snapshot: TorchLeanMarginSnapshot,
+  trusted: TrustedTorchLeanFormalIR | undefined,
+): TorchLeanSoundnessEvidence {
+  const premises: TorchLeanSoundnessPremise[] = [
+    {
+      id: "artifact-binding",
+      label: "Artifact binding",
+      status: "owed",
+      description:
+        "Connect this report's serialized model and parameters to the theorem's graph and parameter store.",
+    },
+    {
+      id: "topological-order",
+      label: "Topological order",
+      status: "owed",
+      description: "Prove the concrete graph is topologically sorted.",
+    },
+    {
+      id: "supported-operations",
+      label: "Supported operations",
+      status: "owed",
+      description: "Prove every operation in the concrete graph is covered by the IBP semantics.",
+    },
+    {
+      id: "input-enclosure",
+      label: "Input enclosure",
+      status: "owed",
+      description: "Prove the concrete perturbation region encloses every admitted input.",
+    },
+  ];
+  const source = {
+    system: "torchlean",
+    declaration: TORCHLEAN_IBP_SOUNDNESS_PIN.declaration,
+    module: TORCHLEAN_IBP_SOUNDNESS_PIN.module,
+    path: "statement",
+  };
+  const interpreted = (
+    verification: TorchLeanSoundnessEvidence["verification"],
+    reason: string,
+  ): TorchLeanSoundnessEvidence => ({
+    status: "interpreted",
+    verification,
+    reason,
+    theorem: TORCHLEAN_IBP_SOUNDNESS_PIN,
+    premises,
+    provenance: {
+      sources: [source],
+      inputs: [snapshot.source.commit, snapshot.source.sha256],
+      note: "Generic theorem evidence is tracked separately from its application to a concrete model artifact.",
+    },
+  });
+
+  if (!trusted) {
+    return interpreted(
+      "formal-ir-missing",
+      "The pinned generic IBP soundness theorem has not been loaded as trusted Formal IR.",
+    );
+  }
+  if (
+    snapshot.source.commit !== TORCHLEAN_IBP_SOUNDNESS_PIN.commit ||
+    trusted.sha256 !== TORCHLEAN_IBP_SOUNDNESS_PIN.formalIrSha256 ||
+    trusted.document.toolchain !== TORCHLEAN_IBP_SOUNDNESS_PIN.toolchain ||
+    trusted.document.modules.length !== 1 ||
+    trusted.document.modules[0] !== TORCHLEAN_IBP_SOUNDNESS_PIN.module
+  ) {
+    return interpreted(
+      "formal-ir-mismatch",
+      "The supplied Formal IR does not match the exact TorchLean commit, toolchain, module, and extraction hash.",
+    );
+  }
+  const declaration = trusted.document.declarations.find(
+    (candidate) => candidate.name === TORCHLEAN_IBP_SOUNDNESS_PIN.declaration,
+  );
+  if (
+    !declaration ||
+    declaration.kind !== "theorem" ||
+    declaration.source?.module !== TORCHLEAN_IBP_SOUNDNESS_PIN.module ||
+    declaration.statement.pretty !== TORCHLEAN_IBP_SOUNDNESS_PIN.statement
+  ) {
+    return interpreted(
+      "formal-ir-mismatch",
+      "The trusted extraction does not contain the exact pinned IBP soundness theorem statement.",
+    );
+  }
+  const witness = kernelWitness(trusted.document, declaration);
+  if (!witness) {
+    return interpreted(
+      "formal-ir-mismatch",
+      "The pinned theorem cannot mint a kernel witness because extraction failed or reached sorry.",
+    );
+  }
+  const verified = transcribe(witness, declaration.statement.pretty, {
+    sources: [source],
+    inputs: [trusted.sha256, snapshot.source.commit],
+    note: "Lean 4.33 accepted TorchLean's generic runIBP enclosure theorem without sorry.",
+  });
+  return {
+    status: verified.status,
+    verification: "kernel-theorem-verified",
+    reason:
+      "Lean verifies the generic rule: for supported, topologically sorted graphs with enclosed inputs, runIBP bounds enclose recursive evaluation. The listed paper-specific premises are still owed.",
+    theorem: TORCHLEAN_IBP_SOUNDNESS_PIN,
+    premises,
+    provenance: verified.provenance,
+  };
+}
+
 function computeExample(example: TorchLeanMarginExample): TorchLeanExampleScene | null {
   if (
     !Number.isSafeInteger(example.id) ||
@@ -440,7 +584,11 @@ function computeExample(example: TorchLeanMarginExample): TorchLeanExampleScene 
  */
 export function compileTorchLeanMarginScene(
   snapshot: TorchLeanMarginSnapshot,
-  options: { receipt?: unknown; trustedFormalIr?: TrustedTorchLeanFormalIR } = {},
+  options: {
+    receipt?: unknown;
+    trustedFormalIr?: TrustedTorchLeanFormalIR;
+    trustedSoundnessFormalIr?: TrustedTorchLeanFormalIR;
+  } = {},
 ): TorchLeanSceneResult {
   if (!record(snapshot) || snapshot.format !== "prooflens_torchlean_margin_snapshot_v0_1") {
     return {
@@ -586,6 +734,7 @@ export function compileTorchLeanMarginScene(
   }
 
   const sourceUrl = `${snapshot.source.repository}/blob/${snapshot.source.commit}/${snapshot.source.path}`;
+  const soundness = soundnessEvidence(snapshot, options.trustedSoundnessFormalIr);
   const enclosure = enclosureEvidence(snapshot, options.receipt, options.trustedFormalIr);
   return {
     status: "ready",
@@ -621,11 +770,14 @@ export function compileTorchLeanMarginScene(
         inputs: [snapshot.source.sha256, snapshot.source.commit],
         note: "The source artifact is pinned and the margin arithmetic is recomputed by ProofLens. TorchLean was not executed by this adapter build.",
       },
+      soundness,
       enclosure,
       boundary:
         enclosure.status === "verified"
           ? "A matching trusted Lean kernel witness establishes the receipt's enclosure theorem; ProofLens separately recomputes the displayed margin."
-          : "This official TorchLean report excerpt is source-pinned and internally recomputed, but ProofLens has not established that its logit intervals enclose the model. TorchLean's own MarginCert documentation requires a separate verifier or propagation theorem for that claim.",
+          : soundness.status === "verified"
+            ? "TorchLean's generic IBP enclosure theorem is kernel-verified. This official report remains interpreted until its concrete model, graph premises, inputs, and displayed intervals are bound to that theorem."
+            : "This official TorchLean report excerpt is source-pinned and internally recomputed, but ProofLens has not established that its logit intervals enclose the model. TorchLean's own MarginCert documentation requires a separate verifier or propagation theorem for that claim.",
     },
   };
 }

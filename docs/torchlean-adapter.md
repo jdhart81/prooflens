@@ -37,10 +37,12 @@ Any mismatch blocks the scene.
 ## Epistemic boundary
 
 The current scene is `interpreted`, not `verified`. ProofLens has a pinned official artifact and
-recomputes its margin arithmetic, but does not run TorchLean in this adapter build and has not
-imported a Lean kernel witness establishing that the intervals enclose the model. This follows the
+recomputes its margin arithmetic. ProofLens has now built and extracted TorchLean's generic
+`runIBP?_encloses_evalGraphRec` theorem with Lean 4.33, but that theorem is conditional: it requires
+a topologically sorted supported graph and enclosed inputs. The report does not yet bind its model,
+parameters, perturbation region, and serialized intervals to those premises. This follows the
 boundary stated in TorchLean's own `MarginCert` module: its report checker validates internal
-arithmetic and summary fields; model enclosure requires a separate verifier or propagation theorem.
+arithmetic and summary fields; model enclosure requires a separate verifier or theorem application.
 
 The interface therefore says “positive margin,” not “kernel-verified robustness.” It also explains
 that “not certified” means the displayed bounds overlap, not that the model is necessarily wrong or
@@ -59,13 +61,24 @@ match. Only `kernelWitness()` can then provide the private capability required f
 claim to become `verified`. A serialized receipt, changed input, missing marker, theorem that reaches
 `sorry`, or unmatched Formal IR hash all remain `interpreted`.
 
-The web view displays source pin, margin replay, and model enclosure as a three-step evidence chain.
-The **Download enclosure request** control emits the exact JSON handoff for the isolated proof
-environment.
+## Generic IBP soundness theorem
+
+The checked-in `examples/torchlean-ibp-soundness.formal-ir.json` is a native ProofLens extraction
+from the pinned TorchLean commit under Lean 4.33. Its SHA-256 is
+`3aa4f293011dd4dcd30a6d280c8e2a63f7524c3aed7376254e8a1016f6800ae4`. The exact declaration,
+module, toolchain, statement, source commit, and extraction hash are pinned in the adapter. It has no
+`sorry` and can mint a ProofLens kernel witness.
+
+The web view therefore displays a four-step evidence chain: source pin, margin replay, generic IBP
+rule, and concrete model enclosure. The generic rule is green. The final step stays certificate debt
+until the artifact binding, topological-order, supported-operation, and input-enclosure premises are
+proved for this report. The visual IF/THEN rule makes this distinction explicit. The **Download
+enclosure request** control emits the exact JSON handoff for the remaining isolated proof work.
 
 ## Next gate
 
-Produce the first authoritative TorchLean propagation theorem for a complete model artifact, export
-it through its native Lean 4.33 toolchain, and return a receipt that satisfies this protocol. The
-checked-in official margin report does not contain that theorem, so the public example correctly
-continues to show certificate debt.
+Bind the digits model artifact and its parameters to TorchLean's graph semantics, discharge the
+generic theorem's concrete graph and input premises, and prove that its computed final boxes are the
+same intervals serialized in the report. Then return a receipt satisfying the enclosure protocol.
+Until that application theorem exists, the public example correctly continues to show certificate
+debt.

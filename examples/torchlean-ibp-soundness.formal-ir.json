@@ -1,0 +1,3231 @@
+{"toolchain": "4.33.0",
+ "system": "lean4",
+ "notationFidelity": "notation",
+ "modules": ["NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd"],
+ "formalIRVersion": "0.1.0",
+ "declarations":
+ [{"usesSorry": false,
+   "statement":
+   {"tree":
+    {"kind": "forall",
+     "body":
+     {"kind": "forall",
+      "body":
+      {"kind": "forall",
+       "body":
+       {"kind": "forall",
+        "body":
+        {"kind": "app",
+         "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"kind": "app",
+           "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+             "levels": [],
+             "kind": "const"}]}]},
+        "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+        "binderName": "a._@._internal._hyg.0",
+        "binderInfo": "default"},
+       "binderType":
+       {"kind": "app",
+        "fn": {"name": "Std.HashMap", "levels": ["0", "0"], "kind": "const"},
+        "args":
+        [{"name": "Nat", "levels": [], "kind": "const"},
+         {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+          "levels": [],
+          "kind": "const"},
+         {"kind": "app",
+          "fn":
+          {"name": "instBEqOfDecidableEq", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"name": "Nat", "levels": [], "kind": "const"},
+           {"name": "instDecidableEqNat", "levels": [], "kind": "const"}]},
+         {"name": "instHashableNat", "levels": [], "kind": "const"}]},
+       "binderName": "inputs",
+       "binderInfo": "default"},
+      "binderType":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "binderName": "ps",
+      "binderInfo": "default"},
+     "binderType":
+     {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+     "binderName": "g",
+     "binderInfo": "default"},
+    "pretty":
+    "NN.MLTheory.CROWN.Graph →\n  NN.MLTheory.CROWN.Graph.ParamStore ℝ →\n    Std.HashMap ℕ NN.MLTheory.CROWN.Graph.CertSoundness.Val →\n      ℕ → Array (Option NN.MLTheory.CROWN.Graph.CertSoundness.Val)",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph",
+     "NN.MLTheory.CROWN.Graph.ParamStore",
+     "Real",
+     "instContextReal",
+     "Std.HashMap",
+     "Nat",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+     "instBEqOfDecidableEq",
+     "instDecidableEqNat",
+     "instHashableNat",
+     "Array",
+     "Option"]},
+   "source":
+   {"startLine": 70,
+    "startColumn": 0,
+    "module": "NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd",
+    "endLine": 75,
+    "endColumn": 52},
+   "proofTermAvailable": true,
+   "namespace": "NN.MLTheory.CROWN.Graph.CertSoundness",
+   "name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix",
+   "kind": "definition",
+   "docstring": null,
+   "dependencies":
+   ["NN.MLTheory.CROWN.Graph",
+    "NN.MLTheory.CROWN.Graph.ParamStore",
+    "Real",
+    "instContextReal",
+    "Std.HashMap",
+    "Nat",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+    "instBEqOfDecidableEq",
+    "instDecidableEqNat",
+    "instHashableNat",
+    "Array",
+    "Option",
+    "Nat.brecOn",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix._f"],
+   "definitionBody":
+   {"tree":
+    {"kind": "app",
+     "fn": {"name": "Nat.brecOn", "levels": ["(0+1)"], "kind": "const"},
+     "args":
+     [{"kind": "lam",
+       "body":
+       {"kind": "app",
+        "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+        "args":
+        [{"kind": "app",
+          "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+            "levels": [],
+            "kind": "const"}]}]},
+       "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+       "binderName":
+       "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.529374641._hygCtx._hyg.17",
+       "binderInfo": "default"},
+      {"name": "a._@._internal._hyg.0", "kind": "fvar", "fvarId": "_uniq.4"},
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix._f",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "g", "kind": "fvar", "fvarId": "_uniq.1"},
+        {"name": "ps", "kind": "fvar", "fvarId": "_uniq.2"},
+        {"name": "inputs", "kind": "fvar", "fvarId": "_uniq.3"}]}]},
+    "pretty":
+    "Nat.brecOn a✝ (NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix._f g ps inputs)",
+    "constants":
+    ["Nat.brecOn",
+     "Nat",
+     "Array",
+     "Option",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix._f"]},
+   "conclusion":
+   {"tree":
+    {"kind": "app",
+     "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+     "args":
+     [{"kind": "app",
+       "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+         "levels": [],
+         "kind": "const"}]}]},
+    "pretty": "Array (Option NN.MLTheory.CROWN.Graph.CertSoundness.Val)",
+    "constants":
+    ["Array", "Option", "NN.MLTheory.CROWN.Graph.CertSoundness.Val"]},
+   "binders":
+   [{"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+      "pretty": "NN.MLTheory.CROWN.Graph",
+      "constants": ["NN.MLTheory.CROWN.Graph"]},
+     "role": "parameter",
+     "rawName": "g",
+     "name": "g",
+     "index": 0,
+     "fvarId": "_uniq.1",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.ParamStore ℝ",
+      "constants":
+      ["NN.MLTheory.CROWN.Graph.ParamStore", "Real", "instContextReal"]},
+     "role": "parameter",
+     "rawName": "ps",
+     "name": "ps",
+     "index": 1,
+     "fvarId": "_uniq.2",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn": {"name": "Std.HashMap", "levels": ["0", "0"], "kind": "const"},
+       "args":
+       [{"name": "Nat", "levels": [], "kind": "const"},
+        {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+         "levels": [],
+         "kind": "const"},
+        {"kind": "app",
+         "fn":
+         {"name": "instBEqOfDecidableEq", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "Nat", "levels": [], "kind": "const"},
+          {"name": "instDecidableEqNat", "levels": [], "kind": "const"}]},
+        {"name": "instHashableNat", "levels": [], "kind": "const"}]},
+      "pretty": "Std.HashMap ℕ NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+      "constants":
+      ["Std.HashMap",
+       "Nat",
+       "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+       "instBEqOfDecidableEq",
+       "instDecidableEqNat",
+       "instHashableNat"]},
+     "role": "parameter",
+     "rawName": "inputs",
+     "name": "inputs",
+     "index": 2,
+     "fvarId": "_uniq.3",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree": {"name": "Nat", "levels": [], "kind": "const"},
+      "pretty": "ℕ",
+      "constants": ["Nat"]},
+     "role": "parameter",
+     "rawName": "a._@._internal._hyg.0",
+     "name": "a✝",
+     "index": 3,
+     "fvarId": "_uniq.4",
+     "binderInfo": "default"}],
+   "axioms": ["propext", "Classical.choice", "Quot.sound"]},
+  {"usesSorry": false,
+   "statement":
+   {"tree":
+    {"kind": "forall",
+     "body":
+     {"kind": "forall",
+      "body":
+      {"kind": "forall",
+       "body":
+       {"kind": "forall",
+        "body":
+        {"kind": "app",
+         "fn": {"name": "Eq", "levels": ["(0+1)"], "kind": "const"},
+         "args":
+         [{"kind": "app",
+           "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"kind": "app",
+             "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+             "args":
+             [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+               "levels": [],
+               "kind": "const"}]}]},
+          {"kind": "app",
+           "fn":
+           {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix",
+            "levels": [],
+            "kind": "const"},
+           "args":
+           [{"kind": "bvar", "index": 3},
+            {"kind": "bvar", "index": 2},
+            {"kind": "bvar", "index": 1},
+            {"kind": "bvar", "index": 0}]},
+          {"kind": "app",
+           "fn":
+           {"name":
+            "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix.match_1",
+            "levels": ["(0+1)"],
+            "kind": "const"},
+           "args":
+           [{"kind": "lam",
+             "body":
+             {"kind": "app",
+              "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+              "args":
+              [{"kind": "app",
+                "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                "args":
+                [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                  "levels": [],
+                  "kind": "const"}]}]},
+             "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+             "binderName":
+             "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.529374641._hygCtx.17.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.529374641._hygCtx._hyg.29",
+             "binderInfo": "default"},
+            {"kind": "bvar", "index": 0},
+            {"kind": "lam",
+             "body":
+             {"kind": "app",
+              "fn":
+              {"name": "Array.replicate", "levels": ["0"], "kind": "const"},
+              "args":
+              [{"kind": "app",
+                "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                "args":
+                [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                  "levels": [],
+                  "kind": "const"}]},
+               {"kind": "app",
+                "fn": {"name": "Array.size", "levels": ["0"], "kind": "const"},
+                "args":
+                [{"name": "NN.IR.Node", "levels": [], "kind": "const"},
+                 {"kind": "app",
+                  "fn":
+                  {"name": "NN.IR.Graph.nodes", "levels": [], "kind": "const"},
+                  "args": [{"kind": "bvar", "index": 4}]}]},
+               {"kind": "app",
+                "fn": {"name": "Option.none", "levels": ["0"], "kind": "const"},
+                "args":
+                [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                  "levels": [],
+                  "kind": "const"}]}]},
+             "binderType": {"name": "Unit", "levels": [], "kind": "const"},
+             "binderName": "_",
+             "binderInfo": "default"},
+            {"kind": "lam",
+             "body":
+             {"value":
+              {"kind": "app",
+               "fn":
+               {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix",
+                "levels": [],
+                "kind": "const"},
+               "args":
+               [{"kind": "bvar", "index": 4},
+                {"kind": "bvar", "index": 3},
+                {"kind": "bvar", "index": 2},
+                {"kind": "bvar", "index": 0}]},
+              "kind": "let",
+              "body":
+              {"kind": "app",
+               "fn": {"name": "Array.set!", "levels": ["0"], "kind": "const"},
+               "args":
+               [{"kind": "app",
+                 "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                 "args":
+                 [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                   "levels": [],
+                   "kind": "const"}]},
+                {"kind": "bvar", "index": 0},
+                {"kind": "bvar", "index": 1},
+                {"kind": "app",
+                 "fn":
+                 {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalNode?",
+                  "levels": [],
+                  "kind": "const"},
+                 "args":
+                 [{"kind": "app",
+                   "fn":
+                   {"name": "NN.IR.Graph.nodes", "levels": [], "kind": "const"},
+                   "args": [{"kind": "bvar", "index": 5}]},
+                  {"kind": "bvar", "index": 4},
+                  {"kind": "bvar", "index": 3},
+                  {"kind": "bvar", "index": 0},
+                  {"kind": "bvar", "index": 1}]}]},
+              "binderType":
+              {"kind": "app",
+               "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+               "args":
+               [{"kind": "app",
+                 "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                 "args":
+                 [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                   "levels": [],
+                   "kind": "const"}]}]},
+              "binderName": "acc"},
+             "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+             "binderName": "n",
+             "binderInfo": "default"}]}]},
+        "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+        "binderName":
+        "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.529374641._hygCtx._hyg.17",
+        "binderInfo": "default"},
+       "binderType":
+       {"kind": "app",
+        "fn": {"name": "Std.HashMap", "levels": ["0", "0"], "kind": "const"},
+        "args":
+        [{"name": "Nat", "levels": [], "kind": "const"},
+         {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+          "levels": [],
+          "kind": "const"},
+         {"kind": "app",
+          "fn":
+          {"name": "instBEqOfDecidableEq", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"name": "Nat", "levels": [], "kind": "const"},
+           {"name": "instDecidableEqNat", "levels": [], "kind": "const"}]},
+         {"name": "instHashableNat", "levels": [], "kind": "const"}]},
+       "binderName": "inputs",
+       "binderInfo": "default"},
+      "binderType":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "binderName": "ps",
+      "binderInfo": "default"},
+     "binderType":
+     {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+     "binderName": "g",
+     "binderInfo": "default"},
+    "pretty":
+    "∀ (g : NN.MLTheory.CROWN.Graph) (ps : NN.MLTheory.CROWN.Graph.ParamStore ℝ)\n  (inputs : Std.HashMap ℕ NN.MLTheory.CROWN.Graph.CertSoundness.Val) (x : ℕ),\n  NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix g ps inputs x =\n    match x with\n    | 0 => Array.replicate g.nodes.size none\n    | n.succ =>\n      have acc := NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix g ps inputs n;\n      acc.set! n (NN.MLTheory.CROWN.Graph.CertSoundness.evalNode? g.nodes ps inputs acc n)",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph",
+     "NN.MLTheory.CROWN.Graph.ParamStore",
+     "Real",
+     "instContextReal",
+     "Std.HashMap",
+     "Nat",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+     "instBEqOfDecidableEq",
+     "instDecidableEqNat",
+     "instHashableNat",
+     "Eq",
+     "Array",
+     "Option",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix.match_1",
+     "Unit",
+     "Array.replicate",
+     "Array.size",
+     "NN.IR.Node",
+     "NN.IR.Graph.nodes",
+     "Option.none",
+     "Array.set!",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.evalNode?"]},
+   "source": null,
+   "proofTermAvailable": false,
+   "namespace": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix",
+   "name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix.eq_def",
+   "kind": "theorem",
+   "docstring": null,
+   "dependencies":
+   ["NN.MLTheory.CROWN.Graph",
+    "NN.MLTheory.CROWN.Graph.ParamStore",
+    "Real",
+    "instContextReal",
+    "Std.HashMap",
+    "Nat",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+    "instBEqOfDecidableEq",
+    "instDecidableEqNat",
+    "instHashableNat",
+    "Eq",
+    "Array",
+    "Option",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix.match_1",
+    "Unit",
+    "Array.replicate",
+    "Array.size",
+    "NN.IR.Node",
+    "NN.IR.Graph.nodes",
+    "Option.none",
+    "Array.set!",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.evalNode?"],
+   "definitionBody": null,
+   "conclusion":
+   {"tree":
+    {"kind": "app",
+     "fn": {"name": "Eq", "levels": ["(0+1)"], "kind": "const"},
+     "args":
+     [{"kind": "app",
+       "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"kind": "app",
+         "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+           "levels": [],
+           "kind": "const"}]}]},
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "g", "kind": "fvar", "fvarId": "_uniq.5"},
+        {"name": "ps", "kind": "fvar", "fvarId": "_uniq.6"},
+        {"name": "inputs", "kind": "fvar", "fvarId": "_uniq.7"},
+        {"name":
+         "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.529374641._hygCtx._hyg.17",
+         "kind": "fvar",
+         "fvarId": "_uniq.8"}]},
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix.match_1",
+        "levels": ["(0+1)"],
+        "kind": "const"},
+       "args":
+       [{"kind": "lam",
+         "body":
+         {"kind": "app",
+          "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"kind": "app",
+            "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+              "levels": [],
+              "kind": "const"}]}]},
+         "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+         "binderName":
+         "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.529374641._hygCtx.17.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.529374641._hygCtx._hyg.29",
+         "binderInfo": "default"},
+        {"name":
+         "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.529374641._hygCtx._hyg.17",
+         "kind": "fvar",
+         "fvarId": "_uniq.8"},
+        {"kind": "lam",
+         "body":
+         {"kind": "app",
+          "fn": {"name": "Array.replicate", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"kind": "app",
+            "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+              "levels": [],
+              "kind": "const"}]},
+           {"kind": "app",
+            "fn": {"name": "Array.size", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "NN.IR.Node", "levels": [], "kind": "const"},
+             {"kind": "app",
+              "fn":
+              {"name": "NN.IR.Graph.nodes", "levels": [], "kind": "const"},
+              "args": [{"name": "g", "kind": "fvar", "fvarId": "_uniq.5"}]}]},
+           {"kind": "app",
+            "fn": {"name": "Option.none", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+              "levels": [],
+              "kind": "const"}]}]},
+         "binderType": {"name": "Unit", "levels": [], "kind": "const"},
+         "binderName": "_",
+         "binderInfo": "default"},
+        {"kind": "lam",
+         "body":
+         {"value":
+          {"kind": "app",
+           "fn":
+           {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix",
+            "levels": [],
+            "kind": "const"},
+           "args":
+           [{"name": "g", "kind": "fvar", "fvarId": "_uniq.5"},
+            {"name": "ps", "kind": "fvar", "fvarId": "_uniq.6"},
+            {"name": "inputs", "kind": "fvar", "fvarId": "_uniq.7"},
+            {"kind": "bvar", "index": 0}]},
+          "kind": "let",
+          "body":
+          {"kind": "app",
+           "fn": {"name": "Array.set!", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"kind": "app",
+             "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+             "args":
+             [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+               "levels": [],
+               "kind": "const"}]},
+            {"kind": "bvar", "index": 0},
+            {"kind": "bvar", "index": 1},
+            {"kind": "app",
+             "fn":
+             {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalNode?",
+              "levels": [],
+              "kind": "const"},
+             "args":
+             [{"kind": "app",
+               "fn":
+               {"name": "NN.IR.Graph.nodes", "levels": [], "kind": "const"},
+               "args": [{"name": "g", "kind": "fvar", "fvarId": "_uniq.5"}]},
+              {"name": "ps", "kind": "fvar", "fvarId": "_uniq.6"},
+              {"name": "inputs", "kind": "fvar", "fvarId": "_uniq.7"},
+              {"kind": "bvar", "index": 0},
+              {"kind": "bvar", "index": 1}]}]},
+          "binderType":
+          {"kind": "app",
+           "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"kind": "app",
+             "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+             "args":
+             [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+               "levels": [],
+               "kind": "const"}]}]},
+          "binderName": "acc"},
+         "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+         "binderName": "n",
+         "binderInfo": "default"}]}]},
+    "pretty":
+    "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix g ps inputs x✝ =\n  match x✝ with\n  | 0 => Array.replicate g.nodes.size none\n  | n.succ =>\n    have acc := NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix g ps inputs n;\n    acc.set! n (NN.MLTheory.CROWN.Graph.CertSoundness.evalNode? g.nodes ps inputs acc n)",
+    "constants":
+    ["Eq",
+     "Array",
+     "Option",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix.match_1",
+     "Nat",
+     "Unit",
+     "Array.replicate",
+     "Array.size",
+     "NN.IR.Node",
+     "NN.IR.Graph.nodes",
+     "Option.none",
+     "Array.set!",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.evalNode?"]},
+   "binders":
+   [{"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": true},
+     "type":
+     {"tree":
+      {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+      "pretty": "NN.MLTheory.CROWN.Graph",
+      "constants": ["NN.MLTheory.CROWN.Graph"]},
+     "role": "parameter",
+     "rawName": "g",
+     "name": "g",
+     "index": 0,
+     "fvarId": "_uniq.5",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": true},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.ParamStore ℝ",
+      "constants":
+      ["NN.MLTheory.CROWN.Graph.ParamStore", "Real", "instContextReal"]},
+     "role": "parameter",
+     "rawName": "ps",
+     "name": "ps",
+     "index": 1,
+     "fvarId": "_uniq.6",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": true},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn": {"name": "Std.HashMap", "levels": ["0", "0"], "kind": "const"},
+       "args":
+       [{"name": "Nat", "levels": [], "kind": "const"},
+        {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+         "levels": [],
+         "kind": "const"},
+        {"kind": "app",
+         "fn":
+         {"name": "instBEqOfDecidableEq", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "Nat", "levels": [], "kind": "const"},
+          {"name": "instDecidableEqNat", "levels": [], "kind": "const"}]},
+        {"name": "instHashableNat", "levels": [], "kind": "const"}]},
+      "pretty": "Std.HashMap ℕ NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+      "constants":
+      ["Std.HashMap",
+       "Nat",
+       "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+       "instBEqOfDecidableEq",
+       "instDecidableEqNat",
+       "instHashableNat"]},
+     "role": "parameter",
+     "rawName": "inputs",
+     "name": "inputs",
+     "index": 2,
+     "fvarId": "_uniq.7",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": true},
+     "type":
+     {"tree": {"name": "Nat", "levels": [], "kind": "const"},
+      "pretty": "ℕ",
+      "constants": ["Nat"]},
+     "role": "parameter",
+     "rawName":
+     "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.529374641._hygCtx._hyg.17",
+     "name": "x✝",
+     "index": 3,
+     "fvarId": "_uniq.8",
+     "binderInfo": "default"}],
+   "axioms": ["propext", "Classical.choice", "Quot.sound"]},
+  {"usesSorry": false,
+   "statement":
+   {"tree":
+    {"kind": "forall",
+     "body":
+     {"kind": "forall",
+      "body":
+      {"kind": "forall",
+       "body":
+       {"kind": "app",
+        "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+        "args":
+        [{"kind": "app",
+          "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+            "levels": [],
+            "kind": "const"}]}]},
+       "binderType":
+       {"kind": "app",
+        "fn": {"name": "Std.HashMap", "levels": ["0", "0"], "kind": "const"},
+        "args":
+        [{"name": "Nat", "levels": [], "kind": "const"},
+         {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+          "levels": [],
+          "kind": "const"},
+         {"kind": "app",
+          "fn":
+          {"name": "instBEqOfDecidableEq", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"name": "Nat", "levels": [], "kind": "const"},
+           {"name": "instDecidableEqNat", "levels": [], "kind": "const"}]},
+         {"name": "instHashableNat", "levels": [], "kind": "const"}]},
+       "binderName": "inputs",
+       "binderInfo": "default"},
+      "binderType":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "binderName": "ps",
+      "binderInfo": "default"},
+     "binderType":
+     {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+     "binderName": "g",
+     "binderInfo": "default"},
+    "pretty":
+    "NN.MLTheory.CROWN.Graph →\n  NN.MLTheory.CROWN.Graph.ParamStore ℝ →\n    Std.HashMap ℕ NN.MLTheory.CROWN.Graph.CertSoundness.Val → Array (Option NN.MLTheory.CROWN.Graph.CertSoundness.Val)",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph",
+     "NN.MLTheory.CROWN.Graph.ParamStore",
+     "Real",
+     "instContextReal",
+     "Std.HashMap",
+     "Nat",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+     "instBEqOfDecidableEq",
+     "instDecidableEqNat",
+     "instHashableNat",
+     "Array",
+     "Option"]},
+   "source":
+   {"startLine": 77,
+    "startColumn": 0,
+    "module": "NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd",
+    "endLine": 80,
+    "endColumn": 42},
+   "proofTermAvailable": true,
+   "namespace": "NN.MLTheory.CROWN.Graph.CertSoundness",
+   "name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec",
+   "kind": "definition",
+   "docstring":
+   "Evaluate all nodes of `g` in id order, returning the final value array. ",
+   "dependencies":
+   ["NN.MLTheory.CROWN.Graph",
+    "NN.MLTheory.CROWN.Graph.ParamStore",
+    "Real",
+    "instContextReal",
+    "Std.HashMap",
+    "Nat",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+    "instBEqOfDecidableEq",
+    "instDecidableEqNat",
+    "instHashableNat",
+    "Array",
+    "Option",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix",
+    "Array.size",
+    "NN.IR.Node",
+    "NN.IR.Graph.nodes"],
+   "definitionBody":
+   {"tree":
+    {"kind": "app",
+     "fn":
+     {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix",
+      "levels": [],
+      "kind": "const"},
+     "args":
+     [{"name": "g", "kind": "fvar", "fvarId": "_uniq.9"},
+      {"name": "ps", "kind": "fvar", "fvarId": "_uniq.10"},
+      {"name": "inputs", "kind": "fvar", "fvarId": "_uniq.11"},
+      {"kind": "app",
+       "fn": {"name": "Array.size", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"name": "NN.IR.Node", "levels": [], "kind": "const"},
+        {"kind": "app",
+         "fn": {"name": "NN.IR.Graph.nodes", "levels": [], "kind": "const"},
+         "args": [{"name": "g", "kind": "fvar", "fvarId": "_uniq.9"}]}]}]},
+    "pretty":
+    "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix g ps inputs g.nodes.size",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix",
+     "Array.size",
+     "NN.IR.Node",
+     "NN.IR.Graph.nodes"]},
+   "conclusion":
+   {"tree":
+    {"kind": "app",
+     "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+     "args":
+     [{"kind": "app",
+       "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+         "levels": [],
+         "kind": "const"}]}]},
+    "pretty": "Array (Option NN.MLTheory.CROWN.Graph.CertSoundness.Val)",
+    "constants":
+    ["Array", "Option", "NN.MLTheory.CROWN.Graph.CertSoundness.Val"]},
+   "binders":
+   [{"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+      "pretty": "NN.MLTheory.CROWN.Graph",
+      "constants": ["NN.MLTheory.CROWN.Graph"]},
+     "role": "parameter",
+     "rawName": "g",
+     "name": "g",
+     "index": 0,
+     "fvarId": "_uniq.9",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.ParamStore ℝ",
+      "constants":
+      ["NN.MLTheory.CROWN.Graph.ParamStore", "Real", "instContextReal"]},
+     "role": "parameter",
+     "rawName": "ps",
+     "name": "ps",
+     "index": 1,
+     "fvarId": "_uniq.10",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn": {"name": "Std.HashMap", "levels": ["0", "0"], "kind": "const"},
+       "args":
+       [{"name": "Nat", "levels": [], "kind": "const"},
+        {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+         "levels": [],
+         "kind": "const"},
+        {"kind": "app",
+         "fn":
+         {"name": "instBEqOfDecidableEq", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "Nat", "levels": [], "kind": "const"},
+          {"name": "instDecidableEqNat", "levels": [], "kind": "const"}]},
+        {"name": "instHashableNat", "levels": [], "kind": "const"}]},
+      "pretty": "Std.HashMap ℕ NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+      "constants":
+      ["Std.HashMap",
+       "Nat",
+       "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+       "instBEqOfDecidableEq",
+       "instDecidableEqNat",
+       "instHashableNat"]},
+     "role": "parameter",
+     "rawName": "inputs",
+     "name": "inputs",
+     "index": 2,
+     "fvarId": "_uniq.11",
+     "binderInfo": "default"}],
+   "axioms": ["propext", "Classical.choice", "Quot.sound"]},
+  {"usesSorry": false,
+   "statement":
+   {"tree":
+    {"kind": "forall",
+     "body":
+     {"kind": "forall",
+      "body":
+      {"kind": "forall",
+       "body":
+       {"kind": "forall",
+        "body":
+        {"kind": "forall",
+         "body":
+         {"kind": "app",
+          "fn":
+          {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.SemLocalOK",
+           "levels": [],
+           "kind": "const"},
+          "args":
+          [{"kind": "bvar", "index": 4},
+           {"kind": "bvar", "index": 3},
+           {"kind": "bvar", "index": 2},
+           {"kind": "app",
+            "fn":
+            {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec",
+             "levels": [],
+             "kind": "const"},
+            "args":
+            [{"kind": "bvar", "index": 4},
+             {"kind": "bvar", "index": 3},
+             {"kind": "bvar", "index": 2}]}]},
+         "binderType":
+         {"kind": "app",
+          "fn":
+          {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Supported",
+           "levels": [],
+           "kind": "const"},
+          "args": [{"kind": "bvar", "index": 3}]},
+         "binderName": "hsupp",
+         "binderInfo": "default"},
+        "binderType":
+        {"kind": "app",
+         "fn":
+         {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted",
+          "levels": [],
+          "kind": "const"},
+         "args": [{"kind": "bvar", "index": 2}]},
+        "binderName": "htopo",
+        "binderInfo": "default"},
+       "binderType":
+       {"kind": "app",
+        "fn": {"name": "Std.HashMap", "levels": ["0", "0"], "kind": "const"},
+        "args":
+        [{"name": "Nat", "levels": [], "kind": "const"},
+         {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+          "levels": [],
+          "kind": "const"},
+         {"kind": "app",
+          "fn":
+          {"name": "instBEqOfDecidableEq", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"name": "Nat", "levels": [], "kind": "const"},
+           {"name": "instDecidableEqNat", "levels": [], "kind": "const"}]},
+         {"name": "instHashableNat", "levels": [], "kind": "const"}]},
+       "binderName": "inputs",
+       "binderInfo": "default"},
+      "binderType":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "binderName": "ps",
+      "binderInfo": "default"},
+     "binderType":
+     {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+     "binderName": "g",
+     "binderInfo": "default"},
+    "pretty":
+    "∀ (g : NN.MLTheory.CROWN.Graph) (ps : NN.MLTheory.CROWN.Graph.ParamStore ℝ)\n  (inputs : Std.HashMap ℕ NN.MLTheory.CROWN.Graph.CertSoundness.Val),\n  NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted g →\n    NN.MLTheory.CROWN.Graph.CertSoundness.Supported g →\n      NN.MLTheory.CROWN.Graph.CertSoundness.SemLocalOK g ps inputs\n        (NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec g ps inputs)",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph",
+     "NN.MLTheory.CROWN.Graph.ParamStore",
+     "Real",
+     "instContextReal",
+     "Std.HashMap",
+     "Nat",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+     "instBEqOfDecidableEq",
+     "instDecidableEqNat",
+     "instHashableNat",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.Supported",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.SemLocalOK",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec"]},
+   "source":
+   {"startLine": 410,
+    "startColumn": 0,
+    "module": "NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd",
+    "endLine": 478,
+    "endColumn": 74},
+   "proofTermAvailable": false,
+   "namespace": "NN.MLTheory.CROWN.Graph.CertSoundness",
+   "name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec_SemLocalOK",
+   "kind": "theorem",
+   "docstring": null,
+   "dependencies":
+   ["NN.MLTheory.CROWN.Graph",
+    "NN.MLTheory.CROWN.Graph.ParamStore",
+    "Real",
+    "instContextReal",
+    "Std.HashMap",
+    "Nat",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+    "instBEqOfDecidableEq",
+    "instDecidableEqNat",
+    "instHashableNat",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.Supported",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.SemLocalOK",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec"],
+   "definitionBody": null,
+   "conclusion":
+   {"tree":
+    {"kind": "app",
+     "fn":
+     {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.SemLocalOK",
+      "levels": [],
+      "kind": "const"},
+     "args":
+     [{"name": "g", "kind": "fvar", "fvarId": "_uniq.12"},
+      {"name": "ps", "kind": "fvar", "fvarId": "_uniq.13"},
+      {"name": "inputs", "kind": "fvar", "fvarId": "_uniq.14"},
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "g", "kind": "fvar", "fvarId": "_uniq.12"},
+        {"name": "ps", "kind": "fvar", "fvarId": "_uniq.13"},
+        {"name": "inputs", "kind": "fvar", "fvarId": "_uniq.14"}]}]},
+    "pretty":
+    "NN.MLTheory.CROWN.Graph.CertSoundness.SemLocalOK g ps inputs\n  (NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec g ps inputs)",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph.CertSoundness.SemLocalOK",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec"]},
+   "binders":
+   [{"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": true,
+      "occursInConclusion": true},
+     "type":
+     {"tree":
+      {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+      "pretty": "NN.MLTheory.CROWN.Graph",
+      "constants": ["NN.MLTheory.CROWN.Graph"]},
+     "role": "parameter",
+     "rawName": "g",
+     "name": "g",
+     "index": 0,
+     "fvarId": "_uniq.12",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": true},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.ParamStore ℝ",
+      "constants":
+      ["NN.MLTheory.CROWN.Graph.ParamStore", "Real", "instContextReal"]},
+     "role": "parameter",
+     "rawName": "ps",
+     "name": "ps",
+     "index": 1,
+     "fvarId": "_uniq.13",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": true},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn": {"name": "Std.HashMap", "levels": ["0", "0"], "kind": "const"},
+       "args":
+       [{"name": "Nat", "levels": [], "kind": "const"},
+        {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+         "levels": [],
+         "kind": "const"},
+        {"kind": "app",
+         "fn":
+         {"name": "instBEqOfDecidableEq", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "Nat", "levels": [], "kind": "const"},
+          {"name": "instDecidableEqNat", "levels": [], "kind": "const"}]},
+        {"name": "instHashableNat", "levels": [], "kind": "const"}]},
+      "pretty": "Std.HashMap ℕ NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+      "constants":
+      ["Std.HashMap",
+       "Nat",
+       "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+       "instBEqOfDecidableEq",
+       "instDecidableEqNat",
+       "instHashableNat"]},
+     "role": "parameter",
+     "rawName": "inputs",
+     "name": "inputs",
+     "index": 2,
+     "fvarId": "_uniq.14",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted",
+        "levels": [],
+        "kind": "const"},
+       "args": [{"name": "g", "kind": "fvar", "fvarId": "_uniq.12"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted g",
+      "constants": ["NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted"]},
+     "role": "hypothesis",
+     "rawName": "htopo",
+     "name": "htopo",
+     "index": 3,
+     "fvarId": "_uniq.15",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Supported",
+        "levels": [],
+        "kind": "const"},
+       "args": [{"name": "g", "kind": "fvar", "fvarId": "_uniq.12"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.CertSoundness.Supported g",
+      "constants": ["NN.MLTheory.CROWN.Graph.CertSoundness.Supported"]},
+     "role": "hypothesis",
+     "rawName": "hsupp",
+     "name": "hsupp",
+     "index": 4,
+     "fvarId": "_uniq.16",
+     "binderInfo": "default"}],
+   "axioms": ["propext", "Classical.choice", "Quot.sound"]},
+  {"usesSorry": false,
+   "statement":
+   {"tree":
+    {"kind": "forall",
+     "body":
+     {"kind": "forall",
+      "body":
+      {"kind": "app",
+       "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"kind": "app",
+         "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"kind": "app",
+           "fn":
+           {"name": "NN.MLTheory.CROWN.FlatBox", "levels": [], "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"name": "instContextReal", "levels": [], "kind": "const"}]}]}]},
+      "binderType":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "binderName": "ps",
+      "binderInfo": "default"},
+     "binderType":
+     {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+     "binderName": "g",
+     "binderInfo": "default"},
+    "pretty":
+    "NN.MLTheory.CROWN.Graph → NN.MLTheory.CROWN.Graph.ParamStore ℝ → Array (Option (NN.MLTheory.CROWN.FlatBox ℝ))",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph",
+     "NN.MLTheory.CROWN.Graph.ParamStore",
+     "Real",
+     "instContextReal",
+     "Array",
+     "Option",
+     "NN.MLTheory.CROWN.FlatBox"]},
+   "source":
+   {"startLine": 89,
+    "startColumn": 0,
+    "module": "NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd",
+    "endLine": 91,
+    "endColumn": 32},
+   "proofTermAvailable": true,
+   "namespace": "NN.MLTheory.CROWN.Graph.CertSoundness",
+   "name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?",
+   "kind": "definition",
+   "docstring":
+   "Run the safe IBP checker step across the full graph, producing a per-node certificate array. ",
+   "dependencies":
+   ["NN.MLTheory.CROWN.Graph",
+    "NN.MLTheory.CROWN.Graph.ParamStore",
+    "Real",
+    "instContextReal",
+    "Array",
+    "Option",
+    "NN.MLTheory.CROWN.FlatBox",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix",
+    "Array.size",
+    "NN.IR.Node",
+    "NN.IR.Graph.nodes"],
+   "definitionBody":
+   {"tree":
+    {"kind": "app",
+     "fn":
+     {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix",
+      "levels": [],
+      "kind": "const"},
+     "args":
+     [{"name": "g", "kind": "fvar", "fvarId": "_uniq.17"},
+      {"name": "ps", "kind": "fvar", "fvarId": "_uniq.18"},
+      {"kind": "app",
+       "fn": {"name": "Array.size", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"name": "NN.IR.Node", "levels": [], "kind": "const"},
+        {"kind": "app",
+         "fn": {"name": "NN.IR.Graph.nodes", "levels": [], "kind": "const"},
+         "args": [{"name": "g", "kind": "fvar", "fvarId": "_uniq.17"}]}]}]},
+    "pretty":
+    "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix g ps g.nodes.size",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix",
+     "Array.size",
+     "NN.IR.Node",
+     "NN.IR.Graph.nodes"]},
+   "conclusion":
+   {"tree":
+    {"kind": "app",
+     "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+     "args":
+     [{"kind": "app",
+       "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"kind": "app",
+         "fn":
+         {"name": "NN.MLTheory.CROWN.FlatBox", "levels": [], "kind": "const"},
+         "args":
+         [{"name": "Real", "levels": [], "kind": "const"},
+          {"name": "instContextReal", "levels": [], "kind": "const"}]}]}]},
+    "pretty": "Array (Option (NN.MLTheory.CROWN.FlatBox ℝ))",
+    "constants":
+    ["Array",
+     "Option",
+     "NN.MLTheory.CROWN.FlatBox",
+     "Real",
+     "instContextReal"]},
+   "binders":
+   [{"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+      "pretty": "NN.MLTheory.CROWN.Graph",
+      "constants": ["NN.MLTheory.CROWN.Graph"]},
+     "role": "parameter",
+     "rawName": "g",
+     "name": "g",
+     "index": 0,
+     "fvarId": "_uniq.17",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.ParamStore ℝ",
+      "constants":
+      ["NN.MLTheory.CROWN.Graph.ParamStore", "Real", "instContextReal"]},
+     "role": "parameter",
+     "rawName": "ps",
+     "name": "ps",
+     "index": 1,
+     "fvarId": "_uniq.18",
+     "binderInfo": "default"}],
+   "axioms": ["propext", "Classical.choice", "Quot.sound"]},
+  {"usesSorry": false,
+   "statement":
+   {"tree":
+    {"kind": "forall",
+     "body":
+     {"kind": "forall",
+      "body":
+      {"kind": "forall",
+       "body":
+       {"kind": "app",
+        "fn":
+        {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.CertLocalOK",
+         "levels": [],
+         "kind": "const"},
+        "args":
+        [{"kind": "bvar", "index": 2},
+         {"kind": "bvar", "index": 1},
+         {"kind": "app",
+          "fn":
+          {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?",
+           "levels": [],
+           "kind": "const"},
+          "args":
+          [{"kind": "bvar", "index": 2}, {"kind": "bvar", "index": 1}]}]},
+       "binderType":
+       {"kind": "app",
+        "fn":
+        {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted",
+         "levels": [],
+         "kind": "const"},
+        "args": [{"kind": "bvar", "index": 1}]},
+       "binderName": "htopo",
+       "binderInfo": "default"},
+      "binderType":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "binderName": "ps",
+      "binderInfo": "default"},
+     "binderType":
+     {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+     "binderName": "g",
+     "binderInfo": "default"},
+    "pretty":
+    "∀ (g : NN.MLTheory.CROWN.Graph) (ps : NN.MLTheory.CROWN.Graph.ParamStore ℝ),\n  NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted g →\n    NN.MLTheory.CROWN.Graph.CertSoundness.CertLocalOK g ps (NN.MLTheory.CROWN.Graph.CertSoundness.runIBP? g ps)",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph",
+     "NN.MLTheory.CROWN.Graph.ParamStore",
+     "Real",
+     "instContextReal",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.CertLocalOK",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?"]},
+   "source":
+   {"startLine": 480,
+    "startColumn": 0,
+    "module": "NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd",
+    "endLine": 531,
+    "endColumn": 20},
+   "proofTermAvailable": false,
+   "namespace": "NN.MLTheory.CROWN.Graph.CertSoundness",
+   "name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?_CertLocalOK",
+   "kind": "theorem",
+   "docstring":
+   "Under topological order, the certificate produced by `runIBP?` satisfies `CertLocalOK`. ",
+   "dependencies":
+   ["NN.MLTheory.CROWN.Graph",
+    "NN.MLTheory.CROWN.Graph.ParamStore",
+    "Real",
+    "instContextReal",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.CertLocalOK",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?"],
+   "definitionBody": null,
+   "conclusion":
+   {"tree":
+    {"kind": "app",
+     "fn":
+     {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.CertLocalOK",
+      "levels": [],
+      "kind": "const"},
+     "args":
+     [{"name": "g", "kind": "fvar", "fvarId": "_uniq.19"},
+      {"name": "ps", "kind": "fvar", "fvarId": "_uniq.20"},
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "g", "kind": "fvar", "fvarId": "_uniq.19"},
+        {"name": "ps", "kind": "fvar", "fvarId": "_uniq.20"}]}]},
+    "pretty":
+    "NN.MLTheory.CROWN.Graph.CertSoundness.CertLocalOK g ps (NN.MLTheory.CROWN.Graph.CertSoundness.runIBP? g ps)",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph.CertSoundness.CertLocalOK",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?"]},
+   "binders":
+   [{"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": true,
+      "occursInConclusion": true},
+     "type":
+     {"tree":
+      {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+      "pretty": "NN.MLTheory.CROWN.Graph",
+      "constants": ["NN.MLTheory.CROWN.Graph"]},
+     "role": "parameter",
+     "rawName": "g",
+     "name": "g",
+     "index": 0,
+     "fvarId": "_uniq.19",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": true},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.ParamStore ℝ",
+      "constants":
+      ["NN.MLTheory.CROWN.Graph.ParamStore", "Real", "instContextReal"]},
+     "role": "parameter",
+     "rawName": "ps",
+     "name": "ps",
+     "index": 1,
+     "fvarId": "_uniq.20",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted",
+        "levels": [],
+        "kind": "const"},
+       "args": [{"name": "g", "kind": "fvar", "fvarId": "_uniq.19"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted g",
+      "constants": ["NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted"]},
+     "role": "hypothesis",
+     "rawName": "htopo",
+     "name": "htopo",
+     "index": 2,
+     "fvarId": "_uniq.21",
+     "binderInfo": "default"}],
+   "axioms": ["propext", "Classical.choice", "Quot.sound"]},
+  {"usesSorry": false,
+   "statement":
+   {"tree":
+    {"kind": "forall",
+     "body":
+     {"kind": "forall",
+      "body":
+      {"kind": "forall",
+       "body":
+       {"kind": "forall",
+        "body":
+        {"kind": "forall",
+         "body":
+         {"kind": "forall",
+          "body":
+          {"kind": "forall",
+           "body":
+           {"kind": "forall",
+            "body":
+            {"kind": "app",
+             "fn":
+             {"name":
+              "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?_encloses_evalGraphRec.match_1",
+              "levels": ["(0+1)"],
+              "kind": "const"},
+             "args":
+             [{"kind": "lam",
+               "body":
+               {"kind": "lam",
+                "body": {"level": "0", "kind": "sort"},
+                "binderType":
+                {"kind": "app",
+                 "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                 "args":
+                 [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                   "levels": [],
+                   "kind": "const"}]},
+                "binderName":
+                "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.4107902695._hygCtx._hyg.61",
+                "binderInfo": "default"},
+               "binderType":
+               {"kind": "app",
+                "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                "args":
+                [{"kind": "app",
+                  "fn":
+                  {"name": "NN.MLTheory.CROWN.FlatBox",
+                   "levels": [],
+                   "kind": "const"},
+                  "args":
+                  [{"name": "Real", "levels": [], "kind": "const"},
+                   {"name": "instContextReal",
+                    "levels": [],
+                    "kind": "const"}]}]},
+               "binderName":
+               "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.4107902695._hygCtx._hyg.59",
+               "binderInfo": "default"},
+              {"kind": "app",
+               "fn":
+               {"name": "GetElem?.getElem!",
+                "levels": ["0", "0", "0"],
+                "kind": "const"},
+               "args":
+               [{"kind": "app",
+                 "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+                 "args":
+                 [{"kind": "app",
+                   "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                   "args":
+                   [{"kind": "app",
+                     "fn":
+                     {"name": "NN.MLTheory.CROWN.FlatBox",
+                      "levels": [],
+                      "kind": "const"},
+                     "args":
+                     [{"name": "Real", "levels": [], "kind": "const"},
+                      {"name": "instContextReal",
+                       "levels": [],
+                       "kind": "const"}]}]}]},
+                {"name": "Nat", "levels": [], "kind": "const"},
+                {"kind": "app",
+                 "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                 "args":
+                 [{"kind": "app",
+                   "fn":
+                   {"name": "NN.MLTheory.CROWN.FlatBox",
+                    "levels": [],
+                    "kind": "const"},
+                   "args":
+                   [{"name": "Real", "levels": [], "kind": "const"},
+                    {"name": "instContextReal",
+                     "levels": [],
+                     "kind": "const"}]}]},
+                {"kind": "lam",
+                 "body":
+                 {"kind": "lam",
+                  "body":
+                  {"kind": "app",
+                   "fn": {"name": "LT.lt", "levels": ["0"], "kind": "const"},
+                   "args":
+                   [{"name": "Nat", "levels": [], "kind": "const"},
+                    {"name": "instLTNat", "levels": [], "kind": "const"},
+                    {"kind": "bvar", "index": 0},
+                    {"kind": "app",
+                     "fn":
+                     {"name": "Array.size", "levels": ["0"], "kind": "const"},
+                     "args":
+                     [{"kind": "app",
+                       "fn":
+                       {"name": "Option", "levels": ["0"], "kind": "const"},
+                       "args":
+                       [{"kind": "app",
+                         "fn":
+                         {"name": "NN.MLTheory.CROWN.FlatBox",
+                          "levels": [],
+                          "kind": "const"},
+                         "args":
+                         [{"name": "Real", "levels": [], "kind": "const"},
+                          {"name": "instContextReal",
+                           "levels": [],
+                           "kind": "const"}]}]},
+                      {"kind": "bvar", "index": 1}]}]},
+                  "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+                  "binderName": "i",
+                  "binderInfo": "default"},
+                 "binderType":
+                 {"kind": "app",
+                  "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+                  "args":
+                  [{"kind": "app",
+                    "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                    "args":
+                    [{"kind": "app",
+                      "fn":
+                      {"name": "NN.MLTheory.CROWN.FlatBox",
+                       "levels": [],
+                       "kind": "const"},
+                      "args":
+                      [{"name": "Real", "levels": [], "kind": "const"},
+                       {"name": "instContextReal",
+                        "levels": [],
+                        "kind": "const"}]}]}]},
+                 "binderName": "xs",
+                 "binderInfo": "default"},
+                {"kind": "app",
+                 "fn":
+                 {"name": "Array.instGetElem?NatLtSize",
+                  "levels": ["0"],
+                  "kind": "const"},
+                 "args":
+                 [{"kind": "app",
+                   "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                   "args":
+                   [{"kind": "app",
+                     "fn":
+                     {"name": "NN.MLTheory.CROWN.FlatBox",
+                      "levels": [],
+                      "kind": "const"},
+                     "args":
+                     [{"name": "Real", "levels": [], "kind": "const"},
+                      {"name": "instContextReal",
+                       "levels": [],
+                       "kind": "const"}]}]}]},
+                {"kind": "app",
+                 "fn":
+                 {"name": "instInhabitedOption",
+                  "levels": ["0"],
+                  "kind": "const"},
+                 "args":
+                 [{"kind": "app",
+                   "fn":
+                   {"name": "NN.MLTheory.CROWN.FlatBox",
+                    "levels": [],
+                    "kind": "const"},
+                   "args":
+                   [{"name": "Real", "levels": [], "kind": "const"},
+                    {"name": "instContextReal",
+                     "levels": [],
+                     "kind": "const"}]}]},
+                {"kind": "app",
+                 "fn":
+                 {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?",
+                  "levels": [],
+                  "kind": "const"},
+                 "args":
+                 [{"kind": "bvar", "index": 7}, {"kind": "bvar", "index": 6}]},
+                {"kind": "bvar", "index": 1}]},
+              {"kind": "app",
+               "fn":
+               {"name": "GetElem?.getElem!",
+                "levels": ["0", "0", "0"],
+                "kind": "const"},
+               "args":
+               [{"kind": "app",
+                 "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+                 "args":
+                 [{"kind": "app",
+                   "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                   "args":
+                   [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                     "levels": [],
+                     "kind": "const"}]}]},
+                {"name": "Nat", "levels": [], "kind": "const"},
+                {"kind": "app",
+                 "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                 "args":
+                 [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                   "levels": [],
+                   "kind": "const"}]},
+                {"kind": "lam",
+                 "body":
+                 {"kind": "lam",
+                  "body":
+                  {"kind": "app",
+                   "fn": {"name": "LT.lt", "levels": ["0"], "kind": "const"},
+                   "args":
+                   [{"name": "Nat", "levels": [], "kind": "const"},
+                    {"name": "instLTNat", "levels": [], "kind": "const"},
+                    {"kind": "bvar", "index": 0},
+                    {"kind": "app",
+                     "fn":
+                     {"name": "Array.size", "levels": ["0"], "kind": "const"},
+                     "args":
+                     [{"kind": "app",
+                       "fn":
+                       {"name": "Option", "levels": ["0"], "kind": "const"},
+                       "args":
+                       [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                         "levels": [],
+                         "kind": "const"}]},
+                      {"kind": "bvar", "index": 1}]}]},
+                  "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+                  "binderName": "i",
+                  "binderInfo": "default"},
+                 "binderType":
+                 {"kind": "app",
+                  "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+                  "args":
+                  [{"kind": "app",
+                    "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                    "args":
+                    [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                      "levels": [],
+                      "kind": "const"}]}]},
+                 "binderName": "xs",
+                 "binderInfo": "default"},
+                {"kind": "app",
+                 "fn":
+                 {"name": "Array.instGetElem?NatLtSize",
+                  "levels": ["0"],
+                  "kind": "const"},
+                 "args":
+                 [{"kind": "app",
+                   "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                   "args":
+                   [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                     "levels": [],
+                     "kind": "const"}]}]},
+                {"kind": "app",
+                 "fn":
+                 {"name": "instInhabitedOption",
+                  "levels": ["0"],
+                  "kind": "const"},
+                 "args":
+                 [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                   "levels": [],
+                   "kind": "const"}]},
+                {"kind": "app",
+                 "fn":
+                 {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec",
+                  "levels": [],
+                  "kind": "const"},
+                 "args":
+                 [{"kind": "bvar", "index": 7},
+                  {"kind": "bvar", "index": 6},
+                  {"kind": "bvar", "index": 5}]},
+                {"kind": "bvar", "index": 1}]},
+              {"kind": "lam",
+               "body":
+               {"kind": "lam",
+                "body":
+                {"kind": "app",
+                 "fn":
+                 {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.EnclosesBox",
+                  "levels": [],
+                  "kind": "const"},
+                 "args":
+                 [{"kind": "bvar", "index": 1}, {"kind": "bvar", "index": 0}]},
+                "binderType":
+                {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                 "levels": [],
+                 "kind": "const"},
+                "binderName": "v",
+                "binderInfo": "default"},
+               "binderType":
+               {"kind": "app",
+                "fn":
+                {"name": "NN.MLTheory.CROWN.FlatBox",
+                 "levels": [],
+                 "kind": "const"},
+                "args":
+                [{"name": "Real", "levels": [], "kind": "const"},
+                 {"name": "instContextReal", "levels": [], "kind": "const"}]},
+               "binderName": "B",
+               "binderInfo": "default"},
+              {"kind": "lam",
+               "body":
+               {"kind": "lam",
+                "body": {"name": "True", "levels": [], "kind": "const"},
+                "binderType":
+                {"kind": "app",
+                 "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                 "args":
+                 [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                   "levels": [],
+                   "kind": "const"}]},
+                "binderName":
+                "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.4107902695._hygCtx._hyg.81",
+                "binderInfo": "default"},
+               "binderType":
+               {"kind": "app",
+                "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                "args":
+                [{"kind": "app",
+                  "fn":
+                  {"name": "NN.MLTheory.CROWN.FlatBox",
+                   "levels": [],
+                   "kind": "const"},
+                  "args":
+                  [{"name": "Real", "levels": [], "kind": "const"},
+                   {"name": "instContextReal",
+                    "levels": [],
+                    "kind": "const"}]}]},
+               "binderName":
+               "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.4107902695._hygCtx._hyg.82",
+               "binderInfo": "default"}]},
+            "binderType":
+            {"kind": "app",
+             "fn": {"name": "LT.lt", "levels": ["0"], "kind": "const"},
+             "args":
+             [{"name": "Nat", "levels": [], "kind": "const"},
+              {"name": "instLTNat", "levels": [], "kind": "const"},
+              {"kind": "bvar", "index": 0},
+              {"kind": "app",
+               "fn": {"name": "Array.size", "levels": ["0"], "kind": "const"},
+               "args":
+               [{"name": "NN.IR.Node", "levels": [], "kind": "const"},
+                {"kind": "app",
+                 "fn":
+                 {"name": "NN.IR.Graph.nodes", "levels": [], "kind": "const"},
+                 "args": [{"kind": "bvar", "index": 6}]}]}]},
+            "binderName": "a._@._internal._hyg.0",
+            "binderInfo": "default"},
+           "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+           "binderName": "id",
+           "binderInfo": "default"},
+          "binderType":
+          {"kind": "app",
+           "fn":
+           {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.InputsEnclosed",
+            "levels": [],
+            "kind": "const"},
+           "args":
+           [{"kind": "bvar", "index": 4},
+            {"kind": "bvar", "index": 3},
+            {"kind": "bvar", "index": 2}]},
+          "binderName": "hinputs",
+          "binderInfo": "default"},
+         "binderType":
+         {"kind": "app",
+          "fn":
+          {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Supported",
+           "levels": [],
+           "kind": "const"},
+          "args": [{"kind": "bvar", "index": 3}]},
+         "binderName": "hsupp",
+         "binderInfo": "default"},
+        "binderType":
+        {"kind": "app",
+         "fn":
+         {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted",
+          "levels": [],
+          "kind": "const"},
+         "args": [{"kind": "bvar", "index": 2}]},
+        "binderName": "htopo",
+        "binderInfo": "default"},
+       "binderType":
+       {"kind": "app",
+        "fn": {"name": "Std.HashMap", "levels": ["0", "0"], "kind": "const"},
+        "args":
+        [{"name": "Nat", "levels": [], "kind": "const"},
+         {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+          "levels": [],
+          "kind": "const"},
+         {"kind": "app",
+          "fn":
+          {"name": "instBEqOfDecidableEq", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"name": "Nat", "levels": [], "kind": "const"},
+           {"name": "instDecidableEqNat", "levels": [], "kind": "const"}]},
+         {"name": "instHashableNat", "levels": [], "kind": "const"}]},
+       "binderName": "inputs",
+       "binderInfo": "default"},
+      "binderType":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "binderName": "ps",
+      "binderInfo": "default"},
+     "binderType":
+     {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+     "binderName": "g",
+     "binderInfo": "default"},
+    "pretty":
+    "∀ (g : NN.MLTheory.CROWN.Graph) (ps : NN.MLTheory.CROWN.Graph.ParamStore ℝ)\n  (inputs : Std.HashMap ℕ NN.MLTheory.CROWN.Graph.CertSoundness.Val),\n  NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted g →\n    NN.MLTheory.CROWN.Graph.CertSoundness.Supported g →\n      NN.MLTheory.CROWN.Graph.CertSoundness.InputsEnclosed g ps inputs →\n        ∀ id < g.nodes.size,\n          match (NN.MLTheory.CROWN.Graph.CertSoundness.runIBP? g ps)[id]!,\n            (NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec g ps inputs)[id]! with\n          | some B, some v => NN.MLTheory.CROWN.Graph.CertSoundness.EnclosesBox B v\n          | x, x_1 => True",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph",
+     "NN.MLTheory.CROWN.Graph.ParamStore",
+     "Real",
+     "instContextReal",
+     "Std.HashMap",
+     "Nat",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+     "instBEqOfDecidableEq",
+     "instDecidableEqNat",
+     "instHashableNat",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.Supported",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.InputsEnclosed",
+     "LT.lt",
+     "instLTNat",
+     "Array.size",
+     "NN.IR.Node",
+     "NN.IR.Graph.nodes",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?_encloses_evalGraphRec.match_1",
+     "Option",
+     "NN.MLTheory.CROWN.FlatBox",
+     "GetElem?.getElem!",
+     "Array",
+     "Array.instGetElem?NatLtSize",
+     "instInhabitedOption",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.EnclosesBox",
+     "True"]},
+   "source":
+   {"startLine": 537,
+    "startColumn": 0,
+    "module": "NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd",
+    "endLine": 560,
+    "endColumn": 24},
+   "proofTermAvailable": false,
+   "namespace": "NN.MLTheory.CROWN.Graph.CertSoundness",
+   "name":
+   "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?_encloses_evalGraphRec",
+   "kind": "theorem",
+   "docstring": null,
+   "dependencies":
+   ["NN.MLTheory.CROWN.Graph",
+    "NN.MLTheory.CROWN.Graph.ParamStore",
+    "Real",
+    "instContextReal",
+    "Std.HashMap",
+    "Nat",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+    "instBEqOfDecidableEq",
+    "instDecidableEqNat",
+    "instHashableNat",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.Supported",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.InputsEnclosed",
+    "LT.lt",
+    "instLTNat",
+    "Array.size",
+    "NN.IR.Node",
+    "NN.IR.Graph.nodes",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?_encloses_evalGraphRec.match_1",
+    "Option",
+    "NN.MLTheory.CROWN.FlatBox",
+    "GetElem?.getElem!",
+    "Array",
+    "Array.instGetElem?NatLtSize",
+    "instInhabitedOption",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.EnclosesBox",
+    "True"],
+   "definitionBody": null,
+   "conclusion":
+   {"tree":
+    {"kind": "app",
+     "fn":
+     {"name":
+      "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?_encloses_evalGraphRec.match_1",
+      "levels": ["(0+1)"],
+      "kind": "const"},
+     "args":
+     [{"kind": "lam",
+       "body":
+       {"kind": "lam",
+        "body": {"level": "0", "kind": "sort"},
+        "binderType":
+        {"kind": "app",
+         "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+           "levels": [],
+           "kind": "const"}]},
+        "binderName":
+        "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.4107902695._hygCtx._hyg.61",
+        "binderInfo": "default"},
+       "binderType":
+       {"kind": "app",
+        "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+        "args":
+        [{"kind": "app",
+          "fn":
+          {"name": "NN.MLTheory.CROWN.FlatBox", "levels": [], "kind": "const"},
+          "args":
+          [{"name": "Real", "levels": [], "kind": "const"},
+           {"name": "instContextReal", "levels": [], "kind": "const"}]}]},
+       "binderName":
+       "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.4107902695._hygCtx._hyg.59",
+       "binderInfo": "default"},
+      {"kind": "app",
+       "fn":
+       {"name": "GetElem?.getElem!",
+        "levels": ["0", "0", "0"],
+        "kind": "const"},
+       "args":
+       [{"kind": "app",
+         "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"kind": "app",
+           "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"kind": "app",
+             "fn":
+             {"name": "NN.MLTheory.CROWN.FlatBox",
+              "levels": [],
+              "kind": "const"},
+             "args":
+             [{"name": "Real", "levels": [], "kind": "const"},
+              {"name": "instContextReal", "levels": [], "kind": "const"}]}]}]},
+        {"name": "Nat", "levels": [], "kind": "const"},
+        {"kind": "app",
+         "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"kind": "app",
+           "fn":
+           {"name": "NN.MLTheory.CROWN.FlatBox", "levels": [], "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"name": "instContextReal", "levels": [], "kind": "const"}]}]},
+        {"kind": "lam",
+         "body":
+         {"kind": "lam",
+          "body":
+          {"kind": "app",
+           "fn": {"name": "LT.lt", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"name": "Nat", "levels": [], "kind": "const"},
+            {"name": "instLTNat", "levels": [], "kind": "const"},
+            {"kind": "bvar", "index": 0},
+            {"kind": "app",
+             "fn": {"name": "Array.size", "levels": ["0"], "kind": "const"},
+             "args":
+             [{"kind": "app",
+               "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+               "args":
+               [{"kind": "app",
+                 "fn":
+                 {"name": "NN.MLTheory.CROWN.FlatBox",
+                  "levels": [],
+                  "kind": "const"},
+                 "args":
+                 [{"name": "Real", "levels": [], "kind": "const"},
+                  {"name": "instContextReal",
+                   "levels": [],
+                   "kind": "const"}]}]},
+              {"kind": "bvar", "index": 1}]}]},
+          "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+          "binderName": "i",
+          "binderInfo": "default"},
+         "binderType":
+         {"kind": "app",
+          "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"kind": "app",
+            "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"kind": "app",
+              "fn":
+              {"name": "NN.MLTheory.CROWN.FlatBox",
+               "levels": [],
+               "kind": "const"},
+              "args":
+              [{"name": "Real", "levels": [], "kind": "const"},
+               {"name": "instContextReal", "levels": [], "kind": "const"}]}]}]},
+         "binderName": "xs",
+         "binderInfo": "default"},
+        {"kind": "app",
+         "fn":
+         {"name": "Array.instGetElem?NatLtSize",
+          "levels": ["0"],
+          "kind": "const"},
+         "args":
+         [{"kind": "app",
+           "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"kind": "app",
+             "fn":
+             {"name": "NN.MLTheory.CROWN.FlatBox",
+              "levels": [],
+              "kind": "const"},
+             "args":
+             [{"name": "Real", "levels": [], "kind": "const"},
+              {"name": "instContextReal", "levels": [], "kind": "const"}]}]}]},
+        {"kind": "app",
+         "fn":
+         {"name": "instInhabitedOption", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"kind": "app",
+           "fn":
+           {"name": "NN.MLTheory.CROWN.FlatBox", "levels": [], "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"name": "instContextReal", "levels": [], "kind": "const"}]}]},
+        {"kind": "app",
+         "fn":
+         {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?",
+          "levels": [],
+          "kind": "const"},
+         "args":
+         [{"name": "g", "kind": "fvar", "fvarId": "_uniq.22"},
+          {"name": "ps", "kind": "fvar", "fvarId": "_uniq.23"}]},
+        {"name": "id", "kind": "fvar", "fvarId": "_uniq.28"}]},
+      {"kind": "app",
+       "fn":
+       {"name": "GetElem?.getElem!",
+        "levels": ["0", "0", "0"],
+        "kind": "const"},
+       "args":
+       [{"kind": "app",
+         "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"kind": "app",
+           "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+             "levels": [],
+             "kind": "const"}]}]},
+        {"name": "Nat", "levels": [], "kind": "const"},
+        {"kind": "app",
+         "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+           "levels": [],
+           "kind": "const"}]},
+        {"kind": "lam",
+         "body":
+         {"kind": "lam",
+          "body":
+          {"kind": "app",
+           "fn": {"name": "LT.lt", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"name": "Nat", "levels": [], "kind": "const"},
+            {"name": "instLTNat", "levels": [], "kind": "const"},
+            {"kind": "bvar", "index": 0},
+            {"kind": "app",
+             "fn": {"name": "Array.size", "levels": ["0"], "kind": "const"},
+             "args":
+             [{"kind": "app",
+               "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+               "args":
+               [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+                 "levels": [],
+                 "kind": "const"}]},
+              {"kind": "bvar", "index": 1}]}]},
+          "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+          "binderName": "i",
+          "binderInfo": "default"},
+         "binderType":
+         {"kind": "app",
+          "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"kind": "app",
+            "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+              "levels": [],
+              "kind": "const"}]}]},
+         "binderName": "xs",
+         "binderInfo": "default"},
+        {"kind": "app",
+         "fn":
+         {"name": "Array.instGetElem?NatLtSize",
+          "levels": ["0"],
+          "kind": "const"},
+         "args":
+         [{"kind": "app",
+           "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+             "levels": [],
+             "kind": "const"}]}]},
+        {"kind": "app",
+         "fn":
+         {"name": "instInhabitedOption", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+           "levels": [],
+           "kind": "const"}]},
+        {"kind": "app",
+         "fn":
+         {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec",
+          "levels": [],
+          "kind": "const"},
+         "args":
+         [{"name": "g", "kind": "fvar", "fvarId": "_uniq.22"},
+          {"name": "ps", "kind": "fvar", "fvarId": "_uniq.23"},
+          {"name": "inputs", "kind": "fvar", "fvarId": "_uniq.24"}]},
+        {"name": "id", "kind": "fvar", "fvarId": "_uniq.28"}]},
+      {"kind": "lam",
+       "body":
+       {"kind": "lam",
+        "body":
+        {"kind": "app",
+         "fn":
+         {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.EnclosesBox",
+          "levels": [],
+          "kind": "const"},
+         "args": [{"kind": "bvar", "index": 1}, {"kind": "bvar", "index": 0}]},
+        "binderType":
+        {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+         "levels": [],
+         "kind": "const"},
+        "binderName": "v",
+        "binderInfo": "default"},
+       "binderType":
+       {"kind": "app",
+        "fn":
+        {"name": "NN.MLTheory.CROWN.FlatBox", "levels": [], "kind": "const"},
+        "args":
+        [{"name": "Real", "levels": [], "kind": "const"},
+         {"name": "instContextReal", "levels": [], "kind": "const"}]},
+       "binderName": "B",
+       "binderInfo": "default"},
+      {"kind": "lam",
+       "body":
+       {"kind": "lam",
+        "body": {"name": "True", "levels": [], "kind": "const"},
+        "binderType":
+        {"kind": "app",
+         "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+           "levels": [],
+           "kind": "const"}]},
+        "binderName":
+        "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.4107902695._hygCtx._hyg.81",
+        "binderInfo": "default"},
+       "binderType":
+       {"kind": "app",
+        "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+        "args":
+        [{"kind": "app",
+          "fn":
+          {"name": "NN.MLTheory.CROWN.FlatBox", "levels": [], "kind": "const"},
+          "args":
+          [{"name": "Real", "levels": [], "kind": "const"},
+           {"name": "instContextReal", "levels": [], "kind": "const"}]}]},
+       "binderName":
+       "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.4107902695._hygCtx._hyg.82",
+       "binderInfo": "default"}]},
+    "pretty":
+    "match (NN.MLTheory.CROWN.Graph.CertSoundness.runIBP? g ps)[id]!,\n  (NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec g ps inputs)[id]! with\n| some B, some v => NN.MLTheory.CROWN.Graph.CertSoundness.EnclosesBox B v\n| x, x_1 => True",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?_encloses_evalGraphRec.match_1",
+     "Option",
+     "NN.MLTheory.CROWN.FlatBox",
+     "Real",
+     "instContextReal",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+     "GetElem?.getElem!",
+     "Array",
+     "Nat",
+     "LT.lt",
+     "instLTNat",
+     "Array.size",
+     "Array.instGetElem?NatLtSize",
+     "instInhabitedOption",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.runIBP?",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphRec",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.EnclosesBox",
+     "True"]},
+   "binders":
+   [{"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": true,
+      "occursInConclusion": true},
+     "type":
+     {"tree":
+      {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+      "pretty": "NN.MLTheory.CROWN.Graph",
+      "constants": ["NN.MLTheory.CROWN.Graph"]},
+     "role": "parameter",
+     "rawName": "g",
+     "name": "g",
+     "index": 0,
+     "fvarId": "_uniq.22",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": true,
+      "occursInConclusion": true},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.ParamStore ℝ",
+      "constants":
+      ["NN.MLTheory.CROWN.Graph.ParamStore", "Real", "instContextReal"]},
+     "role": "parameter",
+     "rawName": "ps",
+     "name": "ps",
+     "index": 1,
+     "fvarId": "_uniq.23",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": true,
+      "occursInConclusion": true},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn": {"name": "Std.HashMap", "levels": ["0", "0"], "kind": "const"},
+       "args":
+       [{"name": "Nat", "levels": [], "kind": "const"},
+        {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+         "levels": [],
+         "kind": "const"},
+        {"kind": "app",
+         "fn":
+         {"name": "instBEqOfDecidableEq", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "Nat", "levels": [], "kind": "const"},
+          {"name": "instDecidableEqNat", "levels": [], "kind": "const"}]},
+        {"name": "instHashableNat", "levels": [], "kind": "const"}]},
+      "pretty": "Std.HashMap ℕ NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+      "constants":
+      ["Std.HashMap",
+       "Nat",
+       "NN.MLTheory.CROWN.Graph.CertSoundness.Val",
+       "instBEqOfDecidableEq",
+       "instDecidableEqNat",
+       "instHashableNat"]},
+     "role": "parameter",
+     "rawName": "inputs",
+     "name": "inputs",
+     "index": 2,
+     "fvarId": "_uniq.24",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted",
+        "levels": [],
+        "kind": "const"},
+       "args": [{"name": "g", "kind": "fvar", "fvarId": "_uniq.22"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted g",
+      "constants": ["NN.MLTheory.CROWN.Graph.CertSoundness.TopoSorted"]},
+     "role": "hypothesis",
+     "rawName": "htopo",
+     "name": "htopo",
+     "index": 3,
+     "fvarId": "_uniq.25",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.Supported",
+        "levels": [],
+        "kind": "const"},
+       "args": [{"name": "g", "kind": "fvar", "fvarId": "_uniq.22"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.CertSoundness.Supported g",
+      "constants": ["NN.MLTheory.CROWN.Graph.CertSoundness.Supported"]},
+     "role": "hypothesis",
+     "rawName": "hsupp",
+     "name": "hsupp",
+     "index": 4,
+     "fvarId": "_uniq.26",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.InputsEnclosed",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "g", "kind": "fvar", "fvarId": "_uniq.22"},
+        {"name": "ps", "kind": "fvar", "fvarId": "_uniq.23"},
+        {"name": "inputs", "kind": "fvar", "fvarId": "_uniq.24"}]},
+      "pretty":
+      "NN.MLTheory.CROWN.Graph.CertSoundness.InputsEnclosed g ps inputs",
+      "constants": ["NN.MLTheory.CROWN.Graph.CertSoundness.InputsEnclosed"]},
+     "role": "hypothesis",
+     "rawName": "hinputs",
+     "name": "hinputs",
+     "index": 5,
+     "fvarId": "_uniq.27",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": true,
+      "occursInConclusion": true},
+     "type":
+     {"tree": {"name": "Nat", "levels": [], "kind": "const"},
+      "pretty": "ℕ",
+      "constants": ["Nat"]},
+     "role": "parameter",
+     "rawName": "id",
+     "name": "id",
+     "index": 6,
+     "fvarId": "_uniq.28",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn": {"name": "LT.lt", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"name": "Nat", "levels": [], "kind": "const"},
+        {"name": "instLTNat", "levels": [], "kind": "const"},
+        {"name": "id", "kind": "fvar", "fvarId": "_uniq.28"},
+        {"kind": "app",
+         "fn": {"name": "Array.size", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"name": "NN.IR.Node", "levels": [], "kind": "const"},
+          {"kind": "app",
+           "fn": {"name": "NN.IR.Graph.nodes", "levels": [], "kind": "const"},
+           "args": [{"name": "g", "kind": "fvar", "fvarId": "_uniq.22"}]}]}]},
+      "pretty": "id < g.nodes.size",
+      "constants":
+      ["LT.lt",
+       "Nat",
+       "instLTNat",
+       "Array.size",
+       "NN.IR.Node",
+       "NN.IR.Graph.nodes"]},
+     "role": "hypothesis",
+     "rawName": "a._@._internal._hyg.0",
+     "name": "a✝",
+     "index": 7,
+     "fvarId": "_uniq.29",
+     "binderInfo": "default"}],
+   "axioms": ["propext", "Classical.choice", "Quot.sound"]},
+  {"usesSorry": false,
+   "statement":
+   {"tree":
+    {"kind": "forall",
+     "body":
+     {"kind": "forall",
+      "body":
+      {"kind": "forall",
+       "body":
+       {"kind": "app",
+        "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+        "args":
+        [{"kind": "app",
+          "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"kind": "app",
+            "fn":
+            {"name": "NN.MLTheory.CROWN.FlatBox",
+             "levels": [],
+             "kind": "const"},
+            "args":
+            [{"name": "Real", "levels": [], "kind": "const"},
+             {"name": "instContextReal", "levels": [], "kind": "const"}]}]}]},
+       "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+       "binderName": "a._@._internal._hyg.0",
+       "binderInfo": "default"},
+      "binderType":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "binderName": "ps",
+      "binderInfo": "default"},
+     "binderType":
+     {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+     "binderName": "g",
+     "binderInfo": "default"},
+    "pretty":
+    "NN.MLTheory.CROWN.Graph → NN.MLTheory.CROWN.Graph.ParamStore ℝ → ℕ → Array (Option (NN.MLTheory.CROWN.FlatBox ℝ))",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph",
+     "NN.MLTheory.CROWN.Graph.ParamStore",
+     "Real",
+     "instContextReal",
+     "Nat",
+     "Array",
+     "Option",
+     "NN.MLTheory.CROWN.FlatBox"]},
+   "source":
+   {"startLine": 82,
+    "startColumn": 0,
+    "module": "NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd",
+    "endLine": 87,
+    "endColumn": 49},
+   "proofTermAvailable": true,
+   "namespace": "NN.MLTheory.CROWN.Graph.CertSoundness",
+   "name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix",
+   "kind": "definition",
+   "docstring":
+   "Prefix evaluator for the safe IBP checker step (`certStepNode?`). ",
+   "dependencies":
+   ["NN.MLTheory.CROWN.Graph",
+    "NN.MLTheory.CROWN.Graph.ParamStore",
+    "Real",
+    "instContextReal",
+    "Nat",
+    "Array",
+    "Option",
+    "NN.MLTheory.CROWN.FlatBox",
+    "Nat.brecOn",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix._f"],
+   "definitionBody":
+   {"tree":
+    {"kind": "app",
+     "fn": {"name": "Nat.brecOn", "levels": ["(0+1)"], "kind": "const"},
+     "args":
+     [{"kind": "lam",
+       "body":
+       {"kind": "app",
+        "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+        "args":
+        [{"kind": "app",
+          "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"kind": "app",
+            "fn":
+            {"name": "NN.MLTheory.CROWN.FlatBox",
+             "levels": [],
+             "kind": "const"},
+            "args":
+            [{"name": "Real", "levels": [], "kind": "const"},
+             {"name": "instContextReal", "levels": [], "kind": "const"}]}]}]},
+       "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+       "binderName":
+       "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.895558167._hygCtx._hyg.19",
+       "binderInfo": "default"},
+      {"name": "a._@._internal._hyg.0", "kind": "fvar", "fvarId": "_uniq.32"},
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix._f",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "g", "kind": "fvar", "fvarId": "_uniq.30"},
+        {"name": "ps", "kind": "fvar", "fvarId": "_uniq.31"}]}]},
+    "pretty":
+    "Nat.brecOn a✝ (NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix._f g ps)",
+    "constants":
+    ["Nat.brecOn",
+     "Nat",
+     "Array",
+     "Option",
+     "NN.MLTheory.CROWN.FlatBox",
+     "Real",
+     "instContextReal",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix._f"]},
+   "conclusion":
+   {"tree":
+    {"kind": "app",
+     "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+     "args":
+     [{"kind": "app",
+       "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"kind": "app",
+         "fn":
+         {"name": "NN.MLTheory.CROWN.FlatBox", "levels": [], "kind": "const"},
+         "args":
+         [{"name": "Real", "levels": [], "kind": "const"},
+          {"name": "instContextReal", "levels": [], "kind": "const"}]}]}]},
+    "pretty": "Array (Option (NN.MLTheory.CROWN.FlatBox ℝ))",
+    "constants":
+    ["Array",
+     "Option",
+     "NN.MLTheory.CROWN.FlatBox",
+     "Real",
+     "instContextReal"]},
+   "binders":
+   [{"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+      "pretty": "NN.MLTheory.CROWN.Graph",
+      "constants": ["NN.MLTheory.CROWN.Graph"]},
+     "role": "parameter",
+     "rawName": "g",
+     "name": "g",
+     "index": 0,
+     "fvarId": "_uniq.30",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.ParamStore ℝ",
+      "constants":
+      ["NN.MLTheory.CROWN.Graph.ParamStore", "Real", "instContextReal"]},
+     "role": "parameter",
+     "rawName": "ps",
+     "name": "ps",
+     "index": 1,
+     "fvarId": "_uniq.31",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": true,
+      "occursInProofTerm": true,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": false},
+     "type":
+     {"tree": {"name": "Nat", "levels": [], "kind": "const"},
+      "pretty": "ℕ",
+      "constants": ["Nat"]},
+     "role": "parameter",
+     "rawName": "a._@._internal._hyg.0",
+     "name": "a✝",
+     "index": 2,
+     "fvarId": "_uniq.32",
+     "binderInfo": "default"}],
+   "axioms": ["propext", "Classical.choice", "Quot.sound"]},
+  {"usesSorry": false,
+   "statement":
+   {"tree":
+    {"kind": "forall",
+     "body":
+     {"kind": "forall",
+      "body":
+      {"kind": "forall",
+       "body":
+       {"kind": "app",
+        "fn": {"name": "Eq", "levels": ["(0+1)"], "kind": "const"},
+        "args":
+        [{"kind": "app",
+          "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"kind": "app",
+            "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"kind": "app",
+              "fn":
+              {"name": "NN.MLTheory.CROWN.FlatBox",
+               "levels": [],
+               "kind": "const"},
+              "args":
+              [{"name": "Real", "levels": [], "kind": "const"},
+               {"name": "instContextReal", "levels": [], "kind": "const"}]}]}]},
+         {"kind": "app",
+          "fn":
+          {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix",
+           "levels": [],
+           "kind": "const"},
+          "args":
+          [{"kind": "bvar", "index": 2},
+           {"kind": "bvar", "index": 1},
+           {"kind": "bvar", "index": 0}]},
+         {"kind": "app",
+          "fn":
+          {"name":
+           "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix.match_1",
+           "levels": ["(0+1)"],
+           "kind": "const"},
+          "args":
+          [{"kind": "lam",
+            "body":
+            {"kind": "app",
+             "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+             "args":
+             [{"kind": "app",
+               "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+               "args":
+               [{"kind": "app",
+                 "fn":
+                 {"name": "NN.MLTheory.CROWN.FlatBox",
+                  "levels": [],
+                  "kind": "const"},
+                 "args":
+                 [{"name": "Real", "levels": [], "kind": "const"},
+                  {"name": "instContextReal",
+                   "levels": [],
+                   "kind": "const"}]}]}]},
+            "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+            "binderName":
+            "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.895558167._hygCtx.19.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.895558167._hygCtx._hyg.31",
+            "binderInfo": "default"},
+           {"kind": "bvar", "index": 0},
+           {"kind": "lam",
+            "body":
+            {"kind": "app",
+             "fn":
+             {"name": "Array.replicate", "levels": ["0"], "kind": "const"},
+             "args":
+             [{"kind": "app",
+               "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+               "args":
+               [{"kind": "app",
+                 "fn":
+                 {"name": "NN.MLTheory.CROWN.FlatBox",
+                  "levels": [],
+                  "kind": "const"},
+                 "args":
+                 [{"name": "Real", "levels": [], "kind": "const"},
+                  {"name": "instContextReal",
+                   "levels": [],
+                   "kind": "const"}]}]},
+              {"kind": "app",
+               "fn": {"name": "Array.size", "levels": ["0"], "kind": "const"},
+               "args":
+               [{"name": "NN.IR.Node", "levels": [], "kind": "const"},
+                {"kind": "app",
+                 "fn":
+                 {"name": "NN.IR.Graph.nodes", "levels": [], "kind": "const"},
+                 "args": [{"kind": "bvar", "index": 3}]}]},
+              {"kind": "app",
+               "fn": {"name": "Option.none", "levels": ["0"], "kind": "const"},
+               "args":
+               [{"kind": "app",
+                 "fn":
+                 {"name": "NN.MLTheory.CROWN.FlatBox",
+                  "levels": [],
+                  "kind": "const"},
+                 "args":
+                 [{"name": "Real", "levels": [], "kind": "const"},
+                  {"name": "instContextReal",
+                   "levels": [],
+                   "kind": "const"}]}]}]},
+            "binderType": {"name": "Unit", "levels": [], "kind": "const"},
+            "binderName": "_",
+            "binderInfo": "default"},
+           {"kind": "lam",
+            "body":
+            {"value":
+             {"kind": "app",
+              "fn":
+              {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix",
+               "levels": [],
+               "kind": "const"},
+              "args":
+              [{"kind": "bvar", "index": 3},
+               {"kind": "bvar", "index": 2},
+               {"kind": "bvar", "index": 0}]},
+             "kind": "let",
+             "body":
+             {"kind": "app",
+              "fn": {"name": "Array.set!", "levels": ["0"], "kind": "const"},
+              "args":
+              [{"kind": "app",
+                "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                "args":
+                [{"kind": "app",
+                  "fn":
+                  {"name": "NN.MLTheory.CROWN.FlatBox",
+                   "levels": [],
+                   "kind": "const"},
+                  "args":
+                  [{"name": "Real", "levels": [], "kind": "const"},
+                   {"name": "instContextReal",
+                    "levels": [],
+                    "kind": "const"}]}]},
+               {"kind": "bvar", "index": 0},
+               {"kind": "bvar", "index": 1},
+               {"kind": "app",
+                "fn":
+                {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.certStepNode?",
+                 "levels": [],
+                 "kind": "const"},
+                "args":
+                [{"kind": "app",
+                  "fn":
+                  {"name": "NN.IR.Graph.nodes", "levels": [], "kind": "const"},
+                  "args": [{"kind": "bvar", "index": 4}]},
+                 {"kind": "bvar", "index": 3},
+                 {"kind": "bvar", "index": 0},
+                 {"kind": "bvar", "index": 1}]}]},
+             "binderType":
+             {"kind": "app",
+              "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+              "args":
+              [{"kind": "app",
+                "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+                "args":
+                [{"kind": "app",
+                  "fn":
+                  {"name": "NN.MLTheory.CROWN.FlatBox",
+                   "levels": [],
+                   "kind": "const"},
+                  "args":
+                  [{"name": "Real", "levels": [], "kind": "const"},
+                   {"name": "instContextReal",
+                    "levels": [],
+                    "kind": "const"}]}]}]},
+             "binderName": "acc"},
+            "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+            "binderName": "n",
+            "binderInfo": "default"}]}]},
+       "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+       "binderName":
+       "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.895558167._hygCtx._hyg.19",
+       "binderInfo": "default"},
+      "binderType":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "binderName": "ps",
+      "binderInfo": "default"},
+     "binderType":
+     {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+     "binderName": "g",
+     "binderInfo": "default"},
+    "pretty":
+    "∀ (g : NN.MLTheory.CROWN.Graph) (ps : NN.MLTheory.CROWN.Graph.ParamStore ℝ) (x : ℕ),\n  NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix g ps x =\n    match x with\n    | 0 => Array.replicate g.nodes.size none\n    | n.succ =>\n      have acc := NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix g ps n;\n      acc.set! n (NN.MLTheory.CROWN.Graph.CertSoundness.certStepNode? g.nodes ps acc n)",
+    "constants":
+    ["NN.MLTheory.CROWN.Graph",
+     "NN.MLTheory.CROWN.Graph.ParamStore",
+     "Real",
+     "instContextReal",
+     "Nat",
+     "Eq",
+     "Array",
+     "Option",
+     "NN.MLTheory.CROWN.FlatBox",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix.match_1",
+     "Unit",
+     "Array.replicate",
+     "Array.size",
+     "NN.IR.Node",
+     "NN.IR.Graph.nodes",
+     "Option.none",
+     "Array.set!",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.certStepNode?"]},
+   "source": null,
+   "proofTermAvailable": false,
+   "namespace": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix",
+   "name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix.eq_def",
+   "kind": "theorem",
+   "docstring": null,
+   "dependencies":
+   ["NN.MLTheory.CROWN.Graph",
+    "NN.MLTheory.CROWN.Graph.ParamStore",
+    "Real",
+    "instContextReal",
+    "Nat",
+    "Eq",
+    "Array",
+    "Option",
+    "NN.MLTheory.CROWN.FlatBox",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix.match_1",
+    "Unit",
+    "Array.replicate",
+    "Array.size",
+    "NN.IR.Node",
+    "NN.IR.Graph.nodes",
+    "Option.none",
+    "Array.set!",
+    "NN.MLTheory.CROWN.Graph.CertSoundness.certStepNode?"],
+   "definitionBody": null,
+   "conclusion":
+   {"tree":
+    {"kind": "app",
+     "fn": {"name": "Eq", "levels": ["(0+1)"], "kind": "const"},
+     "args":
+     [{"kind": "app",
+       "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+       "args":
+       [{"kind": "app",
+         "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+         "args":
+         [{"kind": "app",
+           "fn":
+           {"name": "NN.MLTheory.CROWN.FlatBox", "levels": [], "kind": "const"},
+           "args":
+           [{"name": "Real", "levels": [], "kind": "const"},
+            {"name": "instContextReal", "levels": [], "kind": "const"}]}]}]},
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "g", "kind": "fvar", "fvarId": "_uniq.33"},
+        {"name": "ps", "kind": "fvar", "fvarId": "_uniq.34"},
+        {"name":
+         "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.895558167._hygCtx._hyg.19",
+         "kind": "fvar",
+         "fvarId": "_uniq.35"}]},
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix.match_1",
+        "levels": ["(0+1)"],
+        "kind": "const"},
+       "args":
+       [{"kind": "lam",
+         "body":
+         {"kind": "app",
+          "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"kind": "app",
+            "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"kind": "app",
+              "fn":
+              {"name": "NN.MLTheory.CROWN.FlatBox",
+               "levels": [],
+               "kind": "const"},
+              "args":
+              [{"name": "Real", "levels": [], "kind": "const"},
+               {"name": "instContextReal", "levels": [], "kind": "const"}]}]}]},
+         "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+         "binderName":
+         "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.895558167._hygCtx.19.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.895558167._hygCtx._hyg.31",
+         "binderInfo": "default"},
+        {"name":
+         "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.895558167._hygCtx._hyg.19",
+         "kind": "fvar",
+         "fvarId": "_uniq.35"},
+        {"kind": "lam",
+         "body":
+         {"kind": "app",
+          "fn": {"name": "Array.replicate", "levels": ["0"], "kind": "const"},
+          "args":
+          [{"kind": "app",
+            "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"kind": "app",
+              "fn":
+              {"name": "NN.MLTheory.CROWN.FlatBox",
+               "levels": [],
+               "kind": "const"},
+              "args":
+              [{"name": "Real", "levels": [], "kind": "const"},
+               {"name": "instContextReal", "levels": [], "kind": "const"}]}]},
+           {"kind": "app",
+            "fn": {"name": "Array.size", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"name": "NN.IR.Node", "levels": [], "kind": "const"},
+             {"kind": "app",
+              "fn":
+              {"name": "NN.IR.Graph.nodes", "levels": [], "kind": "const"},
+              "args": [{"name": "g", "kind": "fvar", "fvarId": "_uniq.33"}]}]},
+           {"kind": "app",
+            "fn": {"name": "Option.none", "levels": ["0"], "kind": "const"},
+            "args":
+            [{"kind": "app",
+              "fn":
+              {"name": "NN.MLTheory.CROWN.FlatBox",
+               "levels": [],
+               "kind": "const"},
+              "args":
+              [{"name": "Real", "levels": [], "kind": "const"},
+               {"name": "instContextReal", "levels": [], "kind": "const"}]}]}]},
+         "binderType": {"name": "Unit", "levels": [], "kind": "const"},
+         "binderName": "_",
+         "binderInfo": "default"},
+        {"kind": "lam",
+         "body":
+         {"value":
+          {"kind": "app",
+           "fn":
+           {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix",
+            "levels": [],
+            "kind": "const"},
+           "args":
+           [{"name": "g", "kind": "fvar", "fvarId": "_uniq.33"},
+            {"name": "ps", "kind": "fvar", "fvarId": "_uniq.34"},
+            {"kind": "bvar", "index": 0}]},
+          "kind": "let",
+          "body":
+          {"kind": "app",
+           "fn": {"name": "Array.set!", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"kind": "app",
+             "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+             "args":
+             [{"kind": "app",
+               "fn":
+               {"name": "NN.MLTheory.CROWN.FlatBox",
+                "levels": [],
+                "kind": "const"},
+               "args":
+               [{"name": "Real", "levels": [], "kind": "const"},
+                {"name": "instContextReal", "levels": [], "kind": "const"}]}]},
+            {"kind": "bvar", "index": 0},
+            {"kind": "bvar", "index": 1},
+            {"kind": "app",
+             "fn":
+             {"name": "NN.MLTheory.CROWN.Graph.CertSoundness.certStepNode?",
+              "levels": [],
+              "kind": "const"},
+             "args":
+             [{"kind": "app",
+               "fn":
+               {"name": "NN.IR.Graph.nodes", "levels": [], "kind": "const"},
+               "args": [{"name": "g", "kind": "fvar", "fvarId": "_uniq.33"}]},
+              {"name": "ps", "kind": "fvar", "fvarId": "_uniq.34"},
+              {"kind": "bvar", "index": 0},
+              {"kind": "bvar", "index": 1}]}]},
+          "binderType":
+          {"kind": "app",
+           "fn": {"name": "Array", "levels": ["0"], "kind": "const"},
+           "args":
+           [{"kind": "app",
+             "fn": {"name": "Option", "levels": ["0"], "kind": "const"},
+             "args":
+             [{"kind": "app",
+               "fn":
+               {"name": "NN.MLTheory.CROWN.FlatBox",
+                "levels": [],
+                "kind": "const"},
+               "args":
+               [{"name": "Real", "levels": [], "kind": "const"},
+                {"name": "instContextReal",
+                 "levels": [],
+                 "kind": "const"}]}]}]},
+          "binderName": "acc"},
+         "binderType": {"name": "Nat", "levels": [], "kind": "const"},
+         "binderName": "n",
+         "binderInfo": "default"}]}]},
+    "pretty":
+    "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix g ps x✝ =\n  match x✝ with\n  | 0 => Array.replicate g.nodes.size none\n  | n.succ =>\n    have acc := NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix g ps n;\n    acc.set! n (NN.MLTheory.CROWN.Graph.CertSoundness.certStepNode? g.nodes ps acc n)",
+    "constants":
+    ["Eq",
+     "Array",
+     "Option",
+     "NN.MLTheory.CROWN.FlatBox",
+     "Real",
+     "instContextReal",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.runIBPPrefix",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.evalGraphPrefix.match_1",
+     "Nat",
+     "Unit",
+     "Array.replicate",
+     "Array.size",
+     "NN.IR.Node",
+     "NN.IR.Graph.nodes",
+     "Option.none",
+     "Array.set!",
+     "NN.MLTheory.CROWN.Graph.CertSoundness.certStepNode?"]},
+   "binders":
+   [{"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": true},
+     "type":
+     {"tree":
+      {"name": "NN.MLTheory.CROWN.Graph", "levels": [], "kind": "const"},
+      "pretty": "NN.MLTheory.CROWN.Graph",
+      "constants": ["NN.MLTheory.CROWN.Graph"]},
+     "role": "parameter",
+     "rawName": "g",
+     "name": "g",
+     "index": 0,
+     "fvarId": "_uniq.33",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": true},
+     "type":
+     {"tree":
+      {"kind": "app",
+       "fn":
+       {"name": "NN.MLTheory.CROWN.Graph.ParamStore",
+        "levels": [],
+        "kind": "const"},
+       "args":
+       [{"name": "Real", "levels": [], "kind": "const"},
+        {"name": "instContextReal", "levels": [], "kind": "const"}]},
+      "pretty": "NN.MLTheory.CROWN.Graph.ParamStore ℝ",
+      "constants":
+      ["NN.MLTheory.CROWN.Graph.ParamStore", "Real", "instContextReal"]},
+     "role": "parameter",
+     "rawName": "ps",
+     "name": "ps",
+     "index": 1,
+     "fvarId": "_uniq.34",
+     "binderInfo": "default"},
+    {"usage":
+     {"unusedInProof": false,
+      "proofTermAvailable": false,
+      "occursInProofTerm": false,
+      "occursInLaterBinderTypes": false,
+      "occursInConclusion": true},
+     "type":
+     {"tree": {"name": "Nat", "levels": [], "kind": "const"},
+      "pretty": "ℕ",
+      "constants": ["Nat"]},
+     "role": "parameter",
+     "rawName":
+     "x._@.NN.MLTheory.CROWN.Proofs.GraphRunibpEndToEnd.895558167._hygCtx._hyg.19",
+     "name": "x✝",
+     "index": 2,
+     "fvarId": "_uniq.35",
+     "binderInfo": "default"}],
+   "axioms": ["propext", "Classical.choice", "Quot.sound"]}]}

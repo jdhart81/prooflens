@@ -209,8 +209,10 @@ Ordered roughly by value per unit of work.
   binds certificate-required claims to exact, hash-matched trusted Formal IR, fails closed to
   certificate debt, and produces a downloadable READY/HOLD output. Optional TorchLean model entries
   now bind an enclosure request to the exact artifact and route missing or mismatched kernel receipts
-  into the same HOLD gate. The next slice proves and exports the first authoritative propagation
-  theorem for a complete model, then routes a reviewed Viridis paper that actually uses it.
+  into the same HOLD gate. TorchLean's generic `runIBP?` enclosure theorem is now built and exported
+  through Lean 4.33 as hash-pinned, zero-sorry Formal IR. The next slice binds a complete model
+  artifact to that theorem, discharges its graph/input premises, and then routes a reviewed Viridis
+  paper that actually uses it.
 
 - **Figures for the classification kinds that have none.** `existence`, `conjunction` and
   `membership` all have obvious pictures (a witness box, a list of simultaneous facts, a point

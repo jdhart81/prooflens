@@ -622,7 +622,7 @@ body {
 
 .torchlean-receipt__steps {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
   margin: 12px 0 0;
   padding: 0;
@@ -699,6 +699,91 @@ body {
   margin-top: 9px;
   padding-top: 8px;
   border-top: 1px dashed var(--border);
+}
+
+.torchlean-soundness {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid var(--ep-verified-bd);
+  border-radius: 6px;
+  background: var(--ep-verified-bg);
+}
+
+.torchlean-soundness__header,
+.torchlean-soundness__rule,
+.torchlean-soundness__side {
+  display: flex;
+  align-items: center;
+}
+
+.torchlean-soundness__header {
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--ep-verified-fg);
+  font: 800 8px var(--mono);
+  letter-spacing: 0.07em;
+}
+
+.torchlean-soundness__header code {
+  max-width: 58%;
+  overflow: hidden;
+  color: var(--text-dim);
+  text-overflow: ellipsis;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.torchlean-soundness__rule {
+  gap: 10px;
+}
+
+.torchlean-soundness__side {
+  flex: 1;
+  align-self: stretch;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+}
+
+.torchlean-soundness__side > strong {
+  color: var(--ep-verified-fg);
+  font: 900 10px var(--mono);
+}
+
+.torchlean-soundness__premises {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.torchlean-soundness__premises span {
+  padding: 4px 6px;
+  border: 1px solid var(--warn-bd);
+  border-radius: 999px;
+  background: var(--warn-bg);
+  color: var(--warn-fg);
+  font: 700 8px var(--mono);
+}
+
+.torchlean-soundness__arrow {
+  color: var(--ep-verified-fg);
+  font: 900 18px var(--mono);
+}
+
+.torchlean-soundness__side--result > span {
+  color: var(--text);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.torchlean-soundness > p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 9px;
 }
 
 .torchlean-summary {
@@ -1104,6 +1189,16 @@ body {
     left: 50%;
     content: "↓";
     transform: translateX(-50%);
+  }
+
+  .torchlean-soundness__rule {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .torchlean-soundness__arrow {
+    align-self: center;
+    transform: rotate(90deg);
   }
 
   .torchlean-architecture {

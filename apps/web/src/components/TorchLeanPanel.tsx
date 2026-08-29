@@ -1,14 +1,22 @@
 import { useMemo, useState } from "react";
+import { parseFormalIR } from "@prooflens/formal-ir";
 import {
   compileTorchLeanMarginScene,
   formatMargin,
+  TORCHLEAN_IBP_SOUNDNESS_PIN,
   TORCHLEAN_DIGITS_MARGIN_FIXTURE,
   type TorchLeanExampleScene,
   type TorchLeanScene,
 } from "@prooflens/torchlean-adapter";
+import torchLeanSoundnessFormalIr from "../../../../examples/torchlean-ibp-soundness.formal-ir.json";
 import { EpistemicChip } from "./EpistemicChip.js";
 
-const RESULT = compileTorchLeanMarginScene(TORCHLEAN_DIGITS_MARGIN_FIXTURE);
+const RESULT = compileTorchLeanMarginScene(TORCHLEAN_DIGITS_MARGIN_FIXTURE, {
+  trustedSoundnessFormalIr: {
+    document: parseFormalIR(torchLeanSoundnessFormalIr as unknown),
+    sha256: TORCHLEAN_IBP_SOUNDNESS_PIN.formalIrSha256,
+  },
+});
 
 export function TorchLeanPanel(): JSX.Element {
   if (RESULT.status !== "ready") {
@@ -78,11 +86,46 @@ function TorchLeanSceneView({ scene }: { scene: TorchLeanScene }): JSX.Element {
           />
           <ReceiptStep
             number="3"
+            status={scene.soundness.status === "verified" ? "verified" : "owed"}
+            title="Generic IBP rule"
+            description={scene.soundness.reason}
+          />
+          <ReceiptStep
+            number="4"
             status={scene.enclosure.status === "verified" ? "verified" : "owed"}
-            title="Model enclosure"
+            title="This model enclosed"
             description={scene.enclosure.reason}
           />
         </ol>
+        <div className="torchlean-soundness" aria-label="TorchLean IBP theorem explained">
+          <div className="torchlean-soundness__header">
+            <span>LEAN THEOREM · {scene.soundness.status.toUpperCase()}</span>
+            <code>{scene.soundness.theorem.declaration.split(".").at(-1)}</code>
+          </div>
+          <div className="torchlean-soundness__rule">
+            <div className="torchlean-soundness__side">
+              <strong>IF</strong>
+              <div className="torchlean-soundness__premises">
+                {scene.soundness.premises.slice(1).map((premise) => (
+                  <span key={premise.id} title={premise.description}>
+                    {premise.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <span className="torchlean-soundness__arrow" aria-hidden="true">
+              →
+            </span>
+            <div className="torchlean-soundness__side torchlean-soundness__side--result">
+              <strong>THEN</strong>
+              <span>Every returned IBP box encloses the graph’s evaluated value.</span>
+            </div>
+          </div>
+          <p>
+            The rule is proved. Applying it to this report still needs the concrete artifact binding
+            and the three displayed premises.
+          </p>
+        </div>
         <p className="torchlean-receipt__binding">
           The request binds model <code>{scene.id}</code>, method <code>{scene.method}</code>, ε ={" "}
           <code>{scene.epsilon}</code>, and examples{" "}

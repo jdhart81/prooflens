@@ -1,0 +1,58 @@
+name: First-use or repeat-use report
+description: Tell us what you tried, what helped, and the first thing that blocked you.
+title: "[Builder trial]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A short, reproducible report helps us choose the next improvement. This is a public issue: use a synthetic or openly licensed example, and remove credentials, private research and personal information.
+        Browser previews explain supported statements; they do not run Lean or prove a conjecture.
+  - type: dropdown
+    id: experience
+    attributes:
+      label: Which path did you try?
+      options:
+        - Browser demo
+        - Local quickstart
+        - Own Lean project
+    validations:
+      required: true
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Is this your first use?
+      options:
+        - First use
+        - Returned for a different task
+        - Maintainer or automated test
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: What were you trying to understand?
+      description: Include a small public or synthetic declaration, or name the built-in example.
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: What happened?
+      options:
+        - Answered my question
+        - Partly useful
+        - Blocked before a useful result
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: What became clearer, or where did you get stuck?
+      description: Describe the result in your own words. For a failure, include steps, expected behavior, actual behavior and a sanitized error or screenshot. Mention your browser or tool versions.
+    validations:
+      required: true
+  - type: textarea
+    id: next
+    attributes:
+      label: What would make you use it again?
+      description: If this was a repeat visit, describe the new task. No email or personal details needed.

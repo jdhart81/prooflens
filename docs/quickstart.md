@@ -121,3 +121,8 @@ per preview. Inputs live in memory for the current page. Reloading returns to th
 After exploring, try describing the objects, the asserted relationship, and its assumptions in
 your own words. A useful report tells us which question the picture answered or where it confused
 you. This is the [product success criterion](product-direction.md#evidence-of-success).
+
+[Share a first-use or repeat-use report](https://github.com/jdhart81/prooflens/issues/new?template=builder_trial.yml)
+with a small public or synthetic example, what you expected, and what became
+clearer or blocked you. If you return for another task, describe that separately.
+A report does not need to include code changes, private research or contact details.

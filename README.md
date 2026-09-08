@@ -2,6 +2,14 @@
 
 **See what the mathematics is saying.**
 
+[**Try the browser demo**](https://jdhart81.github.io/prooflens/) ·
+[Run one local example](docs/quickstart.md) ·
+[Share a first-use or repeat-use report](https://github.com/jdhart81/prooflens/issues/new?template=builder_trial.yml)
+
+Start in the browser with a built-in example, or choose **Explore your own Lean**
+and paste a supported declaration. Change an input and check which assumptions
+matter. Browser previews explain statements; they do not run Lean or prove them.
+
 ProofLens turns Lean code into visual descriptions that help people understand
 conjectures and theorems. Explore the mathematical objects, see their relationships,
 and connect a diagram or interactive example back to the statement.

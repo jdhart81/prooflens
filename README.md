@@ -3,6 +3,7 @@
 **See what the mathematics is saying.**
 
 [**Try the browser demo**](https://jdhart81.github.io/prooflens/) ·
+[Try the two-minute visual walkthrough](docs/two-minute-demo.md) ·
 [Run one local example](docs/quickstart.md) ·
 [Share a first-use or repeat-use report](https://github.com/jdhart81/prooflens/issues/new?template=builder_trial.yml)
 
@@ -282,8 +283,8 @@ is grooming them. ProofLens's own hand-written corpus has two.
 
 Remaining limits: only the final proof term is analysed, not tactic structure;
 most plots are schematic, while [semantic scenes](docs/semantic-scenes.md) support
-a narrow subset of numeric bounds. The browser explores bundled examples; use
-the editor or CLI for your own statements. Coverage is untested outside order
+a narrow subset of numeric bounds. The browser explores bundled examples and supported pasted Lean statements; use
+the editor or CLI to extract declarations from your own Lean project. Coverage is untested outside order
 theory and analysis; dependency graphs are single-module. Structural coverage
 does not measure reader comprehension. See [the roadmap](docs/roadmap.md).
 

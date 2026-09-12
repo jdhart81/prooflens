@@ -1,0 +1,18 @@
+{
+  "name": "@prooflens/mcp",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "prooflens-mcp": "./dist/bin.js"
+  },
+  "dependencies": {
+    "@prooflens/formal-ir": "workspace:*",
+    "@prooflens/pipeline": "workspace:*",
+    "@prooflens/visual-ir": "workspace:*",
+    "@prooflens/renderer-svg": "workspace:*",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "zod": "^3.25.76"
+  }
+}

@@ -5,6 +5,7 @@
 [**Try the browser demo**](https://jdhart81.github.io/prooflens/) ·
 [Try the two-minute visual walkthrough](docs/two-minute-demo.md) ·
 [Run one local example](docs/quickstart.md) ·
+[Use the local MCP preview](docs/mcp.md) ·
 [Share a first-use or repeat-use report](https://github.com/jdhart81/prooflens/issues/new?template=builder_trial.yml)
 
 Start in the browser with a built-in example, or choose **Explore your own Lean**

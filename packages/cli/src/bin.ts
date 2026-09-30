@@ -14,11 +14,12 @@ import {
   commandRender,
   explainToText,
   loadBundle,
+  resolveAnalysis,
   stageJson,
   summarise,
   type Stage,
 } from "./commands.js";
-import { coverageReport, findAnalysis } from "@prooflens/pipeline";
+import { coverageReport } from "@prooflens/pipeline";
 import { parseFormalIRJson } from "@prooflens/formal-ir";
 import {
   compilePaperPacket,
@@ -126,7 +127,7 @@ async function main(argv: string[]): Promise<number> {
     case "explain": {
       const bundle = await loadBundle(requirePositional(parsed, 0, "path to Formal IR JSON"));
       const name = requirePositional(parsed, 1, "declaration name");
-      const analysis = findAnalysis(bundle, name);
+      const analysis = resolveAnalysis(bundle, name);
       if (!analysis) {
         throw new Error(`No declaration named ${name}. Try \`prooflens summary\` to see the list.`);
       }

@@ -796,16 +796,25 @@ adding a renderer.
 
 ## Commits, branches, and pull requests
 
-### Sign-off
+### Sign-off (DCO)
 
-**DCO sign-off is not required.** No `Signed-off-by` line, no CLA. Contributions
-are accepted under the [Apache 2.0 licence](LICENSE) — as Section 5 puts it,
-anything you intentionally submit for inclusion is licensed under those terms
-unless you say otherwise.
+Pull requests from forks need a `Signed-off-by` line on every commit, matching
+the commit author's email:
 
-**Tests, however, are required.** A pull request that changes behaviour without
-adding or updating a test will be asked for one before review continues. We keep
-process ceremony low and test coverage high.
+    Signed-off-by: Your Name <you@example.com>
+
+`git commit -s` adds it, and `git rebase --signoff origin/main` fixes an existing
+branch. Signing off certifies the
+[Developer Certificate of Origin 1.1](https://developercertificate.org): you
+wrote the change, or you have the right to submit it under this repository's
+license. The DCO check fails on commits without it. There is no CLA.
+Contributions are accepted under the [Apache 2.0 licence](LICENSE) — as Section 5
+puts it, anything you intentionally submit for inclusion is licensed under those
+terms unless you say otherwise.
+
+**Tests are required.** A pull request that changes behaviour without adding or
+updating a test will be asked for one before review continues. We keep process
+ceremony low and test coverage high.
 
 ### Branches
 

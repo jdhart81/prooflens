@@ -15,5 +15,5 @@
     "@prooflens/pipeline": "workspace:*",
     "@prooflens/renderer-svg": "workspace:*"
   },
-  "devDependencies": { "@types/react": "^18.3.12" }
+  "devDependencies": { "@types/react": "^19.3.0" }
 }

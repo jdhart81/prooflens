@@ -1,0 +1,22 @@
+{
+  "title": "ProofLens",
+  "upload_type": "software",
+  "description": "Visual interpretability for formal mathematics: Lean 4 theorems become explanations, figures and proof animations.",
+  "creators": [
+    {
+      "name": "Hart, Justin D.",
+      "affiliation": "Viridis LLC",
+      "orcid": "0009-0008-3082-2482"
+    }
+  ],
+  "license": "apache-2.0",
+  "keywords": [
+    "Lean 4",
+    "formal methods",
+    "theorem proving",
+    "mathematics",
+    "visualization",
+    "interpretability"
+  ],
+  "access_right": "open"
+}

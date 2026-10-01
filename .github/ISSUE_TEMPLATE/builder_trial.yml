@@ -14,6 +14,7 @@ body:
       options:
         - Browser demo
         - Local quickstart
+        - Local MCP preview
         - Own Lean project
     validations:
       required: true
@@ -56,6 +57,12 @@ body:
     attributes:
       label: What would make you use it again?
       description: If this was a repeat visit, describe the new task. No email or personal details needed.
+  - type: checkboxes
+    id: followup
+    attributes:
+      label: May maintainers follow up in this public issue?
+      options:
+        - label: Yes, I can answer a clarifying question or test a focused fix.
   - type: dropdown
     id: discovery
     attributes:

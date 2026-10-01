@@ -1,5 +1,24 @@
 # Contributing to ProofLens
 
+## Fast contribution paths
+
+You do not need to understand the entire pipeline to help. Start with the
+smallest path that matches what you found:
+
+1. **Try a statement:** use the
+   [browser walkthrough](docs/two-minute-demo.md), then file a
+   [first-use report](https://github.com/jdhart81/prooflens/issues/new?template=builder_trial.yml).
+2. **Show us unsupported mathematics:** file one minimal public or synthetic
+   declaration with the
+   [unsupported-mathematics template](https://github.com/jdhart81/prooflens/issues/new?template=unsupported_mathematics.md).
+3. **Improve code or documentation:** comment on an issue before beginning a
+   substantial change. A small reproduction, classifier fixture, accessibility
+   improvement or documentation correction is a good first pull request.
+
+Maintainers should reply to a well-scoped trial or contribution proposal with
+the next actionable step. Never include confidential mathematics, credentials
+or personal information in a public issue.
+
 Start with [the product direction](docs/product-direction.md): contributions should help a reader
 understand what a Lean conjecture or theorem asserts through a visual explanation. Preserve
 proof status, but judge explanation work by mathematical clarity as well as coverage.
@@ -11,7 +30,7 @@ people understand the mathematics. Thank you for wanting to help.
 
 Before anything else, please read [**Epistemic discipline**](#epistemic-discipline).
 It is the one section of this document that is not negotiable. ProofLens exists to
-make formal mathematics legible *without* blurring the line between what a proof
+make formal mathematics legible _without_ blurring the line between what a proof
 assistant has verified and what a program or a language model has guessed. That
 line is not a convention here — it is a type, enforced by code and guarded by a
 test suite. A patch that is otherwise excellent will be rejected if it erodes it.
@@ -46,12 +65,12 @@ the web app — without ever installing Lean.
 
 ### Prerequisites
 
-| Tool | Version | Notes |
-| --- | --- | --- |
-| [elan](https://github.com/leanprover/elan) | latest | Lean toolchain manager. Installs the pinned Lean for you. |
-| Lean | `4.24.0` | Pinned in `lean/lean-toolchain` and `corpus/lean-toolchain`. Do not install Lean by hand; let elan read the pin. |
-| Node.js | `22.x` | What CI runs. `package.json` allows `>=20`, but 22 is the supported target. |
-| pnpm | `10.x` | This is a pnpm workspace. npm and yarn will produce a broken tree. |
+| Tool                                       | Version  | Notes                                                                                                            |
+| ------------------------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------- |
+| [elan](https://github.com/leanprover/elan) | latest   | Lean toolchain manager. Installs the pinned Lean for you.                                                        |
+| Lean                                       | `4.24.0` | Pinned in `lean/lean-toolchain` and `corpus/lean-toolchain`. Do not install Lean by hand; let elan read the pin. |
+| Node.js                                    | `22.x`   | What CI runs. `package.json` allows `>=20`, but 22 is the supported target.                                      |
+| pnpm                                       | `10.x`   | This is a pnpm workspace. npm and yarn will produce a broken tree.                                               |
 
 Install elan and pnpm if you do not have them:
 
@@ -97,27 +116,27 @@ cd corpus && lake exe cache get && lake build && cd ..
 Run these from the repository root. This table is the complete set of root
 scripts; if a command is not here, it does not exist.
 
-| Command | What it does |
-| --- | --- |
-| `pnpm build` | Builds the nine TypeScript packages in dependency order (`tsc -b`). |
-| `pnpm build:widget` | Bundles the Lean infoview widget into `lean/ProofLens/Widget/prooflens.js`. |
-| `pnpm clean` | Tears down build output across packages and `apps/web`. |
-| `pnpm typecheck` | `tsc -b` over the packages, plus the widget's tsconfig. |
-| `pnpm test` | The full vitest suite. |
-| `pnpm test:watch` | Watch mode while you iterate. |
-| `pnpm lint` | ESLint over `packages` and `apps`. |
-| `pnpm format` / `pnpm format:check` | Prettier write / verify. CI runs `format:check`. |
-| `pnpm prooflens <subcommand>` | The CLI. Requires `pnpm build` first — it runs `packages/cli/dist/bin.js`. |
-| `pnpm extract:corpus` | Re-extracts the five corpus modules to `examples/corpus.formal-ir.json`. |
-| `pnpm dev:web` | Starts the `apps/web` Vite dev server. (There is no `pnpm dev`.) |
+| Command                             | What it does                                                                |
+| ----------------------------------- | --------------------------------------------------------------------------- |
+| `pnpm build`                        | Builds the nine TypeScript packages in dependency order (`tsc -b`).         |
+| `pnpm build:widget`                 | Bundles the Lean infoview widget into `lean/ProofLens/Widget/prooflens.js`. |
+| `pnpm clean`                        | Tears down build output across packages and `apps/web`.                     |
+| `pnpm typecheck`                    | `tsc -b` over the packages, plus the widget's tsconfig.                     |
+| `pnpm test`                         | The full vitest suite.                                                      |
+| `pnpm test:watch`                   | Watch mode while you iterate.                                               |
+| `pnpm lint`                         | ESLint over `packages` and `apps`.                                          |
+| `pnpm format` / `pnpm format:check` | Prettier write / verify. CI runs `format:check`.                            |
+| `pnpm prooflens <subcommand>`       | The CLI. Requires `pnpm build` first — it runs `packages/cli/dist/bin.js`.  |
+| `pnpm extract:corpus`               | Re-extracts the five corpus modules to `examples/corpus.formal-ir.json`.    |
+| `pnpm dev:web`                      | Starts the `apps/web` Vite dev server. (There is no `pnpm dev`.)            |
 
 Lean commands run inside their own project directory:
 
-| Command | Where | What it does |
-| --- | --- | --- |
-| `lake build` | `lean/` | Builds the `ProofLens` library and the `prooflens-extract` executable. |
-| `lake build ProofLensExamples` | `corpus/` | Builds the example corpus against mathlib. |
-| `lake exe cache get` | `corpus/` | Fetches prebuilt mathlib artifacts. Do this before your first corpus build. |
+| Command                        | Where     | What it does                                                                |
+| ------------------------------ | --------- | --------------------------------------------------------------------------- |
+| `lake build`                   | `lean/`   | Builds the `ProofLens` library and the `prooflens-extract` executable.      |
+| `lake build ProofLensExamples` | `corpus/` | Builds the example corpus against mathlib.                                  |
+| `lake exe cache get`           | `corpus/` | Fetches prebuilt mathlib artifacts. Do this before your first corpus build. |
 
 Before opening a pull request, these must all be clean — they are what CI runs:
 
@@ -178,12 +197,12 @@ not in `lean/`.** They live in `corpus/`, which is a separate Lake package.
 
 - **`lean/` depends on Lean core and nothing else.** No mathlib. This is an
   architectural invariant, not an accident of packaging: the extractor has to be
-  usable against *any* Lean project, and a mathlib dependency would force every
+  usable against _any_ Lean project, and a mathlib dependency would force every
   user of ProofLens to adopt mathlib's toolchain and build times. The lakefile
   says so, and CI enforces it with a dedicated job (**`lean-core`**) that builds
   `lean/` on a machine with no mathlib cache. If a mathlib import creeps in,
   that job fails.
-- **`corpus/` depends on mathlib *and* on `../lean`.** The examples exercise
+- **`corpus/` depends on mathlib _and_ on `../lean`.** The examples exercise
   ProofLens against the mathematics people actually write rather than against
   toy stand-ins, which means real `Real`, real order typeclasses, real coercions.
 
@@ -251,7 +270,7 @@ reproducing everything Lean's frontend sets up is a moving target. **When it
 falls short, notation delaborators are missing and expressions come back raw**:
 `LE.le x (HDiv.hDiv P T)` instead of `x ≤ P / T`.
 
-Rather than guess which path you got, the extractor *measures*. It pretty-prints
+Rather than guess which path you got, the extractor _measures_. It pretty-prints
 a known expression and reports the result in the Formal IR envelope as:
 
 ```json
@@ -391,7 +410,7 @@ This is the core architectural commitment of ProofLens. Please read it in full
 before contributing anything that adds, transforms, or displays information.
 
 ProofLens shows users mathematics that a machine has verified, alongside
-explanations and pictures that a machine has *not* verified. Those two kinds of
+explanations and pictures that a machine has _not_ verified. Those two kinds of
 claim look equally confident on a screen unless the system works hard to keep
 them apart. Keeping them apart is the product. As `@prooflens/epistemics` puts
 it: if `verified` can be manufactured anywhere, the product is a lie with good
@@ -404,14 +423,14 @@ that matters most, and everything else is machinery in service of it.
 
 Every piece of information carries one, ordered from strongest to weakest:
 
-| Status | Meaning | Where it may come from |
-| --- | --- | --- |
-| `verified` | Asserted by the Lean kernel. | **Lean extraction only**, through a kernel witness. |
-| `derived` | Computed from verified data by a deterministic, inspectable rule. | Rules, via `derive`. |
-| `interpreted` | A reading of the formal statement, or a human author's declaration about it. | Rules; semantic annotations. |
-| `heuristic` | A rule of thumb, expected to be wrong sometimes. | Rules that opt into it. |
-| `illustrative` | A display choice. It makes no mathematical claim. | Planning and rendering. |
-| `speculative` | Produced by a language model or other unverified source. | Model output, when it arrives. |
+| Status         | Meaning                                                                      | Where it may come from                              |
+| -------------- | ---------------------------------------------------------------------------- | --------------------------------------------------- |
+| `verified`     | Asserted by the Lean kernel.                                                 | **Lean extraction only**, through a kernel witness. |
+| `derived`      | Computed from verified data by a deterministic, inspectable rule.            | Rules, via `derive`.                                |
+| `interpreted`  | A reading of the formal statement, or a human author's declaration about it. | Rules; semantic annotations.                        |
+| `heuristic`    | A rule of thumb, expected to be wrong sometimes.                             | Rules that opt into it.                             |
+| `illustrative` | A display choice. It makes no mathematical claim.                            | Planning and rendering.                             |
+| `speculative`  | Produced by a language model or other unverified source.                     | Model output, when it arrives.                      |
 
 ### This is enforced in code, not by convention
 
@@ -423,7 +442,7 @@ running program:
 `transcribe`, and it demands a `KernelWitness`:
 
 ```ts
-export function transcribe<T>(witness: KernelWitness, value: T, provenance): Claim<T>
+export function transcribe<T>(witness: KernelWitness, value: T, provenance): Claim<T>;
 ```
 
 The witness is branded with a **module-local** `unique symbol` — deliberately
@@ -434,7 +453,7 @@ leaves its module, `mintKernelWitness` is the only door, and it is called from
 exactly one place: the Formal IR loader in `@prooflens/formal-ir`. It returns
 `null` for any declaration whose proof reaches `sorry`, so no `verified` claim
 about such a declaration can exist. `transcribe` also checks `Object.hasOwn`, so
-the brand must be *held*, not merely inherited.
+the brand must be _held_, not merely inherited.
 
 **2. Confidence only ever decreases.** `derive` folds the rule's ceiling, every
 input's status, **and a hard `"derived"` floor** through `weakest`:
@@ -444,7 +463,7 @@ const status = weakest(rule.produces, "derived", ...inputs.map((c) => c.status))
 ```
 
 `Rule.produces` is typed `Exclude<EpistemicStatus, "verified">`, so a rule cannot
-even *declare* kernel standing. The runtime floor is there because types are
+even _declare_ kernel standing. The runtime floor is there because types are
 erased and this module's job is to be true of the running program, not only of
 the one that typechecked: a cast, or a plain JavaScript caller, still gets
 `derived`. `weaken` likewise only moves downward — weakening a `speculative`
@@ -479,7 +498,7 @@ The kernel stops forgery. It cannot stop carelessness. These remain your job:
    highlighting the exact subterm responsible. A transformation that drops
    provenance is a bug on the same footing as one that drops the status.
 4. **Never let model output become mathematics.** When AI adapters arrive, their
-   output enters as `speculative` and stays there. It may be *displayed*
+   output enters as `speculative` and stays there. It may be _displayed_
    alongside the mathematics; it may never be an input to a rule that produces
    `interpreted` or better, and it may never be written into a MathIR field a
    classifier also writes.
@@ -495,7 +514,7 @@ For `theorem foo (h : 0 < n) : ...`:
 - The binder `h` exists and its type prints as `0 < n` — `verified`, transcribed
   from Lean under a kernel witness.
 - `h` does not occur in the elaborated proof term — `derived`, a mechanical
-  occurrence check. Note what this does *not* say: the hypothesis may still be
+  occurrence check. Note what this does _not_ say: the hypothesis may still be
   mathematically necessary; this proof simply does not touch it. ProofLens says
   it that way, and so should you.
 - `h` is "a positivity constraint on `n`" — `derived` if it comes from the
@@ -554,7 +573,7 @@ docstring saying `T` is a temperature is worth showing and worth labelling, and
 ProofLens does both: the explanation output says in as many words that these
 readings come from the declaration's annotations, not from anything Lean checked.
 Nothing downstream may promote them, and a wrong annotation is a wrong
-*interpretation*, not a wrong theorem.
+_interpretation_, not a wrong theorem.
 
 See [ADR 0003](docs/adr/0003-semantic-annotations.md) for why this lives in
 docstrings rather than in a Lean attribute.
@@ -587,7 +606,7 @@ point where untrusted JSON — possibly from a different extractor version —
 enters the system, so it is the point that needs a runtime check. A failure
 throws `FormalIRParseError` carrying the zod issues.
 
-MathIR and VisualIR are *not* zod-parsed, and this is deliberate rather than an
+MathIR and VisualIR are _not_ zod-parsed, and this is deliberate rather than an
 omission. They are never deserialised from an untrusted source: they are
 constructed in-process by typed code, one stage handing a value to the next.
 Their contracts are the TypeScript types in `packages/math-ir/src/types.ts` and
@@ -605,7 +624,7 @@ Do not "improve consistency" by wrapping the internal IRs in schemas.
 - **Keep `lean/` free of mathlib.** See above; CI enforces it.
 - **Keep the extractor deterministic and interpretation-free.** `lean/` produces
   transcription and mechanical computation only. A rule that decides what a
-  theorem *means* belongs in a TypeScript classifier, where it can be versioned,
+  theorem _means_ belongs in a TypeScript classifier, where it can be versioned,
   tested, and tagged.
 - Never emit a field whose meaning is not stated precisely in the emitting
   function's docstring. Downstream code has to tag your field, and it can only do
@@ -644,7 +663,7 @@ Every entry carries a **`valueArity`**, and getting it right is the whole trick:
 
 > `valueArity` counts the **trailing** arguments that carry mathematics.
 
-Lean threads carrier types and typeclass instances as *leading* arguments, so
+Lean threads carrier types and typeclass instances as _leading_ arguments, so
 `LE.le` appears as `LE.le ℝ inst x y` — four arguments, of which only the last
 two are the ones a reader cares about. Hence `valueArity: 2`. Likewise
 `Real.sqrt` is `valueArity: 1`, and `MonotoneOn` is `valueArity: 2` because it
@@ -699,9 +718,8 @@ concrete evidence, not restate the rule:
 `The conclusion \`${theorem.conclusionDisplay}\` puts \`${renderExpression(bounded)}\`
  on the smaller side of \`${symbol}\`, so \`${renderExpression(bound)}\` is an upper
  bound for it.`
-
 // Bad — a restatement of the rule's description.
-`This theorem establishes an upper bound.`
+`This theorem establishes an upper bound.`;
 ```
 
 A user reading the rationale should be able to check your reasoning against the
@@ -710,7 +728,7 @@ statement in front of them without knowing anything about ProofLens internals.
 Also pass the structural `path` of the subterm responsible. That is what lets the
 UI highlight the exact expression that made the rule fire.
 
-If a classification has a preferred *reading*, say which one. `a ≤ b` bounds `a`
+If a classification has a preferred _reading_, say which one. `a ≤ b` bounds `a`
 above and `b` below; both are true and ProofLens reports both, but only one is
 what a reader means. That is what the `natural` flag on the bound payloads is
 for, and why `0 < log 2` presents as "log 2 is positive" rather than the correct
@@ -734,14 +752,14 @@ In `packages/classifier/test/` and `packages/visual-ir/test/`:
 
 - **A positive case** — asserting the payload, the status, the rule id, and that
   the rationale mentions the right terms.
-- **A negative case** — a near-miss where the rule must *not* fire. This is the
+- **A negative case** — a near-miss where the rule must _not_ fire. This is the
   important one. A rule with no test that it declines to fire is a rule that will
   eventually fire on everything.
 - **Ideally a real theorem** in `corpus/ProofLensExamples/`, re-extracted with
   `pnpm extract:corpus` so the rule is exercised against genuine Lean output.
 
 Finally: if nothing matches, `classifyTheorem` falls back to the `UNSUPPORTED`
-rule, which explains *why* and still shows the statement, its structure, its
+rule, which explains _why_ and still shows the statement, its structure, its
 hypotheses, and its dependencies. Discarding mathematics because it cannot be
 drawn is the one outcome ProofLens is not permitted to have. Preserve that
 behaviour.
@@ -772,7 +790,7 @@ the same VisualIR through the SVG renderer.
    `packages/cli/src/bin.ts` and update the usage text.
 
 3. **Do no mathematics.** A renderer may not classify, infer, or decide what
-   something means. Positions in VisualIR are *logical* — `layer`/`order` for
+   something means. Positions in VisualIR are _logical_ — `layer`/`order` for
    graphs, normalised `[0,1]` coordinates for plots — and turning those into
    geometry is the renderer's entire job. If you need a fact VisualIR does not
    carry, add it upstream with a proper status tag rather than computing it here.
@@ -887,16 +905,16 @@ rather they did not.
 
 ## Documentation map
 
-| Document | What it covers |
-| --- | --- |
-| [docs/epistemic-model.md](docs/epistemic-model.md) | **Start here.** The distinction the whole project exists to maintain. |
-| [docs/architecture.md](docs/architecture.md) | The stages, the packages, and what each one is forbidden to do. |
-| [docs/math-ir.md](docs/math-ir.md) | The semantic representation, and how to teach it a new constant. |
-| [docs/visual-ir.md](docs/visual-ir.md) | The visualization representation, and how to add a renderer. |
-| [docs/roadmap.md](docs/roadmap.md) | What v0.1 actually does, with real numbers, and what comes next. |
-| [ADR 0001](docs/adr/0001-lean-extraction.md) | How extraction works, why it runs inside Lean's frontend, and why we do not build a tracer. |
-| [ADR 0002](docs/adr/0002-first-rendering-surface.md) | Why the Lean infoview was the first surface. |
-| [ADR 0003](docs/adr/0003-semantic-annotations.md) | Why annotations live in docstrings rather than a Lean attribute. |
+| Document                                             | What it covers                                                                              |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| [docs/epistemic-model.md](docs/epistemic-model.md)   | **Start here.** The distinction the whole project exists to maintain.                       |
+| [docs/architecture.md](docs/architecture.md)         | The stages, the packages, and what each one is forbidden to do.                             |
+| [docs/math-ir.md](docs/math-ir.md)                   | The semantic representation, and how to teach it a new constant.                            |
+| [docs/visual-ir.md](docs/visual-ir.md)               | The visualization representation, and how to add a renderer.                                |
+| [docs/roadmap.md](docs/roadmap.md)                   | What v0.1 actually does, with real numbers, and what comes next.                            |
+| [ADR 0001](docs/adr/0001-lean-extraction.md)         | How extraction works, why it runs inside Lean's frontend, and why we do not build a tracer. |
+| [ADR 0002](docs/adr/0002-first-rendering-surface.md) | Why the Lean infoview was the first surface.                                                |
+| [ADR 0003](docs/adr/0003-semantic-annotations.md)    | Why annotations live in docstrings rather than a Lean attribute.                            |
 
 ---
 

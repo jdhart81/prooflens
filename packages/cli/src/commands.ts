@@ -21,6 +21,26 @@ export async function loadBundle(formalIrPath: string): Promise<PipelineBundle> 
   return runPipelineOnJson(text);
 }
 
+/** Resolve an exact declaration name or an unambiguous short name. */
+export function resolveAnalysis(
+  bundle: PipelineBundle,
+  declaration: string,
+): TheoremAnalysis | undefined {
+  const exact = bundle.analyses.find((analysis) => analysis.math.name === declaration);
+  if (exact) return exact;
+
+  const matches = bundle.analyses.filter(
+    (analysis) => analysis.math.name.split(".").pop() === declaration,
+  );
+  if (matches.length > 1) {
+    const names = matches.map((analysis) => analysis.math.name).sort();
+    throw new Error(
+      `Ambiguous declaration name ${declaration}. Matches: ${names.join(", ")}. Use a fully qualified name.`,
+    );
+  }
+  return matches[0];
+}
+
 export interface ExtractCommandOptions {
   project: string;
   modules: string[];
@@ -71,8 +91,14 @@ export function summarise(bundle: PipelineBundle): string {
   }
   lines.push("");
   lines.push("declarations:");
+  const shortNameCounts = new Map<string, number>();
   for (const analysis of bundle.analyses) {
     const short = analysis.math.name.split(".").pop() ?? analysis.math.name;
+    shortNameCounts.set(short, (shortNameCounts.get(short) ?? 0) + 1);
+  }
+  for (const analysis of bundle.analyses) {
+    const short = analysis.math.name.split(".").pop() ?? analysis.math.name;
+    const displayName = shortNameCounts.get(short)! > 1 ? analysis.math.name : short;
     const kind = analysis.primary?.payload.kind ?? "—";
     const flags: string[] = [];
     if (analysis.math.trust.usesSorry) flags.push("NOT PROVED");
@@ -85,7 +111,7 @@ export function summarise(bundle: PipelineBundle): string {
       flags.push("unused hypotheses");
     if (analysis.unsupported) flags.push("unsupported");
     lines.push(
-      `  ${short.padEnd(32)} ${kind.padEnd(24)} ${flags.length ? `[${flags.join(", ")}]` : ""}`,
+      `  ${displayName.padEnd(32)} ${kind.padEnd(24)} ${flags.length ? `[${flags.join(", ")}]` : ""}`,
     );
   }
   return lines.join("\n");
@@ -162,7 +188,7 @@ export function renderFileStem(declarationName: string): string {
 export async function commandRender(options: RenderCommandOptions): Promise<void> {
   const bundle = await loadBundle(options.formalIr);
   const analyses = options.declaration
-    ? [findAnalysis(bundle, options.declaration)].filter(
+    ? [resolveAnalysis(bundle, options.declaration)].filter(
         (a): a is TheoremAnalysis => a !== undefined,
       )
     : bundle.analyses;
@@ -229,7 +255,7 @@ export function stageJson(bundle: PipelineBundle, stage: Stage, declaration?: st
         );
     }
   }
-  const analysis = findAnalysis(bundle, declaration);
+  const analysis = resolveAnalysis(bundle, declaration);
   if (!analysis) throw new Error(`No declaration named ${declaration}.`);
   switch (stage) {
     case "formal":

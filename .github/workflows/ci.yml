@@ -18,11 +18,11 @@ jobs:
     name: TypeScript (typecheck, lint, test, build)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -66,7 +66,7 @@ jobs:
     name: Lean core (no mathlib)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install elan
         run: |
@@ -86,11 +86,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -102,7 +102,7 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
 
       - name: Cache mathlib build artifacts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: corpus/.lake/packages
           key: mathlib-${{ hashFiles('corpus/lake-manifest.json') }}
@@ -191,7 +191,7 @@ jobs:
           EOF
           lake env lean /tmp/widget-check.lean
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: prooflens-figures
@@ -207,11 +207,11 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -223,7 +223,7 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
 
       - name: Cache mathlib build artifacts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: corpus/.lake/packages
           key: mathlib-${{ hashFiles('corpus/lake-manifest.json') }}
@@ -286,7 +286,7 @@ jobs:
             console.log('rendered ' + n + ' figures, no failures');
           "
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: mathlib-coverage

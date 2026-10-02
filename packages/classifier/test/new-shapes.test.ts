@@ -9,7 +9,14 @@
  * build next went quiet.
  */
 import { describe, expect, it } from "vitest";
-import { renderExpression, renderProposition, type FilterSpec } from "@prooflens/math-ir";
+import type { FormalExprNode } from "@prooflens/formal-ir";
+import {
+  PREDICATES,
+  lowerProposition,
+  renderExpression,
+  renderProposition,
+  type FilterSpec,
+} from "@prooflens/math-ir";
 import {
   RULES,
   classifyTheorem,
@@ -18,6 +25,14 @@ import {
   type ClassificationPayload,
 } from "@prooflens/classifier";
 import { num, op, opaqueExpr, opaqueProp, pred, rel, synthetic, v } from "./synthetic.js";
+
+const c = (name: string): FormalExprNode => ({ kind: "const", name, levels: [] });
+const fv = (name: string): FormalExprNode => ({ kind: "fvar", name, fvarId: `_uniq.${name}` });
+const app = (name: string, ...args: FormalExprNode[]): FormalExprNode => ({
+  kind: "app",
+  fn: c(name),
+  args,
+});
 
 function kinds(cs: readonly Classification[]): Array<ClassificationPayload["kind"]> {
   return cs.map((c) => c.payload.kind);
@@ -229,6 +244,23 @@ describe("the property classifier", () => {
   it("is the primary classification when nothing stronger matches", () => {
     const cs = classifyTheorem(synthetic(pred("other", "Continuous", v("f"))));
     expect(primaryClassification(cs)!.payload.kind).toBe("property");
+  });
+
+  it("uses the table label for every named property", () => {
+    for (const [name, entry] of Object.entries(PREDICATES)) {
+      if (entry.predicate !== "other") continue;
+      const args = Array.from({ length: entry.valueArity }, (_, i) => fv(i === 0 ? "f" : `a${i}`));
+      const prop = lowerProposition(app(name, ...args), "conclusion");
+      const thm = synthetic(prop);
+      const cs = classifyTheorem(thm);
+      expect(kinds(cs), name).toContain("property");
+      const data = find(cs, "property");
+      expect(data.label, name).toBe(entry.label);
+      if (name === "Set.InjOn") {
+        const classification = cs.find((c) => c.payload.kind === "property")!;
+        expect(classification.rationale).toContain("f is injective on a set");
+      }
+    }
   });
 });
 

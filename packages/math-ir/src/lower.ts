@@ -579,6 +579,7 @@ export function lowerProposition(
           kind: "predicate",
           predicate: predicate.predicate,
           name: shortName(head),
+          head,
           subject: values[0] ?? null,
           args: values.slice(1),
           path,

@@ -5056,6 +5056,7 @@ function lowerProposition(node, path2, scope = [], locals = NO_LOCALS) {
           kind: "predicate",
           predicate: predicate.predicate,
           name: shortName(head),
+          head,
           subject: values[0] ?? null,
           args: values.slice(1),
           path: path2
@@ -5670,7 +5671,8 @@ function classifyProperty(theorem) {
   const prop = theorem.conclusion.value;
   if (prop.kind !== "predicate" || prop.predicate !== "other")
     return [];
-  const label = PREDICATES[prop.name]?.label ?? prop.name;
+  const tableKey = prop.head ?? prop.name;
+  const label = PREDICATES[tableKey]?.label ?? prop.name;
   return [
     makeClassification(theorem, RULES.PROPERTY, {
       kind: "property",

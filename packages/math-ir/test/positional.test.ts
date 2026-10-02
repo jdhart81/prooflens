@@ -320,6 +320,7 @@ describe("the grown PREDICATES table", () => {
   it("shortens a namespaced predicate for display but keeps the table key long", () => {
     const prop = lowerProposition(app("Set.InjOn", c("α"), c("β"), fv("f"), fv("s")), "conclusion");
     expect((prop as Extract<MathProposition, { kind: "predicate" }>).name).toBe("InjOn");
+    expect((prop as Extract<MathProposition, { kind: "predicate" }>).head).toBe("Set.InjOn");
   });
 
   it("leaves a predicate absent from the table opaque", () => {

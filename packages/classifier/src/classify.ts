@@ -318,7 +318,8 @@ function classifyExistence(theorem: TheoremIR): Classification[] {
 function classifyProperty(theorem: TheoremIR): Classification[] {
   const prop = theorem.conclusion.value;
   if (prop.kind !== "predicate" || prop.predicate !== "other") return [];
-  const label = PREDICATES[prop.name]?.label ?? prop.name;
+  const tableKey = prop.head ?? prop.name;
+  const label = PREDICATES[tableKey]?.label ?? prop.name;
   return [
     makeClassification(
       theorem,

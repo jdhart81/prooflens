@@ -10,9 +10,9 @@ The first integration pins TorchLean commit `12f5c651f03b3890ec012d0a6bb45e3ea69
 Lean 4.33. ProofLens currently uses Lean 4.24. Keeping the adapter at a JSON boundary avoids an
 unsafe whole-project toolchain upgrade and lets each project retain its own build and trust model.
 
-## First source fixture
+## Source fixture
 
-The web demonstration uses an exact two-example excerpt and complete summary from TorchLean's
+The web demonstration uses the complete summary and all 360 examples from TorchLean's
 checked-in `robust_margin_cert_v0_1` digits report:
 
 - repository: `https://github.com/lean-dojo/TorchLean`;
@@ -20,9 +20,9 @@ checked-in `robust_margin_cert_v0_1` digits report:
 - complete upstream artifact SHA-256:
   `c517ffd45f2f9e7b844750fcc9e937c1c70509466b973f770644b5d7962aa060`;
 - report summary: 360 examples, 349 nominally correct, 318 with a positive reported margin; and
-- displayed examples: ID 0 (positive margin) and ID 7 (overlapping intervals).
+- displayed examples: all 360 examples (including ID 0 with a positive certified margin and ID 7 with overlapping intervals).
 
-TorchLean is MIT-licensed; the excerpt remains attributed to the pinned upstream source.
+TorchLean is MIT-licensed; the data remains attributed to the pinned upstream source.
 
 The adapter validates the source pin, architecture dimensions, report counters, finite interval
 endpoints, `lower ≤ upper`, class dimensions, and the serialized `certified` flag. It independently
@@ -44,19 +44,19 @@ model, parameters, perturbation region, and serialized intervals to those premis
 boundary stated in TorchLean's own `MarginCert` module: its report checker validates internal
 arithmetic and summary fields; model enclosure requires a separate verifier or theorem application.
 
-The two displayed source examples now also carry a separate `verified` exact-real enclosure
-receipt. That receipt covers the concrete 10×64 linear classifier, both exact ±0.02 input boxes, and
-all ten outward-rounded decimal output intervals for each example.
+All 360 source examples now carry a separate `verified` exact-real enclosure receipt. That receipt
+covers the concrete 10×64 linear classifier, all 360 exact ±0.02 input boxes, and all 3600
+outward-rounded decimal output intervals.
 
-The interface therefore says “positive margin,” not “kernel-verified robustness.” It also explains
-that “not certified” means the displayed bounds overlap, not that the model is necessarily wrong or
-vulnerable.
+The interface therefore distinguishes "positive margin" (certified positive margin) from "not certified"
+(overlapping intervals). It also explains that "not certified" means the displayed bounds overlap, not
+that the model is necessarily wrong or vulnerable.
 
 ## Enclosure receipt protocol
 
-The adapter now exports `prooflens_torchlean_enclosure_request_v0_1`. The request binds the source
+The adapter exports `prooflens_torchlean_enclosure_request_v0_1`. The request binds the source
 repository, commit, path and SHA-256; model ID; norm, method and epsilon; input and class dimensions;
-and exact example IDs. It is explicitly certificate debt, not a certificate.
+and all 360 exact example IDs. It is explicitly certificate debt, not a certificate.
 
 A returned `prooflens_torchlean_enclosure_receipt_v0_1` must repeat that binding exactly and name a
 Lean theorem in hash-matched trusted Formal IR. The declaration must be a theorem carrying the
@@ -96,7 +96,7 @@ The audit found two blockers in the generic graph-proof path:
 ProofLens resolves those blockers for the concrete linear model through a direct exact-real
 certificate in `corpus/ProofLensExamples/TorchLeanDigits.lean`. The certificate represents every
 pinned source decimal as an integer over a common scale, proves the general linear interval rule,
-checks all 20 rounded endpoints by decidable integer arithmetic, and contains no `sorry`. It does not
+checks all 3600 rounded endpoints by decidable integer arithmetic, and contains no `sorry`. It does not
 claim that the generic graph theorem supports `reshape` or `concat`; that path is displayed as
 explicitly unused.
 
@@ -106,8 +106,6 @@ generic theorem pin, exact theorem extraction, receipt, and verified conclusion 
 
 ## Next gate
 
-The v0.1 displayed-example certificate is complete. Future work can extend the exact certificate to
-all 360 examples and upstream TorchLean's semantics-preserving `reshape` and `concat` cases so its
-generic graph theorem can certify the lowered wrapper directly. Until that broader certificate
-exists, the interface keeps the 360-row aggregate report distinct from the two kernel-verified
-example enclosures.
+The 360-example exact-real certificate is complete. Future work can upstream TorchLean's
+semantics-preserving `reshape` and `concat` cases so its generic graph theorem can certify the
+lowered wrapper directly.

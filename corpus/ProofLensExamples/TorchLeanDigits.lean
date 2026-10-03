@@ -3306,368 +3306,369 @@ private theorem numeric_359 (j : Fin 10) :
 
 private theorem numeric_all (sample : Fin 360) (j : Fin 10) :
     certLoZ sample j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ sample) (inputsHiZ sample) j * certificateScale ∧
-      upperNum (inputsLoZ sample) (inputsHiZ sample) j * certificateScale ≤ certHiZ sample j * (sourceScale*sourceScale) := by
-  fin_cases sample
-  · exact numeric_0 j
-  · exact numeric_1 j
-  · exact numeric_2 j
-  · exact numeric_3 j
-  · exact numeric_4 j
-  · exact numeric_5 j
-  · exact numeric_6 j
-  · exact numeric_7 j
-  · exact numeric_8 j
-  · exact numeric_9 j
-  · exact numeric_10 j
-  · exact numeric_11 j
-  · exact numeric_12 j
-  · exact numeric_13 j
-  · exact numeric_14 j
-  · exact numeric_15 j
-  · exact numeric_16 j
-  · exact numeric_17 j
-  · exact numeric_18 j
-  · exact numeric_19 j
-  · exact numeric_20 j
-  · exact numeric_21 j
-  · exact numeric_22 j
-  · exact numeric_23 j
-  · exact numeric_24 j
-  · exact numeric_25 j
-  · exact numeric_26 j
-  · exact numeric_27 j
-  · exact numeric_28 j
-  · exact numeric_29 j
-  · exact numeric_30 j
-  · exact numeric_31 j
-  · exact numeric_32 j
-  · exact numeric_33 j
-  · exact numeric_34 j
-  · exact numeric_35 j
-  · exact numeric_36 j
-  · exact numeric_37 j
-  · exact numeric_38 j
-  · exact numeric_39 j
-  · exact numeric_40 j
-  · exact numeric_41 j
-  · exact numeric_42 j
-  · exact numeric_43 j
-  · exact numeric_44 j
-  · exact numeric_45 j
-  · exact numeric_46 j
-  · exact numeric_47 j
-  · exact numeric_48 j
-  · exact numeric_49 j
-  · exact numeric_50 j
-  · exact numeric_51 j
-  · exact numeric_52 j
-  · exact numeric_53 j
-  · exact numeric_54 j
-  · exact numeric_55 j
-  · exact numeric_56 j
-  · exact numeric_57 j
-  · exact numeric_58 j
-  · exact numeric_59 j
-  · exact numeric_60 j
-  · exact numeric_61 j
-  · exact numeric_62 j
-  · exact numeric_63 j
-  · exact numeric_64 j
-  · exact numeric_65 j
-  · exact numeric_66 j
-  · exact numeric_67 j
-  · exact numeric_68 j
-  · exact numeric_69 j
-  · exact numeric_70 j
-  · exact numeric_71 j
-  · exact numeric_72 j
-  · exact numeric_73 j
-  · exact numeric_74 j
-  · exact numeric_75 j
-  · exact numeric_76 j
-  · exact numeric_77 j
-  · exact numeric_78 j
-  · exact numeric_79 j
-  · exact numeric_80 j
-  · exact numeric_81 j
-  · exact numeric_82 j
-  · exact numeric_83 j
-  · exact numeric_84 j
-  · exact numeric_85 j
-  · exact numeric_86 j
-  · exact numeric_87 j
-  · exact numeric_88 j
-  · exact numeric_89 j
-  · exact numeric_90 j
-  · exact numeric_91 j
-  · exact numeric_92 j
-  · exact numeric_93 j
-  · exact numeric_94 j
-  · exact numeric_95 j
-  · exact numeric_96 j
-  · exact numeric_97 j
-  · exact numeric_98 j
-  · exact numeric_99 j
-  · exact numeric_100 j
-  · exact numeric_101 j
-  · exact numeric_102 j
-  · exact numeric_103 j
-  · exact numeric_104 j
-  · exact numeric_105 j
-  · exact numeric_106 j
-  · exact numeric_107 j
-  · exact numeric_108 j
-  · exact numeric_109 j
-  · exact numeric_110 j
-  · exact numeric_111 j
-  · exact numeric_112 j
-  · exact numeric_113 j
-  · exact numeric_114 j
-  · exact numeric_115 j
-  · exact numeric_116 j
-  · exact numeric_117 j
-  · exact numeric_118 j
-  · exact numeric_119 j
-  · exact numeric_120 j
-  · exact numeric_121 j
-  · exact numeric_122 j
-  · exact numeric_123 j
-  · exact numeric_124 j
-  · exact numeric_125 j
-  · exact numeric_126 j
-  · exact numeric_127 j
-  · exact numeric_128 j
-  · exact numeric_129 j
-  · exact numeric_130 j
-  · exact numeric_131 j
-  · exact numeric_132 j
-  · exact numeric_133 j
-  · exact numeric_134 j
-  · exact numeric_135 j
-  · exact numeric_136 j
-  · exact numeric_137 j
-  · exact numeric_138 j
-  · exact numeric_139 j
-  · exact numeric_140 j
-  · exact numeric_141 j
-  · exact numeric_142 j
-  · exact numeric_143 j
-  · exact numeric_144 j
-  · exact numeric_145 j
-  · exact numeric_146 j
-  · exact numeric_147 j
-  · exact numeric_148 j
-  · exact numeric_149 j
-  · exact numeric_150 j
-  · exact numeric_151 j
-  · exact numeric_152 j
-  · exact numeric_153 j
-  · exact numeric_154 j
-  · exact numeric_155 j
-  · exact numeric_156 j
-  · exact numeric_157 j
-  · exact numeric_158 j
-  · exact numeric_159 j
-  · exact numeric_160 j
-  · exact numeric_161 j
-  · exact numeric_162 j
-  · exact numeric_163 j
-  · exact numeric_164 j
-  · exact numeric_165 j
-  · exact numeric_166 j
-  · exact numeric_167 j
-  · exact numeric_168 j
-  · exact numeric_169 j
-  · exact numeric_170 j
-  · exact numeric_171 j
-  · exact numeric_172 j
-  · exact numeric_173 j
-  · exact numeric_174 j
-  · exact numeric_175 j
-  · exact numeric_176 j
-  · exact numeric_177 j
-  · exact numeric_178 j
-  · exact numeric_179 j
-  · exact numeric_180 j
-  · exact numeric_181 j
-  · exact numeric_182 j
-  · exact numeric_183 j
-  · exact numeric_184 j
-  · exact numeric_185 j
-  · exact numeric_186 j
-  · exact numeric_187 j
-  · exact numeric_188 j
-  · exact numeric_189 j
-  · exact numeric_190 j
-  · exact numeric_191 j
-  · exact numeric_192 j
-  · exact numeric_193 j
-  · exact numeric_194 j
-  · exact numeric_195 j
-  · exact numeric_196 j
-  · exact numeric_197 j
-  · exact numeric_198 j
-  · exact numeric_199 j
-  · exact numeric_200 j
-  · exact numeric_201 j
-  · exact numeric_202 j
-  · exact numeric_203 j
-  · exact numeric_204 j
-  · exact numeric_205 j
-  · exact numeric_206 j
-  · exact numeric_207 j
-  · exact numeric_208 j
-  · exact numeric_209 j
-  · exact numeric_210 j
-  · exact numeric_211 j
-  · exact numeric_212 j
-  · exact numeric_213 j
-  · exact numeric_214 j
-  · exact numeric_215 j
-  · exact numeric_216 j
-  · exact numeric_217 j
-  · exact numeric_218 j
-  · exact numeric_219 j
-  · exact numeric_220 j
-  · exact numeric_221 j
-  · exact numeric_222 j
-  · exact numeric_223 j
-  · exact numeric_224 j
-  · exact numeric_225 j
-  · exact numeric_226 j
-  · exact numeric_227 j
-  · exact numeric_228 j
-  · exact numeric_229 j
-  · exact numeric_230 j
-  · exact numeric_231 j
-  · exact numeric_232 j
-  · exact numeric_233 j
-  · exact numeric_234 j
-  · exact numeric_235 j
-  · exact numeric_236 j
-  · exact numeric_237 j
-  · exact numeric_238 j
-  · exact numeric_239 j
-  · exact numeric_240 j
-  · exact numeric_241 j
-  · exact numeric_242 j
-  · exact numeric_243 j
-  · exact numeric_244 j
-  · exact numeric_245 j
-  · exact numeric_246 j
-  · exact numeric_247 j
-  · exact numeric_248 j
-  · exact numeric_249 j
-  · exact numeric_250 j
-  · exact numeric_251 j
-  · exact numeric_252 j
-  · exact numeric_253 j
-  · exact numeric_254 j
-  · exact numeric_255 j
-  · exact numeric_256 j
-  · exact numeric_257 j
-  · exact numeric_258 j
-  · exact numeric_259 j
-  · exact numeric_260 j
-  · exact numeric_261 j
-  · exact numeric_262 j
-  · exact numeric_263 j
-  · exact numeric_264 j
-  · exact numeric_265 j
-  · exact numeric_266 j
-  · exact numeric_267 j
-  · exact numeric_268 j
-  · exact numeric_269 j
-  · exact numeric_270 j
-  · exact numeric_271 j
-  · exact numeric_272 j
-  · exact numeric_273 j
-  · exact numeric_274 j
-  · exact numeric_275 j
-  · exact numeric_276 j
-  · exact numeric_277 j
-  · exact numeric_278 j
-  · exact numeric_279 j
-  · exact numeric_280 j
-  · exact numeric_281 j
-  · exact numeric_282 j
-  · exact numeric_283 j
-  · exact numeric_284 j
-  · exact numeric_285 j
-  · exact numeric_286 j
-  · exact numeric_287 j
-  · exact numeric_288 j
-  · exact numeric_289 j
-  · exact numeric_290 j
-  · exact numeric_291 j
-  · exact numeric_292 j
-  · exact numeric_293 j
-  · exact numeric_294 j
-  · exact numeric_295 j
-  · exact numeric_296 j
-  · exact numeric_297 j
-  · exact numeric_298 j
-  · exact numeric_299 j
-  · exact numeric_300 j
-  · exact numeric_301 j
-  · exact numeric_302 j
-  · exact numeric_303 j
-  · exact numeric_304 j
-  · exact numeric_305 j
-  · exact numeric_306 j
-  · exact numeric_307 j
-  · exact numeric_308 j
-  · exact numeric_309 j
-  · exact numeric_310 j
-  · exact numeric_311 j
-  · exact numeric_312 j
-  · exact numeric_313 j
-  · exact numeric_314 j
-  · exact numeric_315 j
-  · exact numeric_316 j
-  · exact numeric_317 j
-  · exact numeric_318 j
-  · exact numeric_319 j
-  · exact numeric_320 j
-  · exact numeric_321 j
-  · exact numeric_322 j
-  · exact numeric_323 j
-  · exact numeric_324 j
-  · exact numeric_325 j
-  · exact numeric_326 j
-  · exact numeric_327 j
-  · exact numeric_328 j
-  · exact numeric_329 j
-  · exact numeric_330 j
-  · exact numeric_331 j
-  · exact numeric_332 j
-  · exact numeric_333 j
-  · exact numeric_334 j
-  · exact numeric_335 j
-  · exact numeric_336 j
-  · exact numeric_337 j
-  · exact numeric_338 j
-  · exact numeric_339 j
-  · exact numeric_340 j
-  · exact numeric_341 j
-  · exact numeric_342 j
-  · exact numeric_343 j
-  · exact numeric_344 j
-  · exact numeric_345 j
-  · exact numeric_346 j
-  · exact numeric_347 j
-  · exact numeric_348 j
-  · exact numeric_349 j
-  · exact numeric_350 j
-  · exact numeric_351 j
-  · exact numeric_352 j
-  · exact numeric_353 j
-  · exact numeric_354 j
-  · exact numeric_355 j
-  · exact numeric_356 j
-  · exact numeric_357 j
-  · exact numeric_358 j
-  · exact numeric_359 j
+      upperNum (inputsLoZ sample) (inputsHiZ sample) j * certificateScale ≤ certHiZ sample j * (sourceScale*sourceScale) :=
+  match sample with
+  | ⟨0, _⟩ => numeric_0 j
+  | ⟨1, _⟩ => numeric_1 j
+  | ⟨2, _⟩ => numeric_2 j
+  | ⟨3, _⟩ => numeric_3 j
+  | ⟨4, _⟩ => numeric_4 j
+  | ⟨5, _⟩ => numeric_5 j
+  | ⟨6, _⟩ => numeric_6 j
+  | ⟨7, _⟩ => numeric_7 j
+  | ⟨8, _⟩ => numeric_8 j
+  | ⟨9, _⟩ => numeric_9 j
+  | ⟨10, _⟩ => numeric_10 j
+  | ⟨11, _⟩ => numeric_11 j
+  | ⟨12, _⟩ => numeric_12 j
+  | ⟨13, _⟩ => numeric_13 j
+  | ⟨14, _⟩ => numeric_14 j
+  | ⟨15, _⟩ => numeric_15 j
+  | ⟨16, _⟩ => numeric_16 j
+  | ⟨17, _⟩ => numeric_17 j
+  | ⟨18, _⟩ => numeric_18 j
+  | ⟨19, _⟩ => numeric_19 j
+  | ⟨20, _⟩ => numeric_20 j
+  | ⟨21, _⟩ => numeric_21 j
+  | ⟨22, _⟩ => numeric_22 j
+  | ⟨23, _⟩ => numeric_23 j
+  | ⟨24, _⟩ => numeric_24 j
+  | ⟨25, _⟩ => numeric_25 j
+  | ⟨26, _⟩ => numeric_26 j
+  | ⟨27, _⟩ => numeric_27 j
+  | ⟨28, _⟩ => numeric_28 j
+  | ⟨29, _⟩ => numeric_29 j
+  | ⟨30, _⟩ => numeric_30 j
+  | ⟨31, _⟩ => numeric_31 j
+  | ⟨32, _⟩ => numeric_32 j
+  | ⟨33, _⟩ => numeric_33 j
+  | ⟨34, _⟩ => numeric_34 j
+  | ⟨35, _⟩ => numeric_35 j
+  | ⟨36, _⟩ => numeric_36 j
+  | ⟨37, _⟩ => numeric_37 j
+  | ⟨38, _⟩ => numeric_38 j
+  | ⟨39, _⟩ => numeric_39 j
+  | ⟨40, _⟩ => numeric_40 j
+  | ⟨41, _⟩ => numeric_41 j
+  | ⟨42, _⟩ => numeric_42 j
+  | ⟨43, _⟩ => numeric_43 j
+  | ⟨44, _⟩ => numeric_44 j
+  | ⟨45, _⟩ => numeric_45 j
+  | ⟨46, _⟩ => numeric_46 j
+  | ⟨47, _⟩ => numeric_47 j
+  | ⟨48, _⟩ => numeric_48 j
+  | ⟨49, _⟩ => numeric_49 j
+  | ⟨50, _⟩ => numeric_50 j
+  | ⟨51, _⟩ => numeric_51 j
+  | ⟨52, _⟩ => numeric_52 j
+  | ⟨53, _⟩ => numeric_53 j
+  | ⟨54, _⟩ => numeric_54 j
+  | ⟨55, _⟩ => numeric_55 j
+  | ⟨56, _⟩ => numeric_56 j
+  | ⟨57, _⟩ => numeric_57 j
+  | ⟨58, _⟩ => numeric_58 j
+  | ⟨59, _⟩ => numeric_59 j
+  | ⟨60, _⟩ => numeric_60 j
+  | ⟨61, _⟩ => numeric_61 j
+  | ⟨62, _⟩ => numeric_62 j
+  | ⟨63, _⟩ => numeric_63 j
+  | ⟨64, _⟩ => numeric_64 j
+  | ⟨65, _⟩ => numeric_65 j
+  | ⟨66, _⟩ => numeric_66 j
+  | ⟨67, _⟩ => numeric_67 j
+  | ⟨68, _⟩ => numeric_68 j
+  | ⟨69, _⟩ => numeric_69 j
+  | ⟨70, _⟩ => numeric_70 j
+  | ⟨71, _⟩ => numeric_71 j
+  | ⟨72, _⟩ => numeric_72 j
+  | ⟨73, _⟩ => numeric_73 j
+  | ⟨74, _⟩ => numeric_74 j
+  | ⟨75, _⟩ => numeric_75 j
+  | ⟨76, _⟩ => numeric_76 j
+  | ⟨77, _⟩ => numeric_77 j
+  | ⟨78, _⟩ => numeric_78 j
+  | ⟨79, _⟩ => numeric_79 j
+  | ⟨80, _⟩ => numeric_80 j
+  | ⟨81, _⟩ => numeric_81 j
+  | ⟨82, _⟩ => numeric_82 j
+  | ⟨83, _⟩ => numeric_83 j
+  | ⟨84, _⟩ => numeric_84 j
+  | ⟨85, _⟩ => numeric_85 j
+  | ⟨86, _⟩ => numeric_86 j
+  | ⟨87, _⟩ => numeric_87 j
+  | ⟨88, _⟩ => numeric_88 j
+  | ⟨89, _⟩ => numeric_89 j
+  | ⟨90, _⟩ => numeric_90 j
+  | ⟨91, _⟩ => numeric_91 j
+  | ⟨92, _⟩ => numeric_92 j
+  | ⟨93, _⟩ => numeric_93 j
+  | ⟨94, _⟩ => numeric_94 j
+  | ⟨95, _⟩ => numeric_95 j
+  | ⟨96, _⟩ => numeric_96 j
+  | ⟨97, _⟩ => numeric_97 j
+  | ⟨98, _⟩ => numeric_98 j
+  | ⟨99, _⟩ => numeric_99 j
+  | ⟨100, _⟩ => numeric_100 j
+  | ⟨101, _⟩ => numeric_101 j
+  | ⟨102, _⟩ => numeric_102 j
+  | ⟨103, _⟩ => numeric_103 j
+  | ⟨104, _⟩ => numeric_104 j
+  | ⟨105, _⟩ => numeric_105 j
+  | ⟨106, _⟩ => numeric_106 j
+  | ⟨107, _⟩ => numeric_107 j
+  | ⟨108, _⟩ => numeric_108 j
+  | ⟨109, _⟩ => numeric_109 j
+  | ⟨110, _⟩ => numeric_110 j
+  | ⟨111, _⟩ => numeric_111 j
+  | ⟨112, _⟩ => numeric_112 j
+  | ⟨113, _⟩ => numeric_113 j
+  | ⟨114, _⟩ => numeric_114 j
+  | ⟨115, _⟩ => numeric_115 j
+  | ⟨116, _⟩ => numeric_116 j
+  | ⟨117, _⟩ => numeric_117 j
+  | ⟨118, _⟩ => numeric_118 j
+  | ⟨119, _⟩ => numeric_119 j
+  | ⟨120, _⟩ => numeric_120 j
+  | ⟨121, _⟩ => numeric_121 j
+  | ⟨122, _⟩ => numeric_122 j
+  | ⟨123, _⟩ => numeric_123 j
+  | ⟨124, _⟩ => numeric_124 j
+  | ⟨125, _⟩ => numeric_125 j
+  | ⟨126, _⟩ => numeric_126 j
+  | ⟨127, _⟩ => numeric_127 j
+  | ⟨128, _⟩ => numeric_128 j
+  | ⟨129, _⟩ => numeric_129 j
+  | ⟨130, _⟩ => numeric_130 j
+  | ⟨131, _⟩ => numeric_131 j
+  | ⟨132, _⟩ => numeric_132 j
+  | ⟨133, _⟩ => numeric_133 j
+  | ⟨134, _⟩ => numeric_134 j
+  | ⟨135, _⟩ => numeric_135 j
+  | ⟨136, _⟩ => numeric_136 j
+  | ⟨137, _⟩ => numeric_137 j
+  | ⟨138, _⟩ => numeric_138 j
+  | ⟨139, _⟩ => numeric_139 j
+  | ⟨140, _⟩ => numeric_140 j
+  | ⟨141, _⟩ => numeric_141 j
+  | ⟨142, _⟩ => numeric_142 j
+  | ⟨143, _⟩ => numeric_143 j
+  | ⟨144, _⟩ => numeric_144 j
+  | ⟨145, _⟩ => numeric_145 j
+  | ⟨146, _⟩ => numeric_146 j
+  | ⟨147, _⟩ => numeric_147 j
+  | ⟨148, _⟩ => numeric_148 j
+  | ⟨149, _⟩ => numeric_149 j
+  | ⟨150, _⟩ => numeric_150 j
+  | ⟨151, _⟩ => numeric_151 j
+  | ⟨152, _⟩ => numeric_152 j
+  | ⟨153, _⟩ => numeric_153 j
+  | ⟨154, _⟩ => numeric_154 j
+  | ⟨155, _⟩ => numeric_155 j
+  | ⟨156, _⟩ => numeric_156 j
+  | ⟨157, _⟩ => numeric_157 j
+  | ⟨158, _⟩ => numeric_158 j
+  | ⟨159, _⟩ => numeric_159 j
+  | ⟨160, _⟩ => numeric_160 j
+  | ⟨161, _⟩ => numeric_161 j
+  | ⟨162, _⟩ => numeric_162 j
+  | ⟨163, _⟩ => numeric_163 j
+  | ⟨164, _⟩ => numeric_164 j
+  | ⟨165, _⟩ => numeric_165 j
+  | ⟨166, _⟩ => numeric_166 j
+  | ⟨167, _⟩ => numeric_167 j
+  | ⟨168, _⟩ => numeric_168 j
+  | ⟨169, _⟩ => numeric_169 j
+  | ⟨170, _⟩ => numeric_170 j
+  | ⟨171, _⟩ => numeric_171 j
+  | ⟨172, _⟩ => numeric_172 j
+  | ⟨173, _⟩ => numeric_173 j
+  | ⟨174, _⟩ => numeric_174 j
+  | ⟨175, _⟩ => numeric_175 j
+  | ⟨176, _⟩ => numeric_176 j
+  | ⟨177, _⟩ => numeric_177 j
+  | ⟨178, _⟩ => numeric_178 j
+  | ⟨179, _⟩ => numeric_179 j
+  | ⟨180, _⟩ => numeric_180 j
+  | ⟨181, _⟩ => numeric_181 j
+  | ⟨182, _⟩ => numeric_182 j
+  | ⟨183, _⟩ => numeric_183 j
+  | ⟨184, _⟩ => numeric_184 j
+  | ⟨185, _⟩ => numeric_185 j
+  | ⟨186, _⟩ => numeric_186 j
+  | ⟨187, _⟩ => numeric_187 j
+  | ⟨188, _⟩ => numeric_188 j
+  | ⟨189, _⟩ => numeric_189 j
+  | ⟨190, _⟩ => numeric_190 j
+  | ⟨191, _⟩ => numeric_191 j
+  | ⟨192, _⟩ => numeric_192 j
+  | ⟨193, _⟩ => numeric_193 j
+  | ⟨194, _⟩ => numeric_194 j
+  | ⟨195, _⟩ => numeric_195 j
+  | ⟨196, _⟩ => numeric_196 j
+  | ⟨197, _⟩ => numeric_197 j
+  | ⟨198, _⟩ => numeric_198 j
+  | ⟨199, _⟩ => numeric_199 j
+  | ⟨200, _⟩ => numeric_200 j
+  | ⟨201, _⟩ => numeric_201 j
+  | ⟨202, _⟩ => numeric_202 j
+  | ⟨203, _⟩ => numeric_203 j
+  | ⟨204, _⟩ => numeric_204 j
+  | ⟨205, _⟩ => numeric_205 j
+  | ⟨206, _⟩ => numeric_206 j
+  | ⟨207, _⟩ => numeric_207 j
+  | ⟨208, _⟩ => numeric_208 j
+  | ⟨209, _⟩ => numeric_209 j
+  | ⟨210, _⟩ => numeric_210 j
+  | ⟨211, _⟩ => numeric_211 j
+  | ⟨212, _⟩ => numeric_212 j
+  | ⟨213, _⟩ => numeric_213 j
+  | ⟨214, _⟩ => numeric_214 j
+  | ⟨215, _⟩ => numeric_215 j
+  | ⟨216, _⟩ => numeric_216 j
+  | ⟨217, _⟩ => numeric_217 j
+  | ⟨218, _⟩ => numeric_218 j
+  | ⟨219, _⟩ => numeric_219 j
+  | ⟨220, _⟩ => numeric_220 j
+  | ⟨221, _⟩ => numeric_221 j
+  | ⟨222, _⟩ => numeric_222 j
+  | ⟨223, _⟩ => numeric_223 j
+  | ⟨224, _⟩ => numeric_224 j
+  | ⟨225, _⟩ => numeric_225 j
+  | ⟨226, _⟩ => numeric_226 j
+  | ⟨227, _⟩ => numeric_227 j
+  | ⟨228, _⟩ => numeric_228 j
+  | ⟨229, _⟩ => numeric_229 j
+  | ⟨230, _⟩ => numeric_230 j
+  | ⟨231, _⟩ => numeric_231 j
+  | ⟨232, _⟩ => numeric_232 j
+  | ⟨233, _⟩ => numeric_233 j
+  | ⟨234, _⟩ => numeric_234 j
+  | ⟨235, _⟩ => numeric_235 j
+  | ⟨236, _⟩ => numeric_236 j
+  | ⟨237, _⟩ => numeric_237 j
+  | ⟨238, _⟩ => numeric_238 j
+  | ⟨239, _⟩ => numeric_239 j
+  | ⟨240, _⟩ => numeric_240 j
+  | ⟨241, _⟩ => numeric_241 j
+  | ⟨242, _⟩ => numeric_242 j
+  | ⟨243, _⟩ => numeric_243 j
+  | ⟨244, _⟩ => numeric_244 j
+  | ⟨245, _⟩ => numeric_245 j
+  | ⟨246, _⟩ => numeric_246 j
+  | ⟨247, _⟩ => numeric_247 j
+  | ⟨248, _⟩ => numeric_248 j
+  | ⟨249, _⟩ => numeric_249 j
+  | ⟨250, _⟩ => numeric_250 j
+  | ⟨251, _⟩ => numeric_251 j
+  | ⟨252, _⟩ => numeric_252 j
+  | ⟨253, _⟩ => numeric_253 j
+  | ⟨254, _⟩ => numeric_254 j
+  | ⟨255, _⟩ => numeric_255 j
+  | ⟨256, _⟩ => numeric_256 j
+  | ⟨257, _⟩ => numeric_257 j
+  | ⟨258, _⟩ => numeric_258 j
+  | ⟨259, _⟩ => numeric_259 j
+  | ⟨260, _⟩ => numeric_260 j
+  | ⟨261, _⟩ => numeric_261 j
+  | ⟨262, _⟩ => numeric_262 j
+  | ⟨263, _⟩ => numeric_263 j
+  | ⟨264, _⟩ => numeric_264 j
+  | ⟨265, _⟩ => numeric_265 j
+  | ⟨266, _⟩ => numeric_266 j
+  | ⟨267, _⟩ => numeric_267 j
+  | ⟨268, _⟩ => numeric_268 j
+  | ⟨269, _⟩ => numeric_269 j
+  | ⟨270, _⟩ => numeric_270 j
+  | ⟨271, _⟩ => numeric_271 j
+  | ⟨272, _⟩ => numeric_272 j
+  | ⟨273, _⟩ => numeric_273 j
+  | ⟨274, _⟩ => numeric_274 j
+  | ⟨275, _⟩ => numeric_275 j
+  | ⟨276, _⟩ => numeric_276 j
+  | ⟨277, _⟩ => numeric_277 j
+  | ⟨278, _⟩ => numeric_278 j
+  | ⟨279, _⟩ => numeric_279 j
+  | ⟨280, _⟩ => numeric_280 j
+  | ⟨281, _⟩ => numeric_281 j
+  | ⟨282, _⟩ => numeric_282 j
+  | ⟨283, _⟩ => numeric_283 j
+  | ⟨284, _⟩ => numeric_284 j
+  | ⟨285, _⟩ => numeric_285 j
+  | ⟨286, _⟩ => numeric_286 j
+  | ⟨287, _⟩ => numeric_287 j
+  | ⟨288, _⟩ => numeric_288 j
+  | ⟨289, _⟩ => numeric_289 j
+  | ⟨290, _⟩ => numeric_290 j
+  | ⟨291, _⟩ => numeric_291 j
+  | ⟨292, _⟩ => numeric_292 j
+  | ⟨293, _⟩ => numeric_293 j
+  | ⟨294, _⟩ => numeric_294 j
+  | ⟨295, _⟩ => numeric_295 j
+  | ⟨296, _⟩ => numeric_296 j
+  | ⟨297, _⟩ => numeric_297 j
+  | ⟨298, _⟩ => numeric_298 j
+  | ⟨299, _⟩ => numeric_299 j
+  | ⟨300, _⟩ => numeric_300 j
+  | ⟨301, _⟩ => numeric_301 j
+  | ⟨302, _⟩ => numeric_302 j
+  | ⟨303, _⟩ => numeric_303 j
+  | ⟨304, _⟩ => numeric_304 j
+  | ⟨305, _⟩ => numeric_305 j
+  | ⟨306, _⟩ => numeric_306 j
+  | ⟨307, _⟩ => numeric_307 j
+  | ⟨308, _⟩ => numeric_308 j
+  | ⟨309, _⟩ => numeric_309 j
+  | ⟨310, _⟩ => numeric_310 j
+  | ⟨311, _⟩ => numeric_311 j
+  | ⟨312, _⟩ => numeric_312 j
+  | ⟨313, _⟩ => numeric_313 j
+  | ⟨314, _⟩ => numeric_314 j
+  | ⟨315, _⟩ => numeric_315 j
+  | ⟨316, _⟩ => numeric_316 j
+  | ⟨317, _⟩ => numeric_317 j
+  | ⟨318, _⟩ => numeric_318 j
+  | ⟨319, _⟩ => numeric_319 j
+  | ⟨320, _⟩ => numeric_320 j
+  | ⟨321, _⟩ => numeric_321 j
+  | ⟨322, _⟩ => numeric_322 j
+  | ⟨323, _⟩ => numeric_323 j
+  | ⟨324, _⟩ => numeric_324 j
+  | ⟨325, _⟩ => numeric_325 j
+  | ⟨326, _⟩ => numeric_326 j
+  | ⟨327, _⟩ => numeric_327 j
+  | ⟨328, _⟩ => numeric_328 j
+  | ⟨329, _⟩ => numeric_329 j
+  | ⟨330, _⟩ => numeric_330 j
+  | ⟨331, _⟩ => numeric_331 j
+  | ⟨332, _⟩ => numeric_332 j
+  | ⟨333, _⟩ => numeric_333 j
+  | ⟨334, _⟩ => numeric_334 j
+  | ⟨335, _⟩ => numeric_335 j
+  | ⟨336, _⟩ => numeric_336 j
+  | ⟨337, _⟩ => numeric_337 j
+  | ⟨338, _⟩ => numeric_338 j
+  | ⟨339, _⟩ => numeric_339 j
+  | ⟨340, _⟩ => numeric_340 j
+  | ⟨341, _⟩ => numeric_341 j
+  | ⟨342, _⟩ => numeric_342 j
+  | ⟨343, _⟩ => numeric_343 j
+  | ⟨344, _⟩ => numeric_344 j
+  | ⟨345, _⟩ => numeric_345 j
+  | ⟨346, _⟩ => numeric_346 j
+  | ⟨347, _⟩ => numeric_347 j
+  | ⟨348, _⟩ => numeric_348 j
+  | ⟨349, _⟩ => numeric_349 j
+  | ⟨350, _⟩ => numeric_350 j
+  | ⟨351, _⟩ => numeric_351 j
+  | ⟨352, _⟩ => numeric_352 j
+  | ⟨353, _⟩ => numeric_353 j
+  | ⟨354, _⟩ => numeric_354 j
+  | ⟨355, _⟩ => numeric_355 j
+  | ⟨356, _⟩ => numeric_356 j
+  | ⟨357, _⟩ => numeric_357 j
+  | ⟨358, _⟩ => numeric_358 j
+  | ⟨359, _⟩ => numeric_359 j
+  | ⟨_ + 360, h⟩ => by omega
 
 lemma lower_bridge (lo hi : Fin 64 → ℤ) (j : Fin 10) :
     exactLower lo hi j = (lowerNum lo hi j : ℝ) / (((sourceScale*sourceScale : ℤ) : ℝ)) := by

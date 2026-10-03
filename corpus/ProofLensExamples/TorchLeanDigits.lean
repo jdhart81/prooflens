@@ -1507,7 +1507,8 @@ def upperNum (lo hi : Fin 64 → ℤ) (j : Fin 10) : ℤ :=
 private theorem numeric_all (sample : Fin 360) (j : Fin 10) :
     certLoZ sample j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ sample) (inputsHiZ sample) j * certificateScale ∧
       upperNum (inputsLoZ sample) (inputsHiZ sample) j * certificateScale ≤ certHiZ sample j * (sourceScale*sourceScale) := by
-  decide +revert
+  revert j
+  fin_cases sample <;> decide
 
 lemma lower_bridge (lo hi : Fin 64 → ℤ) (j : Fin 10) :
     exactLower lo hi j = (lowerNum lo hi j : ℝ) / (((sourceScale*sourceScale : ℤ) : ℝ)) := by

@@ -191,7 +191,7 @@
     "status": "verified",
     "strategy": "direct-exact-linear-certificate",
     "declaration": "ProofLens.Examples.TorchLeanDigits.digits_examples_enclosed",
-    "formalIrSha256": "5c97edf1e365f50aef3b2785ad7e6f806dddbea2aaa1084acb649c730f40bd6e",
+    "formalIrSha256": "ad820e109c6fa4fbfd4bbb3feacea2eec69e200f9965cce332198aa7a4fa7757",
     "note": "The certificate uses exact scaled integers and proves outward-rounded endpoints directly; the unsupported generic wrapper-graph path is not used."
   },
   "conclusion": {

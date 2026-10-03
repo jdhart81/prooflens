@@ -380,6 +380,6 @@
     "declaration": "ProofLens.Examples.TorchLeanDigits.digits_examples_enclosed",
     "module": "ProofLensExamples.TorchLeanDigits",
     "statement": "∀ (sample : Fin 360) (x : Fin 64 → ℝ),\n  (∀ (i : Fin 64),\n      ProofLens.Examples.TorchLeanDigits.inputValue (ProofLens.Examples.TorchLeanDigits.inputsLoZ sample) i ≤ x i ∧\n        x i ≤ ProofLens.Examples.TorchLeanDigits.inputValue (ProofLens.Examples.TorchLeanDigits.inputsHiZ sample) i) →\n    ∀ (j : Fin 10),\n      ProofLens.Examples.TorchLeanDigits.certValue (ProofLens.Examples.TorchLeanDigits.certLoZ sample) j ≤\n          ProofLens.Examples.TorchLeanDigits.eval x j ∧\n        ProofLens.Examples.TorchLeanDigits.eval x j ≤\n          ProofLens.Examples.TorchLeanDigits.certValue (ProofLens.Examples.TorchLeanDigits.certHiZ sample) j",
-    "formalIrSha256": "5c97edf1e365f50aef3b2785ad7e6f806dddbea2aaa1084acb649c730f40bd6e"
+    "formalIrSha256": "ad820e109c6fa4fbfd4bbb3feacea2eec69e200f9965cce332198aa7a4fa7757"
   }
 }

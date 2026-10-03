@@ -149,7 +149,7 @@ describe("TorchLean margin-report adapter", () => {
 
   it("verifies the direct exact-real certificate and closes the concrete application gate", () => {
     expect(trustedEnclosure.sha256).toBe(
-      "5c97edf1e365f50aef3b2785ad7e6f806dddbea2aaa1084acb649c730f40bd6e",
+      "ad820e109c6fa4fbfd4bbb3feacea2eec69e200f9965cce332198aa7a4fa7757",
     );
     const result = compileTorchLeanMarginScene(fixture(), {
       trustedSoundnessFormalIr: trustedSoundness,

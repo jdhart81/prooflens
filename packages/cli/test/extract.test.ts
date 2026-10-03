@@ -192,8 +192,8 @@ describe("summarise", () => {
   });
 
   it("reports every summary counter", () => {
-    expect(text).toMatch(/structurally classified\s+34/);
-    expect(text).toMatch(/unsupported structure\s+1/);
+    expect(text).toMatch(/structurally classified\s+35/);
+    expect(text).toMatch(/unsupported structure\s+0/);
     expect(text).toMatch(/with unused hypotheses\s+2/);
     expect(text).toMatch(/proved with sorry\s+0/);
     expect(text).toMatch(/unusual axioms\s+0/);
@@ -224,6 +224,7 @@ describe("summarise", () => {
     expect(line("log_two_pos")).toContain("positivity");
     expect(line("switching_coefficient_ne_zero")).toContain("distinctness");
     expect(line("simple_lower_bound")).toContain("lower-bound");
+    expect(line("energy_cost_injective")).toContain("injective");
   });
 
   it("lists a definition by its functional reading, which is what gets drawn", () => {
@@ -240,10 +241,11 @@ describe("summarise", () => {
     expect(line).not.toContain("unsupported");
   });
 
-  it("flags the unsupported fixture", () => {
+  it("no longer flags the injectivity fixture as unsupported", () => {
     const line = text.split("\n").find((l) => l.trim().startsWith("energy_cost_injective"))!;
     expect(line).toBeDefined();
-    expect(line).toContain("unsupported");
+    expect(line).toContain("injective");
+    expect(line).not.toContain("unsupported");
   });
 
   it("lists the limit fixture by its classification rather than as unsupported", () => {

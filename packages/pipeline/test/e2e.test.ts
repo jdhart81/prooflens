@@ -93,10 +93,9 @@ describe("the summary counts what the classifiers reported", () => {
       a.classifications.some((c) => c.payload.kind === "unsupported"),
     );
     expect(s.unsupported).toBe(unsupported.length);
-    // The `distinctness` classifier now reads `switching_coefficient_ne_zero`,
-    // leaving only the deliberate convergence fixture unsupported.
-    expect(unsupported.map((a) => a.math.name.split(".").pop())).toEqual(["energy_cost_injective"]);
-    expect(s.classified).toBe(34);
+    expect(s.unsupported).toBe(0);
+    expect(unsupported.map((a) => a.math.name.split(".").pop())).toEqual([]);
+    expect(s.classified).toBe(35);
     for (const analysis of bundle.analyses) {
       expect(analysis.unsupported).toBe(
         analysis.classifications.some((c) => c.payload.kind === "unsupported"),
@@ -282,12 +281,11 @@ describe("the switching_coefficient_ne_zero path", () => {
 });
 
 describe("every planned figure type in the corpus", () => {
-  it("covers the ten the planner can currently produce", () => {
+  it("covers the nine the planner can produce for the fully supported corpus", () => {
     const types = new Set(bundle.analyses.flatMap((a) => a.visuals).map((v) => v.type));
     expect([...types].sort()).toEqual([
       "assumption-sensitivity",
       "dependency-graph",
-      "expression-tree",
       "implication-graph",
       "limit-plot",
       "lower-bound-plot",
@@ -614,6 +612,64 @@ describe("the sequence_limit_example path, Formal IR to SVG", () => {
 });
 
 // ---------------------------------------------------------------------------
+// energy_cost_injective: injectivity classifier end to end
+// ---------------------------------------------------------------------------
+
+describe("the energy_cost_injective path, Formal IR to SVG", () => {
+  const analysis = findAnalysis(bundle, "energy_cost_injective")!;
+
+  it("starts from the Lean injectivity statement", () => {
+    expect(analysis.formal.name).toBe("ProofLens.Examples.energy_cost_injective");
+    expect(analysis.formal.conclusion.pretty).toContain("Function.Injective");
+  });
+
+  it("lowers to an `injective` predicate proposition rather than an opaque term", () => {
+    expect(analysis.math.conclusion.value.kind).toBe("predicate");
+    expect((analysis.math.conclusion.value as { predicate: string }).predicate).toBe("injective");
+    expect(analysis.math.conclusionDisplay).toBe("Injective N ↦ N · landauerCost(kB, T, D)");
+  });
+
+  it("classifies as an injective function", () => {
+    expect(analysis.unsupported).toBe(false);
+    expect(analysis.primary!.payload.kind).toBe("injective");
+    expect(analysis.classifications.map((c) => c.payload.kind)).toEqual([
+      "injective",
+      "assumption-sensitivity",
+    ]);
+  });
+
+  it("plans an implication-graph first, then assumption-sensitivity", () => {
+    expect(analysis.visuals.map((v) => v.type)).toEqual([
+      "implication-graph",
+      "assumption-sensitivity",
+      "dependency-graph",
+    ]);
+  });
+
+  it("renders to SVG and to text carrying the implication nodes", () => {
+    for (const spec of analysis.visuals) {
+      const svg = renderSvg(spec);
+      expect(svg.startsWith("<svg"), spec.id).toBe(true);
+      expect(renderText(spec).length).toBeGreaterThan(0);
+    }
+  });
+
+  it("explains itself without claiming it cannot read the statement", () => {
+    const text = analysis.explanations.map((l) => l.claim.value).join("\n");
+    expect(text).not.toContain("does not have a reading for its head symbol");
+    expect(text).toContain("injective");
+  });
+
+  it("no longer appears in the coverage backlog", () => {
+    const report = coverageReport(bundle);
+    for (const backlog of [report.unrecognisedShapes, report.opaqueConstants]) {
+      expect(backlog.flatMap((m) => m.examples)).not.toContain(analysis.math.name);
+      expect(backlog.map((m) => m.head)).not.toContain("Function.Injective");
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
 // The whole-corpus sweep
 // ---------------------------------------------------------------------------
 
@@ -775,7 +831,7 @@ describe("a stub row from a failed extraction", () => {
       declarations: [...(raw["declarations"] as unknown[]), stub],
     });
     expect(mixed.analyses).toHaveLength(CORPUS_DECLARATION_COUNT + 1);
-    expect(mixed.summary.unsupported).toBe(2);
+    expect(mixed.summary.unsupported).toBe(1);
 
     // The real declarations keep their kernel standing.
     const real = findAnalysis(mixed, "simple_upper_bound")!;

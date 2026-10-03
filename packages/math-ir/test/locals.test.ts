@@ -261,9 +261,9 @@ describe("a local constant applied to another local constant", () => {
 // ---------------------------------------------------------------------------
 
 describe("lowerDocument wires the locals through", () => {
-  it("leaves only the deliberate fixture with an opaque term", () => {
+  it("leaves no declaration with an opaque term in the corpus", () => {
     const withOpaque = math.theorems.filter((t) => opaqueHeadsIn(t).size > 0);
-    expect(withOpaque.map((t) => t.name.split(".").pop())).toEqual(["energy_cost_injective"]);
+    expect(withOpaque).toEqual([]);
   });
 
   it("resolves every reference to a corpus definition, in every declaration", () => {

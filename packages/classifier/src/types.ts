@@ -20,6 +20,7 @@ export type ClassificationKind =
   | "equality"
   | "functional-relationship"
   | "monotonicity"
+  | "injective"
   | "implication"
   | "equivalence"
   | "assumption-sensitivity"
@@ -75,6 +76,11 @@ export interface DistinctnessPayload {
 export interface MonotonicityPayload {
   direction: "increasing" | "decreasing";
   strict: boolean;
+  subject: MathExpression | null;
+  predicateName: string;
+}
+
+export interface InjectivePayload {
   subject: MathExpression | null;
   predicateName: string;
 }
@@ -145,6 +151,7 @@ export type ClassificationPayload =
   | { kind: "equality"; data: EqualityPayload }
   | { kind: "functional-relationship"; data: EqualityPayload }
   | { kind: "monotonicity"; data: MonotonicityPayload }
+  | { kind: "injective"; data: InjectivePayload }
   | { kind: "implication"; data: ImplicationPayload }
   | { kind: "equivalence"; data: ImplicationPayload }
   | { kind: "assumption-sensitivity"; data: AssumptionSensitivityPayload }

@@ -310,15 +310,13 @@ describe("opaqueHeadsIn", () => {
     expect(opaqueHeadsIn(t).size).toBe(0);
   });
 
-  it("finds exactly one opaque head across the whole corpus", () => {
+  it("finds no opaque heads across the whole corpus", () => {
     const all = new Map<string, string[]>();
     for (const t of math.theorems) {
       for (const head of opaqueHeadsIn(t)) {
         all.set(head, [...(all.get(head) ?? []), t.name.split(".").pop()!]);
       }
     }
-    // `Filter.Tendsto` used to be the entry here; the `limit` proposition kind
-    // reads it now, leaving the deliberate injectivity fixture as the only miss.
-    expect([...all.entries()]).toEqual([["Function.Injective", ["energy_cost_injective"]]]);
+    expect([...all.entries()]).toEqual([]);
   });
 });

@@ -28,6 +28,7 @@ export const KIND_LABEL: Record<ClassificationKind, string> = {
   equality: "equality",
   "functional-relationship": "definition of",
   monotonicity: "monotonicity",
+  injective: "injective",
   implication: "implication",
   equivalence: "equivalence",
   "assumption-sensitivity": "assumptions",

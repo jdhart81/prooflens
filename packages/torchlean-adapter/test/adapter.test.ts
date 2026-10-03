@@ -7,6 +7,8 @@ import {
   compileTorchLeanMarginScene,
   exportTorchLeanEnclosureRequest,
   inspectTorchLeanApplicationAudit,
+  parseExactDecimalToken,
+  parseJsonWithExactDecimals,
   TORCHLEAN_DIGITS_MARGIN_FIXTURE,
   TORCHLEAN_ENCLOSURE_RECEIPT_FORMAT,
   TORCHLEAN_IBP_SOUNDNESS_PIN,
@@ -43,14 +45,17 @@ const trustedSoundness = {
 };
 
 describe("TorchLean margin-report adapter", () => {
-  it("compiles the pinned official report excerpt and recomputes both outcomes", () => {
+  it("compiles the pinned official report and recomputes all 360 outcomes", () => {
     const result = compileTorchLeanMarginScene(fixture());
     expect(result.status).toBe("ready");
     if (result.status !== "ready") return;
 
     expect(result.scene.source.commit).toBe("12f5c651f03b3890ec012d0a6bb45e3ea698c8d3");
-    expect(result.scene.summary).toMatchObject({ examples: 360, certifiedOk: 318 });
+    expect(result.scene.summary).toMatchObject({ examples: 360, nominalOk: 349, certifiedOk: 318 });
     expect(result.scene.summary.certifiedRate).toBeCloseTo(318 / 360, 12);
+    expect(result.scene.examples).toHaveLength(360);
+
+    // Check sample 0 (positive margin)
     expect(result.scene.examples[0]).toMatchObject({
       id: 0,
       label: 7,
@@ -59,13 +64,20 @@ describe("TorchLean margin-report adapter", () => {
       computedCertified: true,
     });
     expect(result.scene.examples[0]!.margin).toBeCloseTo(6.481595185957846 - 4.82769997820258, 12);
-    expect(result.scene.examples[1]).toMatchObject({
+
+    // Check sample 7 (overlapping intervals / not certified)
+    expect(result.scene.examples[7]).toMatchObject({
       id: 7,
       label: 8,
       competitorClass: 9,
       certified: false,
       computedCertified: false,
     });
+
+    const certifiedCount = result.scene.examples.filter((e) => e.certified).length;
+    const computedCertifiedCount = result.scene.examples.filter((e) => e.computedCertified).length;
+    expect(certifiedCount).toBe(318);
+    expect(computedCertifiedCount).toBe(318);
   });
 
   it("never upgrades the external report to kernel-verified standing", () => {
@@ -137,7 +149,7 @@ describe("TorchLean margin-report adapter", () => {
 
   it("verifies the direct exact-real certificate and closes the concrete application gate", () => {
     expect(trustedEnclosure.sha256).toBe(
-      "2d0965c5c2198bde88f90a521ba39bb6e94dc8474094547a9c95b741348bc0e0",
+      "ad820e109c6fa4fbfd4bbb3feacea2eec69e200f9965cce332198aa7a4fa7757",
     );
     const result = compileTorchLeanMarginScene(fixture(), {
       trustedSoundnessFormalIr: trustedSoundness,
@@ -160,6 +172,10 @@ describe("TorchLean margin-report adapter", () => {
     });
     expect(result.scene.epistemic).toBe("interpreted");
     expect(result.scene.boundary).toContain("matching trusted Lean kernel witness");
+
+    // Check that displayed examples have lean-exact-outward-certificate authority
+    expect(result.scene.examples[0]!.intervalAuthority).toBe("lean-exact-outward-certificate");
+    expect(result.scene.examples[7]!.intervalAuthority).toBe("lean-exact-outward-certificate");
   });
 
   it("rejects altered concrete application audits", () => {
@@ -208,7 +224,7 @@ describe("TorchLean margin-report adapter", () => {
         sourceCommit: "12f5c651f03b3890ec012d0a6bb45e3ea698c8d3",
         modelId: "torchlean:digits-linear-margin",
         method: "ibp_linear",
-        exampleIds: [0, 7],
+        exampleIds: Array.from({ length: 360 }, (_, i) => i),
       },
     });
     expect(request.note).toContain("not a certificate");
@@ -338,5 +354,156 @@ describe("TorchLean margin-report adapter", () => {
       status: "blocked",
       code: "INVALID_EXAMPLE",
     });
+  });
+
+  it("fails closed on missing, extra, or duplicate rows", () => {
+    const missingRow = fixture();
+    missingRow.examples.pop();
+    expect(compileTorchLeanMarginScene(missingRow)).toMatchObject({
+      status: "blocked",
+      code: "INVALID_EXAMPLE",
+      reason: expect.stringContaining("example count does not match"),
+    });
+
+    const extraRow = fixture();
+    extraRow.examples.push({ ...extraRow.examples[0]!, id: 360 });
+    expect(compileTorchLeanMarginScene(extraRow)).toMatchObject({
+      status: "blocked",
+      code: "INVALID_EXAMPLE",
+      reason: expect.stringContaining("example count does not match"),
+    });
+
+    const duplicateId = fixture();
+    duplicateId.examples[1]!.id = 0;
+    expect(compileTorchLeanMarginScene(duplicateId)).toMatchObject({
+      status: "blocked",
+      code: "INVALID_EXAMPLE",
+      reason: expect.stringContaining("Duplicate example id 0"),
+    });
+  });
+
+  it("fails closed on reordered rows between snapshot and receipt binding", () => {
+    const reordered = fixture();
+    const temp = reordered.examples[0]!;
+    reordered.examples[0] = reordered.examples[1]!;
+    reordered.examples[1] = temp;
+
+    const result = compileTorchLeanMarginScene(reordered, {
+      trustedSoundnessFormalIr: trustedSoundness,
+      applicationAudit,
+      receipt: enclosureReceipt,
+      trustedFormalIr: trustedEnclosure,
+    });
+    if (result.status !== "ready") throw new Error(result.reason);
+    expect(result.scene.enclosure.status).toBe("interpreted");
+    expect(result.scene.enclosure.verification).toBe("receipt-mismatch");
+  });
+
+  it("fails closed on endpoint drift and inverted intervals", () => {
+    const invertedInterval = fixture();
+    invertedInterval.examples[0]!.lower[0] = 5;
+    invertedInterval.examples[0]!.upper[0] = -5;
+    expect(compileTorchLeanMarginScene(invertedInterval)).toMatchObject({
+      status: "blocked",
+      code: "INVALID_EXAMPLE",
+    });
+
+    const driftedEndpoint = fixture();
+    // For sample 0 (label 7, certified true), shift label floor below competitor ceiling
+    driftedEndpoint.examples[0]!.lower[7] = -10.0;
+    expect(compileTorchLeanMarginScene(driftedEndpoint)).toMatchObject({
+      status: "blocked",
+      code: "CERTIFICATE_MISMATCH",
+    });
+  });
+
+  it("fails closed on mismatched source hashes or altered constants in receipt", () => {
+    const snapshot = fixture();
+    const binding = exportTorchLeanEnclosureRequest(snapshot).binding;
+    const mismatchedSha = compileTorchLeanMarginScene(snapshot, {
+      receipt: {
+        format: TORCHLEAN_ENCLOSURE_RECEIPT_FORMAT,
+        binding: { ...binding, sourceSha256: "0".repeat(64) },
+        proof: {
+          authority: "lean-kernel",
+          protocol: "prooflens-torchlean-enclosure-v0.1",
+          declaration: "ProofLens.Examples.TorchLeanDigits.digits_examples_enclosed",
+          module: "ProofLensExamples.TorchLeanDigits",
+          statement: "True",
+          formalIrSha256: trustedEnclosure.sha256,
+        },
+      },
+      trustedFormalIr: trustedEnclosure,
+    });
+    if (mismatchedSha.status !== "ready") throw new Error(mismatchedSha.reason);
+    expect(mismatchedSha.scene.enclosure.verification).toBe("receipt-mismatch");
+
+    const mismatchedModel = compileTorchLeanMarginScene(snapshot, {
+      receipt: {
+        format: TORCHLEAN_ENCLOSURE_RECEIPT_FORMAT,
+        binding: { ...binding, modelId: "torchlean:different-model" },
+        proof: {
+          authority: "lean-kernel",
+          protocol: "prooflens-torchlean-enclosure-v0.1",
+          declaration: "ProofLens.Examples.TorchLeanDigits.digits_examples_enclosed",
+          module: "ProofLensExamples.TorchLeanDigits",
+          statement: "True",
+          formalIrSha256: trustedEnclosure.sha256,
+        },
+      },
+      trustedFormalIr: trustedEnclosure,
+    });
+    if (mismatchedModel.status !== "ready") throw new Error(mismatchedModel.reason);
+    expect(mismatchedModel.scene.enclosure.verification).toBe("receipt-mismatch");
+  });
+
+  it("parses exact decimal tokens without binary floating-point representation drift", () => {
+    // 0.07 cannot be represented exactly in IEEE 754 float64 (naive float 0.07 * 1e19 drifts to ...128)
+    expect(parseExactDecimalToken("0.07", 19)).toBe(700000000000000000n);
+    expect(parseExactDecimalToken("0.1", 19)).toBe(1000000000000000000n);
+    expect(parseExactDecimalToken("0.29", 19)).toBe(2900000000000000000n);
+    expect(parseExactDecimalToken("-0.1428571428571428571", 19)).toBe(-1428571428571428571n);
+    expect(parseExactDecimalToken("0.0625", 19)).toBe(625000000000000000n);
+    expect(parseExactDecimalToken("-9.797004565895", 12)).toBe(-9797004565895n);
+    expect(parseExactDecimalToken("1e-5", 19)).toBe(100000000000000n);
+    expect(parseExactDecimalToken("-2.5e-3", 19)).toBe(-25000000000000000n);
+    expect(parseExactDecimalToken("1.25e2", 19)).toBe(1250000000000000000000n);
+    expect(parseExactDecimalToken("0", 19)).toBe(0n);
+    expect(parseExactDecimalToken("-0", 19)).toBe(0n);
+    expect(parseExactDecimalToken("0.50000000000000000000000", 19)).toBe(5000000000000000000n);
+  });
+
+  it("rejects malformed decimal tokens and unsupported excess precision", () => {
+    expect(() => parseExactDecimalToken("", 19)).toThrow("Empty decimal token");
+    expect(() => parseExactDecimalToken("abc", 19)).toThrow("non-digit");
+    expect(() => parseExactDecimalToken("1.2.3", 19)).toThrow("multiple dots");
+    expect(() => parseExactDecimalToken("1e-", 19)).toThrow("Invalid exponent");
+    expect(() => parseExactDecimalToken("0.1234567890123456789123", 19)).toThrow(
+      "Unsupported fractional precision",
+    );
+  });
+
+  it("parses raw JSON files preserving exact numeric string tokens", () => {
+    const rawJson = JSON.stringify({
+      weight: [-0.0009358525276184082, 0.07, 1e-5],
+      bias: [-0.09520449489355087],
+      pixel: 0.125,
+    });
+    const parsed = parseJsonWithExactDecimals(rawJson) as {
+      weight: string[];
+      bias: string[];
+      pixel: string;
+    };
+    expect(parsed.weight[0]).toBe("-0.0009358525276184082");
+    expect(parsed.weight[1]).toBe("0.07");
+    expect(parsed.weight[2]).toBe("0.00001");
+    expect(parsed.bias[0]).toBe("-0.09520449489355087");
+    expect(parsed.pixel).toBe("0.125");
+
+    // Check exact BigInt conversion
+    expect(parseExactDecimalToken(parsed.weight[0]!, 19)).toBe(-9358525276184082n);
+    expect(parseExactDecimalToken(parsed.weight[1]!, 19)).toBe(700000000000000000n);
+    expect(parseExactDecimalToken(parsed.bias[0]!, 19)).toBe(-952044948935508700n);
+    expect(parseExactDecimalToken(parsed.pixel, 19)).toBe(1250000000000000000n);
   });
 });

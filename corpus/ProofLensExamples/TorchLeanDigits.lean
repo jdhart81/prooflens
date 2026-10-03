@@ -1504,11 +1504,2170 @@ def lowerNum (lo hi : Fin 64 → ℤ) (j : Fin 10) : ℤ :=
 def upperNum (lo hi : Fin 64 → ℤ) (j : Fin 10) : ℤ :=
   biasZ j * sourceScale + ∑ i, max (weightsZ j i * lo i) (weightsZ j i * hi i)
 
+private theorem numeric_0 (j : Fin 10) :
+    certLoZ 0 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 0) (inputsHiZ 0) j * certificateScale ∧
+      upperNum (inputsLoZ 0) (inputsHiZ 0) j * certificateScale ≤ certHiZ 0 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_1 (j : Fin 10) :
+    certLoZ 1 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 1) (inputsHiZ 1) j * certificateScale ∧
+      upperNum (inputsLoZ 1) (inputsHiZ 1) j * certificateScale ≤ certHiZ 1 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_2 (j : Fin 10) :
+    certLoZ 2 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 2) (inputsHiZ 2) j * certificateScale ∧
+      upperNum (inputsLoZ 2) (inputsHiZ 2) j * certificateScale ≤ certHiZ 2 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_3 (j : Fin 10) :
+    certLoZ 3 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 3) (inputsHiZ 3) j * certificateScale ∧
+      upperNum (inputsLoZ 3) (inputsHiZ 3) j * certificateScale ≤ certHiZ 3 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_4 (j : Fin 10) :
+    certLoZ 4 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 4) (inputsHiZ 4) j * certificateScale ∧
+      upperNum (inputsLoZ 4) (inputsHiZ 4) j * certificateScale ≤ certHiZ 4 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_5 (j : Fin 10) :
+    certLoZ 5 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 5) (inputsHiZ 5) j * certificateScale ∧
+      upperNum (inputsLoZ 5) (inputsHiZ 5) j * certificateScale ≤ certHiZ 5 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_6 (j : Fin 10) :
+    certLoZ 6 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 6) (inputsHiZ 6) j * certificateScale ∧
+      upperNum (inputsLoZ 6) (inputsHiZ 6) j * certificateScale ≤ certHiZ 6 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_7 (j : Fin 10) :
+    certLoZ 7 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 7) (inputsHiZ 7) j * certificateScale ∧
+      upperNum (inputsLoZ 7) (inputsHiZ 7) j * certificateScale ≤ certHiZ 7 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_8 (j : Fin 10) :
+    certLoZ 8 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 8) (inputsHiZ 8) j * certificateScale ∧
+      upperNum (inputsLoZ 8) (inputsHiZ 8) j * certificateScale ≤ certHiZ 8 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_9 (j : Fin 10) :
+    certLoZ 9 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 9) (inputsHiZ 9) j * certificateScale ∧
+      upperNum (inputsLoZ 9) (inputsHiZ 9) j * certificateScale ≤ certHiZ 9 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_10 (j : Fin 10) :
+    certLoZ 10 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 10) (inputsHiZ 10) j * certificateScale ∧
+      upperNum (inputsLoZ 10) (inputsHiZ 10) j * certificateScale ≤ certHiZ 10 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_11 (j : Fin 10) :
+    certLoZ 11 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 11) (inputsHiZ 11) j * certificateScale ∧
+      upperNum (inputsLoZ 11) (inputsHiZ 11) j * certificateScale ≤ certHiZ 11 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_12 (j : Fin 10) :
+    certLoZ 12 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 12) (inputsHiZ 12) j * certificateScale ∧
+      upperNum (inputsLoZ 12) (inputsHiZ 12) j * certificateScale ≤ certHiZ 12 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_13 (j : Fin 10) :
+    certLoZ 13 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 13) (inputsHiZ 13) j * certificateScale ∧
+      upperNum (inputsLoZ 13) (inputsHiZ 13) j * certificateScale ≤ certHiZ 13 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_14 (j : Fin 10) :
+    certLoZ 14 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 14) (inputsHiZ 14) j * certificateScale ∧
+      upperNum (inputsLoZ 14) (inputsHiZ 14) j * certificateScale ≤ certHiZ 14 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_15 (j : Fin 10) :
+    certLoZ 15 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 15) (inputsHiZ 15) j * certificateScale ∧
+      upperNum (inputsLoZ 15) (inputsHiZ 15) j * certificateScale ≤ certHiZ 15 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_16 (j : Fin 10) :
+    certLoZ 16 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 16) (inputsHiZ 16) j * certificateScale ∧
+      upperNum (inputsLoZ 16) (inputsHiZ 16) j * certificateScale ≤ certHiZ 16 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_17 (j : Fin 10) :
+    certLoZ 17 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 17) (inputsHiZ 17) j * certificateScale ∧
+      upperNum (inputsLoZ 17) (inputsHiZ 17) j * certificateScale ≤ certHiZ 17 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_18 (j : Fin 10) :
+    certLoZ 18 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 18) (inputsHiZ 18) j * certificateScale ∧
+      upperNum (inputsLoZ 18) (inputsHiZ 18) j * certificateScale ≤ certHiZ 18 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_19 (j : Fin 10) :
+    certLoZ 19 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 19) (inputsHiZ 19) j * certificateScale ∧
+      upperNum (inputsLoZ 19) (inputsHiZ 19) j * certificateScale ≤ certHiZ 19 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_20 (j : Fin 10) :
+    certLoZ 20 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 20) (inputsHiZ 20) j * certificateScale ∧
+      upperNum (inputsLoZ 20) (inputsHiZ 20) j * certificateScale ≤ certHiZ 20 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_21 (j : Fin 10) :
+    certLoZ 21 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 21) (inputsHiZ 21) j * certificateScale ∧
+      upperNum (inputsLoZ 21) (inputsHiZ 21) j * certificateScale ≤ certHiZ 21 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_22 (j : Fin 10) :
+    certLoZ 22 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 22) (inputsHiZ 22) j * certificateScale ∧
+      upperNum (inputsLoZ 22) (inputsHiZ 22) j * certificateScale ≤ certHiZ 22 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_23 (j : Fin 10) :
+    certLoZ 23 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 23) (inputsHiZ 23) j * certificateScale ∧
+      upperNum (inputsLoZ 23) (inputsHiZ 23) j * certificateScale ≤ certHiZ 23 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_24 (j : Fin 10) :
+    certLoZ 24 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 24) (inputsHiZ 24) j * certificateScale ∧
+      upperNum (inputsLoZ 24) (inputsHiZ 24) j * certificateScale ≤ certHiZ 24 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_25 (j : Fin 10) :
+    certLoZ 25 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 25) (inputsHiZ 25) j * certificateScale ∧
+      upperNum (inputsLoZ 25) (inputsHiZ 25) j * certificateScale ≤ certHiZ 25 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_26 (j : Fin 10) :
+    certLoZ 26 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 26) (inputsHiZ 26) j * certificateScale ∧
+      upperNum (inputsLoZ 26) (inputsHiZ 26) j * certificateScale ≤ certHiZ 26 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_27 (j : Fin 10) :
+    certLoZ 27 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 27) (inputsHiZ 27) j * certificateScale ∧
+      upperNum (inputsLoZ 27) (inputsHiZ 27) j * certificateScale ≤ certHiZ 27 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_28 (j : Fin 10) :
+    certLoZ 28 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 28) (inputsHiZ 28) j * certificateScale ∧
+      upperNum (inputsLoZ 28) (inputsHiZ 28) j * certificateScale ≤ certHiZ 28 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_29 (j : Fin 10) :
+    certLoZ 29 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 29) (inputsHiZ 29) j * certificateScale ∧
+      upperNum (inputsLoZ 29) (inputsHiZ 29) j * certificateScale ≤ certHiZ 29 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_30 (j : Fin 10) :
+    certLoZ 30 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 30) (inputsHiZ 30) j * certificateScale ∧
+      upperNum (inputsLoZ 30) (inputsHiZ 30) j * certificateScale ≤ certHiZ 30 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_31 (j : Fin 10) :
+    certLoZ 31 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 31) (inputsHiZ 31) j * certificateScale ∧
+      upperNum (inputsLoZ 31) (inputsHiZ 31) j * certificateScale ≤ certHiZ 31 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_32 (j : Fin 10) :
+    certLoZ 32 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 32) (inputsHiZ 32) j * certificateScale ∧
+      upperNum (inputsLoZ 32) (inputsHiZ 32) j * certificateScale ≤ certHiZ 32 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_33 (j : Fin 10) :
+    certLoZ 33 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 33) (inputsHiZ 33) j * certificateScale ∧
+      upperNum (inputsLoZ 33) (inputsHiZ 33) j * certificateScale ≤ certHiZ 33 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_34 (j : Fin 10) :
+    certLoZ 34 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 34) (inputsHiZ 34) j * certificateScale ∧
+      upperNum (inputsLoZ 34) (inputsHiZ 34) j * certificateScale ≤ certHiZ 34 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_35 (j : Fin 10) :
+    certLoZ 35 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 35) (inputsHiZ 35) j * certificateScale ∧
+      upperNum (inputsLoZ 35) (inputsHiZ 35) j * certificateScale ≤ certHiZ 35 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_36 (j : Fin 10) :
+    certLoZ 36 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 36) (inputsHiZ 36) j * certificateScale ∧
+      upperNum (inputsLoZ 36) (inputsHiZ 36) j * certificateScale ≤ certHiZ 36 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_37 (j : Fin 10) :
+    certLoZ 37 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 37) (inputsHiZ 37) j * certificateScale ∧
+      upperNum (inputsLoZ 37) (inputsHiZ 37) j * certificateScale ≤ certHiZ 37 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_38 (j : Fin 10) :
+    certLoZ 38 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 38) (inputsHiZ 38) j * certificateScale ∧
+      upperNum (inputsLoZ 38) (inputsHiZ 38) j * certificateScale ≤ certHiZ 38 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_39 (j : Fin 10) :
+    certLoZ 39 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 39) (inputsHiZ 39) j * certificateScale ∧
+      upperNum (inputsLoZ 39) (inputsHiZ 39) j * certificateScale ≤ certHiZ 39 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_40 (j : Fin 10) :
+    certLoZ 40 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 40) (inputsHiZ 40) j * certificateScale ∧
+      upperNum (inputsLoZ 40) (inputsHiZ 40) j * certificateScale ≤ certHiZ 40 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_41 (j : Fin 10) :
+    certLoZ 41 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 41) (inputsHiZ 41) j * certificateScale ∧
+      upperNum (inputsLoZ 41) (inputsHiZ 41) j * certificateScale ≤ certHiZ 41 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_42 (j : Fin 10) :
+    certLoZ 42 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 42) (inputsHiZ 42) j * certificateScale ∧
+      upperNum (inputsLoZ 42) (inputsHiZ 42) j * certificateScale ≤ certHiZ 42 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_43 (j : Fin 10) :
+    certLoZ 43 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 43) (inputsHiZ 43) j * certificateScale ∧
+      upperNum (inputsLoZ 43) (inputsHiZ 43) j * certificateScale ≤ certHiZ 43 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_44 (j : Fin 10) :
+    certLoZ 44 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 44) (inputsHiZ 44) j * certificateScale ∧
+      upperNum (inputsLoZ 44) (inputsHiZ 44) j * certificateScale ≤ certHiZ 44 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_45 (j : Fin 10) :
+    certLoZ 45 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 45) (inputsHiZ 45) j * certificateScale ∧
+      upperNum (inputsLoZ 45) (inputsHiZ 45) j * certificateScale ≤ certHiZ 45 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_46 (j : Fin 10) :
+    certLoZ 46 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 46) (inputsHiZ 46) j * certificateScale ∧
+      upperNum (inputsLoZ 46) (inputsHiZ 46) j * certificateScale ≤ certHiZ 46 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_47 (j : Fin 10) :
+    certLoZ 47 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 47) (inputsHiZ 47) j * certificateScale ∧
+      upperNum (inputsLoZ 47) (inputsHiZ 47) j * certificateScale ≤ certHiZ 47 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_48 (j : Fin 10) :
+    certLoZ 48 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 48) (inputsHiZ 48) j * certificateScale ∧
+      upperNum (inputsLoZ 48) (inputsHiZ 48) j * certificateScale ≤ certHiZ 48 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_49 (j : Fin 10) :
+    certLoZ 49 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 49) (inputsHiZ 49) j * certificateScale ∧
+      upperNum (inputsLoZ 49) (inputsHiZ 49) j * certificateScale ≤ certHiZ 49 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_50 (j : Fin 10) :
+    certLoZ 50 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 50) (inputsHiZ 50) j * certificateScale ∧
+      upperNum (inputsLoZ 50) (inputsHiZ 50) j * certificateScale ≤ certHiZ 50 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_51 (j : Fin 10) :
+    certLoZ 51 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 51) (inputsHiZ 51) j * certificateScale ∧
+      upperNum (inputsLoZ 51) (inputsHiZ 51) j * certificateScale ≤ certHiZ 51 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_52 (j : Fin 10) :
+    certLoZ 52 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 52) (inputsHiZ 52) j * certificateScale ∧
+      upperNum (inputsLoZ 52) (inputsHiZ 52) j * certificateScale ≤ certHiZ 52 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_53 (j : Fin 10) :
+    certLoZ 53 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 53) (inputsHiZ 53) j * certificateScale ∧
+      upperNum (inputsLoZ 53) (inputsHiZ 53) j * certificateScale ≤ certHiZ 53 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_54 (j : Fin 10) :
+    certLoZ 54 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 54) (inputsHiZ 54) j * certificateScale ∧
+      upperNum (inputsLoZ 54) (inputsHiZ 54) j * certificateScale ≤ certHiZ 54 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_55 (j : Fin 10) :
+    certLoZ 55 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 55) (inputsHiZ 55) j * certificateScale ∧
+      upperNum (inputsLoZ 55) (inputsHiZ 55) j * certificateScale ≤ certHiZ 55 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_56 (j : Fin 10) :
+    certLoZ 56 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 56) (inputsHiZ 56) j * certificateScale ∧
+      upperNum (inputsLoZ 56) (inputsHiZ 56) j * certificateScale ≤ certHiZ 56 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_57 (j : Fin 10) :
+    certLoZ 57 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 57) (inputsHiZ 57) j * certificateScale ∧
+      upperNum (inputsLoZ 57) (inputsHiZ 57) j * certificateScale ≤ certHiZ 57 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_58 (j : Fin 10) :
+    certLoZ 58 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 58) (inputsHiZ 58) j * certificateScale ∧
+      upperNum (inputsLoZ 58) (inputsHiZ 58) j * certificateScale ≤ certHiZ 58 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_59 (j : Fin 10) :
+    certLoZ 59 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 59) (inputsHiZ 59) j * certificateScale ∧
+      upperNum (inputsLoZ 59) (inputsHiZ 59) j * certificateScale ≤ certHiZ 59 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_60 (j : Fin 10) :
+    certLoZ 60 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 60) (inputsHiZ 60) j * certificateScale ∧
+      upperNum (inputsLoZ 60) (inputsHiZ 60) j * certificateScale ≤ certHiZ 60 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_61 (j : Fin 10) :
+    certLoZ 61 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 61) (inputsHiZ 61) j * certificateScale ∧
+      upperNum (inputsLoZ 61) (inputsHiZ 61) j * certificateScale ≤ certHiZ 61 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_62 (j : Fin 10) :
+    certLoZ 62 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 62) (inputsHiZ 62) j * certificateScale ∧
+      upperNum (inputsLoZ 62) (inputsHiZ 62) j * certificateScale ≤ certHiZ 62 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_63 (j : Fin 10) :
+    certLoZ 63 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 63) (inputsHiZ 63) j * certificateScale ∧
+      upperNum (inputsLoZ 63) (inputsHiZ 63) j * certificateScale ≤ certHiZ 63 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_64 (j : Fin 10) :
+    certLoZ 64 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 64) (inputsHiZ 64) j * certificateScale ∧
+      upperNum (inputsLoZ 64) (inputsHiZ 64) j * certificateScale ≤ certHiZ 64 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_65 (j : Fin 10) :
+    certLoZ 65 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 65) (inputsHiZ 65) j * certificateScale ∧
+      upperNum (inputsLoZ 65) (inputsHiZ 65) j * certificateScale ≤ certHiZ 65 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_66 (j : Fin 10) :
+    certLoZ 66 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 66) (inputsHiZ 66) j * certificateScale ∧
+      upperNum (inputsLoZ 66) (inputsHiZ 66) j * certificateScale ≤ certHiZ 66 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_67 (j : Fin 10) :
+    certLoZ 67 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 67) (inputsHiZ 67) j * certificateScale ∧
+      upperNum (inputsLoZ 67) (inputsHiZ 67) j * certificateScale ≤ certHiZ 67 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_68 (j : Fin 10) :
+    certLoZ 68 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 68) (inputsHiZ 68) j * certificateScale ∧
+      upperNum (inputsLoZ 68) (inputsHiZ 68) j * certificateScale ≤ certHiZ 68 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_69 (j : Fin 10) :
+    certLoZ 69 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 69) (inputsHiZ 69) j * certificateScale ∧
+      upperNum (inputsLoZ 69) (inputsHiZ 69) j * certificateScale ≤ certHiZ 69 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_70 (j : Fin 10) :
+    certLoZ 70 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 70) (inputsHiZ 70) j * certificateScale ∧
+      upperNum (inputsLoZ 70) (inputsHiZ 70) j * certificateScale ≤ certHiZ 70 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_71 (j : Fin 10) :
+    certLoZ 71 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 71) (inputsHiZ 71) j * certificateScale ∧
+      upperNum (inputsLoZ 71) (inputsHiZ 71) j * certificateScale ≤ certHiZ 71 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_72 (j : Fin 10) :
+    certLoZ 72 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 72) (inputsHiZ 72) j * certificateScale ∧
+      upperNum (inputsLoZ 72) (inputsHiZ 72) j * certificateScale ≤ certHiZ 72 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_73 (j : Fin 10) :
+    certLoZ 73 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 73) (inputsHiZ 73) j * certificateScale ∧
+      upperNum (inputsLoZ 73) (inputsHiZ 73) j * certificateScale ≤ certHiZ 73 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_74 (j : Fin 10) :
+    certLoZ 74 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 74) (inputsHiZ 74) j * certificateScale ∧
+      upperNum (inputsLoZ 74) (inputsHiZ 74) j * certificateScale ≤ certHiZ 74 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_75 (j : Fin 10) :
+    certLoZ 75 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 75) (inputsHiZ 75) j * certificateScale ∧
+      upperNum (inputsLoZ 75) (inputsHiZ 75) j * certificateScale ≤ certHiZ 75 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_76 (j : Fin 10) :
+    certLoZ 76 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 76) (inputsHiZ 76) j * certificateScale ∧
+      upperNum (inputsLoZ 76) (inputsHiZ 76) j * certificateScale ≤ certHiZ 76 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_77 (j : Fin 10) :
+    certLoZ 77 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 77) (inputsHiZ 77) j * certificateScale ∧
+      upperNum (inputsLoZ 77) (inputsHiZ 77) j * certificateScale ≤ certHiZ 77 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_78 (j : Fin 10) :
+    certLoZ 78 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 78) (inputsHiZ 78) j * certificateScale ∧
+      upperNum (inputsLoZ 78) (inputsHiZ 78) j * certificateScale ≤ certHiZ 78 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_79 (j : Fin 10) :
+    certLoZ 79 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 79) (inputsHiZ 79) j * certificateScale ∧
+      upperNum (inputsLoZ 79) (inputsHiZ 79) j * certificateScale ≤ certHiZ 79 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_80 (j : Fin 10) :
+    certLoZ 80 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 80) (inputsHiZ 80) j * certificateScale ∧
+      upperNum (inputsLoZ 80) (inputsHiZ 80) j * certificateScale ≤ certHiZ 80 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_81 (j : Fin 10) :
+    certLoZ 81 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 81) (inputsHiZ 81) j * certificateScale ∧
+      upperNum (inputsLoZ 81) (inputsHiZ 81) j * certificateScale ≤ certHiZ 81 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_82 (j : Fin 10) :
+    certLoZ 82 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 82) (inputsHiZ 82) j * certificateScale ∧
+      upperNum (inputsLoZ 82) (inputsHiZ 82) j * certificateScale ≤ certHiZ 82 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_83 (j : Fin 10) :
+    certLoZ 83 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 83) (inputsHiZ 83) j * certificateScale ∧
+      upperNum (inputsLoZ 83) (inputsHiZ 83) j * certificateScale ≤ certHiZ 83 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_84 (j : Fin 10) :
+    certLoZ 84 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 84) (inputsHiZ 84) j * certificateScale ∧
+      upperNum (inputsLoZ 84) (inputsHiZ 84) j * certificateScale ≤ certHiZ 84 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_85 (j : Fin 10) :
+    certLoZ 85 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 85) (inputsHiZ 85) j * certificateScale ∧
+      upperNum (inputsLoZ 85) (inputsHiZ 85) j * certificateScale ≤ certHiZ 85 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_86 (j : Fin 10) :
+    certLoZ 86 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 86) (inputsHiZ 86) j * certificateScale ∧
+      upperNum (inputsLoZ 86) (inputsHiZ 86) j * certificateScale ≤ certHiZ 86 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_87 (j : Fin 10) :
+    certLoZ 87 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 87) (inputsHiZ 87) j * certificateScale ∧
+      upperNum (inputsLoZ 87) (inputsHiZ 87) j * certificateScale ≤ certHiZ 87 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_88 (j : Fin 10) :
+    certLoZ 88 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 88) (inputsHiZ 88) j * certificateScale ∧
+      upperNum (inputsLoZ 88) (inputsHiZ 88) j * certificateScale ≤ certHiZ 88 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_89 (j : Fin 10) :
+    certLoZ 89 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 89) (inputsHiZ 89) j * certificateScale ∧
+      upperNum (inputsLoZ 89) (inputsHiZ 89) j * certificateScale ≤ certHiZ 89 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_90 (j : Fin 10) :
+    certLoZ 90 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 90) (inputsHiZ 90) j * certificateScale ∧
+      upperNum (inputsLoZ 90) (inputsHiZ 90) j * certificateScale ≤ certHiZ 90 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_91 (j : Fin 10) :
+    certLoZ 91 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 91) (inputsHiZ 91) j * certificateScale ∧
+      upperNum (inputsLoZ 91) (inputsHiZ 91) j * certificateScale ≤ certHiZ 91 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_92 (j : Fin 10) :
+    certLoZ 92 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 92) (inputsHiZ 92) j * certificateScale ∧
+      upperNum (inputsLoZ 92) (inputsHiZ 92) j * certificateScale ≤ certHiZ 92 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_93 (j : Fin 10) :
+    certLoZ 93 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 93) (inputsHiZ 93) j * certificateScale ∧
+      upperNum (inputsLoZ 93) (inputsHiZ 93) j * certificateScale ≤ certHiZ 93 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_94 (j : Fin 10) :
+    certLoZ 94 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 94) (inputsHiZ 94) j * certificateScale ∧
+      upperNum (inputsLoZ 94) (inputsHiZ 94) j * certificateScale ≤ certHiZ 94 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_95 (j : Fin 10) :
+    certLoZ 95 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 95) (inputsHiZ 95) j * certificateScale ∧
+      upperNum (inputsLoZ 95) (inputsHiZ 95) j * certificateScale ≤ certHiZ 95 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_96 (j : Fin 10) :
+    certLoZ 96 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 96) (inputsHiZ 96) j * certificateScale ∧
+      upperNum (inputsLoZ 96) (inputsHiZ 96) j * certificateScale ≤ certHiZ 96 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_97 (j : Fin 10) :
+    certLoZ 97 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 97) (inputsHiZ 97) j * certificateScale ∧
+      upperNum (inputsLoZ 97) (inputsHiZ 97) j * certificateScale ≤ certHiZ 97 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_98 (j : Fin 10) :
+    certLoZ 98 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 98) (inputsHiZ 98) j * certificateScale ∧
+      upperNum (inputsLoZ 98) (inputsHiZ 98) j * certificateScale ≤ certHiZ 98 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_99 (j : Fin 10) :
+    certLoZ 99 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 99) (inputsHiZ 99) j * certificateScale ∧
+      upperNum (inputsLoZ 99) (inputsHiZ 99) j * certificateScale ≤ certHiZ 99 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_100 (j : Fin 10) :
+    certLoZ 100 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 100) (inputsHiZ 100) j * certificateScale ∧
+      upperNum (inputsLoZ 100) (inputsHiZ 100) j * certificateScale ≤ certHiZ 100 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_101 (j : Fin 10) :
+    certLoZ 101 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 101) (inputsHiZ 101) j * certificateScale ∧
+      upperNum (inputsLoZ 101) (inputsHiZ 101) j * certificateScale ≤ certHiZ 101 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_102 (j : Fin 10) :
+    certLoZ 102 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 102) (inputsHiZ 102) j * certificateScale ∧
+      upperNum (inputsLoZ 102) (inputsHiZ 102) j * certificateScale ≤ certHiZ 102 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_103 (j : Fin 10) :
+    certLoZ 103 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 103) (inputsHiZ 103) j * certificateScale ∧
+      upperNum (inputsLoZ 103) (inputsHiZ 103) j * certificateScale ≤ certHiZ 103 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_104 (j : Fin 10) :
+    certLoZ 104 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 104) (inputsHiZ 104) j * certificateScale ∧
+      upperNum (inputsLoZ 104) (inputsHiZ 104) j * certificateScale ≤ certHiZ 104 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_105 (j : Fin 10) :
+    certLoZ 105 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 105) (inputsHiZ 105) j * certificateScale ∧
+      upperNum (inputsLoZ 105) (inputsHiZ 105) j * certificateScale ≤ certHiZ 105 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_106 (j : Fin 10) :
+    certLoZ 106 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 106) (inputsHiZ 106) j * certificateScale ∧
+      upperNum (inputsLoZ 106) (inputsHiZ 106) j * certificateScale ≤ certHiZ 106 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_107 (j : Fin 10) :
+    certLoZ 107 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 107) (inputsHiZ 107) j * certificateScale ∧
+      upperNum (inputsLoZ 107) (inputsHiZ 107) j * certificateScale ≤ certHiZ 107 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_108 (j : Fin 10) :
+    certLoZ 108 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 108) (inputsHiZ 108) j * certificateScale ∧
+      upperNum (inputsLoZ 108) (inputsHiZ 108) j * certificateScale ≤ certHiZ 108 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_109 (j : Fin 10) :
+    certLoZ 109 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 109) (inputsHiZ 109) j * certificateScale ∧
+      upperNum (inputsLoZ 109) (inputsHiZ 109) j * certificateScale ≤ certHiZ 109 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_110 (j : Fin 10) :
+    certLoZ 110 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 110) (inputsHiZ 110) j * certificateScale ∧
+      upperNum (inputsLoZ 110) (inputsHiZ 110) j * certificateScale ≤ certHiZ 110 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_111 (j : Fin 10) :
+    certLoZ 111 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 111) (inputsHiZ 111) j * certificateScale ∧
+      upperNum (inputsLoZ 111) (inputsHiZ 111) j * certificateScale ≤ certHiZ 111 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_112 (j : Fin 10) :
+    certLoZ 112 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 112) (inputsHiZ 112) j * certificateScale ∧
+      upperNum (inputsLoZ 112) (inputsHiZ 112) j * certificateScale ≤ certHiZ 112 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_113 (j : Fin 10) :
+    certLoZ 113 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 113) (inputsHiZ 113) j * certificateScale ∧
+      upperNum (inputsLoZ 113) (inputsHiZ 113) j * certificateScale ≤ certHiZ 113 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_114 (j : Fin 10) :
+    certLoZ 114 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 114) (inputsHiZ 114) j * certificateScale ∧
+      upperNum (inputsLoZ 114) (inputsHiZ 114) j * certificateScale ≤ certHiZ 114 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_115 (j : Fin 10) :
+    certLoZ 115 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 115) (inputsHiZ 115) j * certificateScale ∧
+      upperNum (inputsLoZ 115) (inputsHiZ 115) j * certificateScale ≤ certHiZ 115 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_116 (j : Fin 10) :
+    certLoZ 116 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 116) (inputsHiZ 116) j * certificateScale ∧
+      upperNum (inputsLoZ 116) (inputsHiZ 116) j * certificateScale ≤ certHiZ 116 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_117 (j : Fin 10) :
+    certLoZ 117 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 117) (inputsHiZ 117) j * certificateScale ∧
+      upperNum (inputsLoZ 117) (inputsHiZ 117) j * certificateScale ≤ certHiZ 117 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_118 (j : Fin 10) :
+    certLoZ 118 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 118) (inputsHiZ 118) j * certificateScale ∧
+      upperNum (inputsLoZ 118) (inputsHiZ 118) j * certificateScale ≤ certHiZ 118 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_119 (j : Fin 10) :
+    certLoZ 119 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 119) (inputsHiZ 119) j * certificateScale ∧
+      upperNum (inputsLoZ 119) (inputsHiZ 119) j * certificateScale ≤ certHiZ 119 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_120 (j : Fin 10) :
+    certLoZ 120 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 120) (inputsHiZ 120) j * certificateScale ∧
+      upperNum (inputsLoZ 120) (inputsHiZ 120) j * certificateScale ≤ certHiZ 120 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_121 (j : Fin 10) :
+    certLoZ 121 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 121) (inputsHiZ 121) j * certificateScale ∧
+      upperNum (inputsLoZ 121) (inputsHiZ 121) j * certificateScale ≤ certHiZ 121 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_122 (j : Fin 10) :
+    certLoZ 122 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 122) (inputsHiZ 122) j * certificateScale ∧
+      upperNum (inputsLoZ 122) (inputsHiZ 122) j * certificateScale ≤ certHiZ 122 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_123 (j : Fin 10) :
+    certLoZ 123 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 123) (inputsHiZ 123) j * certificateScale ∧
+      upperNum (inputsLoZ 123) (inputsHiZ 123) j * certificateScale ≤ certHiZ 123 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_124 (j : Fin 10) :
+    certLoZ 124 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 124) (inputsHiZ 124) j * certificateScale ∧
+      upperNum (inputsLoZ 124) (inputsHiZ 124) j * certificateScale ≤ certHiZ 124 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_125 (j : Fin 10) :
+    certLoZ 125 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 125) (inputsHiZ 125) j * certificateScale ∧
+      upperNum (inputsLoZ 125) (inputsHiZ 125) j * certificateScale ≤ certHiZ 125 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_126 (j : Fin 10) :
+    certLoZ 126 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 126) (inputsHiZ 126) j * certificateScale ∧
+      upperNum (inputsLoZ 126) (inputsHiZ 126) j * certificateScale ≤ certHiZ 126 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_127 (j : Fin 10) :
+    certLoZ 127 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 127) (inputsHiZ 127) j * certificateScale ∧
+      upperNum (inputsLoZ 127) (inputsHiZ 127) j * certificateScale ≤ certHiZ 127 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_128 (j : Fin 10) :
+    certLoZ 128 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 128) (inputsHiZ 128) j * certificateScale ∧
+      upperNum (inputsLoZ 128) (inputsHiZ 128) j * certificateScale ≤ certHiZ 128 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_129 (j : Fin 10) :
+    certLoZ 129 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 129) (inputsHiZ 129) j * certificateScale ∧
+      upperNum (inputsLoZ 129) (inputsHiZ 129) j * certificateScale ≤ certHiZ 129 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_130 (j : Fin 10) :
+    certLoZ 130 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 130) (inputsHiZ 130) j * certificateScale ∧
+      upperNum (inputsLoZ 130) (inputsHiZ 130) j * certificateScale ≤ certHiZ 130 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_131 (j : Fin 10) :
+    certLoZ 131 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 131) (inputsHiZ 131) j * certificateScale ∧
+      upperNum (inputsLoZ 131) (inputsHiZ 131) j * certificateScale ≤ certHiZ 131 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_132 (j : Fin 10) :
+    certLoZ 132 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 132) (inputsHiZ 132) j * certificateScale ∧
+      upperNum (inputsLoZ 132) (inputsHiZ 132) j * certificateScale ≤ certHiZ 132 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_133 (j : Fin 10) :
+    certLoZ 133 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 133) (inputsHiZ 133) j * certificateScale ∧
+      upperNum (inputsLoZ 133) (inputsHiZ 133) j * certificateScale ≤ certHiZ 133 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_134 (j : Fin 10) :
+    certLoZ 134 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 134) (inputsHiZ 134) j * certificateScale ∧
+      upperNum (inputsLoZ 134) (inputsHiZ 134) j * certificateScale ≤ certHiZ 134 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_135 (j : Fin 10) :
+    certLoZ 135 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 135) (inputsHiZ 135) j * certificateScale ∧
+      upperNum (inputsLoZ 135) (inputsHiZ 135) j * certificateScale ≤ certHiZ 135 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_136 (j : Fin 10) :
+    certLoZ 136 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 136) (inputsHiZ 136) j * certificateScale ∧
+      upperNum (inputsLoZ 136) (inputsHiZ 136) j * certificateScale ≤ certHiZ 136 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_137 (j : Fin 10) :
+    certLoZ 137 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 137) (inputsHiZ 137) j * certificateScale ∧
+      upperNum (inputsLoZ 137) (inputsHiZ 137) j * certificateScale ≤ certHiZ 137 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_138 (j : Fin 10) :
+    certLoZ 138 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 138) (inputsHiZ 138) j * certificateScale ∧
+      upperNum (inputsLoZ 138) (inputsHiZ 138) j * certificateScale ≤ certHiZ 138 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_139 (j : Fin 10) :
+    certLoZ 139 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 139) (inputsHiZ 139) j * certificateScale ∧
+      upperNum (inputsLoZ 139) (inputsHiZ 139) j * certificateScale ≤ certHiZ 139 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_140 (j : Fin 10) :
+    certLoZ 140 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 140) (inputsHiZ 140) j * certificateScale ∧
+      upperNum (inputsLoZ 140) (inputsHiZ 140) j * certificateScale ≤ certHiZ 140 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_141 (j : Fin 10) :
+    certLoZ 141 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 141) (inputsHiZ 141) j * certificateScale ∧
+      upperNum (inputsLoZ 141) (inputsHiZ 141) j * certificateScale ≤ certHiZ 141 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_142 (j : Fin 10) :
+    certLoZ 142 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 142) (inputsHiZ 142) j * certificateScale ∧
+      upperNum (inputsLoZ 142) (inputsHiZ 142) j * certificateScale ≤ certHiZ 142 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_143 (j : Fin 10) :
+    certLoZ 143 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 143) (inputsHiZ 143) j * certificateScale ∧
+      upperNum (inputsLoZ 143) (inputsHiZ 143) j * certificateScale ≤ certHiZ 143 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_144 (j : Fin 10) :
+    certLoZ 144 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 144) (inputsHiZ 144) j * certificateScale ∧
+      upperNum (inputsLoZ 144) (inputsHiZ 144) j * certificateScale ≤ certHiZ 144 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_145 (j : Fin 10) :
+    certLoZ 145 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 145) (inputsHiZ 145) j * certificateScale ∧
+      upperNum (inputsLoZ 145) (inputsHiZ 145) j * certificateScale ≤ certHiZ 145 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_146 (j : Fin 10) :
+    certLoZ 146 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 146) (inputsHiZ 146) j * certificateScale ∧
+      upperNum (inputsLoZ 146) (inputsHiZ 146) j * certificateScale ≤ certHiZ 146 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_147 (j : Fin 10) :
+    certLoZ 147 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 147) (inputsHiZ 147) j * certificateScale ∧
+      upperNum (inputsLoZ 147) (inputsHiZ 147) j * certificateScale ≤ certHiZ 147 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_148 (j : Fin 10) :
+    certLoZ 148 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 148) (inputsHiZ 148) j * certificateScale ∧
+      upperNum (inputsLoZ 148) (inputsHiZ 148) j * certificateScale ≤ certHiZ 148 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_149 (j : Fin 10) :
+    certLoZ 149 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 149) (inputsHiZ 149) j * certificateScale ∧
+      upperNum (inputsLoZ 149) (inputsHiZ 149) j * certificateScale ≤ certHiZ 149 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_150 (j : Fin 10) :
+    certLoZ 150 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 150) (inputsHiZ 150) j * certificateScale ∧
+      upperNum (inputsLoZ 150) (inputsHiZ 150) j * certificateScale ≤ certHiZ 150 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_151 (j : Fin 10) :
+    certLoZ 151 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 151) (inputsHiZ 151) j * certificateScale ∧
+      upperNum (inputsLoZ 151) (inputsHiZ 151) j * certificateScale ≤ certHiZ 151 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_152 (j : Fin 10) :
+    certLoZ 152 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 152) (inputsHiZ 152) j * certificateScale ∧
+      upperNum (inputsLoZ 152) (inputsHiZ 152) j * certificateScale ≤ certHiZ 152 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_153 (j : Fin 10) :
+    certLoZ 153 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 153) (inputsHiZ 153) j * certificateScale ∧
+      upperNum (inputsLoZ 153) (inputsHiZ 153) j * certificateScale ≤ certHiZ 153 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_154 (j : Fin 10) :
+    certLoZ 154 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 154) (inputsHiZ 154) j * certificateScale ∧
+      upperNum (inputsLoZ 154) (inputsHiZ 154) j * certificateScale ≤ certHiZ 154 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_155 (j : Fin 10) :
+    certLoZ 155 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 155) (inputsHiZ 155) j * certificateScale ∧
+      upperNum (inputsLoZ 155) (inputsHiZ 155) j * certificateScale ≤ certHiZ 155 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_156 (j : Fin 10) :
+    certLoZ 156 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 156) (inputsHiZ 156) j * certificateScale ∧
+      upperNum (inputsLoZ 156) (inputsHiZ 156) j * certificateScale ≤ certHiZ 156 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_157 (j : Fin 10) :
+    certLoZ 157 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 157) (inputsHiZ 157) j * certificateScale ∧
+      upperNum (inputsLoZ 157) (inputsHiZ 157) j * certificateScale ≤ certHiZ 157 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_158 (j : Fin 10) :
+    certLoZ 158 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 158) (inputsHiZ 158) j * certificateScale ∧
+      upperNum (inputsLoZ 158) (inputsHiZ 158) j * certificateScale ≤ certHiZ 158 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_159 (j : Fin 10) :
+    certLoZ 159 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 159) (inputsHiZ 159) j * certificateScale ∧
+      upperNum (inputsLoZ 159) (inputsHiZ 159) j * certificateScale ≤ certHiZ 159 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_160 (j : Fin 10) :
+    certLoZ 160 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 160) (inputsHiZ 160) j * certificateScale ∧
+      upperNum (inputsLoZ 160) (inputsHiZ 160) j * certificateScale ≤ certHiZ 160 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_161 (j : Fin 10) :
+    certLoZ 161 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 161) (inputsHiZ 161) j * certificateScale ∧
+      upperNum (inputsLoZ 161) (inputsHiZ 161) j * certificateScale ≤ certHiZ 161 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_162 (j : Fin 10) :
+    certLoZ 162 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 162) (inputsHiZ 162) j * certificateScale ∧
+      upperNum (inputsLoZ 162) (inputsHiZ 162) j * certificateScale ≤ certHiZ 162 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_163 (j : Fin 10) :
+    certLoZ 163 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 163) (inputsHiZ 163) j * certificateScale ∧
+      upperNum (inputsLoZ 163) (inputsHiZ 163) j * certificateScale ≤ certHiZ 163 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_164 (j : Fin 10) :
+    certLoZ 164 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 164) (inputsHiZ 164) j * certificateScale ∧
+      upperNum (inputsLoZ 164) (inputsHiZ 164) j * certificateScale ≤ certHiZ 164 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_165 (j : Fin 10) :
+    certLoZ 165 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 165) (inputsHiZ 165) j * certificateScale ∧
+      upperNum (inputsLoZ 165) (inputsHiZ 165) j * certificateScale ≤ certHiZ 165 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_166 (j : Fin 10) :
+    certLoZ 166 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 166) (inputsHiZ 166) j * certificateScale ∧
+      upperNum (inputsLoZ 166) (inputsHiZ 166) j * certificateScale ≤ certHiZ 166 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_167 (j : Fin 10) :
+    certLoZ 167 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 167) (inputsHiZ 167) j * certificateScale ∧
+      upperNum (inputsLoZ 167) (inputsHiZ 167) j * certificateScale ≤ certHiZ 167 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_168 (j : Fin 10) :
+    certLoZ 168 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 168) (inputsHiZ 168) j * certificateScale ∧
+      upperNum (inputsLoZ 168) (inputsHiZ 168) j * certificateScale ≤ certHiZ 168 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_169 (j : Fin 10) :
+    certLoZ 169 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 169) (inputsHiZ 169) j * certificateScale ∧
+      upperNum (inputsLoZ 169) (inputsHiZ 169) j * certificateScale ≤ certHiZ 169 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_170 (j : Fin 10) :
+    certLoZ 170 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 170) (inputsHiZ 170) j * certificateScale ∧
+      upperNum (inputsLoZ 170) (inputsHiZ 170) j * certificateScale ≤ certHiZ 170 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_171 (j : Fin 10) :
+    certLoZ 171 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 171) (inputsHiZ 171) j * certificateScale ∧
+      upperNum (inputsLoZ 171) (inputsHiZ 171) j * certificateScale ≤ certHiZ 171 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_172 (j : Fin 10) :
+    certLoZ 172 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 172) (inputsHiZ 172) j * certificateScale ∧
+      upperNum (inputsLoZ 172) (inputsHiZ 172) j * certificateScale ≤ certHiZ 172 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_173 (j : Fin 10) :
+    certLoZ 173 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 173) (inputsHiZ 173) j * certificateScale ∧
+      upperNum (inputsLoZ 173) (inputsHiZ 173) j * certificateScale ≤ certHiZ 173 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_174 (j : Fin 10) :
+    certLoZ 174 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 174) (inputsHiZ 174) j * certificateScale ∧
+      upperNum (inputsLoZ 174) (inputsHiZ 174) j * certificateScale ≤ certHiZ 174 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_175 (j : Fin 10) :
+    certLoZ 175 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 175) (inputsHiZ 175) j * certificateScale ∧
+      upperNum (inputsLoZ 175) (inputsHiZ 175) j * certificateScale ≤ certHiZ 175 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_176 (j : Fin 10) :
+    certLoZ 176 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 176) (inputsHiZ 176) j * certificateScale ∧
+      upperNum (inputsLoZ 176) (inputsHiZ 176) j * certificateScale ≤ certHiZ 176 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_177 (j : Fin 10) :
+    certLoZ 177 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 177) (inputsHiZ 177) j * certificateScale ∧
+      upperNum (inputsLoZ 177) (inputsHiZ 177) j * certificateScale ≤ certHiZ 177 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_178 (j : Fin 10) :
+    certLoZ 178 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 178) (inputsHiZ 178) j * certificateScale ∧
+      upperNum (inputsLoZ 178) (inputsHiZ 178) j * certificateScale ≤ certHiZ 178 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_179 (j : Fin 10) :
+    certLoZ 179 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 179) (inputsHiZ 179) j * certificateScale ∧
+      upperNum (inputsLoZ 179) (inputsHiZ 179) j * certificateScale ≤ certHiZ 179 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_180 (j : Fin 10) :
+    certLoZ 180 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 180) (inputsHiZ 180) j * certificateScale ∧
+      upperNum (inputsLoZ 180) (inputsHiZ 180) j * certificateScale ≤ certHiZ 180 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_181 (j : Fin 10) :
+    certLoZ 181 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 181) (inputsHiZ 181) j * certificateScale ∧
+      upperNum (inputsLoZ 181) (inputsHiZ 181) j * certificateScale ≤ certHiZ 181 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_182 (j : Fin 10) :
+    certLoZ 182 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 182) (inputsHiZ 182) j * certificateScale ∧
+      upperNum (inputsLoZ 182) (inputsHiZ 182) j * certificateScale ≤ certHiZ 182 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_183 (j : Fin 10) :
+    certLoZ 183 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 183) (inputsHiZ 183) j * certificateScale ∧
+      upperNum (inputsLoZ 183) (inputsHiZ 183) j * certificateScale ≤ certHiZ 183 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_184 (j : Fin 10) :
+    certLoZ 184 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 184) (inputsHiZ 184) j * certificateScale ∧
+      upperNum (inputsLoZ 184) (inputsHiZ 184) j * certificateScale ≤ certHiZ 184 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_185 (j : Fin 10) :
+    certLoZ 185 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 185) (inputsHiZ 185) j * certificateScale ∧
+      upperNum (inputsLoZ 185) (inputsHiZ 185) j * certificateScale ≤ certHiZ 185 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_186 (j : Fin 10) :
+    certLoZ 186 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 186) (inputsHiZ 186) j * certificateScale ∧
+      upperNum (inputsLoZ 186) (inputsHiZ 186) j * certificateScale ≤ certHiZ 186 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_187 (j : Fin 10) :
+    certLoZ 187 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 187) (inputsHiZ 187) j * certificateScale ∧
+      upperNum (inputsLoZ 187) (inputsHiZ 187) j * certificateScale ≤ certHiZ 187 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_188 (j : Fin 10) :
+    certLoZ 188 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 188) (inputsHiZ 188) j * certificateScale ∧
+      upperNum (inputsLoZ 188) (inputsHiZ 188) j * certificateScale ≤ certHiZ 188 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_189 (j : Fin 10) :
+    certLoZ 189 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 189) (inputsHiZ 189) j * certificateScale ∧
+      upperNum (inputsLoZ 189) (inputsHiZ 189) j * certificateScale ≤ certHiZ 189 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_190 (j : Fin 10) :
+    certLoZ 190 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 190) (inputsHiZ 190) j * certificateScale ∧
+      upperNum (inputsLoZ 190) (inputsHiZ 190) j * certificateScale ≤ certHiZ 190 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_191 (j : Fin 10) :
+    certLoZ 191 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 191) (inputsHiZ 191) j * certificateScale ∧
+      upperNum (inputsLoZ 191) (inputsHiZ 191) j * certificateScale ≤ certHiZ 191 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_192 (j : Fin 10) :
+    certLoZ 192 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 192) (inputsHiZ 192) j * certificateScale ∧
+      upperNum (inputsLoZ 192) (inputsHiZ 192) j * certificateScale ≤ certHiZ 192 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_193 (j : Fin 10) :
+    certLoZ 193 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 193) (inputsHiZ 193) j * certificateScale ∧
+      upperNum (inputsLoZ 193) (inputsHiZ 193) j * certificateScale ≤ certHiZ 193 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_194 (j : Fin 10) :
+    certLoZ 194 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 194) (inputsHiZ 194) j * certificateScale ∧
+      upperNum (inputsLoZ 194) (inputsHiZ 194) j * certificateScale ≤ certHiZ 194 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_195 (j : Fin 10) :
+    certLoZ 195 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 195) (inputsHiZ 195) j * certificateScale ∧
+      upperNum (inputsLoZ 195) (inputsHiZ 195) j * certificateScale ≤ certHiZ 195 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_196 (j : Fin 10) :
+    certLoZ 196 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 196) (inputsHiZ 196) j * certificateScale ∧
+      upperNum (inputsLoZ 196) (inputsHiZ 196) j * certificateScale ≤ certHiZ 196 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_197 (j : Fin 10) :
+    certLoZ 197 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 197) (inputsHiZ 197) j * certificateScale ∧
+      upperNum (inputsLoZ 197) (inputsHiZ 197) j * certificateScale ≤ certHiZ 197 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_198 (j : Fin 10) :
+    certLoZ 198 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 198) (inputsHiZ 198) j * certificateScale ∧
+      upperNum (inputsLoZ 198) (inputsHiZ 198) j * certificateScale ≤ certHiZ 198 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_199 (j : Fin 10) :
+    certLoZ 199 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 199) (inputsHiZ 199) j * certificateScale ∧
+      upperNum (inputsLoZ 199) (inputsHiZ 199) j * certificateScale ≤ certHiZ 199 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_200 (j : Fin 10) :
+    certLoZ 200 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 200) (inputsHiZ 200) j * certificateScale ∧
+      upperNum (inputsLoZ 200) (inputsHiZ 200) j * certificateScale ≤ certHiZ 200 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_201 (j : Fin 10) :
+    certLoZ 201 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 201) (inputsHiZ 201) j * certificateScale ∧
+      upperNum (inputsLoZ 201) (inputsHiZ 201) j * certificateScale ≤ certHiZ 201 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_202 (j : Fin 10) :
+    certLoZ 202 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 202) (inputsHiZ 202) j * certificateScale ∧
+      upperNum (inputsLoZ 202) (inputsHiZ 202) j * certificateScale ≤ certHiZ 202 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_203 (j : Fin 10) :
+    certLoZ 203 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 203) (inputsHiZ 203) j * certificateScale ∧
+      upperNum (inputsLoZ 203) (inputsHiZ 203) j * certificateScale ≤ certHiZ 203 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_204 (j : Fin 10) :
+    certLoZ 204 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 204) (inputsHiZ 204) j * certificateScale ∧
+      upperNum (inputsLoZ 204) (inputsHiZ 204) j * certificateScale ≤ certHiZ 204 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_205 (j : Fin 10) :
+    certLoZ 205 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 205) (inputsHiZ 205) j * certificateScale ∧
+      upperNum (inputsLoZ 205) (inputsHiZ 205) j * certificateScale ≤ certHiZ 205 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_206 (j : Fin 10) :
+    certLoZ 206 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 206) (inputsHiZ 206) j * certificateScale ∧
+      upperNum (inputsLoZ 206) (inputsHiZ 206) j * certificateScale ≤ certHiZ 206 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_207 (j : Fin 10) :
+    certLoZ 207 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 207) (inputsHiZ 207) j * certificateScale ∧
+      upperNum (inputsLoZ 207) (inputsHiZ 207) j * certificateScale ≤ certHiZ 207 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_208 (j : Fin 10) :
+    certLoZ 208 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 208) (inputsHiZ 208) j * certificateScale ∧
+      upperNum (inputsLoZ 208) (inputsHiZ 208) j * certificateScale ≤ certHiZ 208 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_209 (j : Fin 10) :
+    certLoZ 209 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 209) (inputsHiZ 209) j * certificateScale ∧
+      upperNum (inputsLoZ 209) (inputsHiZ 209) j * certificateScale ≤ certHiZ 209 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_210 (j : Fin 10) :
+    certLoZ 210 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 210) (inputsHiZ 210) j * certificateScale ∧
+      upperNum (inputsLoZ 210) (inputsHiZ 210) j * certificateScale ≤ certHiZ 210 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_211 (j : Fin 10) :
+    certLoZ 211 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 211) (inputsHiZ 211) j * certificateScale ∧
+      upperNum (inputsLoZ 211) (inputsHiZ 211) j * certificateScale ≤ certHiZ 211 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_212 (j : Fin 10) :
+    certLoZ 212 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 212) (inputsHiZ 212) j * certificateScale ∧
+      upperNum (inputsLoZ 212) (inputsHiZ 212) j * certificateScale ≤ certHiZ 212 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_213 (j : Fin 10) :
+    certLoZ 213 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 213) (inputsHiZ 213) j * certificateScale ∧
+      upperNum (inputsLoZ 213) (inputsHiZ 213) j * certificateScale ≤ certHiZ 213 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_214 (j : Fin 10) :
+    certLoZ 214 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 214) (inputsHiZ 214) j * certificateScale ∧
+      upperNum (inputsLoZ 214) (inputsHiZ 214) j * certificateScale ≤ certHiZ 214 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_215 (j : Fin 10) :
+    certLoZ 215 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 215) (inputsHiZ 215) j * certificateScale ∧
+      upperNum (inputsLoZ 215) (inputsHiZ 215) j * certificateScale ≤ certHiZ 215 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_216 (j : Fin 10) :
+    certLoZ 216 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 216) (inputsHiZ 216) j * certificateScale ∧
+      upperNum (inputsLoZ 216) (inputsHiZ 216) j * certificateScale ≤ certHiZ 216 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_217 (j : Fin 10) :
+    certLoZ 217 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 217) (inputsHiZ 217) j * certificateScale ∧
+      upperNum (inputsLoZ 217) (inputsHiZ 217) j * certificateScale ≤ certHiZ 217 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_218 (j : Fin 10) :
+    certLoZ 218 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 218) (inputsHiZ 218) j * certificateScale ∧
+      upperNum (inputsLoZ 218) (inputsHiZ 218) j * certificateScale ≤ certHiZ 218 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_219 (j : Fin 10) :
+    certLoZ 219 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 219) (inputsHiZ 219) j * certificateScale ∧
+      upperNum (inputsLoZ 219) (inputsHiZ 219) j * certificateScale ≤ certHiZ 219 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_220 (j : Fin 10) :
+    certLoZ 220 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 220) (inputsHiZ 220) j * certificateScale ∧
+      upperNum (inputsLoZ 220) (inputsHiZ 220) j * certificateScale ≤ certHiZ 220 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_221 (j : Fin 10) :
+    certLoZ 221 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 221) (inputsHiZ 221) j * certificateScale ∧
+      upperNum (inputsLoZ 221) (inputsHiZ 221) j * certificateScale ≤ certHiZ 221 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_222 (j : Fin 10) :
+    certLoZ 222 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 222) (inputsHiZ 222) j * certificateScale ∧
+      upperNum (inputsLoZ 222) (inputsHiZ 222) j * certificateScale ≤ certHiZ 222 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_223 (j : Fin 10) :
+    certLoZ 223 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 223) (inputsHiZ 223) j * certificateScale ∧
+      upperNum (inputsLoZ 223) (inputsHiZ 223) j * certificateScale ≤ certHiZ 223 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_224 (j : Fin 10) :
+    certLoZ 224 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 224) (inputsHiZ 224) j * certificateScale ∧
+      upperNum (inputsLoZ 224) (inputsHiZ 224) j * certificateScale ≤ certHiZ 224 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_225 (j : Fin 10) :
+    certLoZ 225 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 225) (inputsHiZ 225) j * certificateScale ∧
+      upperNum (inputsLoZ 225) (inputsHiZ 225) j * certificateScale ≤ certHiZ 225 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_226 (j : Fin 10) :
+    certLoZ 226 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 226) (inputsHiZ 226) j * certificateScale ∧
+      upperNum (inputsLoZ 226) (inputsHiZ 226) j * certificateScale ≤ certHiZ 226 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_227 (j : Fin 10) :
+    certLoZ 227 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 227) (inputsHiZ 227) j * certificateScale ∧
+      upperNum (inputsLoZ 227) (inputsHiZ 227) j * certificateScale ≤ certHiZ 227 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_228 (j : Fin 10) :
+    certLoZ 228 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 228) (inputsHiZ 228) j * certificateScale ∧
+      upperNum (inputsLoZ 228) (inputsHiZ 228) j * certificateScale ≤ certHiZ 228 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_229 (j : Fin 10) :
+    certLoZ 229 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 229) (inputsHiZ 229) j * certificateScale ∧
+      upperNum (inputsLoZ 229) (inputsHiZ 229) j * certificateScale ≤ certHiZ 229 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_230 (j : Fin 10) :
+    certLoZ 230 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 230) (inputsHiZ 230) j * certificateScale ∧
+      upperNum (inputsLoZ 230) (inputsHiZ 230) j * certificateScale ≤ certHiZ 230 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_231 (j : Fin 10) :
+    certLoZ 231 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 231) (inputsHiZ 231) j * certificateScale ∧
+      upperNum (inputsLoZ 231) (inputsHiZ 231) j * certificateScale ≤ certHiZ 231 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_232 (j : Fin 10) :
+    certLoZ 232 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 232) (inputsHiZ 232) j * certificateScale ∧
+      upperNum (inputsLoZ 232) (inputsHiZ 232) j * certificateScale ≤ certHiZ 232 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_233 (j : Fin 10) :
+    certLoZ 233 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 233) (inputsHiZ 233) j * certificateScale ∧
+      upperNum (inputsLoZ 233) (inputsHiZ 233) j * certificateScale ≤ certHiZ 233 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_234 (j : Fin 10) :
+    certLoZ 234 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 234) (inputsHiZ 234) j * certificateScale ∧
+      upperNum (inputsLoZ 234) (inputsHiZ 234) j * certificateScale ≤ certHiZ 234 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_235 (j : Fin 10) :
+    certLoZ 235 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 235) (inputsHiZ 235) j * certificateScale ∧
+      upperNum (inputsLoZ 235) (inputsHiZ 235) j * certificateScale ≤ certHiZ 235 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_236 (j : Fin 10) :
+    certLoZ 236 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 236) (inputsHiZ 236) j * certificateScale ∧
+      upperNum (inputsLoZ 236) (inputsHiZ 236) j * certificateScale ≤ certHiZ 236 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_237 (j : Fin 10) :
+    certLoZ 237 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 237) (inputsHiZ 237) j * certificateScale ∧
+      upperNum (inputsLoZ 237) (inputsHiZ 237) j * certificateScale ≤ certHiZ 237 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_238 (j : Fin 10) :
+    certLoZ 238 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 238) (inputsHiZ 238) j * certificateScale ∧
+      upperNum (inputsLoZ 238) (inputsHiZ 238) j * certificateScale ≤ certHiZ 238 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_239 (j : Fin 10) :
+    certLoZ 239 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 239) (inputsHiZ 239) j * certificateScale ∧
+      upperNum (inputsLoZ 239) (inputsHiZ 239) j * certificateScale ≤ certHiZ 239 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_240 (j : Fin 10) :
+    certLoZ 240 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 240) (inputsHiZ 240) j * certificateScale ∧
+      upperNum (inputsLoZ 240) (inputsHiZ 240) j * certificateScale ≤ certHiZ 240 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_241 (j : Fin 10) :
+    certLoZ 241 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 241) (inputsHiZ 241) j * certificateScale ∧
+      upperNum (inputsLoZ 241) (inputsHiZ 241) j * certificateScale ≤ certHiZ 241 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_242 (j : Fin 10) :
+    certLoZ 242 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 242) (inputsHiZ 242) j * certificateScale ∧
+      upperNum (inputsLoZ 242) (inputsHiZ 242) j * certificateScale ≤ certHiZ 242 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_243 (j : Fin 10) :
+    certLoZ 243 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 243) (inputsHiZ 243) j * certificateScale ∧
+      upperNum (inputsLoZ 243) (inputsHiZ 243) j * certificateScale ≤ certHiZ 243 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_244 (j : Fin 10) :
+    certLoZ 244 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 244) (inputsHiZ 244) j * certificateScale ∧
+      upperNum (inputsLoZ 244) (inputsHiZ 244) j * certificateScale ≤ certHiZ 244 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_245 (j : Fin 10) :
+    certLoZ 245 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 245) (inputsHiZ 245) j * certificateScale ∧
+      upperNum (inputsLoZ 245) (inputsHiZ 245) j * certificateScale ≤ certHiZ 245 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_246 (j : Fin 10) :
+    certLoZ 246 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 246) (inputsHiZ 246) j * certificateScale ∧
+      upperNum (inputsLoZ 246) (inputsHiZ 246) j * certificateScale ≤ certHiZ 246 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_247 (j : Fin 10) :
+    certLoZ 247 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 247) (inputsHiZ 247) j * certificateScale ∧
+      upperNum (inputsLoZ 247) (inputsHiZ 247) j * certificateScale ≤ certHiZ 247 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_248 (j : Fin 10) :
+    certLoZ 248 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 248) (inputsHiZ 248) j * certificateScale ∧
+      upperNum (inputsLoZ 248) (inputsHiZ 248) j * certificateScale ≤ certHiZ 248 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_249 (j : Fin 10) :
+    certLoZ 249 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 249) (inputsHiZ 249) j * certificateScale ∧
+      upperNum (inputsLoZ 249) (inputsHiZ 249) j * certificateScale ≤ certHiZ 249 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_250 (j : Fin 10) :
+    certLoZ 250 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 250) (inputsHiZ 250) j * certificateScale ∧
+      upperNum (inputsLoZ 250) (inputsHiZ 250) j * certificateScale ≤ certHiZ 250 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_251 (j : Fin 10) :
+    certLoZ 251 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 251) (inputsHiZ 251) j * certificateScale ∧
+      upperNum (inputsLoZ 251) (inputsHiZ 251) j * certificateScale ≤ certHiZ 251 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_252 (j : Fin 10) :
+    certLoZ 252 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 252) (inputsHiZ 252) j * certificateScale ∧
+      upperNum (inputsLoZ 252) (inputsHiZ 252) j * certificateScale ≤ certHiZ 252 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_253 (j : Fin 10) :
+    certLoZ 253 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 253) (inputsHiZ 253) j * certificateScale ∧
+      upperNum (inputsLoZ 253) (inputsHiZ 253) j * certificateScale ≤ certHiZ 253 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_254 (j : Fin 10) :
+    certLoZ 254 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 254) (inputsHiZ 254) j * certificateScale ∧
+      upperNum (inputsLoZ 254) (inputsHiZ 254) j * certificateScale ≤ certHiZ 254 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_255 (j : Fin 10) :
+    certLoZ 255 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 255) (inputsHiZ 255) j * certificateScale ∧
+      upperNum (inputsLoZ 255) (inputsHiZ 255) j * certificateScale ≤ certHiZ 255 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_256 (j : Fin 10) :
+    certLoZ 256 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 256) (inputsHiZ 256) j * certificateScale ∧
+      upperNum (inputsLoZ 256) (inputsHiZ 256) j * certificateScale ≤ certHiZ 256 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_257 (j : Fin 10) :
+    certLoZ 257 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 257) (inputsHiZ 257) j * certificateScale ∧
+      upperNum (inputsLoZ 257) (inputsHiZ 257) j * certificateScale ≤ certHiZ 257 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_258 (j : Fin 10) :
+    certLoZ 258 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 258) (inputsHiZ 258) j * certificateScale ∧
+      upperNum (inputsLoZ 258) (inputsHiZ 258) j * certificateScale ≤ certHiZ 258 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_259 (j : Fin 10) :
+    certLoZ 259 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 259) (inputsHiZ 259) j * certificateScale ∧
+      upperNum (inputsLoZ 259) (inputsHiZ 259) j * certificateScale ≤ certHiZ 259 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_260 (j : Fin 10) :
+    certLoZ 260 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 260) (inputsHiZ 260) j * certificateScale ∧
+      upperNum (inputsLoZ 260) (inputsHiZ 260) j * certificateScale ≤ certHiZ 260 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_261 (j : Fin 10) :
+    certLoZ 261 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 261) (inputsHiZ 261) j * certificateScale ∧
+      upperNum (inputsLoZ 261) (inputsHiZ 261) j * certificateScale ≤ certHiZ 261 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_262 (j : Fin 10) :
+    certLoZ 262 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 262) (inputsHiZ 262) j * certificateScale ∧
+      upperNum (inputsLoZ 262) (inputsHiZ 262) j * certificateScale ≤ certHiZ 262 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_263 (j : Fin 10) :
+    certLoZ 263 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 263) (inputsHiZ 263) j * certificateScale ∧
+      upperNum (inputsLoZ 263) (inputsHiZ 263) j * certificateScale ≤ certHiZ 263 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_264 (j : Fin 10) :
+    certLoZ 264 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 264) (inputsHiZ 264) j * certificateScale ∧
+      upperNum (inputsLoZ 264) (inputsHiZ 264) j * certificateScale ≤ certHiZ 264 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_265 (j : Fin 10) :
+    certLoZ 265 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 265) (inputsHiZ 265) j * certificateScale ∧
+      upperNum (inputsLoZ 265) (inputsHiZ 265) j * certificateScale ≤ certHiZ 265 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_266 (j : Fin 10) :
+    certLoZ 266 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 266) (inputsHiZ 266) j * certificateScale ∧
+      upperNum (inputsLoZ 266) (inputsHiZ 266) j * certificateScale ≤ certHiZ 266 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_267 (j : Fin 10) :
+    certLoZ 267 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 267) (inputsHiZ 267) j * certificateScale ∧
+      upperNum (inputsLoZ 267) (inputsHiZ 267) j * certificateScale ≤ certHiZ 267 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_268 (j : Fin 10) :
+    certLoZ 268 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 268) (inputsHiZ 268) j * certificateScale ∧
+      upperNum (inputsLoZ 268) (inputsHiZ 268) j * certificateScale ≤ certHiZ 268 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_269 (j : Fin 10) :
+    certLoZ 269 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 269) (inputsHiZ 269) j * certificateScale ∧
+      upperNum (inputsLoZ 269) (inputsHiZ 269) j * certificateScale ≤ certHiZ 269 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_270 (j : Fin 10) :
+    certLoZ 270 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 270) (inputsHiZ 270) j * certificateScale ∧
+      upperNum (inputsLoZ 270) (inputsHiZ 270) j * certificateScale ≤ certHiZ 270 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_271 (j : Fin 10) :
+    certLoZ 271 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 271) (inputsHiZ 271) j * certificateScale ∧
+      upperNum (inputsLoZ 271) (inputsHiZ 271) j * certificateScale ≤ certHiZ 271 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_272 (j : Fin 10) :
+    certLoZ 272 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 272) (inputsHiZ 272) j * certificateScale ∧
+      upperNum (inputsLoZ 272) (inputsHiZ 272) j * certificateScale ≤ certHiZ 272 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_273 (j : Fin 10) :
+    certLoZ 273 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 273) (inputsHiZ 273) j * certificateScale ∧
+      upperNum (inputsLoZ 273) (inputsHiZ 273) j * certificateScale ≤ certHiZ 273 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_274 (j : Fin 10) :
+    certLoZ 274 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 274) (inputsHiZ 274) j * certificateScale ∧
+      upperNum (inputsLoZ 274) (inputsHiZ 274) j * certificateScale ≤ certHiZ 274 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_275 (j : Fin 10) :
+    certLoZ 275 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 275) (inputsHiZ 275) j * certificateScale ∧
+      upperNum (inputsLoZ 275) (inputsHiZ 275) j * certificateScale ≤ certHiZ 275 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_276 (j : Fin 10) :
+    certLoZ 276 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 276) (inputsHiZ 276) j * certificateScale ∧
+      upperNum (inputsLoZ 276) (inputsHiZ 276) j * certificateScale ≤ certHiZ 276 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_277 (j : Fin 10) :
+    certLoZ 277 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 277) (inputsHiZ 277) j * certificateScale ∧
+      upperNum (inputsLoZ 277) (inputsHiZ 277) j * certificateScale ≤ certHiZ 277 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_278 (j : Fin 10) :
+    certLoZ 278 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 278) (inputsHiZ 278) j * certificateScale ∧
+      upperNum (inputsLoZ 278) (inputsHiZ 278) j * certificateScale ≤ certHiZ 278 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_279 (j : Fin 10) :
+    certLoZ 279 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 279) (inputsHiZ 279) j * certificateScale ∧
+      upperNum (inputsLoZ 279) (inputsHiZ 279) j * certificateScale ≤ certHiZ 279 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_280 (j : Fin 10) :
+    certLoZ 280 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 280) (inputsHiZ 280) j * certificateScale ∧
+      upperNum (inputsLoZ 280) (inputsHiZ 280) j * certificateScale ≤ certHiZ 280 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_281 (j : Fin 10) :
+    certLoZ 281 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 281) (inputsHiZ 281) j * certificateScale ∧
+      upperNum (inputsLoZ 281) (inputsHiZ 281) j * certificateScale ≤ certHiZ 281 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_282 (j : Fin 10) :
+    certLoZ 282 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 282) (inputsHiZ 282) j * certificateScale ∧
+      upperNum (inputsLoZ 282) (inputsHiZ 282) j * certificateScale ≤ certHiZ 282 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_283 (j : Fin 10) :
+    certLoZ 283 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 283) (inputsHiZ 283) j * certificateScale ∧
+      upperNum (inputsLoZ 283) (inputsHiZ 283) j * certificateScale ≤ certHiZ 283 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_284 (j : Fin 10) :
+    certLoZ 284 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 284) (inputsHiZ 284) j * certificateScale ∧
+      upperNum (inputsLoZ 284) (inputsHiZ 284) j * certificateScale ≤ certHiZ 284 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_285 (j : Fin 10) :
+    certLoZ 285 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 285) (inputsHiZ 285) j * certificateScale ∧
+      upperNum (inputsLoZ 285) (inputsHiZ 285) j * certificateScale ≤ certHiZ 285 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_286 (j : Fin 10) :
+    certLoZ 286 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 286) (inputsHiZ 286) j * certificateScale ∧
+      upperNum (inputsLoZ 286) (inputsHiZ 286) j * certificateScale ≤ certHiZ 286 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_287 (j : Fin 10) :
+    certLoZ 287 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 287) (inputsHiZ 287) j * certificateScale ∧
+      upperNum (inputsLoZ 287) (inputsHiZ 287) j * certificateScale ≤ certHiZ 287 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_288 (j : Fin 10) :
+    certLoZ 288 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 288) (inputsHiZ 288) j * certificateScale ∧
+      upperNum (inputsLoZ 288) (inputsHiZ 288) j * certificateScale ≤ certHiZ 288 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_289 (j : Fin 10) :
+    certLoZ 289 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 289) (inputsHiZ 289) j * certificateScale ∧
+      upperNum (inputsLoZ 289) (inputsHiZ 289) j * certificateScale ≤ certHiZ 289 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_290 (j : Fin 10) :
+    certLoZ 290 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 290) (inputsHiZ 290) j * certificateScale ∧
+      upperNum (inputsLoZ 290) (inputsHiZ 290) j * certificateScale ≤ certHiZ 290 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_291 (j : Fin 10) :
+    certLoZ 291 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 291) (inputsHiZ 291) j * certificateScale ∧
+      upperNum (inputsLoZ 291) (inputsHiZ 291) j * certificateScale ≤ certHiZ 291 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_292 (j : Fin 10) :
+    certLoZ 292 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 292) (inputsHiZ 292) j * certificateScale ∧
+      upperNum (inputsLoZ 292) (inputsHiZ 292) j * certificateScale ≤ certHiZ 292 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_293 (j : Fin 10) :
+    certLoZ 293 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 293) (inputsHiZ 293) j * certificateScale ∧
+      upperNum (inputsLoZ 293) (inputsHiZ 293) j * certificateScale ≤ certHiZ 293 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_294 (j : Fin 10) :
+    certLoZ 294 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 294) (inputsHiZ 294) j * certificateScale ∧
+      upperNum (inputsLoZ 294) (inputsHiZ 294) j * certificateScale ≤ certHiZ 294 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_295 (j : Fin 10) :
+    certLoZ 295 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 295) (inputsHiZ 295) j * certificateScale ∧
+      upperNum (inputsLoZ 295) (inputsHiZ 295) j * certificateScale ≤ certHiZ 295 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_296 (j : Fin 10) :
+    certLoZ 296 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 296) (inputsHiZ 296) j * certificateScale ∧
+      upperNum (inputsLoZ 296) (inputsHiZ 296) j * certificateScale ≤ certHiZ 296 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_297 (j : Fin 10) :
+    certLoZ 297 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 297) (inputsHiZ 297) j * certificateScale ∧
+      upperNum (inputsLoZ 297) (inputsHiZ 297) j * certificateScale ≤ certHiZ 297 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_298 (j : Fin 10) :
+    certLoZ 298 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 298) (inputsHiZ 298) j * certificateScale ∧
+      upperNum (inputsLoZ 298) (inputsHiZ 298) j * certificateScale ≤ certHiZ 298 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_299 (j : Fin 10) :
+    certLoZ 299 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 299) (inputsHiZ 299) j * certificateScale ∧
+      upperNum (inputsLoZ 299) (inputsHiZ 299) j * certificateScale ≤ certHiZ 299 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_300 (j : Fin 10) :
+    certLoZ 300 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 300) (inputsHiZ 300) j * certificateScale ∧
+      upperNum (inputsLoZ 300) (inputsHiZ 300) j * certificateScale ≤ certHiZ 300 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_301 (j : Fin 10) :
+    certLoZ 301 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 301) (inputsHiZ 301) j * certificateScale ∧
+      upperNum (inputsLoZ 301) (inputsHiZ 301) j * certificateScale ≤ certHiZ 301 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_302 (j : Fin 10) :
+    certLoZ 302 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 302) (inputsHiZ 302) j * certificateScale ∧
+      upperNum (inputsLoZ 302) (inputsHiZ 302) j * certificateScale ≤ certHiZ 302 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_303 (j : Fin 10) :
+    certLoZ 303 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 303) (inputsHiZ 303) j * certificateScale ∧
+      upperNum (inputsLoZ 303) (inputsHiZ 303) j * certificateScale ≤ certHiZ 303 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_304 (j : Fin 10) :
+    certLoZ 304 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 304) (inputsHiZ 304) j * certificateScale ∧
+      upperNum (inputsLoZ 304) (inputsHiZ 304) j * certificateScale ≤ certHiZ 304 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_305 (j : Fin 10) :
+    certLoZ 305 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 305) (inputsHiZ 305) j * certificateScale ∧
+      upperNum (inputsLoZ 305) (inputsHiZ 305) j * certificateScale ≤ certHiZ 305 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_306 (j : Fin 10) :
+    certLoZ 306 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 306) (inputsHiZ 306) j * certificateScale ∧
+      upperNum (inputsLoZ 306) (inputsHiZ 306) j * certificateScale ≤ certHiZ 306 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_307 (j : Fin 10) :
+    certLoZ 307 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 307) (inputsHiZ 307) j * certificateScale ∧
+      upperNum (inputsLoZ 307) (inputsHiZ 307) j * certificateScale ≤ certHiZ 307 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_308 (j : Fin 10) :
+    certLoZ 308 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 308) (inputsHiZ 308) j * certificateScale ∧
+      upperNum (inputsLoZ 308) (inputsHiZ 308) j * certificateScale ≤ certHiZ 308 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_309 (j : Fin 10) :
+    certLoZ 309 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 309) (inputsHiZ 309) j * certificateScale ∧
+      upperNum (inputsLoZ 309) (inputsHiZ 309) j * certificateScale ≤ certHiZ 309 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_310 (j : Fin 10) :
+    certLoZ 310 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 310) (inputsHiZ 310) j * certificateScale ∧
+      upperNum (inputsLoZ 310) (inputsHiZ 310) j * certificateScale ≤ certHiZ 310 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_311 (j : Fin 10) :
+    certLoZ 311 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 311) (inputsHiZ 311) j * certificateScale ∧
+      upperNum (inputsLoZ 311) (inputsHiZ 311) j * certificateScale ≤ certHiZ 311 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_312 (j : Fin 10) :
+    certLoZ 312 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 312) (inputsHiZ 312) j * certificateScale ∧
+      upperNum (inputsLoZ 312) (inputsHiZ 312) j * certificateScale ≤ certHiZ 312 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_313 (j : Fin 10) :
+    certLoZ 313 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 313) (inputsHiZ 313) j * certificateScale ∧
+      upperNum (inputsLoZ 313) (inputsHiZ 313) j * certificateScale ≤ certHiZ 313 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_314 (j : Fin 10) :
+    certLoZ 314 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 314) (inputsHiZ 314) j * certificateScale ∧
+      upperNum (inputsLoZ 314) (inputsHiZ 314) j * certificateScale ≤ certHiZ 314 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_315 (j : Fin 10) :
+    certLoZ 315 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 315) (inputsHiZ 315) j * certificateScale ∧
+      upperNum (inputsLoZ 315) (inputsHiZ 315) j * certificateScale ≤ certHiZ 315 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_316 (j : Fin 10) :
+    certLoZ 316 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 316) (inputsHiZ 316) j * certificateScale ∧
+      upperNum (inputsLoZ 316) (inputsHiZ 316) j * certificateScale ≤ certHiZ 316 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_317 (j : Fin 10) :
+    certLoZ 317 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 317) (inputsHiZ 317) j * certificateScale ∧
+      upperNum (inputsLoZ 317) (inputsHiZ 317) j * certificateScale ≤ certHiZ 317 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_318 (j : Fin 10) :
+    certLoZ 318 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 318) (inputsHiZ 318) j * certificateScale ∧
+      upperNum (inputsLoZ 318) (inputsHiZ 318) j * certificateScale ≤ certHiZ 318 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_319 (j : Fin 10) :
+    certLoZ 319 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 319) (inputsHiZ 319) j * certificateScale ∧
+      upperNum (inputsLoZ 319) (inputsHiZ 319) j * certificateScale ≤ certHiZ 319 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_320 (j : Fin 10) :
+    certLoZ 320 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 320) (inputsHiZ 320) j * certificateScale ∧
+      upperNum (inputsLoZ 320) (inputsHiZ 320) j * certificateScale ≤ certHiZ 320 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_321 (j : Fin 10) :
+    certLoZ 321 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 321) (inputsHiZ 321) j * certificateScale ∧
+      upperNum (inputsLoZ 321) (inputsHiZ 321) j * certificateScale ≤ certHiZ 321 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_322 (j : Fin 10) :
+    certLoZ 322 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 322) (inputsHiZ 322) j * certificateScale ∧
+      upperNum (inputsLoZ 322) (inputsHiZ 322) j * certificateScale ≤ certHiZ 322 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_323 (j : Fin 10) :
+    certLoZ 323 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 323) (inputsHiZ 323) j * certificateScale ∧
+      upperNum (inputsLoZ 323) (inputsHiZ 323) j * certificateScale ≤ certHiZ 323 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_324 (j : Fin 10) :
+    certLoZ 324 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 324) (inputsHiZ 324) j * certificateScale ∧
+      upperNum (inputsLoZ 324) (inputsHiZ 324) j * certificateScale ≤ certHiZ 324 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_325 (j : Fin 10) :
+    certLoZ 325 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 325) (inputsHiZ 325) j * certificateScale ∧
+      upperNum (inputsLoZ 325) (inputsHiZ 325) j * certificateScale ≤ certHiZ 325 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_326 (j : Fin 10) :
+    certLoZ 326 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 326) (inputsHiZ 326) j * certificateScale ∧
+      upperNum (inputsLoZ 326) (inputsHiZ 326) j * certificateScale ≤ certHiZ 326 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_327 (j : Fin 10) :
+    certLoZ 327 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 327) (inputsHiZ 327) j * certificateScale ∧
+      upperNum (inputsLoZ 327) (inputsHiZ 327) j * certificateScale ≤ certHiZ 327 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_328 (j : Fin 10) :
+    certLoZ 328 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 328) (inputsHiZ 328) j * certificateScale ∧
+      upperNum (inputsLoZ 328) (inputsHiZ 328) j * certificateScale ≤ certHiZ 328 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_329 (j : Fin 10) :
+    certLoZ 329 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 329) (inputsHiZ 329) j * certificateScale ∧
+      upperNum (inputsLoZ 329) (inputsHiZ 329) j * certificateScale ≤ certHiZ 329 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_330 (j : Fin 10) :
+    certLoZ 330 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 330) (inputsHiZ 330) j * certificateScale ∧
+      upperNum (inputsLoZ 330) (inputsHiZ 330) j * certificateScale ≤ certHiZ 330 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_331 (j : Fin 10) :
+    certLoZ 331 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 331) (inputsHiZ 331) j * certificateScale ∧
+      upperNum (inputsLoZ 331) (inputsHiZ 331) j * certificateScale ≤ certHiZ 331 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_332 (j : Fin 10) :
+    certLoZ 332 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 332) (inputsHiZ 332) j * certificateScale ∧
+      upperNum (inputsLoZ 332) (inputsHiZ 332) j * certificateScale ≤ certHiZ 332 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_333 (j : Fin 10) :
+    certLoZ 333 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 333) (inputsHiZ 333) j * certificateScale ∧
+      upperNum (inputsLoZ 333) (inputsHiZ 333) j * certificateScale ≤ certHiZ 333 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_334 (j : Fin 10) :
+    certLoZ 334 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 334) (inputsHiZ 334) j * certificateScale ∧
+      upperNum (inputsLoZ 334) (inputsHiZ 334) j * certificateScale ≤ certHiZ 334 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_335 (j : Fin 10) :
+    certLoZ 335 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 335) (inputsHiZ 335) j * certificateScale ∧
+      upperNum (inputsLoZ 335) (inputsHiZ 335) j * certificateScale ≤ certHiZ 335 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_336 (j : Fin 10) :
+    certLoZ 336 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 336) (inputsHiZ 336) j * certificateScale ∧
+      upperNum (inputsLoZ 336) (inputsHiZ 336) j * certificateScale ≤ certHiZ 336 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_337 (j : Fin 10) :
+    certLoZ 337 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 337) (inputsHiZ 337) j * certificateScale ∧
+      upperNum (inputsLoZ 337) (inputsHiZ 337) j * certificateScale ≤ certHiZ 337 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_338 (j : Fin 10) :
+    certLoZ 338 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 338) (inputsHiZ 338) j * certificateScale ∧
+      upperNum (inputsLoZ 338) (inputsHiZ 338) j * certificateScale ≤ certHiZ 338 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_339 (j : Fin 10) :
+    certLoZ 339 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 339) (inputsHiZ 339) j * certificateScale ∧
+      upperNum (inputsLoZ 339) (inputsHiZ 339) j * certificateScale ≤ certHiZ 339 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_340 (j : Fin 10) :
+    certLoZ 340 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 340) (inputsHiZ 340) j * certificateScale ∧
+      upperNum (inputsLoZ 340) (inputsHiZ 340) j * certificateScale ≤ certHiZ 340 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_341 (j : Fin 10) :
+    certLoZ 341 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 341) (inputsHiZ 341) j * certificateScale ∧
+      upperNum (inputsLoZ 341) (inputsHiZ 341) j * certificateScale ≤ certHiZ 341 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_342 (j : Fin 10) :
+    certLoZ 342 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 342) (inputsHiZ 342) j * certificateScale ∧
+      upperNum (inputsLoZ 342) (inputsHiZ 342) j * certificateScale ≤ certHiZ 342 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_343 (j : Fin 10) :
+    certLoZ 343 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 343) (inputsHiZ 343) j * certificateScale ∧
+      upperNum (inputsLoZ 343) (inputsHiZ 343) j * certificateScale ≤ certHiZ 343 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_344 (j : Fin 10) :
+    certLoZ 344 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 344) (inputsHiZ 344) j * certificateScale ∧
+      upperNum (inputsLoZ 344) (inputsHiZ 344) j * certificateScale ≤ certHiZ 344 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_345 (j : Fin 10) :
+    certLoZ 345 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 345) (inputsHiZ 345) j * certificateScale ∧
+      upperNum (inputsLoZ 345) (inputsHiZ 345) j * certificateScale ≤ certHiZ 345 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_346 (j : Fin 10) :
+    certLoZ 346 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 346) (inputsHiZ 346) j * certificateScale ∧
+      upperNum (inputsLoZ 346) (inputsHiZ 346) j * certificateScale ≤ certHiZ 346 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_347 (j : Fin 10) :
+    certLoZ 347 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 347) (inputsHiZ 347) j * certificateScale ∧
+      upperNum (inputsLoZ 347) (inputsHiZ 347) j * certificateScale ≤ certHiZ 347 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_348 (j : Fin 10) :
+    certLoZ 348 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 348) (inputsHiZ 348) j * certificateScale ∧
+      upperNum (inputsLoZ 348) (inputsHiZ 348) j * certificateScale ≤ certHiZ 348 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_349 (j : Fin 10) :
+    certLoZ 349 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 349) (inputsHiZ 349) j * certificateScale ∧
+      upperNum (inputsLoZ 349) (inputsHiZ 349) j * certificateScale ≤ certHiZ 349 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_350 (j : Fin 10) :
+    certLoZ 350 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 350) (inputsHiZ 350) j * certificateScale ∧
+      upperNum (inputsLoZ 350) (inputsHiZ 350) j * certificateScale ≤ certHiZ 350 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_351 (j : Fin 10) :
+    certLoZ 351 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 351) (inputsHiZ 351) j * certificateScale ∧
+      upperNum (inputsLoZ 351) (inputsHiZ 351) j * certificateScale ≤ certHiZ 351 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_352 (j : Fin 10) :
+    certLoZ 352 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 352) (inputsHiZ 352) j * certificateScale ∧
+      upperNum (inputsLoZ 352) (inputsHiZ 352) j * certificateScale ≤ certHiZ 352 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_353 (j : Fin 10) :
+    certLoZ 353 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 353) (inputsHiZ 353) j * certificateScale ∧
+      upperNum (inputsLoZ 353) (inputsHiZ 353) j * certificateScale ≤ certHiZ 353 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_354 (j : Fin 10) :
+    certLoZ 354 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 354) (inputsHiZ 354) j * certificateScale ∧
+      upperNum (inputsLoZ 354) (inputsHiZ 354) j * certificateScale ≤ certHiZ 354 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_355 (j : Fin 10) :
+    certLoZ 355 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 355) (inputsHiZ 355) j * certificateScale ∧
+      upperNum (inputsLoZ 355) (inputsHiZ 355) j * certificateScale ≤ certHiZ 355 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_356 (j : Fin 10) :
+    certLoZ 356 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 356) (inputsHiZ 356) j * certificateScale ∧
+      upperNum (inputsLoZ 356) (inputsHiZ 356) j * certificateScale ≤ certHiZ 356 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_357 (j : Fin 10) :
+    certLoZ 357 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 357) (inputsHiZ 357) j * certificateScale ∧
+      upperNum (inputsLoZ 357) (inputsHiZ 357) j * certificateScale ≤ certHiZ 357 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_358 (j : Fin 10) :
+    certLoZ 358 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 358) (inputsHiZ 358) j * certificateScale ∧
+      upperNum (inputsLoZ 358) (inputsHiZ 358) j * certificateScale ≤ certHiZ 358 j * (sourceScale*sourceScale) := by
+  decide +revert
+
+private theorem numeric_359 (j : Fin 10) :
+    certLoZ 359 j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ 359) (inputsHiZ 359) j * certificateScale ∧
+      upperNum (inputsLoZ 359) (inputsHiZ 359) j * certificateScale ≤ certHiZ 359 j * (sourceScale*sourceScale) := by
+  decide +revert
+
 private theorem numeric_all (sample : Fin 360) (j : Fin 10) :
     certLoZ sample j * (sourceScale*sourceScale) ≤ lowerNum (inputsLoZ sample) (inputsHiZ sample) j * certificateScale ∧
-      upperNum (inputsLoZ sample) (inputsHiZ sample) j * certificateScale ≤ certHiZ sample j * (sourceScale*sourceScale) := by
-  revert j
-  fin_cases sample <;> decide
+      upperNum (inputsLoZ sample) (inputsHiZ sample) j * certificateScale ≤ certHiZ sample j * (sourceScale*sourceScale) :=
+  match sample with
+  | 0 => numeric_0 j
+  | 1 => numeric_1 j
+  | 2 => numeric_2 j
+  | 3 => numeric_3 j
+  | 4 => numeric_4 j
+  | 5 => numeric_5 j
+  | 6 => numeric_6 j
+  | 7 => numeric_7 j
+  | 8 => numeric_8 j
+  | 9 => numeric_9 j
+  | 10 => numeric_10 j
+  | 11 => numeric_11 j
+  | 12 => numeric_12 j
+  | 13 => numeric_13 j
+  | 14 => numeric_14 j
+  | 15 => numeric_15 j
+  | 16 => numeric_16 j
+  | 17 => numeric_17 j
+  | 18 => numeric_18 j
+  | 19 => numeric_19 j
+  | 20 => numeric_20 j
+  | 21 => numeric_21 j
+  | 22 => numeric_22 j
+  | 23 => numeric_23 j
+  | 24 => numeric_24 j
+  | 25 => numeric_25 j
+  | 26 => numeric_26 j
+  | 27 => numeric_27 j
+  | 28 => numeric_28 j
+  | 29 => numeric_29 j
+  | 30 => numeric_30 j
+  | 31 => numeric_31 j
+  | 32 => numeric_32 j
+  | 33 => numeric_33 j
+  | 34 => numeric_34 j
+  | 35 => numeric_35 j
+  | 36 => numeric_36 j
+  | 37 => numeric_37 j
+  | 38 => numeric_38 j
+  | 39 => numeric_39 j
+  | 40 => numeric_40 j
+  | 41 => numeric_41 j
+  | 42 => numeric_42 j
+  | 43 => numeric_43 j
+  | 44 => numeric_44 j
+  | 45 => numeric_45 j
+  | 46 => numeric_46 j
+  | 47 => numeric_47 j
+  | 48 => numeric_48 j
+  | 49 => numeric_49 j
+  | 50 => numeric_50 j
+  | 51 => numeric_51 j
+  | 52 => numeric_52 j
+  | 53 => numeric_53 j
+  | 54 => numeric_54 j
+  | 55 => numeric_55 j
+  | 56 => numeric_56 j
+  | 57 => numeric_57 j
+  | 58 => numeric_58 j
+  | 59 => numeric_59 j
+  | 60 => numeric_60 j
+  | 61 => numeric_61 j
+  | 62 => numeric_62 j
+  | 63 => numeric_63 j
+  | 64 => numeric_64 j
+  | 65 => numeric_65 j
+  | 66 => numeric_66 j
+  | 67 => numeric_67 j
+  | 68 => numeric_68 j
+  | 69 => numeric_69 j
+  | 70 => numeric_70 j
+  | 71 => numeric_71 j
+  | 72 => numeric_72 j
+  | 73 => numeric_73 j
+  | 74 => numeric_74 j
+  | 75 => numeric_75 j
+  | 76 => numeric_76 j
+  | 77 => numeric_77 j
+  | 78 => numeric_78 j
+  | 79 => numeric_79 j
+  | 80 => numeric_80 j
+  | 81 => numeric_81 j
+  | 82 => numeric_82 j
+  | 83 => numeric_83 j
+  | 84 => numeric_84 j
+  | 85 => numeric_85 j
+  | 86 => numeric_86 j
+  | 87 => numeric_87 j
+  | 88 => numeric_88 j
+  | 89 => numeric_89 j
+  | 90 => numeric_90 j
+  | 91 => numeric_91 j
+  | 92 => numeric_92 j
+  | 93 => numeric_93 j
+  | 94 => numeric_94 j
+  | 95 => numeric_95 j
+  | 96 => numeric_96 j
+  | 97 => numeric_97 j
+  | 98 => numeric_98 j
+  | 99 => numeric_99 j
+  | 100 => numeric_100 j
+  | 101 => numeric_101 j
+  | 102 => numeric_102 j
+  | 103 => numeric_103 j
+  | 104 => numeric_104 j
+  | 105 => numeric_105 j
+  | 106 => numeric_106 j
+  | 107 => numeric_107 j
+  | 108 => numeric_108 j
+  | 109 => numeric_109 j
+  | 110 => numeric_110 j
+  | 111 => numeric_111 j
+  | 112 => numeric_112 j
+  | 113 => numeric_113 j
+  | 114 => numeric_114 j
+  | 115 => numeric_115 j
+  | 116 => numeric_116 j
+  | 117 => numeric_117 j
+  | 118 => numeric_118 j
+  | 119 => numeric_119 j
+  | 120 => numeric_120 j
+  | 121 => numeric_121 j
+  | 122 => numeric_122 j
+  | 123 => numeric_123 j
+  | 124 => numeric_124 j
+  | 125 => numeric_125 j
+  | 126 => numeric_126 j
+  | 127 => numeric_127 j
+  | 128 => numeric_128 j
+  | 129 => numeric_129 j
+  | 130 => numeric_130 j
+  | 131 => numeric_131 j
+  | 132 => numeric_132 j
+  | 133 => numeric_133 j
+  | 134 => numeric_134 j
+  | 135 => numeric_135 j
+  | 136 => numeric_136 j
+  | 137 => numeric_137 j
+  | 138 => numeric_138 j
+  | 139 => numeric_139 j
+  | 140 => numeric_140 j
+  | 141 => numeric_141 j
+  | 142 => numeric_142 j
+  | 143 => numeric_143 j
+  | 144 => numeric_144 j
+  | 145 => numeric_145 j
+  | 146 => numeric_146 j
+  | 147 => numeric_147 j
+  | 148 => numeric_148 j
+  | 149 => numeric_149 j
+  | 150 => numeric_150 j
+  | 151 => numeric_151 j
+  | 152 => numeric_152 j
+  | 153 => numeric_153 j
+  | 154 => numeric_154 j
+  | 155 => numeric_155 j
+  | 156 => numeric_156 j
+  | 157 => numeric_157 j
+  | 158 => numeric_158 j
+  | 159 => numeric_159 j
+  | 160 => numeric_160 j
+  | 161 => numeric_161 j
+  | 162 => numeric_162 j
+  | 163 => numeric_163 j
+  | 164 => numeric_164 j
+  | 165 => numeric_165 j
+  | 166 => numeric_166 j
+  | 167 => numeric_167 j
+  | 168 => numeric_168 j
+  | 169 => numeric_169 j
+  | 170 => numeric_170 j
+  | 171 => numeric_171 j
+  | 172 => numeric_172 j
+  | 173 => numeric_173 j
+  | 174 => numeric_174 j
+  | 175 => numeric_175 j
+  | 176 => numeric_176 j
+  | 177 => numeric_177 j
+  | 178 => numeric_178 j
+  | 179 => numeric_179 j
+  | 180 => numeric_180 j
+  | 181 => numeric_181 j
+  | 182 => numeric_182 j
+  | 183 => numeric_183 j
+  | 184 => numeric_184 j
+  | 185 => numeric_185 j
+  | 186 => numeric_186 j
+  | 187 => numeric_187 j
+  | 188 => numeric_188 j
+  | 189 => numeric_189 j
+  | 190 => numeric_190 j
+  | 191 => numeric_191 j
+  | 192 => numeric_192 j
+  | 193 => numeric_193 j
+  | 194 => numeric_194 j
+  | 195 => numeric_195 j
+  | 196 => numeric_196 j
+  | 197 => numeric_197 j
+  | 198 => numeric_198 j
+  | 199 => numeric_199 j
+  | 200 => numeric_200 j
+  | 201 => numeric_201 j
+  | 202 => numeric_202 j
+  | 203 => numeric_203 j
+  | 204 => numeric_204 j
+  | 205 => numeric_205 j
+  | 206 => numeric_206 j
+  | 207 => numeric_207 j
+  | 208 => numeric_208 j
+  | 209 => numeric_209 j
+  | 210 => numeric_210 j
+  | 211 => numeric_211 j
+  | 212 => numeric_212 j
+  | 213 => numeric_213 j
+  | 214 => numeric_214 j
+  | 215 => numeric_215 j
+  | 216 => numeric_216 j
+  | 217 => numeric_217 j
+  | 218 => numeric_218 j
+  | 219 => numeric_219 j
+  | 220 => numeric_220 j
+  | 221 => numeric_221 j
+  | 222 => numeric_222 j
+  | 223 => numeric_223 j
+  | 224 => numeric_224 j
+  | 225 => numeric_225 j
+  | 226 => numeric_226 j
+  | 227 => numeric_227 j
+  | 228 => numeric_228 j
+  | 229 => numeric_229 j
+  | 230 => numeric_230 j
+  | 231 => numeric_231 j
+  | 232 => numeric_232 j
+  | 233 => numeric_233 j
+  | 234 => numeric_234 j
+  | 235 => numeric_235 j
+  | 236 => numeric_236 j
+  | 237 => numeric_237 j
+  | 238 => numeric_238 j
+  | 239 => numeric_239 j
+  | 240 => numeric_240 j
+  | 241 => numeric_241 j
+  | 242 => numeric_242 j
+  | 243 => numeric_243 j
+  | 244 => numeric_244 j
+  | 245 => numeric_245 j
+  | 246 => numeric_246 j
+  | 247 => numeric_247 j
+  | 248 => numeric_248 j
+  | 249 => numeric_249 j
+  | 250 => numeric_250 j
+  | 251 => numeric_251 j
+  | 252 => numeric_252 j
+  | 253 => numeric_253 j
+  | 254 => numeric_254 j
+  | 255 => numeric_255 j
+  | 256 => numeric_256 j
+  | 257 => numeric_257 j
+  | 258 => numeric_258 j
+  | 259 => numeric_259 j
+  | 260 => numeric_260 j
+  | 261 => numeric_261 j
+  | 262 => numeric_262 j
+  | 263 => numeric_263 j
+  | 264 => numeric_264 j
+  | 265 => numeric_265 j
+  | 266 => numeric_266 j
+  | 267 => numeric_267 j
+  | 268 => numeric_268 j
+  | 269 => numeric_269 j
+  | 270 => numeric_270 j
+  | 271 => numeric_271 j
+  | 272 => numeric_272 j
+  | 273 => numeric_273 j
+  | 274 => numeric_274 j
+  | 275 => numeric_275 j
+  | 276 => numeric_276 j
+  | 277 => numeric_277 j
+  | 278 => numeric_278 j
+  | 279 => numeric_279 j
+  | 280 => numeric_280 j
+  | 281 => numeric_281 j
+  | 282 => numeric_282 j
+  | 283 => numeric_283 j
+  | 284 => numeric_284 j
+  | 285 => numeric_285 j
+  | 286 => numeric_286 j
+  | 287 => numeric_287 j
+  | 288 => numeric_288 j
+  | 289 => numeric_289 j
+  | 290 => numeric_290 j
+  | 291 => numeric_291 j
+  | 292 => numeric_292 j
+  | 293 => numeric_293 j
+  | 294 => numeric_294 j
+  | 295 => numeric_295 j
+  | 296 => numeric_296 j
+  | 297 => numeric_297 j
+  | 298 => numeric_298 j
+  | 299 => numeric_299 j
+  | 300 => numeric_300 j
+  | 301 => numeric_301 j
+  | 302 => numeric_302 j
+  | 303 => numeric_303 j
+  | 304 => numeric_304 j
+  | 305 => numeric_305 j
+  | 306 => numeric_306 j
+  | 307 => numeric_307 j
+  | 308 => numeric_308 j
+  | 309 => numeric_309 j
+  | 310 => numeric_310 j
+  | 311 => numeric_311 j
+  | 312 => numeric_312 j
+  | 313 => numeric_313 j
+  | 314 => numeric_314 j
+  | 315 => numeric_315 j
+  | 316 => numeric_316 j
+  | 317 => numeric_317 j
+  | 318 => numeric_318 j
+  | 319 => numeric_319 j
+  | 320 => numeric_320 j
+  | 321 => numeric_321 j
+  | 322 => numeric_322 j
+  | 323 => numeric_323 j
+  | 324 => numeric_324 j
+  | 325 => numeric_325 j
+  | 326 => numeric_326 j
+  | 327 => numeric_327 j
+  | 328 => numeric_328 j
+  | 329 => numeric_329 j
+  | 330 => numeric_330 j
+  | 331 => numeric_331 j
+  | 332 => numeric_332 j
+  | 333 => numeric_333 j
+  | 334 => numeric_334 j
+  | 335 => numeric_335 j
+  | 336 => numeric_336 j
+  | 337 => numeric_337 j
+  | 338 => numeric_338 j
+  | 339 => numeric_339 j
+  | 340 => numeric_340 j
+  | 341 => numeric_341 j
+  | 342 => numeric_342 j
+  | 343 => numeric_343 j
+  | 344 => numeric_344 j
+  | 345 => numeric_345 j
+  | 346 => numeric_346 j
+  | 347 => numeric_347 j
+  | 348 => numeric_348 j
+  | 349 => numeric_349 j
+  | 350 => numeric_350 j
+  | 351 => numeric_351 j
+  | 352 => numeric_352 j
+  | 353 => numeric_353 j
+  | 354 => numeric_354 j
+  | 355 => numeric_355 j
+  | 356 => numeric_356 j
+  | 357 => numeric_357 j
+  | 358 => numeric_358 j
+  | 359 => numeric_359 j
 
 lemma lower_bridge (lo hi : Fin 64 → ℤ) (j : Fin 10) :
     exactLower lo hi j = (lowerNum lo hi j : ℝ) / (((sourceScale*sourceScale : ℤ) : ℝ)) := by

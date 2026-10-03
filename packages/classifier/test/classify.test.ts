@@ -702,8 +702,18 @@ describe("primaryClassification", () => {
     expect(primaryClassification(classifyTheorem(theorem))!.payload.kind).toBe("upper-bound");
   });
 
-  it("leads with `unsupported` when that is all there is", () => {
+  it("leads with `injective` for an injectivity statement", () => {
     const theorem = math.theorems.find((t) => t.name.endsWith(".energy_cost_injective"))!;
+    expect(primaryClassification(classifyTheorem(theorem))!.payload.kind).toBe("injective");
+  });
+
+  it("leads with `unsupported` when that is all there is", () => {
+    const theorem = synthetic({
+      kind: "opaque",
+      head: "Unknown.Thing",
+      display: "Unknown.Thing x",
+      path: "conclusion",
+    });
     expect(primaryClassification(classifyTheorem(theorem))!.payload.kind).toBe("unsupported");
   });
 
@@ -758,61 +768,35 @@ describe("primaryClassification", () => {
 // Unsupported
 // ---------------------------------------------------------------------------
 
-describe("the unsupported fixture", () => {
-  // `unsupported_tendsto_fixture` was renamed `sequence_limit_example` once the
-  // `limit` classifier could read it. `energy_cost_injective` replaced it as the
-  // deliberate can't-read-this fixture: `Function.Injective` is kept out of the
-  // tables on purpose so the corpus always exercises graceful degradation.
+describe("the injective fixture", () => {
   const theorem = math.theorems.find((t) => t.name.endsWith(".energy_cost_injective"))!;
   const cs = classifyTheorem(theorem);
-  const unsupported = cs.find((c) => c.payload.kind === "unsupported")!;
+  const injective = cs.find((c) => c.payload.kind === "injective")!;
 
-  it("is classified as unsupported", () => {
-    expect(unsupported).toBeDefined();
-    expect(unsupported.rule.id).toBe(RULES.UNSUPPORTED.id);
+  it("is classified as injective", () => {
+    expect(injective).toBeDefined();
+    expect(injective.rule.id).toBe(RULES.INJECTIVE.id);
   });
 
-  it("names the structure it could not read in its rationale", () => {
-    expect(unsupported.rationale).toContain(theorem.conclusionDisplay);
-    expect(unsupported.rationale).toContain("landauerCost");
+  it("names the function in its rationale", () => {
+    expect(injective.rationale).toContain("Injective");
+    expect(injective.rationale).toContain("landauerCost");
+    expect(injective.rationale).toContain("maps distinct inputs to distinct outputs");
   });
 
-  it("names the unrecognised head constant in its payload", () => {
-    const data = find(cs, "unsupported");
-    expect(data.head).toBe("Function.Injective");
-    expect(data.reason).toContain("Function.Injective");
+  it("is not classified as unsupported", () => {
+    expect(kinds(cs)).not.toContain("unsupported");
+    expect(kinds(cs)).toContain("injective");
   });
 
-  it("claims nothing about the mathematics it could not read", () => {
-    const text = `${unsupported.rationale} ${find(cs, "unsupported").reason}`;
-    for (const forbidden of [
-      "upper bound",
-      "lower bound",
-      "increasing",
-      "decreasing",
-      "monotone",
-      "is false",
-      "is true",
-      "verified",
-    ]) {
-      expect(text.toLowerCase()).not.toContain(forbidden.toLowerCase());
-    }
-  });
-
-  it("says the formal material is still available rather than dropping it", () => {
-    expect(unsupported.rationale).toMatch(/still available/);
-  });
-
-  it("is the only unsupported declaration in the corpus", () => {
+  it("leaves no unsupported declarations across the whole corpus", () => {
     const unreadable = math.theorems.filter((t) =>
       kinds(classifyTheorem(t)).includes("unsupported"),
     );
-    expect(unreadable.map((t) => t.name.split(".").pop())).toEqual(["energy_cost_injective"]);
+    expect(unreadable).toEqual([]);
   });
 
-  it("keeps its assumption-sensitivity analysis, unreadable conclusion or not", () => {
-    // Graceful degradation is not the same as giving up: the hypotheses are
-    // still analysable even when the conclusion is not.
+  it("keeps its assumption-sensitivity analysis", () => {
     expect(kinds(cs)).toContain("assumption-sensitivity");
   });
 });

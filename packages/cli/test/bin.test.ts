@@ -58,7 +58,7 @@ describe("prooflens coverage", () => {
     const result = run("coverage", CORPUS_PATH);
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("ProofLens coverage");
-    expect(result.stdout).toContain("97.1%");
+    expect(result.stdout).toContain("100.0%");
   });
 
   it("accepts --format text", () => {

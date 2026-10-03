@@ -132,6 +132,7 @@ export function explain(
   );
   const lower = classifications.find((c) => c.payload.kind === "lower-bound");
   const mono = classifications.find((c) => c.payload.kind === "monotonicity");
+  const injective = classifications.find((c) => c.payload.kind === "injective");
   const limit = classifications.find((c) => c.payload.kind === "limit");
   const functional = classifications.find((c) => c.payload.kind === "functional-relationship");
   const unsupported = classifications.find((c) => c.payload.kind === "unsupported");
@@ -159,6 +160,11 @@ export function explain(
     structural = `${assertion} that ${
       subject ? `\`${renderExpression(subject)}\`` : "the function"
     } is ${strict ? "strictly " : ""}${direction}.`;
+  } else if (injective && injective.payload.kind === "injective") {
+    const { subject } = injective.payload.data;
+    structural = `${assertion} that ${
+      subject ? `\`${renderExpression(subject)}\`` : "the function"
+    } is injective: equal outputs imply equal inputs.`;
   } else if (functional && functional.payload.kind === "functional-relationship") {
     structural = `${isDefinition ? "The definition expresses" : "The theorem defines"} \`${renderExpression(
       functional.payload.data.left,

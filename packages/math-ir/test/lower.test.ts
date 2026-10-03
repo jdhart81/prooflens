@@ -252,22 +252,24 @@ describe("sequence_limit_example", () => {
   });
 });
 
-describe("energy_cost_injective, the deliberate unsupported fixture", () => {
+describe("energy_cost_injective", () => {
   const t = theorem("energy_cost_injective");
 
-  it("lowers to `opaque`, because `Function.Injective` is not in the tables", () => {
-    expect(t.conclusion.value.kind).toBe("opaque");
-    expect((t.conclusion.value as Extract<MathProposition, { kind: "opaque" }>).head).toBe(
-      "Function.Injective",
-    );
+  it("lowers to `predicate` with predicate kind `injective`", () => {
+    expect(t.conclusion.value.kind).toBe("predicate");
+    const pred = t.conclusion.value as Extract<MathProposition, { kind: "predicate" }>;
+    expect(pred.predicate).toBe("injective");
+    expect(pred.name).toBe("Injective");
+    expect(pred.head).toBe("Function.Injective");
   });
 
-  it("still lowers the function it is about", () => {
+  it("lowers the function it is about into subject", () => {
     expect(t.conclusionDisplay).toContain("landauerCost(kB, T, D)");
     expect(t.conclusionDisplay).toContain("N ↦");
+    expect(t.conclusionDisplay).toBe("Injective N ↦ N · landauerCost(kB, T, D)");
   });
 
-  it("shows no elaborator plumbing inside the opaque display", () => {
+  it("shows no elaborator plumbing inside the display", () => {
     for (const noise of ["hMul", "inst", "ofNat"]) {
       expect(t.conclusionDisplay).not.toContain(noise);
     }

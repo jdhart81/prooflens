@@ -4450,6 +4450,8 @@ var PREDICATES = {
     label: "strictly decreasing on a set",
     valueArity: 2
   },
+  Injective: { predicate: "injective", label: "injective", valueArity: 1 },
+  "Function.Injective": { predicate: "injective", label: "injective", valueArity: 1 },
   // Named properties ProofLens can *read* without claiming to interpret. Being
   // in this table is an explicit statement that ProofLens recognises the
   // property; anything absent stays `unsupported`, which is the honest answer
@@ -5184,6 +5186,11 @@ var RULES = {
     description: "The conclusion asserts a monotonicity property.",
     produces: "derived"
   },
+  INJECTIVE: {
+    id: "PREDICATE_INJECTIVE_001",
+    description: "The conclusion asserts that a function is injective.",
+    produces: "derived"
+  },
   LIMIT: {
     id: "PREDICATE_LIMIT_001",
     description: "The conclusion asserts a limit along a filter.",
@@ -5642,6 +5649,21 @@ function classifyMonotonicity(theorem) {
     }, `The conclusion applies \`${prop.name}\`, which asserts a ${entry.strict ? "strictly " : ""}${entry.direction === "increasing" ? "increasing" : "decreasing"} relationship.`, prop.path)
   ];
 }
+function classifyInjective(theorem) {
+  const prop = theorem.conclusion.value;
+  if (prop.kind !== "predicate" || prop.predicate !== "injective")
+    return [];
+  const subjectDisplay = prop.subject ? renderExpression(prop.subject) : "f";
+  return [
+    makeClassification(theorem, RULES.INJECTIVE, {
+      kind: "injective",
+      data: {
+        subject: prop.subject,
+        predicateName: prop.name
+      }
+    }, `The conclusion applies \`${prop.name}\`, which asserts that \`${subjectDisplay}\` maps distinct inputs to distinct outputs.`, prop.path)
+  ];
+}
 function classifyLimit(theorem) {
   const prop = theorem.conclusion.value;
   if (prop.kind !== "limit")
@@ -5790,6 +5812,7 @@ function classifyTheorem(theorem) {
     ...classifyBounds(theorem),
     ...classifyEquality(theorem),
     ...classifyMonotonicity(theorem),
+    ...classifyInjective(theorem),
     ...classifyImplication(theorem)
   ];
   const analytical = [...classifyAssumptionSensitivity(theorem), ...classifyTrust(theorem)];
@@ -5812,6 +5835,7 @@ function primaryClassification(classifications) {
     "limit",
     "positivity",
     "monotonicity",
+    "injective",
     "distinctness",
     "upper-bound",
     "lower-bound",
@@ -5896,6 +5920,7 @@ function explain(theorem, classifications, options = {}) {
   const bound = classifications.find((c) => c.payload.kind === "upper-bound" && c.payload.data.natural);
   const lower = classifications.find((c) => c.payload.kind === "lower-bound");
   const mono = classifications.find((c) => c.payload.kind === "monotonicity");
+  const injective = classifications.find((c) => c.payload.kind === "injective");
   const limit = classifications.find((c) => c.payload.kind === "limit");
   const functional = classifications.find((c) => c.payload.kind === "functional-relationship");
   const unsupported = classifications.find((c) => c.payload.kind === "unsupported");
@@ -5912,6 +5937,9 @@ function explain(theorem, classifications, options = {}) {
   } else if (mono && mono.payload.kind === "monotonicity") {
     const { direction, strict, subject } = mono.payload.data;
     structural = `${assertion} that ${subject ? `\`${renderExpression(subject)}\`` : "the function"} is ${strict ? "strictly " : ""}${direction}.`;
+  } else if (injective && injective.payload.kind === "injective") {
+    const { subject } = injective.payload.data;
+    structural = `${assertion} that ${subject ? `\`${renderExpression(subject)}\`` : "the function"} is injective: equal outputs imply equal inputs.`;
   } else if (functional && functional.payload.kind === "functional-relationship") {
     structural = `${isDefinition ? "The definition expresses" : "The theorem defines"} \`${renderExpression(functional.payload.data.left)}\` in terms of the other quantities.`;
   } else if (unsupported && unsupported.payload.kind === "unsupported") {
@@ -6434,6 +6462,68 @@ function planMonotonicity(theorem, classification) {
     rationale: classification.rationale
   };
 }
+function planInjective(theorem, classification) {
+  if (classification.payload.kind !== "injective")
+    return null;
+  const { subject, predicateName } = classification.payload.data;
+  const status = classification.claim.status;
+  const label = subject ? renderExpression(subject) : "f";
+  return {
+    id: `${theorem.id}:injective`,
+    type: "implication-graph",
+    title: `${predicateName} ${label}`,
+    subtitle: theorem.concept ?? theorem.name.split(".").pop(),
+    entities: [
+      {
+        id: "antecedent",
+        kind: "node",
+        label: "f(x) = f(y)",
+        detail: subject ? renderExpression(subject) : void 0,
+        position: { layer: 0, order: 0 },
+        emphasis: "secondary",
+        epistemic: status,
+        sourceRef: refFor(theorem, subject?.path ?? "conclusion")
+      },
+      {
+        id: "consequent",
+        kind: "node",
+        label: "x = y",
+        position: { layer: 1, order: 0 },
+        emphasis: "primary",
+        epistemic: status,
+        sourceRef: refFor(theorem, "conclusion")
+      }
+    ],
+    relationships: [
+      {
+        id: "implies",
+        kind: "implies",
+        from: "antecedent",
+        to: "consequent",
+        label: "\u2192",
+        epistemic: status,
+        sourceRef: refFor(theorem, "conclusion")
+      }
+    ],
+    axes: [],
+    annotations: [
+      { id: "rationale", kind: "rationale", text: classification.rationale, epistemic: status },
+      {
+        id: "definition",
+        kind: "legend",
+        text: "An injective function maps distinct inputs to distinct outputs: if the outputs are equal, the inputs must be equal.",
+        epistemic: "derived"
+      }
+    ],
+    epistemic: status,
+    provenance: {
+      sources: [refFor(theorem, "conclusion")],
+      rule: classification.rule,
+      inputs: [theorem.id]
+    },
+    rationale: classification.rationale
+  };
+}
 function planAssumptionSensitivity(theorem, classification) {
   if (classification.payload.kind !== "assumption-sensitivity")
     return null;
@@ -6791,6 +6881,12 @@ function planVisuals(theorem, classifications, context = {}) {
           specs.push(spec);
         break;
       }
+      case "injective": {
+        const spec = planInjective(theorem, classification);
+        if (spec)
+          specs.push(spec);
+        break;
+      }
       case "functional-relationship": {
         const spec = planFunctionalRelationship(theorem, classification);
         if (spec)
@@ -6830,6 +6926,9 @@ var VISUAL_HINT_ALIASES = {
   "monotone-curve": "monotonicity-plot",
   "antitone-curve": "monotonicity-plot",
   "monotonicity-curve": "monotonicity-plot",
+  injective: "implication-graph",
+  injectivity: "implication-graph",
+  "one-to-one": "implication-graph",
   limit: "limit-plot",
   convergence: "limit-plot",
   asymptote: "limit-plot",

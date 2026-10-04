@@ -350,12 +350,34 @@ describe("explanation provenance", () => {
 
   it("still admits it cannot read a theorem whose structure it does not recognise", () => {
     // The definition branches must not have swallowed the honest admission.
-    const theorem = math.theorems.find((t) => t.name.endsWith(".energy_cost_injective"))!;
+    const rawThm = math.theorems.find((t) => t.name.endsWith(".energy_cost_injective"))!;
+    const theorem = {
+      ...rawThm,
+      conclusion: {
+        ...rawThm.conclusion,
+        value: {
+          kind: "opaque" as const,
+          head: "Unknown.Head",
+          display: "Unknown.Head x",
+          path: "conclusion",
+        },
+      },
+    };
     const mathematical = explain(theorem, classifyTheorem(theorem), {
       formalDocument: doc,
       formalDeclaration: decl("energy_cost_injective"),
     }).find((l) => l.id === "mathematical")!;
     expect(mathematical.claim.value).toContain("does not have a reading for its head symbol");
+  });
+
+  it("explains an injective declaration with the expected structural layer", () => {
+    const theorem = math.theorems.find((t) => t.name.endsWith(".energy_cost_injective"))!;
+    const layers = explain(theorem, classifyTheorem(theorem), {
+      formalDocument: doc,
+      formalDeclaration: decl("energy_cost_injective"),
+    });
+    const structural = layers.find((l) => l.id === "structural")!;
+    expect(structural.claim.value).toContain("is injective: equal outputs imply equal inputs");
   });
 
   it("titles a definition's kernel layer `What was defined`", () => {

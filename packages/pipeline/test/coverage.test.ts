@@ -47,11 +47,11 @@ describe("totals", () => {
     expect(t.fullyReadable).toBe(t.classified - t.classifiedWithOpaqueTerms);
   });
 
-  it("reports the corpus as 34 of 35 readable, with the injectivity fixture the only miss", () => {
-    expect(t.classified).toBe(34);
-    expect(t.unsupported).toBe(1);
+  it("reports the corpus as 35 of 35 readable, with zero misses", () => {
+    expect(t.classified).toBe(35);
+    expect(t.unsupported).toBe(0);
     expect(t.classifiedWithOpaqueTerms).toBe(0);
-    expect(t.fullyReadable).toBe(34);
+    expect(t.fullyReadable).toBe(35);
   });
 
   it("agrees with `opaqueHeadsIn` on which classified declarations have opaque terms", () => {
@@ -71,9 +71,9 @@ describe("rates", () => {
   });
 
   it("lands where the corpus actually is", () => {
-    expect(report.rates.classified).toBeCloseTo(34 / 35, 10);
-    expect(report.rates.fullyReadable).toBeCloseTo(34 / 35, 10);
-    expect(report.rates.fullyReadable * 100).toBeCloseTo(97.14, 1);
+    expect(report.rates.classified).toBe(1);
+    expect(report.rates.fullyReadable).toBe(1);
+    expect(report.rates.fullyReadable * 100).toBe(100);
   });
 
   it("stays within [0,1]", () => {
@@ -89,15 +89,8 @@ describe("rates", () => {
 // ---------------------------------------------------------------------------
 
 describe("unrecognisedShapes", () => {
-  it("contains exactly the injectivity fixture", () => {
-    // `Filter.Tendsto` used to sit here; the `limit` classifier reads it now.
-    expect(report.unrecognisedShapes).toEqual([
-      {
-        head: "Function.Injective",
-        declarations: 1,
-        examples: ["ProofLens.Examples.energy_cost_injective"],
-      },
-    ]);
+  it("is empty for the committed corpus", () => {
+    expect(report.unrecognisedShapes).toEqual([]);
   });
 
   it("accounts for every unsupported declaration exactly once", () => {
@@ -116,12 +109,12 @@ describe("unrecognisedShapes", () => {
 });
 
 describe("opaqueConstants", () => {
-  it("contains exactly Function.Injective", () => {
-    expect(report.opaqueConstants.map((m) => m.head)).toEqual(["Function.Injective"]);
+  it("is empty for the committed corpus", () => {
+    expect(report.opaqueConstants).toEqual([]);
   });
 
-  it("no longer lists Filter.Tendsto, now that limits are read properly", () => {
-    expect(report.opaqueConstants.map((m) => m.head)).not.toContain("Filter.Tendsto");
+  it("no longer lists Function.Injective, now that injectivity is read properly", () => {
+    expect(report.opaqueConstants.map((m) => m.head)).not.toContain("Function.Injective");
   });
 
   it("agrees with `opaqueHeadsIn` declaration by declaration", () => {
@@ -200,22 +193,34 @@ describe("backlog ranking", () => {
     // Twelve declarations, all with the same unreadable conclusion shape.
     const raw = corpusRaw() as Record<string, unknown>;
     const template = (raw["declarations"] as Array<Record<string, unknown>>).find(
-      (d) => d["name"] === "ProofLens.Examples.energy_cost_injective",
+      (d) => d["name"] === "ProofLens.Examples.simple_upper_bound",
     )!;
-    const many = Array.from({ length: 12 }, (_, i) => ({
+    const unreadableTemplate = {
       ...template,
-      name: `ProofLens.Examples.injective_${String(i).padStart(2, "0")}`,
+      conclusion: {
+        pretty: "Function.Surjective f",
+        tree: {
+          kind: "app",
+          fn: { kind: "const", name: "Function.Surjective", levels: [] },
+          args: [{ kind: "fvar", name: "f", fvarId: "_uniq.0" }],
+        },
+        constants: ["Function.Surjective"],
+      },
+    };
+    const many = Array.from({ length: 12 }, (_, i) => ({
+      ...unreadableTemplate,
+      name: `ProofLens.Examples.surjective_${String(i).padStart(2, "0")}`,
     }));
     const built = coverageReport(runPipelineOnValue({ ...raw, declarations: many }));
     const miss = built.unrecognisedShapes[0]!;
     expect(miss.declarations).toBe(12);
     expect(miss.examples).toHaveLength(5);
     expect(miss.examples).toEqual([
-      "ProofLens.Examples.injective_00",
-      "ProofLens.Examples.injective_01",
-      "ProofLens.Examples.injective_02",
-      "ProofLens.Examples.injective_03",
-      "ProofLens.Examples.injective_04",
+      "ProofLens.Examples.surjective_00",
+      "ProofLens.Examples.surjective_01",
+      "ProofLens.Examples.surjective_02",
+      "ProofLens.Examples.surjective_03",
+      "ProofLens.Examples.surjective_04",
     ]);
   });
 });
@@ -431,14 +436,27 @@ describe("a single-declaration bundle", () => {
     expect(built.unrecognisedShapes).toEqual([]);
   });
 
-  it("reports 0% when that declaration is the unreadable one", () => {
+  it("reports 0% when that declaration is an unreadable one", () => {
     const raw = corpusRaw() as Record<string, unknown>;
     const one = (raw["declarations"] as Array<Record<string, unknown>>).find(
-      (d) => d["name"] === "ProofLens.Examples.energy_cost_injective",
+      (d) => d["name"] === "ProofLens.Examples.simple_upper_bound",
     )!;
-    const built = coverageReport(runPipelineOnValue({ ...raw, declarations: [one] }));
+    const unreadable = {
+      ...one,
+      name: "ProofLens.Examples.unrecognised_fixture",
+      conclusion: {
+        pretty: "Function.Surjective f",
+        tree: {
+          kind: "app",
+          fn: { kind: "const", name: "Function.Surjective", levels: [] },
+          args: [{ kind: "fvar", name: "f", fvarId: "_uniq.0" }],
+        },
+        constants: ["Function.Surjective"],
+      },
+    };
+    const built = coverageReport(runPipelineOnValue({ ...raw, declarations: [unreadable] }));
     expect(built.rates.classified).toBe(0);
     expect(built.rates.fullyReadable).toBe(0);
-    expect(built.unrecognisedShapes.map((m) => m.head)).toEqual(["Function.Injective"]);
+    expect(built.unrecognisedShapes.map((m) => m.head)).toEqual(["Function.Surjective"]);
   });
 });

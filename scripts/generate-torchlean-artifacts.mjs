@@ -1,20 +1,12 @@
 #!/usr/bin/env node
 /**
- * Pinned TorchLean Digits 360-Example Artifact Generator & Verifier.
+ * Numeric helpers for the pinned TorchLean digits artifacts.
  *
- * This script deterministically:
- * 1. Verifies the SHA-256 hashes of the 3 pinned TorchLean artifacts:
- *    - digits_linear_margin_cert.json
- *    - digits_linear_weights.json
- *    - digits_test.json
- * 2. Computes exact integer arithmetic over sourceScale (10^19) and certificateScale (10^12)
- *    for all 360 samples and all 10 classes (3600 interval pairs).
- * 3. Proves mathematical enclosure via outward floor/ceil integer bounds.
- * 4. Generates `corpus/ProofLensExamples/TorchLeanDigits.lean`.
- * 5. Generates canonical `examples/torchlean-digits-enclosure.formal-ir.json` and
- *    `examples/torchlean-digits-enclosure.receipt.json`.
- * 6. Updates `examples/torchlean-digits-application-audit.json` resolution hash.
- * 7. Verifies the Formal IR document schema with `@prooflens/formal-ir`.
+ * generateAllArtifacts computes integer vectors and outward-rounded bounds.
+ * Direct invocation validates the retained Formal IR schema and receipt hash;
+ * it does not emit Lean code or perform a fresh Formal IR extraction. Use the
+ * pinned CI extraction path to regenerate those proof artifacts.
+ * Pass original decimal tokens as strings when exact source precision matters.
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
@@ -51,47 +43,35 @@ const scaleDiff = 100000000000000000000000000n; // 10^26
 const epsZ = 200000000000000000n; // 0.02 * 10^19
 
 export function parseScaledDecimal(s, scalePower = 19) {
-  let str = typeof s === "number" ? s.toString() : String(s);
-  str = str.trim();
-  const isNeg = str.startsWith("-");
-  if (isNeg || str.startsWith("+")) str = str.slice(1);
-
-  if (str.includes("e") || str.includes("E")) {
-    const [mantissa, expStr] = str.split(/[eE]/);
-    const exp = parseInt(expStr || "0", 10);
-    const [mInt = "0", mFrac = ""] = (mantissa || "").split(".");
-    if (exp < 0) {
-      const shift = -exp;
-      const fullFrac = "0".repeat(shift - 1) + mInt + mFrac;
-      str = "0." + fullFrac;
-    } else if (exp > 0) {
-      if (mFrac.length <= exp) {
-        str = mInt + mFrac + "0".repeat(exp - mFrac.length);
-      } else {
-        str = mInt + mFrac.slice(0, exp) + "." + mFrac.slice(exp);
-      }
-    }
+  if (!Number.isSafeInteger(scalePower) || scalePower < 0) {
+    throw new Error("Invalid decimal precision");
   }
-
-  const [intStr, fracStr = ""] = str.split(".");
-  const scale = 10n ** BigInt(scalePower);
-  const intVal = BigInt(intStr || "0") * scale;
-  let fracVal;
-  if (fracStr.length >= scalePower) {
-    fracVal = BigInt(fracStr.slice(0, scalePower));
+  const token = String(s).trim();
+  const match = /^([+-]?)(\d+)(?:\.(\d*))?(?:[eE]([+-]?\d+))?$/.exec(token);
+  if (!match) throw new Error("Invalid decimal token");
+  const fraction = match[3] ?? "";
+  const exponent = Number(match[4] ?? "0");
+  if (!Number.isSafeInteger(exponent)) throw new Error("Invalid decimal exponent");
+  const shift = scalePower + exponent - fraction.length;
+  let coefficient = BigInt(match[2] + fraction);
+  if (shift >= 0) {
+    coefficient *= 10n ** BigInt(shift);
   } else {
-    fracVal = BigInt(fracStr.padEnd(scalePower, "0"));
+    const divisor = 10n ** BigInt(-shift);
+    if (coefficient % divisor !== 0n) {
+      throw new Error("Source decimal exceeds supported precision");
+    }
+    coefficient /= divisor;
   }
-  const total = intVal + fracVal;
-  return isNeg ? -total : total;
+  return match[1] === "-" ? -coefficient : coefficient;
 }
 
 export function generateAllArtifacts(weightsData, testData, marginCert) {
   const rawWeights = weightsData["layers.0.weight"];
   const rawBias = weightsData["layers.0.bias"];
 
-  const weightsZ = rawWeights.map((row) => row.map(parseScaledDecimal));
-  const biasZ = rawBias.map(parseScaledDecimal);
+  const weightsZ = rawWeights.map((row) => row.map((value) => parseScaledDecimal(value)));
+  const biasZ = rawBias.map((value) => parseScaledDecimal(value));
 
   const inputsLoZ = [];
   const inputsHiZ = [];
@@ -199,14 +179,17 @@ export function generateAllArtifacts(weightsData, testData, marginCert) {
   };
 }
 
-// When run directly, generate and check all files
+// Direct invocation checks retained artifacts; it does not regenerate them.
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  console.log("Generating and verifying TorchLean 360-example artifacts...");
+  console.log("Verifying retained TorchLean 360-example artifacts...");
   console.log("Source repository:", PINNED_SOURCE.repository, "@", PINNED_SOURCE.commit);
 
-  const { TORCHLEAN_DIGITS_MARGIN_FIXTURE } = await import("../packages/torchlean-adapter/dist/index.js");
-  console.log("Fixture loaded with " + TORCHLEAN_DIGITS_MARGIN_FIXTURE.examples.length + " examples.");
-  
+  const { TORCHLEAN_DIGITS_MARGIN_FIXTURE } =
+    await import("../packages/torchlean-adapter/dist/index.js");
+  console.log(
+    "Fixture loaded with " + TORCHLEAN_DIGITS_MARGIN_FIXTURE.examples.length + " examples.",
+  );
+
   // Verify that committed Formal IR and receipt match the schema
   const formalIrPath = resolve(root, "examples/torchlean-digits-enclosure.formal-ir.json");
   const formalIrContent = readFileSync(formalIrPath, "utf8");
@@ -217,10 +200,18 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const receipt = JSON.parse(readFileSync(receiptPath, "utf8"));
 
   if (receipt.proof.formalIrSha256 !== formalIrSha256) {
-    throw new Error(`Receipt formalIrSha256 mismatch: receipt=${receipt.proof.formalIrSha256}, actual=${formalIrSha256}`);
+    throw new Error(
+      `Receipt formalIrSha256 mismatch: receipt=${receipt.proof.formalIrSha256}, actual=${formalIrSha256}`,
+    );
   }
 
-  console.log("Formal IR verified (declarations: " + parsedDoc.declarations.length + ", sha256: " + formalIrSha256 + ")");
+  console.log(
+    "Formal IR verified (declarations: " +
+      parsedDoc.declarations.length +
+      ", sha256: " +
+      formalIrSha256 +
+      ")",
+  );
   console.log("Receipt verified (examples: " + receipt.binding.exampleIds.length + ")");
   console.log("All TorchLean artifacts verified successfully.");
 }

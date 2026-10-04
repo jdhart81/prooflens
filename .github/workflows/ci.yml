@@ -41,6 +41,9 @@ jobs:
       - name: Unit and integration tests
         run: pnpm run test
 
+      - name: Exact decimal helper regression tests
+        run: node --test scripts/generate-torchlean-artifacts.test.mjs
+
       - name: Build the web application
         run: pnpm --filter @prooflens/web build
 
@@ -199,7 +202,6 @@ jobs:
             /tmp/figures
             /tmp/ci.torchlean.formal-ir.json
             /tmp/ci.formal-ir.json
-
 
   # Coverage against real mathlib is a tracked metric, not a gate. It runs on a
   # schedule and on demand rather than on every pull request: it needs a mathlib

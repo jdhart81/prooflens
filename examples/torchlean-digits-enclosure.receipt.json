@@ -379,7 +379,7 @@
     "protocol": "prooflens-torchlean-enclosure-v0.1",
     "declaration": "ProofLens.Examples.TorchLeanDigits.digits_examples_enclosed",
     "module": "ProofLensExamples.TorchLeanDigits",
-    "statement": "∀ (sample : Fin 360) (x : Fin 64 → ℝ),\n  (∀ (i : Fin 64),\n      ProofLens.Examples.TorchLeanDigits.inputValue (ProofLens.Examples.TorchLeanDigits.inputsLoZ sample) i ≤ x i ∧\n        x i ≤ ProofLens.Examples.TorchLeanDigits.inputValue (ProofLens.Examples.TorchLeanDigits.inputsHiZ sample) i) →\n    ∀ (j : Fin 10),\n      ProofLens.Examples.TorchLeanDigits.certValue (ProofLens.Examples.TorchLeanDigits.certLoZ sample) j ≤\n          ProofLens.Examples.TorchLeanDigits.eval x j ∧\n        ProofLens.Examples.TorchLeanDigits.eval x j ≤\n          ProofLens.Examples.TorchLeanDigits.certValue (ProofLens.Examples.TorchLeanDigits.certHiZ sample) j",
-    "formalIrSha256": "ad820e109c6fa4fbfd4bbb3feacea2eec69e200f9965cce332198aa7a4fa7757"
+    "statement": "\u2200 (sample : Fin 360) (x : Fin 64 \u2192 \u211d),\n  (\u2200 (i : Fin 64),\n      ProofLens.Examples.TorchLeanDigits.inputValue (ProofLens.Examples.TorchLeanDigits.inputsLoZ sample) i \u2264 x i \u2227\n        x i \u2264 ProofLens.Examples.TorchLeanDigits.inputValue (ProofLens.Examples.TorchLeanDigits.inputsHiZ sample) i) \u2192\n    \u2200 (j : Fin 10),\n      ProofLens.Examples.TorchLeanDigits.certValue (ProofLens.Examples.TorchLeanDigits.certLoZ sample) j \u2264\n          ProofLens.Examples.TorchLeanDigits.eval x j \u2227\n        ProofLens.Examples.TorchLeanDigits.eval x j \u2264\n          ProofLens.Examples.TorchLeanDigits.certValue (ProofLens.Examples.TorchLeanDigits.certHiZ sample) j",
+    "formalIrSha256": "45d42b475cd6c5906acfd2b4594b1644c585b0e113e0f3ed402909f4cd09686e"
   }
 }

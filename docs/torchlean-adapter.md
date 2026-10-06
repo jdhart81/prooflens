@@ -44,9 +44,9 @@ model, parameters, perturbation region, and serialized intervals to those premis
 boundary stated in TorchLean's own `MarginCert` module: its report checker validates internal
 arithmetic and summary fields; model enclosure requires a separate verifier or theorem application.
 
-All 360 source examples now carry a separate `verified` exact-real enclosure receipt. That receipt
-covers the concrete 10×64 linear classifier, all 360 exact ±0.02 input boxes, and all 3600
-outward-rounded decimal output intervals.
+The concrete enclosure path covers the 10×64 linear classifier, all 360 exact ±0.02 input boxes,
+and all 3600 outward-rounded decimal output intervals. A source-constant change requires a fresh
+Lean check, extraction, and hash-matched receipt before presenting that candidate as `verified`.
 
 The interface therefore distinguishes "positive margin" (certified positive margin) from "not certified"
 (overlapping intervals). It also explains that "not certified" means the displayed bounds overlap, not
@@ -93,10 +93,10 @@ The audit found two blockers in the generic graph-proof path:
   exact-real boxes. No outward-rounding bridge currently proves that the serialized endpoints are
   conservative exact-real bounds.
 
-ProofLens resolves those blockers for the concrete linear model through a direct exact-real
-certificate in `corpus/ProofLensExamples/TorchLeanDigits.lean`. The certificate represents every
-pinned source decimal as an integer over a common scale, proves the general linear interval rule,
-checks all 3600 rounded endpoints by decidable integer arithmetic, and contains no `sorry`. It does not
+ProofLens uses a direct exact-real certificate path for the concrete linear model in
+`corpus/ProofLensExamples/TorchLeanDigits.lean`. The intended certificate represents every original
+pinned JSON decimal token as an integer over a common scale, proves the general linear interval rule,
+and checks all 3600 rounded endpoints by decidable integer arithmetic with no `sorry`. It does not
 claim that the generic graph theorem supports `reshape` or `concat`; that path is displayed as
 explicitly unused.
 
@@ -104,8 +104,46 @@ The UI describes `g`, `ps`, `inputs`, and `B`, then shows the exact certificate 
 the observed 16-node wrapper graph. **Download evidence packet** emits the application audit,
 generic theorem pin, exact theorem extraction, receipt, and verified conclusion together.
 
+## Exact source-token binding
+
+The model interpretation is the exact rational value of each original JSON decimal token at
+scale 10^19. It does not decode the token to IEEE binary64 or float32 before constructing Lean
+integers. Excess precision is rejected instead of silently rounded or truncated. This contract does
+not establish a rounding bridge to the upstream Python exporter or Torch runtime.
+
+`fixtures/torchlean-digits-source` retains the three original, hash-pinned public JSON files.
+Run `python3 scripts/check_torchlean_source_binding.py` to compare all 640 weights, 10 biases,
+360 clipped input boxes and 3600 interval pairs independently of the JavaScript numeric helper.
+The gate parses original tokens with Python's `Decimal` and performs only integer arithmetic;
+it is a source-binding and numerical sanity check, not formal proof or a kernel witness.
+
+The JavaScript helper also accepts the original files through
+`node scripts/generate-torchlean-artifacts.mjs --source-dir fixtures/torchlean-digits-source`.
+It validates their hashes and preserves original JSON number tokens as strings before integer
+conversion. Passing already-decoded JavaScript numbers is rejected. Discrete class labels are
+converted only after validation as integers in the range 0 through 9.
+The helper computes minimal outward bounds at the certificate scale. A retained Lean enclosure
+may have additional conservative slack; the independent gate checks soundness, rather than
+requiring the bounds to be minimal.
+
+The native extractor emits naturals above 2^53−1 as exact decimal strings in the existing Formal IR
+schema, retaining safe small naturals as numbers. The JavaScript parser preserves those strings,
+and MathIR renders them unquoted without binary64 conversion. Source preview also preserves large
+integer tokens, but remains interpreted rather than elaborated or kernel-verified; decimal and
+heuristic preview behavior is unchanged. Historical IR containing unsafe numeric literals can still
+round when decoded. These projections do not establish IEEE/PyTorch execution equivalence.
+
+The CI source-token gate supplements the full Lean corpus build and extraction-parity check.
+Never disable extraction parity to accept changed constants or update a receipt hash without a
+fresh extraction. Update the Formal IR, receipt and application-audit hash bindings together
+after that path.
+
 ## Next gate
 
-The 360-example exact-real certificate is complete. Future work can upstream TorchLean's
-semantics-preserving `reshape` and `concat` cases so its generic graph theorem can certify the
-lowered wrapper directly.
+Any source-constant change must check all numeric lemmas through the pinned Lean build,
+freshly extract the TorchLean Formal IR, and update its receipt and evidence bindings together.
+Passing the Python source gate alone does not complete this gate. Maintainer and contributor review
+must agree that the exact JSON-decimal rational model is the intended claim before publication.
+The certificate does not establish IEEE/PyTorch execution equivalence or authorize publication.
+Future work can upstream TorchLean's semantics-preserving `reshape` and `concat` cases so its
+generic graph theorem can certify the lowered wrapper directly.

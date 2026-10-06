@@ -204,6 +204,10 @@ export function lowerExpression(
       return { kind: "variable", id: `bound:${symbol}`, symbol, path };
     }
     case "lit":
+      // Large naturals arrive as decimal strings to preserve all digits. Keep
+      // them outside numeric heuristics rather than rounding through Number.
+      if (node.litKind === "nat" && typeof node.value === "string")
+        return { kind: "constant", name: "Nat.literal", display: node.value, path };
       return typeof node.value === "number"
         ? { kind: "number", value: node.value, display: String(node.value), path }
         : { kind: "constant", name: "string", display: JSON.stringify(node.value), path };

@@ -149,7 +149,7 @@ describe("TorchLean margin-report adapter", () => {
 
   it("verifies the direct exact-real certificate and closes the concrete application gate", () => {
     expect(trustedEnclosure.sha256).toBe(
-      "ad820e109c6fa4fbfd4bbb3feacea2eec69e200f9965cce332198aa7a4fa7757",
+      "45d42b475cd6c5906acfd2b4594b1644c585b0e113e0f3ed402909f4cd09686e",
     );
     const result = compileTorchLeanMarginScene(fixture(), {
       trustedSoundnessFormalIr: trustedSoundness,
@@ -172,6 +172,10 @@ describe("TorchLean margin-report adapter", () => {
     });
     expect(result.scene.epistemic).toBe("interpreted");
     expect(result.scene.boundary).toContain("matching trusted Lean kernel witness");
+    expect(result.scene.boundary).toContain(
+      "exact rational values of the pinned JSON decimal tokens",
+    );
+    expect(result.scene.boundary).toContain("floating-point execution remains unproved");
 
     // Check that displayed examples have lean-exact-outward-certificate authority
     expect(result.scene.examples[0]!.intervalAuthority).toBe("lean-exact-outward-certificate");

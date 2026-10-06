@@ -160,8 +160,10 @@ cannot be promoted.
 
 ## Getting started
 
-Requirements: [elan](https://github.com/leanprover/elan) (Lean 4.24.0), Node 22,
-pnpm 10.
+Requirements: [elan](https://github.com/leanprover/elan) (Lean 4.24.0), Node
+22.12 or later in the 22.x line, or Node 24.x, and pnpm 10.28.0. The development
+test suite uses Vitest 5; Node 20 is outside its supported runtime range. CI uses
+Node 22; use the supported Node range in `package.json` for local development.
 
 Want the smallest useful example first? Follow [**one theorem in five minutes**](docs/quickstart.md)
 to produce a layered explanation and animated SVG from the checked-in Formal IR without installing

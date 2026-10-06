@@ -43,6 +43,7 @@ export type PredicateKind =
   | "strictly-antitone"
   | "positive"
   | "nonnegative"
+  | "injective"
   | "other";
 
 /**

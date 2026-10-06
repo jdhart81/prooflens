@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { generateAllArtifacts, parseScaledDecimal } from "./generate-torchlean-artifacts.mjs";
+import { generateAllArtifacts, parseScaledDecimal, parseSourceJsonTokens, loadPinnedSourceArtifacts } from "./generate-torchlean-artifacts.mjs";
+import { fileURLToPath } from "node:url";
 
 test("all weights and biases use the declared 19-digit scale, independent of array position", () => {
   const weights = {
@@ -30,4 +31,29 @@ test("decimal tokens retain exact scaled values across scientific notation", () 
 test("unsupported precision fails instead of silently truncating source decimals", () => {
   assert.throws(() => parseScaledDecimal("0.00000000000000000001"), /precision/);
   assert.throws(() => parseScaledDecimal("not-a-number"), /decimal/);
+});
+
+test("decoded JavaScript numbers cannot be mistaken for original source decimal tokens", () => {
+  assert.throws(() => parseScaledDecimal(-0.04142650589346886), /original decimal token/);
+});
+
+test("lossless JSON token parsing preserves source precision and ignores numbers in strings", () => {
+  const parsed = parseSourceJsonTokens('{"value":-0.04142650589346886,"exp":1.25e0,"text":"value 42 and \\\"0.125\\\"","count":360}');
+  assert.equal(parsed.value, "-0.04142650589346886");
+  assert.equal(parsed.exp, "1.25e0");
+  assert.equal(parsed.text, 'value 42 and "0.125"');
+  assert.equal(parsed.count, "360");
+  assert.throws(() => parseSourceJsonTokens('{"value":01}'), SyntaxError);
+});
+
+test("the supported hash-pinned source path computes the actual exact-token model", () => {
+  const sourceDir = fileURLToPath(new URL("../fixtures/torchlean-digits-source", import.meta.url));
+  const { weightsData, testData, marginCert } = loadPinnedSourceArtifacts(sourceDir);
+  const result = generateAllArtifacts(weightsData, testData, marginCert);
+  assert.equal(result.weightsZ[0][1], -414265058934688600n);
+  assert.equal(result.weightsZ[0][3], 8443235754966736000n);
+  assert.equal(result.inputsLoZ.length, 360);
+  assert.equal(result.certLoZ.length, 360);
+  assert.equal(result.certHiZ[206][8], 40677441312n);
+  assert.equal(result.certifiedMismatches, 0);
 });

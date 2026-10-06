@@ -122,6 +122,11 @@ jobs:
         working-directory: lean
         run: lake build
 
+      - name: Independent TorchLean source-token binding gate
+        run: |
+          python3 -m unittest discover -s scripts -p 'test_torchlean_source_binding.py' -v
+          python3 scripts/check_torchlean_source_binding.py
+
       - name: Build the example corpus and TorchLean certificate
         working-directory: corpus
         run: lake build ProofLensExamples ProofLensExamples.TorchLeanDigits
@@ -135,6 +140,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
+
+      - name: Large natural literal extraction round-trip
+        run: node scripts/test-natural-literal-roundtrip.mjs
 
       # Extraction runs through Lean's own frontend (see ADR 0001), which is the
       # only path guaranteed to produce full notation fidelity.

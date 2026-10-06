@@ -252,22 +252,24 @@ describe("sequence_limit_example", () => {
   });
 });
 
-describe("energy_cost_injective, the deliberate unsupported fixture", () => {
+describe("energy_cost_injective", () => {
   const t = theorem("energy_cost_injective");
 
-  it("lowers to `opaque`, because `Function.Injective` is not in the tables", () => {
-    expect(t.conclusion.value.kind).toBe("opaque");
-    expect((t.conclusion.value as Extract<MathProposition, { kind: "opaque" }>).head).toBe(
-      "Function.Injective",
-    );
+  it("lowers to `predicate` with predicate kind `injective`", () => {
+    expect(t.conclusion.value.kind).toBe("predicate");
+    const pred = t.conclusion.value as Extract<MathProposition, { kind: "predicate" }>;
+    expect(pred.predicate).toBe("injective");
+    expect(pred.name).toBe("Injective");
+    expect(pred.head).toBe("Function.Injective");
   });
 
-  it("still lowers the function it is about", () => {
+  it("lowers the function it is about into subject", () => {
     expect(t.conclusionDisplay).toContain("landauerCost(kB, T, D)");
     expect(t.conclusionDisplay).toContain("N ↦");
+    expect(t.conclusionDisplay).toBe("Injective N ↦ N · landauerCost(kB, T, D)");
   });
 
-  it("shows no elaborator plumbing inside the opaque display", () => {
+  it("shows no elaborator plumbing inside the display", () => {
     for (const noise of ["hMul", "inst", "ofNat"]) {
       expect(t.conclusionDisplay).not.toContain(noise);
     }
@@ -389,6 +391,63 @@ describe("binder display names", () => {
         expect(text, `${t.name}: ${text}`).not.toMatch(/_hyg|_@|\._internal\./);
       }
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Literal preservation
+// ---------------------------------------------------------------------------
+
+describe("literal lowering", () => {
+  it("renders a large natural's exact decimal digits without quotes or number conversion", () => {
+    const value = "10000000000000000001";
+    const expr = lowerExpression({ kind: "lit", litKind: "nat", value }, "e");
+    expect(expr).toEqual({ kind: "constant", name: "Nat.literal", display: value, path: "e" });
+    expect(renderExpression(expr)).toBe(value);
+  });
+
+  it.each([0, 1, 2, Number.MAX_SAFE_INTEGER])(
+    "keeps safe numeric natural %s unchanged",
+    (value) => {
+      const expr = lowerExpression({ kind: "lit", litKind: "nat", value }, "e");
+      expect(expr).toEqual({ kind: "number", value, display: String(value), path: "e" });
+      expect(renderExpression(expr)).toBe(String(value));
+    },
+  );
+
+  it("keeps a real string literal quoted even when it contains only digits", () => {
+    const value = "10000000000000000001";
+    const expr = lowerExpression({ kind: "lit", litKind: "str", value }, "e");
+    expect(expr).toEqual({
+      kind: "constant",
+      name: "string",
+      display: JSON.stringify(value),
+      path: "e",
+    });
+    expect(renderExpression(expr)).toBe(JSON.stringify(value));
+  });
+
+  it("preserves an exact large natural through the OfNat wrapper", () => {
+    const value = "10000000000000000001";
+    const expr = lowerExpression(
+      {
+        kind: "app",
+        fn: { kind: "const", name: "OfNat.ofNat", levels: [] },
+        args: [
+          { kind: "const", name: "Real", levels: [] },
+          { kind: "lit", litKind: "nat", value },
+          { kind: "const", name: "instOfNatReal", levels: [] },
+        ],
+      },
+      "e",
+    );
+    expect(expr).toEqual({
+      kind: "constant",
+      name: "Nat.literal",
+      display: value,
+      path: "e.args[1]",
+    });
+    expect(renderExpression(expr)).toBe(value);
   });
 });
 

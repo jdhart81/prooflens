@@ -4855,7 +4855,7 @@ export function compileTorchLeanMarginScene(
       enclosure,
       boundary:
         enclosure.status === "verified"
-          ? "A matching trusted Lean kernel witness establishes the receipt's enclosure theorem; ProofLens separately recomputes the displayed margin."
+          ? "A matching trusted Lean kernel witness establishes enclosure for the exact rational values of the pinned JSON decimal tokens; ProofLens separately recomputes the displayed margin. Equivalence to IEEE/PyTorch floating-point execution remains unproved."
           : soundness.status === "verified"
             ? "TorchLean's generic IBP enclosure theorem is kernel-verified. This official report remains interpreted until its concrete model, graph premises, inputs, and displayed intervals are bound to that theorem."
             : "This official TorchLean report excerpt is source-pinned and internally recomputed, but ProofLens has not established that its logit intervals enclose the model. TorchLean's own MarginCert documentation requires a separate verifier or propagation theorem for that claim.",

@@ -172,6 +172,8 @@ export const PREDICATES: Record<string, { predicate: PredicateKind; label: strin
     label: "strictly decreasing on a set",
     valueArity: 2,
   },
+  Injective: { predicate: "injective", label: "injective", valueArity: 1 },
+  "Function.Injective": { predicate: "injective", label: "injective", valueArity: 1 },
 
   // Named properties ProofLens can *read* without claiming to interpret. Being
   // in this table is an explicit statement that ProofLens recognises the

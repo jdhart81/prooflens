@@ -7,7 +7,7 @@
   "type": "module",
   "packageManager": "pnpm@10.28.0",
   "engines": {
-    "node": ">=20"
+    "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
   },
   "scripts": {
     "build": "tsc -b packages/epistemics packages/formal-ir packages/paper-packet packages/math-ir packages/classifier packages/visual-ir packages/torchlean-adapter packages/pipeline packages/renderer-svg packages/renderer-text packages/cli packages/mcp",

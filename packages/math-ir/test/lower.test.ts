@@ -395,6 +395,63 @@ describe("binder display names", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Literal preservation
+// ---------------------------------------------------------------------------
+
+describe("literal lowering", () => {
+  it("renders a large natural's exact decimal digits without quotes or number conversion", () => {
+    const value = "10000000000000000001";
+    const expr = lowerExpression({ kind: "lit", litKind: "nat", value }, "e");
+    expect(expr).toEqual({ kind: "constant", name: "Nat.literal", display: value, path: "e" });
+    expect(renderExpression(expr)).toBe(value);
+  });
+
+  it.each([0, 1, 2, Number.MAX_SAFE_INTEGER])(
+    "keeps safe numeric natural %s unchanged",
+    (value) => {
+      const expr = lowerExpression({ kind: "lit", litKind: "nat", value }, "e");
+      expect(expr).toEqual({ kind: "number", value, display: String(value), path: "e" });
+      expect(renderExpression(expr)).toBe(String(value));
+    },
+  );
+
+  it("keeps a real string literal quoted even when it contains only digits", () => {
+    const value = "10000000000000000001";
+    const expr = lowerExpression({ kind: "lit", litKind: "str", value }, "e");
+    expect(expr).toEqual({
+      kind: "constant",
+      name: "string",
+      display: JSON.stringify(value),
+      path: "e",
+    });
+    expect(renderExpression(expr)).toBe(JSON.stringify(value));
+  });
+
+  it("preserves an exact large natural through the OfNat wrapper", () => {
+    const value = "10000000000000000001";
+    const expr = lowerExpression(
+      {
+        kind: "app",
+        fn: { kind: "const", name: "OfNat.ofNat", levels: [] },
+        args: [
+          { kind: "const", name: "Real", levels: [] },
+          { kind: "lit", litKind: "nat", value },
+          { kind: "const", name: "instOfNatReal", levels: [] },
+        ],
+      },
+      "e",
+    );
+    expect(expr).toEqual({
+      kind: "constant",
+      name: "Nat.literal",
+      display: value,
+      path: "e.args[1]",
+    });
+    expect(renderExpression(expr)).toBe(value);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Transparency
 // ---------------------------------------------------------------------------
 

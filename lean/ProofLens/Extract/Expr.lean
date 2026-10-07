@@ -91,7 +91,10 @@ partial def exprToJson (e : Expr) : MetaM Json := do
         , ("value", ← exprToJson v)
         , ("body", ← exprToJson b) ]
   | .lit (.natVal n) =>
-      return Json.mkObj [("kind", Json.str "lit"), ("litKind", Json.str "nat"), ("value", toJson n)]
+      -- JSON/JavaScript numbers cannot represent every integer above 2^53-1.
+      -- The Formal IR schema already permits decimal strings for literals.
+      let value := if n ≤ 9007199254740991 then toJson n else Json.str (toString n)
+      return Json.mkObj [("kind", Json.str "lit"), ("litKind", Json.str "nat"), ("value", value)]
   | .lit (.strVal s) =>
       return Json.mkObj [("kind", Json.str "lit"), ("litKind", Json.str "str"), ("value", Json.str s)]
   | .mdata _ b => exprToJson b

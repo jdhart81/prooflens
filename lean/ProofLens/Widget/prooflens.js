@@ -4775,6 +4775,8 @@ function lowerExpression(node, path2, scope = [], locals = NO_LOCALS) {
       return { kind: "variable", id: `bound:${symbol}`, symbol, path: path2 };
     }
     case "lit":
+      if (node.litKind === "nat" && typeof node.value === "string")
+        return { kind: "constant", name: "Nat.literal", display: node.value, path: path2 };
       return typeof node.value === "number" ? { kind: "number", value: node.value, display: String(node.value), path: path2 } : { kind: "constant", name: "string", display: JSON.stringify(node.value), path: path2 };
     case "const":
       return { kind: "constant", name: node.name, display: shortName(node.name), path: path2 };

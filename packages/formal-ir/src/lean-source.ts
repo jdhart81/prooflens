@@ -169,7 +169,12 @@ class SignatureParser {
       this.need("|");
       return call("abs", value);
     }
-    if (/^\d+$/.test(token)) return { kind: "lit", litKind: "nat", value: Number(token) };
+    if (/^\d+$/.test(token))
+      return {
+        kind: "lit",
+        litKind: "nat",
+        value: BigInt(token) <= BigInt(Number.MAX_SAFE_INTEGER) ? Number(token) : token,
+      };
     if (token === "∀" || token === "∃" || token === "fun") {
       const prior = new Map(this.variables);
       const parenthesized = this.peek() === "(";

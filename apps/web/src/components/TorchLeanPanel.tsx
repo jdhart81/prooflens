@@ -23,7 +23,7 @@ const RESULT = compileTorchLeanMarginScene(TORCHLEAN_DIGITS_MARGIN_FIXTURE, {
   receipt: torchLeanEnclosureReceipt,
   trustedFormalIr: {
     document: parseFormalIR(torchLeanEnclosureFormalIr as unknown),
-    sha256: "5c97edf1e365f50aef3b2785ad7e6f806dddbea2aaa1084acb649c730f40bd6e",
+    sha256: "45d42b475cd6c5906acfd2b4594b1644c585b0e113e0f3ed402909f4cd09686e",
   },
 });
 

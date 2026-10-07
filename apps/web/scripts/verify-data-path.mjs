@@ -40,6 +40,7 @@ writeFileSync(
     `export { FormalPanel } from "${join(here, "..", "src", "components", "FormalPanel.js")}";`,
     `export { ProvenanceTable } from "${join(here, "..", "src", "components", "ProvenanceTable.js")}";`,
     `export { SummaryStrip } from "${join(here, "..", "src", "components", "SummaryStrip.js")}";`,
+    `export { TorchLeanPanel } from "${join(here, "..", "src", "components", "TorchLeanPanel.js")}";`,
     "",
   ].join("\n"),
 );
@@ -78,6 +79,7 @@ const {
   FormalPanel,
   ProvenanceTable,
   SummaryStrip,
+  TorchLeanPanel,
 } = await import(pathToFileURL(out).href);
 rmSync(out, { force: true });
 const { createElement } = await import("react");
@@ -200,6 +202,16 @@ check("all 19 Viridis source statements render numerical experiments with contro
   }));
 check("uploaded extraction metadata never yields a verified statement",
   runPipeline(importFormalIR(JSON.stringify(corpus))).analyses.every(a => a.math.ceiling !== "verified" && a.explanations.every(e => e.claim.status !== "verified")));
+
+const torchLeanMarkup = renderToStaticMarkup(createElement(TorchLeanPanel));
+check("the bundled TorchLean panel binds the witnessed 360-example certificate",
+  torchLeanMarkup.includes("CONCRETE APPLICATION · VERIFIED") &&
+    torchLeanMarkup.includes("zero sorry · 360 source examples") &&
+    !torchLeanMarkup.includes("The receipt has no matching trusted Formal IR"));
+check("the TorchLean panel preserves the exact-decimal and floating-point claim boundary",
+  torchLeanMarkup.includes("JSON decimal tokens") &&
+    torchLeanMarkup.includes("IEEE/PyTorch") &&
+    torchLeanMarkup.includes("remains unproved"));
 
 console.log("\nsummary:", JSON.stringify(bundle.summary, null, 2));
 

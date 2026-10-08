@@ -347,6 +347,7 @@ export type MathProposition =
       kind: "predicate";
       predicate: PredicateKind;
       name: string;
+      head?: string;
       subject: MathExpression | null;
       args: MathExpression[];
       path: string;
@@ -451,8 +452,9 @@ holds the rest, so `MonotoneOn f s` puts `f` in `subject` and `s` in `args`. Fro
 ```
 
 `predicate` is the `PredicateKind` the classifiers switch on; `name` is the short Lean name used
-for display. The two are separate so that `MonotoneOn` and `Monotone` can share
-`predicate: "monotone"` while still rendering under their own names.
+for display, while `head` retains the fully qualified constant name (e.g. `Set.InjOn`) for table
+lookups. The fields are kept distinct so that namespaced properties can render concisely while
+still resolving their semantic labels in `PREDICATES`.
 
 ### `implication`
 

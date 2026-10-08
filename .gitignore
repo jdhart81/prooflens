@@ -1,6 +1,7 @@
 node_modules/
 dist/
 *.tsbuildinfo
+__pycache__/
 .lake/
 lake-packages/
 .DS_Store
@@ -9,3 +10,13 @@ apps/web/dist/
 .vitest/
 prooflens-figures/
 prooflens-out/
+
+# Additional secret-file patterns
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.p12
+service-account.json
+*.keystore

@@ -42,6 +42,11 @@ export const RULES = {
     description: "The conclusion asserts a monotonicity property.",
     produces: "derived",
   },
+  INJECTIVE: {
+    id: "PREDICATE_INJECTIVE_001",
+    description: "The conclusion asserts that a function is injective.",
+    produces: "derived",
+  },
   LIMIT: {
     id: "PREDICATE_LIMIT_001",
     description: "The conclusion asserts a limit along a filter.",

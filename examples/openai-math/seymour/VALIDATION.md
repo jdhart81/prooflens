@@ -1,6 +1,6 @@
 # Seymour explorer validation
 
-Checked locally on October 7, 2026. This records engineering evidence for the
+Initial implementation checked locally on October 7, 2026. This records engineering evidence for the
 finite example explorer and caption corrections, not a certificate for OpenAI's
 released solution or evidence of community adoption.
 
@@ -48,3 +48,14 @@ automatic extraction of arbitrary graph theorems, reproduce the upstream Lean
 comprehension. The separate Lean specification and TypeScript oracle are two
 forms of evidence; no formal theorem connecting the TypeScript program to Lean
 is claimed. Independent reader trials remain the next community validation step.
+
+## Integration with current main
+
+Before pushing, the implementation was merged with remote main
+`ea3aeb4`, preserving its security fixes, MCP tools, injectivity visualization,
+and 360-example TorchLean certificate work. With the updated locked dependencies
+and Node 24.19.0, all **1,276 tests in 35 files** and all **18 web checks** passed.
+Package/widget/web type checks, lint, formatting, production web build, regenerated
+widget, and the **18-proof Lean correspondence check** also passed. This later
+integration check supersedes the initial engineering counts above; mathematical
+and reader-evaluation scope remains the same.

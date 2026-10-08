@@ -43,6 +43,7 @@ export type PredicateKind =
   | "strictly-antitone"
   | "positive"
   | "nonnegative"
+  | "injective"
   | "other";
 
 /**
@@ -74,6 +75,7 @@ export type MathProposition =
       kind: "predicate";
       predicate: PredicateKind;
       name: string;
+      head?: string;
       subject: MathExpression | null;
       args: MathExpression[];
       path: string;

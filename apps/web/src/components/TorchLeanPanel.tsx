@@ -23,7 +23,7 @@ const RESULT = compileTorchLeanMarginScene(TORCHLEAN_DIGITS_MARGIN_FIXTURE, {
   receipt: torchLeanEnclosureReceipt,
   trustedFormalIr: {
     document: parseFormalIR(torchLeanEnclosureFormalIr as unknown),
-    sha256: "2d0965c5c2198bde88f90a521ba39bb6e94dc8474094547a9c95b741348bc0e0",
+    sha256: "45d42b475cd6c5906acfd2b4594b1644c585b0e113e0f3ed402909f4cd09686e",
   },
 });
 
@@ -44,6 +44,30 @@ export function TorchLeanPanel(): JSX.Element {
 
 function TorchLeanSceneView({ scene }: { scene: TorchLeanScene }): JSX.Element {
   const [selectedId, setSelectedId] = useState(scene.examples[0]!.id);
+  const [filterMode, setFilterMode] = useState<"all" | "certified" | "not-certified">("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(0);
+  const pageSize = 24;
+
+  const filteredExamples = useMemo(() => {
+    return scene.examples.filter((ex) => {
+      if (filterMode === "certified" && !ex.certified) return false;
+      if (filterMode === "not-certified" && ex.certified) return false;
+      if (searchQuery.trim() !== "") {
+        const idStr = ex.id.toString();
+        const query = searchQuery.trim();
+        return idStr.includes(query) || `example ${idStr}`.includes(query.toLowerCase());
+      }
+      return true;
+    });
+  }, [scene.examples, filterMode, searchQuery]);
+
+  const totalPages = Math.ceil(filteredExamples.length / pageSize);
+  const pagedExamples = useMemo(() => {
+    const start = page * pageSize;
+    return filteredExamples.slice(start, start + pageSize);
+  }, [filteredExamples, page, pageSize]);
+
   const selected =
     scene.examples.find((example) => example.id === selectedId) ?? scene.examples[0]!;
   const sourceUrl = `${scene.source.repository}/blob/${scene.source.commit}/${scene.source.path}`;
@@ -52,11 +76,11 @@ function TorchLeanSceneView({ scene }: { scene: TorchLeanScene }): JSX.Element {
     <section className="panel torchlean-panel" aria-labelledby="torchlean-title">
       <header className="torchlean-panel__header">
         <div>
-          <p className="semantic-scene__eyebrow">Optional adapter · first integration</p>
+          <p className="semantic-scene__eyebrow">Optional adapter · exact-real certification</p>
           <h2 id="torchlean-title">{scene.title}</h2>
           <p>
-            Follow a real TorchLean robustness-report excerpt from its model path to the exact
-            margin decision.
+            Follow all 360 TorchLean digits robustness examples from model weights to exact-real
+            interval enclosure and strict margin verification.
           </p>
         </div>
         <div className="torchlean-panel__chips">
@@ -91,7 +115,7 @@ function TorchLeanSceneView({ scene }: { scene: TorchLeanScene }): JSX.Element {
             number="2"
             status="matched"
             title="Margin replayed"
-            description="ProofLens recomputes label floor minus strongest competitor ceiling."
+            description="ProofLens recomputes label floor minus strongest competitor ceiling for all 360 examples."
           />
           <ReceiptStep
             number="3"
@@ -102,7 +126,7 @@ function TorchLeanSceneView({ scene }: { scene: TorchLeanScene }): JSX.Element {
           <ReceiptStep
             number="4"
             status={scene.enclosure.status === "verified" ? "verified" : "owed"}
-            title="This model enclosed"
+            title="All 360 examples enclosed"
             description={scene.enclosure.reason}
           />
         </ol>
@@ -133,15 +157,15 @@ function TorchLeanSceneView({ scene }: { scene: TorchLeanScene }): JSX.Element {
           </div>
           <p>
             {scene.application?.status === "verified"
-              ? "This generic graph rule is proved but not used for the concrete receipt. The direct exact-linear theorem above closes the displayed-example enclosure without the unsupported wrapper operations."
+              ? "This generic graph rule is proved but not used for the concrete receipt. The direct exact-linear theorem above closes the 360-example enclosure without the unsupported wrapper operations."
               : "The rule is proved. Applying it to this report still needs the concrete artifact binding and the three displayed premises."}
           </p>
         </div>
         <p className="torchlean-receipt__binding">
           The request binds model <code>{scene.id}</code>, method <code>{scene.method}</code>, ε ={" "}
-          <code>{scene.epsilon}</code>, and examples{" "}
-          <code>{scene.enclosure.request.binding.exampleIds.join(", ")}</code>. Editing any field
-          invalidates a returned receipt.
+          <code>{scene.epsilon}</code>, and all{" "}
+          <code>{scene.enclosure.request.binding.exampleIds.length}</code> examples (IDs 0–359).
+          Editing any field invalidates a returned receipt.
         </p>
       </section>
 
@@ -194,26 +218,130 @@ function TorchLeanSceneView({ scene }: { scene: TorchLeanScene }): JSX.Element {
         </ol>
       </section>
 
-      <div className="torchlean-example-tabs" role="tablist" aria-label="Report examples">
-        {scene.examples.map((example) => (
-          <button
-            key={example.id}
-            id={`torchlean-example-tab-${example.id}`}
-            type="button"
-            role="tab"
-            aria-selected={example.id === selected.id}
-            aria-controls="torchlean-example-panel"
-            className={
-              example.id === selected.id
-                ? "torchlean-example-tab torchlean-example-tab--active"
-                : "torchlean-example-tab"
-            }
-            onClick={() => setSelectedId(example.id)}
-          >
-            Example {example.id} · {example.certified ? "positive margin" : "not certified"}
-          </button>
-        ))}
-      </div>
+      {/* 360-example navigation and filter toolbar */}
+      <section className="torchlean-explorer" aria-label="360 Examples Explorer">
+        <div className="torchlean-explorer__toolbar">
+          <div className="torchlean-explorer__filters" role="group" aria-label="Filter examples">
+            <button
+              type="button"
+              className={
+                filterMode === "all"
+                  ? "torchlean-filter-btn torchlean-filter-btn--active"
+                  : "torchlean-filter-btn"
+              }
+              onClick={() => {
+                setFilterMode("all");
+                setPage(0);
+              }}
+            >
+              All (360)
+            </button>
+            <button
+              type="button"
+              className={
+                filterMode === "certified"
+                  ? "torchlean-filter-btn torchlean-filter-btn--active"
+                  : "torchlean-filter-btn"
+              }
+              onClick={() => {
+                setFilterMode("certified");
+                setPage(0);
+              }}
+            >
+              Robustness Certified (318)
+            </button>
+            <button
+              type="button"
+              className={
+                filterMode === "not-certified"
+                  ? "torchlean-filter-btn torchlean-filter-btn--active"
+                  : "torchlean-filter-btn"
+              }
+              onClick={() => {
+                setFilterMode("not-certified");
+                setPage(0);
+              }}
+            >
+              Not Certified / Overlap (42)
+            </button>
+          </div>
+
+          <div className="torchlean-explorer__quick-select">
+            <label htmlFor="torchlean-jump-select">Jump to example:</label>
+            <select
+              id="torchlean-jump-select"
+              value={selectedId}
+              onChange={(e) => setSelectedId(Number(e.target.value))}
+              aria-label="Select example by ID"
+            >
+              {scene.examples.map((ex) => (
+                <option key={ex.id} value={ex.id}>
+                  Example {ex.id} · Label {ex.label} ({ex.certified ? "Certified" : "Not Certified"}
+                  )
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="torchlean-explorer__search">
+            <input
+              type="search"
+              placeholder="Search example ID..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(0);
+              }}
+              aria-label="Search examples by ID"
+            />
+          </div>
+        </div>
+
+        <div className="torchlean-example-tabs" role="tablist" aria-label="Report examples">
+          {pagedExamples.map((example) => (
+            <button
+              key={example.id}
+              id={`torchlean-example-tab-${example.id}`}
+              type="button"
+              role="tab"
+              aria-selected={example.id === selected.id}
+              aria-controls="torchlean-example-panel"
+              className={
+                example.id === selected.id
+                  ? "torchlean-example-tab torchlean-example-tab--active"
+                  : example.certified
+                    ? "torchlean-example-tab torchlean-example-tab--certified"
+                    : "torchlean-example-tab torchlean-example-tab--overlap"
+              }
+              onClick={() => setSelectedId(example.id)}
+            >
+              Ex {example.id} · {example.certified ? "✓" : "✗"}
+            </button>
+          ))}
+        </div>
+
+        {totalPages > 1 ? (
+          <div className="torchlean-pagination" aria-label="Example pages">
+            <button
+              type="button"
+              disabled={page === 0}
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+            >
+              ← Previous
+            </button>
+            <span>
+              Page {page + 1} of {totalPages} ({filteredExamples.length} examples)
+            </span>
+            <button
+              type="button"
+              disabled={page >= totalPages - 1}
+              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            >
+              Next →
+            </button>
+          </div>
+        ) : null}
+      </section>
 
       <div
         className="torchlean-detail-grid"
@@ -319,7 +447,7 @@ function ApplicationBridge({ scene }: { scene: TorchLeanScene }): JSX.Element | 
       name: "admitted values",
       detail:
         application.status === "verified"
-          ? "the theorem covers every 64-value input inside either exact ±0.02 box"
+          ? "the theorem covers every 64-value input inside all 360 exact ±0.02 boxes"
           : "64 pixels may move ±0.02; membership in every Lean input box remains owed",
       status: application.status === "verified" ? "verified" : "owed",
     },
@@ -349,7 +477,7 @@ function ApplicationBridge({ scene }: { scene: TorchLeanScene }): JSX.Element | 
         </div>
         <code>
           {application.status === "verified"
-            ? "zero sorry · 2 source examples"
+            ? "zero sorry · 360 source examples"
             : "16 nodes · 2 unsupported operations"}
         </code>
       </header>

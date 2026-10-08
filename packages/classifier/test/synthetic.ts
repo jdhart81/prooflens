@@ -66,8 +66,9 @@ export function pred(
   predicate: PredicateKind,
   name: string,
   subject: MathExpression | null,
+  head?: string,
 ): MathProposition {
-  return { kind: "predicate", predicate, name, subject, args: [], path: "conclusion" };
+  return { kind: "predicate", predicate, name, head, subject, args: [], path: "conclusion" };
 }
 
 export function implies(antecedent: MathProposition, consequent: MathProposition): MathProposition {

@@ -253,6 +253,27 @@ function classifyMonotonicity(theorem: TheoremIR): Classification[] {
   ];
 }
 
+function classifyInjective(theorem: TheoremIR): Classification[] {
+  const prop = theorem.conclusion.value;
+  if (prop.kind !== "predicate" || prop.predicate !== "injective") return [];
+  const subjectDisplay = prop.subject ? renderExpression(prop.subject) : "f";
+  return [
+    makeClassification(
+      theorem,
+      RULES.INJECTIVE,
+      {
+        kind: "injective",
+        data: {
+          subject: prop.subject,
+          predicateName: prop.name,
+        },
+      },
+      `The conclusion applies \`${prop.name}\`, which asserts that \`${subjectDisplay}\` maps distinct inputs to distinct outputs.`,
+      prop.path,
+    ),
+  ];
+}
+
 /**
  * Limits.
  *
@@ -318,7 +339,8 @@ function classifyExistence(theorem: TheoremIR): Classification[] {
 function classifyProperty(theorem: TheoremIR): Classification[] {
   const prop = theorem.conclusion.value;
   if (prop.kind !== "predicate" || prop.predicate !== "other") return [];
-  const label = PREDICATES[prop.name]?.label ?? prop.name;
+  const tableKey = prop.head ?? prop.name;
+  const label = PREDICATES[tableKey]?.label ?? prop.name;
   return [
     makeClassification(
       theorem,
@@ -546,6 +568,7 @@ export function classifyTheorem(theorem: TheoremIR): Classification[] {
     ...classifyBounds(theorem),
     ...classifyEquality(theorem),
     ...classifyMonotonicity(theorem),
+    ...classifyInjective(theorem),
     ...classifyImplication(theorem),
   ];
 
@@ -603,6 +626,7 @@ export function primaryClassification(
     "limit",
     "positivity",
     "monotonicity",
+    "injective",
     "distinctness",
     "upper-bound",
     "lower-bound",

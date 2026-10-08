@@ -497,6 +497,70 @@ function planMonotonicity(theorem: TheoremIR, classification: Classification): V
   };
 }
 
+/** Injective: an implication graph expressing `f(x) = f(y) → x = y`. */
+function planInjective(theorem: TheoremIR, classification: Classification): VisualSpec | null {
+  if (classification.payload.kind !== "injective") return null;
+  const { subject, predicateName } = classification.payload.data;
+  const status = classification.claim.status;
+  const label = subject ? renderExpression(subject) : "f";
+
+  return {
+    id: `${theorem.id}:injective`,
+    type: "implication-graph",
+    title: `${predicateName} ${label}`,
+    subtitle: theorem.concept ?? theorem.name.split(".").pop(),
+    entities: [
+      {
+        id: "antecedent",
+        kind: "node",
+        label: "f(x) = f(y)",
+        detail: subject ? renderExpression(subject) : undefined,
+        position: { layer: 0, order: 0 },
+        emphasis: "secondary",
+        epistemic: status,
+        sourceRef: refFor(theorem, subject?.path ?? "conclusion"),
+      },
+      {
+        id: "consequent",
+        kind: "node",
+        label: "x = y",
+        position: { layer: 1, order: 0 },
+        emphasis: "primary",
+        epistemic: status,
+        sourceRef: refFor(theorem, "conclusion"),
+      },
+    ],
+    relationships: [
+      {
+        id: "implies",
+        kind: "implies",
+        from: "antecedent",
+        to: "consequent",
+        label: "→",
+        epistemic: status,
+        sourceRef: refFor(theorem, "conclusion"),
+      },
+    ],
+    axes: [],
+    annotations: [
+      { id: "rationale", kind: "rationale", text: classification.rationale, epistemic: status },
+      {
+        id: "definition",
+        kind: "legend",
+        text: "An injective function maps distinct inputs to distinct outputs: if the outputs are equal, the inputs must be equal.",
+        epistemic: "derived",
+      },
+    ],
+    epistemic: status,
+    provenance: {
+      sources: [refFor(theorem, "conclusion")],
+      rule: classification.rule,
+      inputs: [theorem.id],
+    },
+    rationale: classification.rationale,
+  };
+}
+
 /**
  * Assumption sensitivity — the flagship figure.
  *
@@ -932,6 +996,11 @@ export function planVisuals(
         if (spec) specs.push(spec);
         break;
       }
+      case "injective": {
+        const spec = planInjective(theorem, classification);
+        if (spec) specs.push(spec);
+        break;
+      }
       case "functional-relationship": {
         const spec = planFunctionalRelationship(theorem, classification);
         if (spec) specs.push(spec);
@@ -1008,6 +1077,9 @@ const VISUAL_HINT_ALIASES: Record<string, VisualType> = {
   "monotone-curve": "monotonicity-plot",
   "antitone-curve": "monotonicity-plot",
   "monotonicity-curve": "monotonicity-plot",
+  injective: "implication-graph",
+  injectivity: "implication-graph",
+  "one-to-one": "implication-graph",
   limit: "limit-plot",
   convergence: "limit-plot",
   asymptote: "limit-plot",

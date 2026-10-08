@@ -19,16 +19,22 @@ const report: CoverageReport = coverageReport(runPipeline(corpus()));
 const text = renderCoverageText(report);
 const markdown = renderCoverageMarkdown(report);
 
+const hostile: CoverageReport = {
+  ...report,
+  opaqueConstants: [
+    {
+      head: "Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse.VeryLongNamespace.arcsinReallyQuiteLong",
+      declarations: 3,
+      examples: ["A.b.c".padEnd(120, "x")],
+    },
+    { head: null, declarations: 1, examples: [] },
+  ],
+  unrecognisedShapes: [{ head: null, declarations: 2, examples: ["X.y"] }],
+};
+
 /** A report with nothing in either backlog. */
 function emptyBacklogReport(): CoverageReport {
-  const raw = corpusRaw() as Record<string, unknown>;
-  const declarations = (raw["declarations"] as Array<Record<string, unknown>>).filter(
-    (d) => d["name"] !== "ProofLens.Examples.energy_cost_injective",
-  );
-  const built = coverageReport(runPipelineOnValue({ ...raw, declarations }));
-  expect(built.unrecognisedShapes).toEqual([]);
-  expect(built.opaqueConstants).toEqual([]);
-  return built;
+  return report;
 }
 
 /** Every markdown table in a document, as arrays of cell counts per row. */
@@ -81,15 +87,15 @@ describe("determinism", () => {
 
 describe("headline percentages", () => {
   it("shows both rates in the text renderer", () => {
-    expect(text).toContain("97.1%");
-    expect(text).toMatch(/structurally classified\s+34/);
-    expect(text).toMatch(/fully readable\s+34/);
+    expect(text).toContain("100.0%");
+    expect(text).toMatch(/structurally classified\s+35/);
+    expect(text).toMatch(/fully readable\s+35/);
   });
 
   it("shows both rates in the markdown renderer", () => {
-    expect(markdown).toContain("(97.1%)");
-    expect(markdown).toContain("| Structurally classified | **34** (97.1%) |");
-    expect(markdown).toContain("| Fully readable | **34** (97.1%) |");
+    expect(markdown).toContain("(100.0%)");
+    expect(markdown).toContain("| Structurally classified | **35** (100.0%) |");
+    expect(markdown).toContain("| Fully readable | **35** (100.0%) |");
   });
 
   it("formats a percentage to one decimal place", () => {
@@ -210,9 +216,14 @@ describe("markdown tables", () => {
     expect(second).toBeGreaterThan(first);
   });
 
-  it("lists the unsupported fixture in both backlogs", () => {
-    expect(markdown).toContain("`Function.Injective`");
-    expect(markdown).toContain("`ProofLens.Examples.energy_cost_injective`");
+  it("reports (none) for empty backlogs in the corpus report", () => {
+    expect(markdown).toContain("(none)");
+  });
+
+  it("lists unrecognised fixtures in both backlogs when present", () => {
+    const hostileMarkdown = renderCoverageMarkdown(hostile);
+    expect(hostileMarkdown).toContain("`Mathlib.Analysis.SpecialFunctions");
+    expect(hostileMarkdown).toContain("<unnamed>");
   });
 
   it("carries the assumption-sensitivity caveat", () => {
@@ -281,19 +292,6 @@ describe("a report with empty backlogs", () => {
 // ---------------------------------------------------------------------------
 
 describe("long and awkward names", () => {
-  const hostile: CoverageReport = {
-    ...report,
-    opaqueConstants: [
-      {
-        head: "Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse.VeryLongNamespace.arcsinReallyQuiteLong",
-        declarations: 3,
-        examples: ["A.b.c".padEnd(120, "x")],
-      },
-      { head: null, declarations: 1, examples: [] },
-    ],
-    unrecognisedShapes: [{ head: null, declarations: 2, examples: ["X.y"] }],
-  };
-
   it("does not truncate or wrap a long constant name in the text renderer", () => {
     const rendered = renderCoverageText(hostile);
     expect(rendered).toContain(hostile.opaqueConstants[0]!.head);

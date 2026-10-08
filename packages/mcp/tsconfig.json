@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*.ts"],
+  "references": [
+    {
+      "path": "../formal-ir"
+    },
+    {
+      "path": "../pipeline"
+    },
+    {
+      "path": "../visual-ir"
+    },
+    {
+      "path": "../renderer-svg"
+    }
+  ]
+}

@@ -41,6 +41,7 @@ writeFileSync(
     `export { ProvenanceTable } from "${join(here, "..", "src", "components", "ProvenanceTable.js")}";`,
     `export { SummaryStrip } from "${join(here, "..", "src", "components", "SummaryStrip.js")}";`,
     `export { SeymourExplorer } from "${join(here, "..", "src", "components", "SeymourExplorer.js")}";`,
+    `export { TorchLeanPanel } from "${join(here, "..", "src", "components", "TorchLeanPanel.js")}";`,
     "",
   ].join("\n"),
 );
@@ -80,6 +81,7 @@ const {
   ProvenanceTable,
   SummaryStrip,
   SeymourExplorer,
+  TorchLeanPanel,
 } = await import(pathToFileURL(out).href);
 rmSync(out, { force: true });
 const { createElement } = await import("react");
@@ -266,6 +268,16 @@ check(
     seymourMarkup.includes("has not checked the separate released solution") &&
     seymourMarkup.includes("4.34.1"),
 );
+
+const torchLeanMarkup = renderToStaticMarkup(createElement(TorchLeanPanel));
+check("the bundled TorchLean panel binds the witnessed 360-example certificate",
+  torchLeanMarkup.includes("CONCRETE APPLICATION · VERIFIED") &&
+    torchLeanMarkup.includes("zero sorry · 360 source examples") &&
+    !torchLeanMarkup.includes("The receipt has no matching trusted Formal IR"));
+check("the TorchLean panel preserves the exact-decimal and floating-point claim boundary",
+  torchLeanMarkup.includes("JSON decimal tokens") &&
+    torchLeanMarkup.includes("IEEE/PyTorch") &&
+    torchLeanMarkup.includes("remains unproved"));
 
 console.log("\nsummary:", JSON.stringify(bundle.summary, null, 2));
 

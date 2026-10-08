@@ -320,12 +320,23 @@ describe("the grown PREDICATES table", () => {
   it("shortens a namespaced predicate for display but keeps the table key long", () => {
     const prop = lowerProposition(app("Set.InjOn", c("α"), c("β"), fv("f"), fv("s")), "conclusion");
     expect((prop as Extract<MathProposition, { kind: "predicate" }>).name).toBe("InjOn");
+    expect((prop as Extract<MathProposition, { kind: "predicate" }>).head).toBe("Set.InjOn");
+  });
+
+  it("lowers Function.Injective to an injective predicate", () => {
+    const prop = lowerProposition(app("Function.Injective", c("α"), c("β"), fv("f")), "conclusion");
+    expect(prop.kind).toBe("predicate");
+    const pred = prop as Extract<MathProposition, { kind: "predicate" }>;
+    expect(pred.name).toBe("Injective");
+    expect(pred.head).toBe("Function.Injective");
+    expect(pred.predicate).toBe("injective");
+    expect(renderExpression(pred.subject!)).toBe("f");
   });
 
   it("leaves a predicate absent from the table opaque", () => {
     // The table is the gate. Anything not in it must stay unreadable, so the
     // backlog keeps reporting it.
-    for (const name of ["Function.Injective", "Function.Surjective", "Filter.EventuallyEq"]) {
+    for (const name of ["Function.Surjective", "Function.Bijective", "Filter.EventuallyEq"]) {
       expect(PREDICATES[name], name).toBeUndefined();
       const prop = lowerProposition(app(name, c("α"), c("β"), fv("f")), "conclusion");
       expect(prop.kind, name).toBe("opaque");
@@ -341,6 +352,7 @@ describe("the grown PREDICATES table", () => {
       "strictly-antitone",
       "positive",
       "nonnegative",
+      "injective",
       "other",
     ];
     for (const [name, entry] of Object.entries(PREDICATES)) {

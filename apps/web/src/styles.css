@@ -1173,26 +1173,120 @@ body {
   font-size: 9px;
 }
 
+.torchlean-explorer {
+  margin-top: 14px;
+}
+
+.torchlean-explorer__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.torchlean-explorer__filters {
+  display: flex;
+  gap: 4px;
+}
+
+.torchlean-filter-btn {
+  padding: 4px 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text-dim);
+  font: 600 10px var(--mono);
+  cursor: pointer;
+}
+
+.torchlean-filter-btn--active {
+  border-color: var(--ep-interpreted-bd);
+  background: var(--ep-interpreted-bg);
+  color: var(--ep-interpreted-fg);
+}
+
+.torchlean-explorer__quick-select {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.torchlean-explorer__quick-select select {
+  padding: 3px 6px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  font: 500 11px var(--mono);
+}
+
+.torchlean-explorer__search input {
+  padding: 3px 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  font: 500 11px var(--sans);
+}
+
 .torchlean-example-tabs {
   display: flex;
-  gap: 6px;
-  margin-top: 12px;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
 }
 
 .torchlean-example-tab {
-  padding: 6px 10px;
+  padding: 4px 8px;
   border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border-radius: 4px;
   background: var(--surface);
   color: var(--text-dim);
-  font: 700 10px var(--mono);
+  font: 700 9.5px var(--mono);
   cursor: pointer;
+}
+
+.torchlean-example-tab--certified {
+  border-color: rgba(46, 160, 67, 0.4);
+}
+
+.torchlean-example-tab--overlap {
+  border-color: rgba(218, 54, 51, 0.4);
 }
 
 .torchlean-example-tab--active {
   border-color: var(--ep-interpreted-bd);
   background: var(--ep-interpreted-bg);
   color: var(--ep-interpreted-fg);
+}
+
+.torchlean-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.torchlean-pagination button {
+  padding: 3px 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  font: 600 10px var(--mono);
+  cursor: pointer;
+}
+
+.torchlean-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .torchlean-detail-grid {

@@ -125,7 +125,7 @@ describe("planned orderings", () => {
     simple_lower_bound: ["lower-bound-plot", "assumption-sensitivity"],
     div_upper_bound: ["upper-bound-plot", "assumption-sensitivity"],
     sequence_limit_example: ["limit-plot"],
-    energy_cost_injective: ["assumption-sensitivity", "dependency-graph", "expression-tree"],
+    energy_cost_injective: ["implication-graph", "assumption-sensitivity", "dependency-graph"],
     switching_coefficient_ne_zero: ["assumption-sensitivity", "dependency-graph"],
     landauerCost: ["relationship-diagram"],
     energyBudget: ["relationship-diagram"],
@@ -961,51 +961,113 @@ describe("schematic axes are illustrative", () => {
 // Graceful degradation
 // ---------------------------------------------------------------------------
 
-describe("the unsupported fixture degrades gracefully", () => {
-  // `energy_cost_injective` replaced `unsupported_tendsto_fixture` once the
-  // `limit` classifier could read the latter. `Function.Injective` is kept out
-  // of the tables on purpose so this path stays exercised.
+// ---------------------------------------------------------------------------
+// Injectivity implication graphs
+// ---------------------------------------------------------------------------
+
+describe("injectivity theorems", () => {
   const p = forName("energy_cost_injective");
 
+  it("plans an implication-graph for the corpus injectivity fixture", () => {
+    expect(p.classifications.map((c) => c.payload.kind)).toEqual([
+      "injective",
+      "assumption-sensitivity",
+    ]);
+    expect(p.specs.map((s) => s.type)).toContain("implication-graph");
+  });
+
+  it("titles an injective statement from its conclusion display", () => {
+    const spec = p.specs.find((s) => s.type === "implication-graph")!;
+    expect(spec.title).toBe("Injective N ↦ N · landauerCost(kB, T, D)");
+    expect(spec.subtitle).toBe("energy cost determines operation count");
+  });
+
+  it("draws antecedent f(x) = f(y) and consequent x = y with an implication arrow", () => {
+    const spec = p.specs.find((s) => s.type === "implication-graph")!;
+    const antecedent = spec.entities.find((e) => e.id === "antecedent")!;
+    const consequent = spec.entities.find((e) => e.id === "consequent")!;
+    expect(antecedent.label).toBe("f(x) = f(y)");
+    expect(consequent.label).toBe("x = y");
+    expect(spec.relationships).toHaveLength(1);
+    expect(spec.relationships[0]!.from).toBe("antecedent");
+    expect(spec.relationships[0]!.to).toBe("consequent");
+    expect(spec.relationships[0]!.label).toBe("→");
+  });
+
+  it("explains injectivity in a legend annotation", () => {
+    const spec = p.specs.find((s) => s.type === "implication-graph")!;
+    const legend = spec.annotations.find((a) => a.id === "definition")!;
+    expect(legend.text).toContain("maps distinct inputs to distinct outputs");
+    expect(legend.epistemic).toBe("derived");
+  });
+
+  it("resolves the injective hint aliases", () => {
+    for (const hint of ["injective", "injectivity", "one-to-one"]) {
+      expect(resolveVisualHint(hint), hint).toBe("implication-graph");
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Graceful degradation
+// ---------------------------------------------------------------------------
+
+describe("the unsupported fixture degrades gracefully", () => {
+  function unsupportedTheorem() {
+    return synthetic(opaqueProp("Function.Surjective", "Function.Surjective"), {
+      name: "ProofLens.Examples.surjective_fixture",
+      hypotheses: [
+        {
+          symbol: "h",
+          proposition: opaqueProp("SomeType", "SomeType"),
+        },
+      ],
+    });
+  }
+
   it("still gets a spec", () => {
-    expect(p.specs.length).toBeGreaterThanOrEqual(1);
-    expect(p.specs.map((s) => s.type)).toContain("expression-tree");
+    const theorem = unsupportedTheorem();
+    const specs = planVisuals(theorem, classifyTheorem(theorem));
+    expect(specs.length).toBeGreaterThanOrEqual(1);
+    expect(specs.map((s) => s.type)).toContain("expression-tree");
   });
 
   it("preserves the conclusion as an entity", () => {
-    const spec = p.specs.find((s) => s.type === "expression-tree")!;
+    const theorem = unsupportedTheorem();
+    const spec = planVisuals(theorem, classifyTheorem(theorem)).find(
+      (s) => s.type === "expression-tree",
+    )!;
     const conclusion = spec.entities.find((e) => e.id === "conclusion")!;
-    expect(conclusion.label).toBe(p.theorem.conclusionDisplay);
-    expect(conclusion.label).toContain("landauerCost");
+    expect(conclusion.label).toBe(theorem.conclusionDisplay);
   });
 
   it("says why it is showing structure instead of a picture", () => {
-    const spec = p.specs.find((s) => s.type === "expression-tree")!;
-    expect(spec.rationale).toContain("Function.Injective");
+    const theorem = unsupportedTheorem();
+    const spec = planVisuals(theorem, classifyTheorem(theorem)).find(
+      (s) => s.type === "expression-tree",
+    )!;
+    expect(spec.rationale).toContain("Function.Surjective");
     expect(spec.annotations.map((a) => a.text).join(" ")).toMatch(/Nothing here is guessed/);
   });
 
   it("preserves this fixture's hypotheses alongside its conclusion", () => {
-    expect(p.theorem.hypotheses.length).toBeGreaterThan(0);
-    const spec = p.specs.find((s) => s.type === "expression-tree")!;
+    const theorem = unsupportedTheorem();
+    const spec = planVisuals(theorem, classifyTheorem(theorem)).find(
+      (s) => s.type === "expression-tree",
+    )!;
     const labels = spec.entities.map((e) => e.label);
-    expect(labels).toContain(p.theorem.conclusionDisplay);
-    for (const h of p.theorem.hypotheses) {
+    expect(labels).toContain(theorem.conclusionDisplay);
+    for (const h of theorem.hypotheses) {
       expect(labels).toContain(`${h.symbol} : ${h.display}`);
     }
-    expect(spec.relationships).toHaveLength(p.theorem.hypotheses.length);
+    expect(spec.relationships).toHaveLength(theorem.hypotheses.length);
   });
 
   it("plans an expression tree for every unsupported declaration in the corpus", () => {
     const unsupported = planned.filter((x) =>
       x.classifications.some((c) => c.payload.kind === "unsupported"),
     );
-    expect(unsupported.map((x) => x.theorem.name.split(".").pop())).toEqual([
-      "energy_cost_injective",
-    ]);
-    for (const x of unsupported) {
-      expect(x.specs.map((s) => s.type)).toContain("expression-tree");
-    }
+    expect(unsupported).toEqual([]);
   });
 });
 

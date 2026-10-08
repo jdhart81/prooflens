@@ -7,14 +7,14 @@
   "type": "module",
   "packageManager": "pnpm@10.28.0",
   "engines": {
-    "node": ">=20"
+    "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
   },
   "scripts": {
-    "build": "tsc -b packages/epistemics packages/formal-ir packages/paper-packet packages/math-ir packages/classifier packages/visual-ir packages/torchlean-adapter packages/pipeline packages/renderer-svg packages/renderer-text packages/cli",
+    "build": "tsc -b packages/epistemics packages/formal-ir packages/paper-packet packages/math-ir packages/classifier packages/visual-ir packages/torchlean-adapter packages/pipeline packages/renderer-svg packages/renderer-text packages/cli packages/mcp",
     "build:widget": "node scripts/build-widget.mjs",
     "verify:seymour-lean": "node scripts/verify-seymour-lean.mjs",
-    "clean": "tsc -b --clean packages/epistemics packages/formal-ir packages/paper-packet packages/math-ir packages/classifier packages/visual-ir packages/torchlean-adapter packages/pipeline packages/renderer-svg packages/renderer-text packages/cli && rm -rf packages/*/dist apps/web/dist",
-    "typecheck": "tsc -b packages/epistemics packages/formal-ir packages/paper-packet packages/math-ir packages/classifier packages/visual-ir packages/torchlean-adapter packages/pipeline packages/renderer-svg packages/renderer-text packages/cli && tsc --noEmit -p lean/widget/tsconfig.json",
+    "clean": "tsc -b --clean packages/epistemics packages/formal-ir packages/paper-packet packages/math-ir packages/classifier packages/visual-ir packages/torchlean-adapter packages/pipeline packages/renderer-svg packages/renderer-text packages/cli packages/mcp && rm -rf packages/*/dist apps/web/dist",
+    "typecheck": "tsc -b packages/epistemics packages/formal-ir packages/paper-packet packages/math-ir packages/classifier packages/visual-ir packages/torchlean-adapter packages/pipeline packages/renderer-svg packages/renderer-text packages/cli packages/mcp && tsc --noEmit -p lean/widget/tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint packages apps --ext .ts,.tsx",
@@ -23,16 +23,18 @@
     "prooflens": "node packages/cli/dist/bin.js",
     "extract:corpus": "node packages/cli/dist/bin.js extract --project corpus --module ProofLensExamples.Bounds --module ProofLensExamples.Monotonicity --module ProofLensExamples.Implication --module ProofLensExamples.DependencyChain --module ProofLensExamples.IntelligenceBound --out examples/corpus.formal-ir.json && node scripts/sync-corpus.mjs",
     "dev:web": "pnpm --filter @prooflens/web dev",
-    "sync:corpus": "node scripts/sync-corpus.mjs"
+    "sync:corpus": "node scripts/sync-corpus.mjs",
+    "mcp": "node packages/mcp/dist/bin.js"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.18.0",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.28.1",
     "eslint": "^8.57.1",
     "prettier": "^3.4.2",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
+    "vite": "^6.4.3",
+    "vitest": "^5.0.3"
   }
 }

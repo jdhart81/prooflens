@@ -1,18 +1,26 @@
 # ProofLens
 
-**See what the mathematics is saying.**
+**See what a Lean statement means—before getting lost in the proof.**
 
-[**Try the browser demo**](https://jdhart81.github.io/prooflens/) ·
-[Run one local example](docs/quickstart.md) ·
-[Share a first-use or repeat-use report](https://github.com/jdhart81/prooflens/issues/new?template=builder_trial.yml)
+ProofLens turns Lean conjectures and theorems into visual, inspectable
+explanations. It shows the objects, relationships, assumptions, proof status and
+provenance without pretending that a numerical preview is a proof.
 
-Start in the browser with a built-in example, or choose **Explore your own Lean**
-and paste a supported declaration. Change an input and check which assumptions
-matter. Browser previews explain statements; they do not run Lean or prove them.
+## Get one useful result in two minutes
 
-ProofLens turns Lean code into visual descriptions that help people understand
-conjectures and theorems. Explore the mathematical objects, see their relationships,
-and connect a diagram or interactive example back to the statement.
+**[Open ProofLens in your browser](https://jdhart81.github.io/prooflens/)** — no
+install or account required. Load a built-in example, change one input, and see
+which assumptions and relationships control the result. To paste a supported
+declaration, open **Explore your own Lean** and choose **Visualize statement**.
+
+[Follow the exact two-minute walkthrough](docs/two-minute-demo.md) ·
+[Try one theorem locally](docs/quickstart.md) ·
+[Connect the local MCP preview](docs/mcp.md)
+
+If ProofLens answered a real question—or blocked you before it could—please
+[share a short first-use report](https://github.com/jdhart81/prooflens/issues/new?template=builder_trial.yml).
+Those reports decide what gets fixed next. If you want to follow the project,
+star the repository so the next release is easy to find.
 
 Lean records the formal claim and checks completed proofs. ProofLens helps humans
 understand what the claim means, including while its proof is still incomplete.
@@ -159,8 +167,10 @@ cannot be promoted.
 
 ## Getting started
 
-Requirements: [elan](https://github.com/leanprover/elan) (Lean 4.24.0), Node 22,
-pnpm 10.
+Requirements: [elan](https://github.com/leanprover/elan) (Lean 4.24.0), Node
+22.12 or later in the 22.x line, or Node 24.x, and pnpm 10.28.0. The development
+test suite uses Vitest 5; Node 20 is outside its supported runtime range. CI uses
+Node 22; use the supported Node range in `package.json` for local development.
 
 Want the smallest useful example first? Follow [**one theorem in five minutes**](docs/quickstart.md)
 to produce a layered explanation and animated SVG from the checked-in Formal IR without installing
@@ -289,8 +299,8 @@ is grooming them. ProofLens's own hand-written corpus has two.
 
 Remaining limits: only the final proof term is analysed, not tactic structure;
 most plots are schematic, while [semantic scenes](docs/semantic-scenes.md) support
-a narrow subset of numeric bounds. The browser explores bundled examples; use
-the editor or CLI for your own statements. Coverage is untested outside order
+a narrow subset of numeric bounds. The browser explores bundled examples and supported pasted Lean statements; use
+the editor or CLI to extract declarations from your own Lean project. Coverage is untested outside order
 theory and analysis; dependency graphs are single-module. Structural coverage
 does not measure reader comprehension. See [the roadmap](docs/roadmap.md).
 

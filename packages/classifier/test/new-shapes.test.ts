@@ -9,7 +9,14 @@
  * build next went quiet.
  */
 import { describe, expect, it } from "vitest";
-import { renderExpression, renderProposition, type FilterSpec } from "@prooflens/math-ir";
+import type { FormalExprNode } from "@prooflens/formal-ir";
+import {
+  PREDICATES,
+  lowerProposition,
+  renderExpression,
+  renderProposition,
+  type FilterSpec,
+} from "@prooflens/math-ir";
 import {
   RULES,
   classifyTheorem,
@@ -18,6 +25,14 @@ import {
   type ClassificationPayload,
 } from "@prooflens/classifier";
 import { num, op, opaqueExpr, opaqueProp, pred, rel, synthetic, v } from "./synthetic.js";
+
+const c = (name: string): FormalExprNode => ({ kind: "const", name, levels: [] });
+const fv = (name: string): FormalExprNode => ({ kind: "fvar", name, fvarId: `_uniq.${name}` });
+const app = (name: string, ...args: FormalExprNode[]): FormalExprNode => ({
+  kind: "app",
+  fn: c(name),
+  args,
+});
 
 function kinds(cs: readonly Classification[]): Array<ClassificationPayload["kind"]> {
   return cs.map((c) => c.payload.kind);
@@ -230,6 +245,62 @@ describe("the property classifier", () => {
     const cs = classifyTheorem(synthetic(pred("other", "Continuous", v("f"))));
     expect(primaryClassification(cs)!.payload.kind).toBe("property");
   });
+
+  it("uses the table label for every named property", () => {
+    for (const [name, entry] of Object.entries(PREDICATES)) {
+      if (entry.predicate !== "other") continue;
+      const args = Array.from({ length: entry.valueArity }, (_, i) => fv(i === 0 ? "f" : `a${i}`));
+      const prop = lowerProposition(app(name, ...args), "conclusion");
+      const thm = synthetic(prop);
+      const cs = classifyTheorem(thm);
+      expect(kinds(cs), name).toContain("property");
+      const data = find(cs, "property");
+      expect(data.label, name).toBe(entry.label);
+      if (name === "Set.InjOn") {
+        const classification = cs.find((c) => c.payload.kind === "property")!;
+        expect(classification.rationale).toContain("f is injective on a set");
+      }
+    }
+  });
+});
+
+/**
+ * The load-bearing restriction.
+ *
+ * `classifyProperty` reads named properties out of the `PREDICATES` table, and
+ * `lowerProposition` only builds a `predicate` proposition for heads that are in
+ * that table. Anything else stays `opaque` and comes out `unsupported`, which is
+ * how the backlog keeps telling us what to build next. A blanket rule over every
+ * predicate-shaped conclusion would push coverage to look complete while the
+ * backlog fell silent.
+ */
+describe("the injective classifier", () => {
+  it("classifies Function.Injective propositions", () => {
+    const prop = lowerProposition(app("Function.Injective", c("α"), c("β"), fv("f")), "conclusion");
+    const cs = classifyTheorem(synthetic(prop));
+    expect(kinds(cs)).toContain("injective");
+    const data = find(cs, "injective");
+    expect(data.predicateName).toBe("Injective");
+    expect(renderExpression(data.subject!)).toBe("f");
+  });
+
+  it("produces derived status with the expected rule ID and rationale", () => {
+    const prop = lowerProposition(app("Function.Injective", c("α"), c("β"), fv("f")), "conclusion");
+    const cs = classifyTheorem(synthetic(prop));
+    const classification = cs.find((c) => c.payload.kind === "injective")!;
+    expect(classification.rule.id).toBe(RULES.INJECTIVE.id);
+    expect(classification.claim.status).toBe("derived");
+    expect(classification.rationale).toContain("Injective");
+    expect(classification.rationale).toContain("maps distinct inputs to distinct outputs");
+  });
+
+  it("is fail-closed against unrecognised or unrelated heads", () => {
+    for (const head of ["Function.Surjective", "Function.Bijective", "Continuous", "Monotone"]) {
+      const thm = synthetic(opaqueProp(`${head} f`, head));
+      const cs = classifyTheorem(thm);
+      expect(kinds(cs), head).not.toContain("injective");
+    }
+  });
 });
 
 /**
@@ -244,15 +315,14 @@ describe("the property classifier", () => {
  */
 describe("a predicate absent from the table stays unsupported", () => {
   it("classifies an unrecognised predicate-shaped conclusion as unsupported", () => {
-    const cs = classifyTheorem(opaqueTheorem("Function.Injective"));
+    const cs = classifyTheorem(opaqueTheorem("Function.Surjective"));
     expect(kinds(cs)).toContain("unsupported");
     expect(kinds(cs)).not.toContain("property");
-    expect(find(cs, "unsupported").head).toBe("Function.Injective");
+    expect(find(cs, "unsupported").head).toBe("Function.Surjective");
   });
 
   it("holds for every property mathlib has that ProofLens has not been taught", () => {
     for (const name of [
-      "Function.Injective",
       "Function.Surjective",
       "Function.Bijective",
       "Filter.EventuallyEq",

@@ -298,11 +298,11 @@ export function layoutNumberLine(spec: VisualSpec, ctx: RenderContext): LayoutRe
 
   legend.push({
     swatch: "permit",
-    text: "Solid band: the range of values the theorem permits.",
+    text: "Solid band: the range of values the stated bound permits.",
   });
   legend.push({
     swatch: "exclude",
-    text: "Hatched band: values the theorem rules out.",
+    text: "Hatched band: values the stated bound excludes.",
   });
   if (bound) {
     legend.push(
@@ -491,7 +491,7 @@ export function layoutMonotonicity(spec: VisualSpec, ctx: RenderContext): Layout
 
   legend.push({
     swatch: "curve",
-    text: "The curve is one arbitrary function with the proved order property. The theorem constrains the ordering, not the shape.",
+    text: "The curve illustrates the stated order property. The statement specifies the ordering; the curve's shape is a display choice.",
   });
   if (schematic) {
     legend.push({
@@ -869,11 +869,11 @@ export function layoutLimit(spec: VisualSpec, ctx: RenderContext): LayoutResult 
   if (convergent) {
     legend.push({
       swatch: "asymptote",
-      text: "Dotted horizontal line: the limit value. The curve closes on it and never meets it — the theorem says the values get arbitrarily close, not that any of them is the limit.",
+      text: "Dotted horizontal line: the stated limit value. The curve approaches it without meeting it, illustrating arbitrary closeness rather than equality to the limit.",
     });
     legend.push({
       swatch: "curve",
-      text: "The curve is one arbitrary function with the proved limit. The theorem constrains where the values end up, not the path they take to get there.",
+      text: "The curve illustrates the stated limit. The statement specifies where the values approach; the curve's path is a display choice.",
     });
     legend.push({
       swatch: "arrow",
@@ -1150,10 +1150,10 @@ interface Rect {
  *
  * Animated, layers appear in ascending `layer` order. For a dependency graph
  * the planner assigns `layer` = dependency depth, with 0 the declarations
- * that rest on nothing local — so the proof builds upward from its
- * foundations and the focused theorem, at the greatest depth, arrives last.
+ * that have no local references, and the focused declaration, at the greatest
+ * depth, arrives last.
  * Every edge draws only after both of its endpoints' layers have entered.
- * That order is derived from the proof term; only the pacing is a choice.
+ * This is an order of declaration references, not a chronology of proof steps.
  */
 export function layoutLayeredGraph(spec: VisualSpec, ctx: RenderContext): LayoutResult {
   const legend: LegendRow[] = [];
@@ -1414,15 +1414,16 @@ export function layoutExpressionTree(spec: VisualSpec, ctx: RenderContext): Layo
     const boxWidth = inner - 26;
     let lastCenter = y;
     for (const entity of hypotheses) {
-      const used = entity.state !== "unused";
-      const height = hypothesisBoxHeight(entity, boxWidth, used);
+      const used = entity.state === "used";
+      const unused = entity.state === "unused";
+      const height = hypothesisBoxHeight(entity, boxWidth, !unused);
       // Unused hypotheses fade in place: no rise, nothing that could imply
       // they contribute to the conclusion.
       const hypAnim = ctx.anim({
         kind: used ? "enter" : "fade",
         delay: stageDelay(1),
       });
-      svg += renderHypothesisBox(entity, boxX, y, boxWidth, used, hypAnim);
+      svg += renderHypothesisBox(entity, boxX, y, boxWidth, !unused, hypAnim);
       lastCenter = y + height / 2;
       svg += line(
         spineX,
@@ -1431,7 +1432,7 @@ export function layoutExpressionTree(spec: VisualSpec, ctx: RenderContext): Layo
         lastCenter,
         used
           ? `pl-edge-used${ctx.anim({ kind: "draw", delay: spineAt, length: boxX - spineX })}`
-          : `pl-edge pl-weak-stroke${ctx.anim({ kind: "fade", delay: spineAt })}`,
+          : `pl-edge${unused ? " pl-weak-stroke" : ""}${ctx.anim({ kind: "fade", delay: spineAt })}`,
       );
       y += height + 10;
     }
@@ -1449,9 +1450,15 @@ export function layoutExpressionTree(spec: VisualSpec, ctx: RenderContext): Layo
   }
 
   legend.push({
-    swatch: "used-box",
-    text: "ProofLens shows a theorem's formal structure even when it cannot interpret the statement. Nothing in this figure is guessed.",
+    swatch: "none",
+    text: "Boxes and connectors show the statement's formal structure and its stated assumptions.",
   });
+  if (hypotheses.some((h) => h.state === "neutral")) {
+    legend.push({
+      swatch: "none",
+      text: "Proof use has not been analysed for the neutral hypotheses. Their connectors do not claim that a completed proof uses them.",
+    });
+  }
   if (hypotheses.some((h) => h.state === "unused")) {
     legend.push({
       swatch: "unused-box",

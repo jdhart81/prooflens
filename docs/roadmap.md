@@ -313,7 +313,12 @@ author-declared domains. Extend it to additional forms while showing which assum
 A displayed inequality check alone does not establish all hypotheses or physical feasibility.
 Invalid or unsupported expressions must remain explicit gaps.
 
-### Proof animation _(landed: `--animate` renders staged CSS animations — order from the proof term is derived, pacing is illustrative)_
+### Proof animation _(staged figure animation has landed; proof-step reconstruction remains future work)_
+
+`--animate` follows the figure's displayed structure. Declaration-reference layers use local
+reference depth from the combined statement/body references; they do not distinguish proof
+use or recover a chronology of proof steps. Pacing and illustrative curve shapes are display
+choices.
 
 Stepping through a proof rather than seeing its end state. This needs tactic-level information
 that v0.1 deliberately does not extract, so it is gated on a real change to the Lean side rather

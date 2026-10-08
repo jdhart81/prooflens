@@ -120,7 +120,7 @@ Nothing in this file interprets mathematics. It only transcribes.
 ```
 
 The one computed (rather than transcribed) output is binder usage, and it is deliberately
-narrow. `BinderUsage` reports three independent booleans about the *elaborated term*, and
+narrow. `BinderUsage` reports three independent booleans about the _elaborated term_, and
 `unusedInProof` is their conjunction with `proofTermAvailable`. It is a fact about one proof,
 not about mathematical necessity, and every downstream layer that surfaces it is required to
 say so.
@@ -264,17 +264,17 @@ dispatches unknown types to `pushGeneric`.
 
 ## Package map
 
-| Package | Stage | Depends on |
-| --- | --- | --- |
-| `@prooflens/epistemics` | Claims, lattice, provenance | (nothing) |
-| `@prooflens/formal-ir` | Formal IR schema, loading, paths | `epistemics`, `zod` |
-| `@prooflens/math-ir` | MathIR types, tables, annotations, lowering, rendering, traversal (`traverse.ts`) | `epistemics`, `formal-ir` |
-| `@prooflens/classifier` | Rules, signs, classification, explanation, dependencies | `epistemics`, `formal-ir`, `math-ir` |
-| `@prooflens/visual-ir` | VisualIR types and the planner | `epistemics`, `formal-ir`, `math-ir`, `classifier` |
-| `@prooflens/pipeline` | End-to-end bundle, coverage analysis (`coverage.ts`) | `epistemics`, `formal-ir`, `math-ir`, `classifier`, `visual-ir` |
-| `@prooflens/renderer-svg` | SVG output | `epistemics`, `visual-ir` |
-| `@prooflens/renderer-text` | Plain-text output | `epistemics`, `visual-ir` |
-| `@prooflens/cli` | The `prooflens` command | all of the above |
+| Package                    | Stage                                                                             | Depends on                                                      |
+| -------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `@prooflens/epistemics`    | Claims, lattice, provenance                                                       | (nothing)                                                       |
+| `@prooflens/formal-ir`     | Formal IR schema, loading, paths                                                  | `epistemics`, `zod`                                             |
+| `@prooflens/math-ir`       | MathIR types, tables, annotations, lowering, rendering, traversal (`traverse.ts`) | `epistemics`, `formal-ir`                                       |
+| `@prooflens/classifier`    | Rules, signs, classification, explanation, dependencies                           | `epistemics`, `formal-ir`, `math-ir`                            |
+| `@prooflens/visual-ir`     | VisualIR types and the planner                                                    | `epistemics`, `formal-ir`, `math-ir`, `classifier`              |
+| `@prooflens/pipeline`      | End-to-end bundle, coverage analysis (`coverage.ts`)                              | `epistemics`, `formal-ir`, `math-ir`, `classifier`, `visual-ir` |
+| `@prooflens/renderer-svg`  | SVG output                                                                        | `epistemics`, `visual-ir`                                       |
+| `@prooflens/renderer-text` | Plain-text output                                                                 | `epistemics`, `visual-ir`                                       |
+| `@prooflens/cli`           | The `prooflens` command                                                           | all of the above                                                |
 
 ```mermaid
 flowchart BT
@@ -442,11 +442,11 @@ the Formal IR, `TheoremIR` and `MathIRDocument` carry it forward, and the CLI wa
 `raw`:
 
 ```ts
-  if (bundle.generatedFrom.notationFidelity === "raw") {
-    options.log(
-      "  warning: notation delaborators were unavailable, so expressions are rendered as raw applications.",
-    );
-  }
+if (bundle.generatedFrom.notationFidelity === "raw") {
+  options.log(
+    "  warning: notation delaborators were unavailable, so expressions are rendered as raw applications.",
+  );
+}
 ```
 
 Note what is and is not affected. `notationFidelity` degrades `FormalExpr.pretty` and therefore
@@ -563,10 +563,11 @@ deterministic rule.
 
 ### No proof-state or tactic-level analysis
 
-ProofLens sees the final elaborated proof term and nothing else. It does not see the tactic
-script, the intermediate goals, or the order in which they were closed. This is why
-assumption sensitivity is phrased the way it is: `unusedInProof` means "this free variable does
-not occur in the elaborated term", and the caveat that ships with every such figure says so:
+The extractor analyses final elaborated proof terms, statement types, and later binder types;
+it also preserves definition bodies. It does not see the tactic script, intermediate goals,
+or the order in which they were closed. `unusedInProof` records no occurrence in the completed
+proof term, later binder types, or conclusion. Admitted or unavailable proof terms produce no
+assumption-use findings, and the caveat that ships with every completed-proof figure says:
 
 ```
 Detached hypotheses do not occur in this proof term. A different proof of the same
@@ -623,7 +624,6 @@ in as many words: "ProofLens recognises the property but does not interpret what
 - [adr/0001-lean-extraction.md](./adr/0001-lean-extraction.md) — why the frontend command is the reference extractor
 - [adr/0002-first-rendering-surface.md](./adr/0002-first-rendering-surface.md) — why the infoview widget came first
 - [adr/0003-semantic-annotations.md](./adr/0003-semantic-annotations.md) — why annotations live in docstrings
-
 
 ## Browser source preview and mathematical exploration
 

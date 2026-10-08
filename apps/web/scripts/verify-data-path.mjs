@@ -40,6 +40,7 @@ writeFileSync(
     `export { FormalPanel } from "${join(here, "..", "src", "components", "FormalPanel.js")}";`,
     `export { ProvenanceTable } from "${join(here, "..", "src", "components", "ProvenanceTable.js")}";`,
     `export { SummaryStrip } from "${join(here, "..", "src", "components", "SummaryStrip.js")}";`,
+    `export { SeymourExplorer } from "${join(here, "..", "src", "components", "SeymourExplorer.js")}";`,
     "",
   ].join("\n"),
 );
@@ -78,11 +79,14 @@ const {
   FormalPanel,
   ProvenanceTable,
   SummaryStrip,
+  SeymourExplorer,
 } = await import(pathToFileURL(out).href);
 rmSync(out, { force: true });
 const { createElement } = await import("react");
 
-const corpus = JSON.parse(readFileSync(join(here, "..", "public", "corpus.formal-ir.json"), "utf8"));
+const corpus = JSON.parse(
+  readFileSync(join(here, "..", "public", "corpus.formal-ir.json"), "utf8"),
+);
 const bundle = runPipelineOnValue(corpus);
 
 const checks = [];
@@ -99,8 +103,16 @@ check(
 );
 
 const sub = findAnalysis(bundle, "simple_upper_bound");
-check("findAnalysis('simple_upper_bound') resolves", Boolean(sub), sub ? sub.math.name : "not found");
-check("simple_upper_bound has >= 1 visual", Boolean(sub) && sub.visuals.length > 0, sub ? `${sub.visuals.length} visual(s): ${sub.visuals.map((v) => v.type).join(", ")}` : "");
+check(
+  "findAnalysis('simple_upper_bound') resolves",
+  Boolean(sub),
+  sub ? sub.math.name : "not found",
+);
+check(
+  "simple_upper_bound has >= 1 visual",
+  Boolean(sub) && sub.visuals.length > 0,
+  sub ? `${sub.visuals.length} visual(s): ${sub.visuals.map((v) => v.type).join(", ")}` : "",
+);
 
 const svg = sub && sub.visuals[0] ? renderSvg(sub.visuals[0], { theme: "auto" }) : "";
 check(
@@ -112,7 +124,11 @@ check(
 const everyAnalysisRenders = bundle.analyses.every((a) =>
   a.visuals.every((v) => renderSvg(v, { theme: "auto" }).startsWith("<svg")),
 );
-check("every planned visual in the corpus renders", everyAnalysisRenders, `${bundle.summary.visualsPlanned} figures`);
+check(
+  "every planned visual in the corpus renders",
+  everyAnalysisRenders,
+  `${bundle.summary.visualsPlanned} figures`,
+);
 
 check(
   "every explanation layer carries an epistemic status",
@@ -168,7 +184,11 @@ incompleteBound.usesSorry = true;
 incompleteBound.axioms.push("sorryAx");
 const conjecture = findAnalysis(runPipelineOnValue(incompleteCorpus), "information_rate_bound");
 const conjectureMarkup = renderToStaticMarkup(
-  createElement(VisualizationPanel, { analysis: conjecture, activeIndex: 0, onSelectIndex: () => {} }),
+  createElement(VisualizationPanel, {
+    analysis: conjecture,
+    activeIndex: 0,
+    onSelectIndex: () => {},
+  }),
 );
 check(
   "an unproved bound keeps its interactive explanation without a verified equation story",
@@ -182,7 +202,11 @@ check(
 const strictBound = structuredClone(findAnalysis(bundle, "information_rate_bound"));
 strictBound.semanticScene.scene.strict = true;
 const strictMarkup = renderToStaticMarkup(
-  createElement(VisualizationPanel, { analysis: strictBound, activeIndex: 0, onSelectIndex: () => {} }),
+  createElement(VisualizationPanel, {
+    analysis: strictBound,
+    activeIndex: 0,
+    onSelectIndex: () => {},
+  }),
 );
 check(
   "equation anatomy preserves a strict comparator",
@@ -190,16 +214,58 @@ check(
 );
 
 const paperSource = ["ShadowPrice", "InverseSquare", "ShadowPriceLevelCurves", "SLSPTTowerOrdering"]
-  .map(name => readFileSync(join(repo, "packages/pipeline/test/fixtures/viridis-run026", `${name}.lean`), "utf8"))
+  .map((name) =>
+    readFileSync(
+      join(repo, "packages/pipeline/test/fixtures/viridis-run026", `${name}.lean`),
+      "utf8",
+    ),
+  )
   .join("\n\n");
 const paper = runPipeline(previewLeanSource(paperSource).document);
-check("all 19 Viridis source statements render numerical experiments with controls and exports",
-  paper.analyses.length === 19 && paper.analyses.every(analysis => {
-    const markup = renderToStaticMarkup(createElement(VisualizationPanel, { analysis, activeIndex: 0, onSelectIndex: () => {} }));
-    return markup.includes("Numerical illustration") && markup.includes("Save explanation") && markup.includes('type="number"') && markup.includes("Numerical plot:");
-  }));
-check("uploaded extraction metadata never yields a verified statement",
-  runPipeline(importFormalIR(JSON.stringify(corpus))).analyses.every(a => a.math.ceiling !== "verified" && a.explanations.every(e => e.claim.status !== "verified")));
+check(
+  "all 19 Viridis source statements render numerical experiments with controls and exports",
+  paper.analyses.length === 19 &&
+    paper.analyses.every((analysis) => {
+      const markup = renderToStaticMarkup(
+        createElement(VisualizationPanel, { analysis, activeIndex: 0, onSelectIndex: () => {} }),
+      );
+      return (
+        markup.includes("Numerical illustration") &&
+        markup.includes("Save explanation") &&
+        markup.includes('type="number"') &&
+        markup.includes("Numerical plot:")
+      );
+    }),
+);
+check(
+  "uploaded extraction metadata never yields a verified statement",
+  runPipeline(importFormalIR(JSON.stringify(corpus))).analyses.every(
+    (a) =>
+      a.math.ceiling !== "verified" && a.explanations.every((e) => e.claim.status !== "verified"),
+  ),
+);
+
+const seymourMarkup = renderToStaticMarkup(createElement(SeymourExplorer));
+check(
+  "Seymour explorer renders the default cycle with exact sets and source pin",
+  seymourMarkup.includes("{ 1 }") &&
+    seymourMarkup.includes("{ 2 }") &&
+    seymourMarkup.includes("Vertex 0 qualifies") &&
+    seymourMarkup.includes("adc7f1241b42e322a6451854ab7e4b4c146bf78a"),
+);
+check(
+  "Seymour explorer exposes keyboard controls and example export",
+  seymourMarkup.includes('role="button" tabindex="0"') &&
+    seymourMarkup.includes('aria-label="Pair 0 and 1:') &&
+    seymourMarkup.includes("Save this example"),
+);
+check(
+  "Seymour explorer distinguishes definitions and finite tests from the released proof",
+  seymourMarkup.includes("Finite example explorer.") &&
+    seymourMarkup.includes("does not prove the general conjecture") &&
+    seymourMarkup.includes("has not checked the separate released solution") &&
+    seymourMarkup.includes("4.34.1"),
+);
 
 console.log("\nsummary:", JSON.stringify(bundle.summary, null, 2));
 

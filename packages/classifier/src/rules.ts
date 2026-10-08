@@ -101,7 +101,8 @@ export const RULES = {
   },
   DEPENDENCY_GRAPH: {
     id: "GRAPH_DEPENDENCY_001",
-    description: "Edges were read from the constants each declaration's proof term references.",
+    description:
+      "Edges were read from declaration references in statements and bodies, when available; proof-only use is not distinguished.",
     produces: "derived",
   },
   UNSUPPORTED: {

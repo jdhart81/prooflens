@@ -431,10 +431,11 @@ function stripAnimation(animated: string, staticSvg: string): string {
   s = s.replace(/ pl-anim-[A-Za-z0-9_-]+/g, "");
   s = s.replace(/ class=""/g, "");
 
-  // 3. The legend row: its wrapped lines are substrings of the row text.
-  const rowText = escapeXml(ANIMATION_LEGEND_ROW.text);
-  s = s.replace(/<text x="[0-9.]+" y="[0-9.]+" class="pl-note">([^<]*)<\/text>/g, (m, line) =>
-    rowText.includes((line as string).replace(/…$/, "")) ? "" : m,
+  // 3. Only the appended animation row. Removing every substring of its text
+  // also removes unrelated wrapped captions such as a final "choice." line.
+  s = s.replace(
+    /<text x="[0-9.]+" y="[0-9.]+" class="pl-note">Order of appearance[^<]*<\/text>(?:<text x="[0-9.]+" y="[0-9.]+" class="pl-note">[^<]*<\/text>)*/g,
+    "",
   );
 
   // 4. Rebase the heights the removed row occupied.

@@ -516,7 +516,7 @@ function pushMonotonicity(lines: string[], spec: VisualSpec, ctx: Ctx): void {
   }
   lines.push("");
   for (const line of wrapText(
-    "The plotted points are one arbitrary function with the proved order property. The theorem constrains the ordering, not the shape.",
+    "The plotted points illustrate the stated order property. The statement specifies the ordering; the curve's shape is a display choice.",
     ctx.inner,
   )) {
     lines.push(`${INDENT}${line}`);

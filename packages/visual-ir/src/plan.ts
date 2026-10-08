@@ -100,7 +100,7 @@ function planBound(
     annotations.push({
       id: "warning:sorry",
       kind: "warning",
-      text: "This statement is not proved: its proof reaches `sorryAx`.",
+      text: "This extracted declaration is admitted (`sorryAx`) and does not prove its statement. The figure describes the statement.",
       epistemic: "derived",
     });
   }
@@ -509,6 +509,13 @@ function planAssumptionSensitivity(
   classification: Classification,
 ): VisualSpec | null {
   if (classification.payload.kind !== "assumption-sensitivity") return null;
+  if (
+    theorem.trust.usesSorry ||
+    !theorem.trust.proofTermAvailable ||
+    !theorem.hypotheses.every((h) => h.usage.proofTermAvailable) ||
+    !classification.payload.data.proofTermAvailable
+  )
+    return null;
   const { used, unusedInProof } = classification.payload.data;
   const status = classification.claim.status;
 
@@ -768,7 +775,7 @@ function planDependencies(theorem: TheoremIR, graph: DependencyGraph): VisualSpe
   return {
     id: `${theorem.id}:dependencies`,
     type: "dependency-graph",
-    title: "What this proof rests on",
+    title: "Declaration references",
     subtitle: theorem.name.split(".").pop(),
     entities,
     relationships: sub.edges.map((e, i) => ({
@@ -784,13 +791,13 @@ function planDependencies(theorem: TheoremIR, graph: DependencyGraph): VisualSpe
       {
         id: "rationale",
         kind: "rationale",
-        text: "Edges are the declarations this proof term actually references.",
+        text: "Edges show declaration references in statements and bodies, when available. They do not distinguish proof use from statement use.",
         epistemic: "derived",
       },
       {
         id: "external",
         kind: "legend",
-        text: `${sub.externalDependencyCount} further dependencies lie outside the extracted modules and are not drawn.`,
+        text: `Across the entire extraction, ${sub.externalDependencyCount} declaration references lie outside the extracted modules and are not drawn. This is not a count for this local graph alone.`,
         epistemic: "derived",
       },
     ],
@@ -800,7 +807,7 @@ function planDependencies(theorem: TheoremIR, graph: DependencyGraph): VisualSpe
       inputs: [theorem.id],
     },
     rationale:
-      "A dependency graph is always available, because it is read directly from the proof term rather than from any recognised statement shape.",
+      "This graph follows extracted declaration references without interpreting their mathematical role.",
   };
 }
 
@@ -827,7 +834,9 @@ function planExpressionTree(theorem: TheoremIR, classification?: Classification)
       label: `${h.symbol} : ${h.display}`,
       position: { layer: 1, order: i },
       emphasis: "secondary" as const,
-      state: (!h.usage.proofTermAvailable
+      state: (theorem.trust.usesSorry ||
+      !theorem.trust.proofTermAvailable ||
+      !h.usage.proofTermAvailable
         ? "neutral"
         : h.usage.unusedInProof
           ? "unused"
@@ -952,6 +961,20 @@ export function planVisuals(
   const unsupported = classifications.find((c) => c.payload.kind === "unsupported");
   if (specs.length === 0 || unsupported) {
     specs.push(planExpressionTree(theorem, unsupported));
+  }
+
+  // Every view of an admitted declaration needs its own notice: readers may
+  // export or share a structure or dependency view without the bound plot.
+  if (theorem.trust.usesSorry) {
+    for (const spec of specs) {
+      if (spec.annotations.some((a) => a.id === "warning:sorry")) continue;
+      spec.annotations.push({
+        id: "warning:sorry",
+        kind: "warning",
+        text: "This extracted declaration is admitted (`sorryAx`) and does not prove its statement. The figure describes the statement.",
+        epistemic: "derived",
+      });
+    }
   }
 
   return applyAuthorHint(theorem, specs);

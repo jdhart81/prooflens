@@ -423,6 +423,10 @@ function classifyImplication(theorem: TheoremIR): Classification[] {
  */
 function classifyAssumptionSensitivity(theorem: TheoremIR): Classification[] {
   if (theorem.hypotheses.length === 0) return [];
+  // An admitted term can ignore every hypothesis because `sorryAx` supplies
+  // the goal. Its occurrence counts are not evidence about a completed proof.
+  if (theorem.trust.usesSorry || !theorem.trust.proofTermAvailable) return [];
+  if (!theorem.hypotheses.every((h) => h.usage.proofTermAvailable)) return [];
   const unused = theorem.hypotheses.filter((h) => h.usage.unusedInProof);
   const used = theorem.hypotheses.filter((h) => !h.usage.unusedInProof);
   const proofTermAvailable = theorem.hypotheses.some((h) => h.usage.proofTermAvailable);
@@ -455,7 +459,7 @@ function classifyTrust(theorem: TheoremIR): Classification[] {
       RULES.TRUST,
       { kind: "trust", data: { usesSorry, unusualAxioms } },
       usesSorry
-        ? "The proof term reaches `sorryAx`. This statement has NOT been proved."
+        ? "This extracted declaration does not prove the statement: its proof term reaches `sorryAx`."
         : `The proof depends on axioms beyond Lean's standard three: ${unusualAxioms.join(", ")}.`,
       "axioms",
     ),

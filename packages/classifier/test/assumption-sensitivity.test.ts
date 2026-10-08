@@ -16,7 +16,7 @@ import {
   type Classification,
 } from "@prooflens/classifier";
 import { corpus, decl } from "../../pipeline/test/helpers.js";
-import { num, rel, synthetic, v } from "./synthetic.js";
+import { num, opaqueProp, rel, synthetic, v } from "./synthetic.js";
 
 const doc = corpus();
 const math = lowerDocument(doc);
@@ -219,6 +219,76 @@ describe("declarations with no hypotheses", () => {
       proofTermAvailable: false,
     });
     expect(classifyTheorem(t).map((c) => c.payload.kind)).not.toContain("assumption-sensitivity");
+  });
+});
+
+describe("proof evidence required for assumption analysis", () => {
+  const completed = theorem("simple_upper_bound");
+  const completedClassifications = classifyTheorem(completed);
+
+  it("does not interpret an admitted target's untouched hypothesis as a proof insight", () => {
+    const target = synthetic(opaqueProp("∃ v, GoodVertex r v"), {
+      name: "OAI.SeymourSecondNeighborhood.exists_goodVertex",
+      usesSorry: true,
+      hypotheses: [{ symbol: "hr", proposition: opaqueProp("IsOriented r"), unusedInProof: true }],
+    });
+    const classifications = classifyTheorem(target);
+    expect(classifications.map((c) => c.payload.kind)).not.toContain("assumption-sensitivity");
+    const trust = classifications.find((c) => c.payload.kind === "trust")!;
+    expect(trust.rationale).toContain("This extracted declaration does not prove the statement");
+    expect(trust.rationale).toContain("sorryAx");
+    const layers = explain(target, classifications);
+    expect(layers.map((l) => l.id)).not.toContain("assumptions");
+    expect(layers.find((l) => l.id === "trust")!.claim.value).toContain(
+      "a completed proof may exist in another artifact",
+    );
+  });
+
+  it("refuses stale occurrence classifications when a declaration becomes admitted", () => {
+    const admitted = { ...completed, trust: { ...completed.trust, usesSorry: true } };
+    expect(classifyTheorem(admitted).map((c) => c.payload.kind)).not.toContain(
+      "assumption-sensitivity",
+    );
+    expect(explain(admitted, completedClassifications).map((l) => l.id)).not.toContain(
+      "assumptions",
+    );
+  });
+
+  it("requires declaration-level proof availability even if binder counts remain populated", () => {
+    const unavailable = {
+      ...completed,
+      trust: { ...completed.trust, proofTermAvailable: false },
+    };
+    expect(unavailable.hypotheses.every((h) => h.usage.proofTermAvailable)).toBe(true);
+    expect(classifyTheorem(unavailable).map((c) => c.payload.kind)).not.toContain(
+      "assumption-sensitivity",
+    );
+    expect(explain(unavailable, completedClassifications).map((l) => l.id)).not.toContain(
+      "assumptions",
+    );
+  });
+
+  it("does not silently partition hypotheses with incomplete occurrence data", () => {
+    const partial = {
+      ...completed,
+      hypotheses: completed.hypotheses.map((h, i) =>
+        i === 0 ? { ...h, usage: { ...h.usage, proofTermAvailable: false } } : h,
+      ),
+    };
+    expect(classifyTheorem(partial).map((c) => c.payload.kind)).not.toContain(
+      "assumption-sensitivity",
+    );
+  });
+
+  it("preserves the completed proof's real hypothesis findings", () => {
+    const sensitivity = completedClassifications.find(
+      (c) => c.payload.kind === "assumption-sensitivity",
+    )!;
+    expect(sensitivity.payload.kind).toBe("assumption-sensitivity");
+    if (sensitivity.payload.kind !== "assumption-sensitivity") return;
+    expect(symbols(sensitivity.payload.data.used)).toEqual(["h"]);
+    expect(symbols(sensitivity.payload.data.unusedInProof)).toEqual(["hP", "hT"]);
+    expect(explain(completed, completedClassifications).map((l) => l.id)).toContain("assumptions");
   });
 });
 

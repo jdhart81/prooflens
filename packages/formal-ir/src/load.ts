@@ -94,10 +94,11 @@ export function indexByName(doc: FormalIRDocument): Map<string, FormalDeclaratio
 /**
  * Dependency edges restricted to declarations present in this document.
  *
- * Lean reports every constant a proof term touches, which for a mathlib-backed
- * theorem is hundreds of library lemmas. For a v0.1 dependency graph we keep the
- * edges the reader can actually follow, and report how many we dropped so the
- * UI can say so rather than implying the graph is complete.
+ * The extractor combines constants in a declaration's type and its value,
+ * when a value is available. These include statement references, proof
+ * references, and definition-body references; this field does not distinguish
+ * their roles. We retain local edges and count references outside the document
+ * across the entire extraction so the UI can describe its scope accurately.
  */
 export function localDependencyEdges(doc: FormalIRDocument): {
   edges: Array<{ from: string; to: string }>;

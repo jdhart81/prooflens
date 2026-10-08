@@ -63,12 +63,12 @@ export function afterStage(stage: number): number {
 /**
  * The legend row appended to every animated figure.
  *
- * This sentence is the epistemic line between a proof animation and a
- * slideshow: the order is a fact about the proof, the pacing is not.
+ * The planner supplies structure, not a chronology of a mathematical proof.
+ * The appearance order and pacing must not claim to reconstruct proof steps.
  */
 export const ANIMATION_LEGEND_ROW: LegendRow = {
   swatch: "none",
-  text: "Order of appearance follows the proof's dependency structure. The pacing is a display choice.",
+  text: "Order of appearance follows the figure's displayed structure. The pacing is a display choice.",
 };
 
 /**

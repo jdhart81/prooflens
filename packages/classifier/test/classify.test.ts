@@ -602,12 +602,12 @@ describe("definitions and trust", () => {
     }
   });
 
-  it("flags a sorry-carrying declaration and says it is NOT proved", () => {
+  it("flags a sorry-carrying declaration without claiming the statement is unproved everywhere", () => {
     const cs = classifyTheorem(
       synthetic(rel("less-than-or-equal", v("x"), v("y")), { usesSorry: true }),
     );
     const trust = cs.find((c) => c.payload.kind === "trust")!;
-    expect(trust.rationale).toMatch(/NOT been proved/);
+    expect(trust.rationale).toMatch(/This extracted declaration does not prove the statement/);
     expect(find(cs, "trust").usesSorry).toBe(true);
   });
 

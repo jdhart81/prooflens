@@ -9,6 +9,7 @@ import { TheoremList, type ListFilters } from "./components/TheoremList.js";
 import { TorchLeanPanel } from "./components/TorchLeanPanel.js";
 import { VisualizationPanel } from "./components/VisualizationPanel.js";
 import { InputPanel } from "./components/InputPanel.js";
+import { SeymourExplorer } from "./components/SeymourExplorer.js";
 import { KIND_LABEL, primaryKind, unusedHypothesisCount } from "./lib/format.js";
 
 const CORPUS_URL = "corpus.formal-ir.json";
@@ -24,6 +25,9 @@ async function sha256(value: string): Promise<string> {
 }
 
 export function App(): JSX.Element {
+  const [view, setView] = useState<"corpus" | "seymour">(() =>
+    typeof window !== "undefined" && window.location.hash === "#seymour" ? "seymour" : "corpus",
+  );
   const [load, setLoad] = useState<LoadState>({ status: "loading" });
   const [examples, setExamples] = useState<Extract<LoadState, { status: "ready" }> | null>(null);
   const [inputName, setInputName] = useState("Bundled examples");
@@ -35,6 +39,15 @@ export function App(): JSX.Element {
     onlyUnusedHypotheses: false,
     onlyUnsupported: false,
   });
+
+  useEffect(() => {
+    const onHashChange = (): void => {
+      if (window.location.hash === "#seymour") setView("seymour");
+      else if (window.location.hash === "#corpus" || window.location.hash === "") setView("corpus");
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -153,6 +166,14 @@ export function App(): JSX.Element {
     setVisualIndex(Math.max(0, mathematicalFigure ?? 0));
   }, [selectedName, bundle]);
 
+  if (view === "seymour") {
+    return (
+      <Shell activeView="seymour">
+        <SeymourExplorer />
+      </Shell>
+    );
+  }
+
   if (load.status === "loading") {
     return (
       <Shell>
@@ -256,13 +277,25 @@ export function App(): JSX.Element {
 function Shell({
   children,
   summary,
+  activeView = "corpus",
 }: {
   children: React.ReactNode;
   summary?: React.ReactNode;
+  activeView?: "corpus" | "seymour";
 }): JSX.Element {
   return (
     <div className="app">
-      <a className="skip-link" href="#math-workspace">
+      <a
+        className="skip-link"
+        href="#math-workspace"
+        onClick={(event) => {
+          const workspace = document.getElementById("math-workspace");
+          if (workspace) {
+            event.preventDefault();
+            workspace.focus();
+          }
+        }}
+      >
         Skip to mathematical exploration
       </a>
       <header className="masthead">
@@ -271,6 +304,14 @@ function Shell({
           <span className="masthead__tagline">See what the mathematics is saying</span>
         </h1>
       </header>
+      <nav className="workspace-nav" aria-label="ProofLens examples">
+        <a href="#corpus" aria-current={activeView === "corpus" ? "page" : undefined}>
+          Explore statements
+        </a>
+        <a href="#seymour" aria-current={activeView === "seymour" ? "page" : undefined}>
+          OpenAI · Seymour graph explorer
+        </a>
+      </nav>
       {summary}
       {children}
     </div>

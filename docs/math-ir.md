@@ -9,11 +9,11 @@ type arguments and an instance chain. None of that is mathematics a reader wants
 turns it into a `relation` node with a `less-than-or-equal` relation, a variable on the left and
 a `div` operator on the right.
 
-MathIR is also the last stage that is still about *what was proved* rather than *how to show it*.
+MathIR is also the last stage that is still about _what was proved_ rather than _how to show it_.
 Nothing in this package knows what a figure is.
 
 It has two sources of vocabulary: the constant tables in `tables.ts`, which are global and
-maintained by this project, and the *local* constants of whatever document is being lowered,
+maintained by this project, and the _local_ constants of whatever document is being lowered,
 which are free. `localConstantsOf` collects the definitions in the same extraction so that
 `energyBudget P t` lowers as an application rather than as a mystery.
 
@@ -23,12 +23,12 @@ uses `transcribe` only for the pretty-printed statement string (which is a trans
 Lean said), and `derive` for the lowered conclusion:
 
 ```ts
-  const conclusion = derive<MathProposition>(
-    conclusionProp,
-    conclusionProp.kind === "opaque" ? MATH_IR_RULES.unrecognised : MATH_IR_RULES.lowerProposition,
-    [statementClaim],
-    { sources: [sourceRefFor(doc, decl, "conclusion")] },
-  );
+const conclusion = derive<MathProposition>(
+  conclusionProp,
+  conclusionProp.kind === "opaque" ? MATH_IR_RULES.unrecognised : MATH_IR_RULES.lowerProposition,
+  [statementClaim],
+  { sources: [sourceRefFor(doc, decl, "conclusion")] },
+);
 ```
 
 See [architecture.md](./architecture.md) for where this stage sits, and
@@ -131,8 +131,18 @@ here. From `abs_upper_bound`, conclusion `|a + b| ≤ |a| + |b|`:
       "op": "add",
       "symbol": "+",
       "args": [
-        { "kind": "variable", "id": "_uniq.2", "symbol": "a", "path": "conclusion.args[2].args[3].args[4]" },
-        { "kind": "variable", "id": "_uniq.3", "symbol": "b", "path": "conclusion.args[2].args[3].args[5]" }
+        {
+          "kind": "variable",
+          "id": "_uniq.2",
+          "symbol": "a",
+          "path": "conclusion.args[2].args[3].args[4]"
+        },
+        {
+          "kind": "variable",
+          "id": "_uniq.3",
+          "symbol": "b",
+          "path": "conclusion.args[2].args[3].args[5]"
+        }
       ],
       "path": "conclusion.args[2].args[3]"
     }
@@ -180,13 +190,29 @@ Three other paths produce an `application` node:
     "head": "ProofLens.Examples.landauerCost",
     "display": "landauerCost",
     "args": [
-      { "kind": "variable", "id": "_uniq.57", "symbol": "kB", "path": "conclusion.args[3].args[5].args[0]" },
-      { "kind": "variable", "id": "_uniq.56", "symbol": "T",  "path": "conclusion.args[3].args[5].args[1]" },
-      { "kind": "variable", "id": "_uniq.58", "symbol": "D",  "path": "conclusion.args[3].args[5].args[2]" }
+      {
+        "kind": "variable",
+        "id": "_uniq.57",
+        "symbol": "kB",
+        "path": "conclusion.args[3].args[5].args[0]"
+      },
+      {
+        "kind": "variable",
+        "id": "_uniq.56",
+        "symbol": "T",
+        "path": "conclusion.args[3].args[5].args[1]"
+      },
+      {
+        "kind": "variable",
+        "id": "_uniq.58",
+        "symbol": "D",
+        "path": "conclusion.args[3].args[5].args[2]"
+      }
     ],
     "path": "conclusion.args[3].args[5]"
   }
   ```
+
 - **Interval and floor displays**, whose `display` carries `·` placeholders. `renderExpression`
   fills them rather than calling them, so `Set.Icc 0 1` renders `[0, 1]` and not `[·, ·](0, 1)`.
 
@@ -213,12 +239,27 @@ A Lean `lam` node, kept as a binder rather than flattened. From `monotone_affine
         "op": "mul",
         "symbol": "·",
         "args": [
-          { "kind": "variable", "id": "_uniq.100", "symbol": "a", "path": "conclusion.args[4].body.args[4].args[4]" },
-          { "kind": "variable", "id": "bound:x", "symbol": "x", "path": "conclusion.args[4].body.args[4].args[5]" }
+          {
+            "kind": "variable",
+            "id": "_uniq.100",
+            "symbol": "a",
+            "path": "conclusion.args[4].body.args[4].args[4]"
+          },
+          {
+            "kind": "variable",
+            "id": "bound:x",
+            "symbol": "x",
+            "path": "conclusion.args[4].body.args[4].args[5]"
+          }
         ],
         "path": "conclusion.args[4].body.args[4]"
       },
-      { "kind": "variable", "id": "_uniq.101", "symbol": "b", "path": "conclusion.args[4].body.args[5]" }
+      {
+        "kind": "variable",
+        "id": "_uniq.101",
+        "symbol": "b",
+        "path": "conclusion.args[4].body.args[5]"
+      }
     ],
     "path": "conclusion.args[4].body"
   },
@@ -238,7 +279,7 @@ nor `locals`, MathIR does not guess. It records the head (or `null`), the arity 
 mathematical arguments, and a display string built by `opaqueDisplay`, which recursively lowers
 the arguments so that a reader still sees mathematics rather than elaborator plumbing.
 
-The ProofLens corpus no longer contains an opaque *expression* with a named head, which is itself
+The ProofLens corpus no longer contains an opaque _expression_ with a named head, which is itself
 the point: `Monotone (throughput ipc)` used to lower with an opaque `throughput(ipc)` subject, and
 local constant resolution turned it into an `application`. What remains are the zero-arity
 opaque nodes `Iff` produces, from `rate_bound_iff`:
@@ -339,8 +380,20 @@ Head constant found in `RELATIONS`. From `information_rate_bound`, conclusion
 {
   "kind": "relation",
   "relation": "less-than-or-equal",
-  "lhs": { "kind": "operator", "op": "div", "symbol": "/", "args": ["…N…", "…t…"], "path": "conclusion.args[2]" },
-  "rhs": { "kind": "operator", "op": "div", "symbol": "/", "args": ["…P · D…", "…kB · T · log(2)…"], "path": "conclusion.args[3]" },
+  "lhs": {
+    "kind": "operator",
+    "op": "div",
+    "symbol": "/",
+    "args": ["…N…", "…t…"],
+    "path": "conclusion.args[2]"
+  },
+  "rhs": {
+    "kind": "operator",
+    "op": "div",
+    "symbol": "/",
+    "args": ["…P · D…", "…kB · T · log(2)…"],
+    "path": "conclusion.args[3]"
+  },
   "path": "conclusion"
 }
 ```
@@ -354,8 +407,20 @@ lowers both sides as propositions, renders them, and wraps each rendering in a z
 {
   "kind": "relation",
   "relation": "equivalent",
-  "lhs": { "kind": "opaque", "head": null, "display": "x ≤ P / T", "arity": 0, "path": "conclusion.args[0]" },
-  "rhs": { "kind": "opaque", "head": null, "display": "x · T ≤ P", "arity": 0, "path": "conclusion.args[1]" },
+  "lhs": {
+    "kind": "opaque",
+    "head": null,
+    "display": "x ≤ P / T",
+    "arity": 0,
+    "path": "conclusion.args[0]"
+  },
+  "rhs": {
+    "kind": "opaque",
+    "head": null,
+    "display": "x · T ≤ P",
+    "arity": 0,
+    "path": "conclusion.args[1]"
+  },
   "path": "conclusion"
 }
 ```
@@ -374,7 +439,12 @@ holds the rest, so `MonotoneOn f s` puts `f` in `subject` and `s` in `args`. Fro
   "kind": "predicate",
   "predicate": "strictly-monotone",
   "name": "StrictMono",
-  "subject": { "kind": "constant", "name": "Real.exp", "display": "exp", "path": "conclusion.args[4]" },
+  "subject": {
+    "kind": "constant",
+    "name": "Real.exp",
+    "display": "exp",
+    "path": "conclusion.args[4]"
+  },
   "args": [],
   "path": "conclusion"
 }
@@ -398,7 +468,7 @@ what an arrow is:
 Worth knowing where this actually shows up. `extractDeclaration` calls `forallTelescope` on the
 declaration's type, which strips arrows along with everything else, so a theorem stated as
 `A → B` arrives with `A` as a hypothesis binder and `B` as the conclusion. Implication
-propositions therefore appear in *hypothesis types*, not in conclusions. From
+propositions therefore appear in _hypothesis types_, not in conclusions. From
 `ceiling_of_budget`, whose second hypothesis is `x ≤ P → x ≤ B`:
 
 ```json
@@ -407,22 +477,42 @@ propositions therefore appear in *hypothesis types*, not in conclusions. From
   "antecedent": {
     "kind": "relation",
     "relation": "less-than-or-equal",
-    "lhs": { "kind": "variable", "id": "_uniq.20", "symbol": "x", "path": "binders[4].type.binderType.args[2]" },
-    "rhs": { "kind": "variable", "id": "_uniq.21", "symbol": "P", "path": "binders[4].type.binderType.args[3]" },
+    "lhs": {
+      "kind": "variable",
+      "id": "_uniq.20",
+      "symbol": "x",
+      "path": "binders[4].type.binderType.args[2]"
+    },
+    "rhs": {
+      "kind": "variable",
+      "id": "_uniq.21",
+      "symbol": "P",
+      "path": "binders[4].type.binderType.args[3]"
+    },
     "path": "binders[4].type.binderType"
   },
   "consequent": {
     "kind": "relation",
     "relation": "less-than-or-equal",
-    "lhs": { "kind": "variable", "id": "_uniq.20", "symbol": "x", "path": "binders[4].type.body.args[2]" },
-    "rhs": { "kind": "variable", "id": "_uniq.22", "symbol": "B", "path": "binders[4].type.body.args[3]" },
+    "lhs": {
+      "kind": "variable",
+      "id": "_uniq.20",
+      "symbol": "x",
+      "path": "binders[4].type.body.args[2]"
+    },
+    "rhs": {
+      "kind": "variable",
+      "id": "_uniq.22",
+      "symbol": "B",
+      "path": "binders[4].type.body.args[3]"
+    },
     "path": "binders[4].type.body"
   },
   "path": "binders[4].type"
 }
 ```
 
-A `forall` whose variable *is* used (a genuine quantifier) falls through to `opaque`. v0.1 has no
+A `forall` whose variable _is_ used (a genuine quantifier) falls through to `opaque`. v0.1 has no
 vocabulary for quantifier structure.
 
 ### `limit`
@@ -455,7 +545,12 @@ From `sequence_limit_example`, whose statement is
 ```json
 {
   "kind": "limit",
-  "subject": { "kind": "lambda", "parameter": "n", "body": "…1 / (n + 1)…", "path": "conclusion.args[2]" },
+  "subject": {
+    "kind": "lambda",
+    "parameter": "n",
+    "body": "…1 / (n + 1)…",
+    "path": "conclusion.args[2]"
+  },
   "source": {
     "kind": "at-top",
     "display": "+∞",
@@ -466,7 +561,12 @@ From `sequence_limit_example`, whose statement is
     "kind": "neighbourhood",
     "display": "0",
     "label": "approaches",
-    "point": { "kind": "number", "value": 0, "display": "0", "path": "conclusion.args[4].args[2].args[1]" }
+    "point": {
+      "kind": "number",
+      "value": 0,
+      "display": "0",
+      "path": "conclusion.args[4].args[2].args[1]"
+    }
   },
   "path": "conclusion"
 }
@@ -493,8 +593,18 @@ gives:
   "body": {
     "kind": "relation",
     "relation": "less-than",
-    "lhs": { "kind": "number", "value": 0, "display": "0", "path": "conclusion.args[1].body.args[2]" },
-    "rhs": { "kind": "variable", "id": "bound:ε", "symbol": "ε", "path": "conclusion.args[1].body.args[3]" },
+    "lhs": {
+      "kind": "number",
+      "value": 0,
+      "display": "0",
+      "path": "conclusion.args[1].body.args[2]"
+    },
+    "rhs": {
+      "kind": "variable",
+      "id": "bound:ε",
+      "symbol": "ε",
+      "path": "conclusion.args[1].body.args[3]"
+    },
     "path": "conclusion.args[1].body"
   },
   "path": "conclusion"
@@ -511,8 +621,8 @@ already-named predicate — lowering falls through to `opaque` rather than inven
 `And a b`, with nested conjunctions flattened:
 
 ```ts
-      // `And a b`. Nested conjunctions are flattened, because `A ∧ B ∧ C` is
-      // one list of facts to a reader, not a tree.
+// `And a b`. Nested conjunctions are flattened, because `A ∧ B ∧ C` is
+// one list of facts to a reader, not a tree.
 ```
 
 Lowering `And (0 < x) (And (x ≤ 1) (x < y))` produces a single `conjunction` with three
@@ -526,13 +636,23 @@ Lowering `And (0 < x) (And (x ≤ 1) (x < y))` produces a single `conjunction` w
       "kind": "relation",
       "relation": "less-than",
       "lhs": { "kind": "number", "value": 0, "display": "0", "path": "conclusion.args[0].args[2]" },
-      "rhs": { "kind": "variable", "id": "_uniq.x", "symbol": "x", "path": "conclusion.args[0].args[3]" },
+      "rhs": {
+        "kind": "variable",
+        "id": "_uniq.x",
+        "symbol": "x",
+        "path": "conclusion.args[0].args[3]"
+      },
       "path": "conclusion.args[0]"
     },
     {
       "kind": "relation",
       "relation": "less-than-or-equal",
-      "lhs": { "kind": "variable", "id": "_uniq.x", "symbol": "x", "path": "conclusion.args[1].args[2]" },
+      "lhs": {
+        "kind": "variable",
+        "id": "_uniq.x",
+        "symbol": "x",
+        "path": "conclusion.args[1].args[2]"
+      },
       "rhs": { "kind": "number", "value": 1, "display": "1", "path": "conclusion.args[1].args[3]" },
       "path": "conclusion.args[1]"
     }
@@ -546,8 +666,8 @@ Lowering `And (0 < x) (And (x ≤ 1) (x < y))` produces a single `conjunction` w
 `Membership.mem`, with one detail that will bite anyone reading the Lean signature quickly:
 
 ```ts
-      // `Membership.mem {γ α} [inst] (s : γ) (a : α)` — note that Lean puts the
-      // collection first, while a reader writes `a ∈ s`.
+// `Membership.mem {γ α} [inst] (s : γ) (a : α)` — note that Lean puts the
+// collection first, while a reader writes `a ∈ s`.
 ```
 
 Lowering `Membership.mem ℝ Set inst (Set.Icc 0 1) x`:
@@ -607,8 +727,8 @@ so the lowered proposition is `{ "kind": "opaque", "head": "Real", "display": "R
 unsupported path, and `walkTheorem` skips a definition's conclusion entirely:
 
 ```ts
-  // A definition's "conclusion" is its return type, not a claim. Counting `ℝ`
-  // as an unreadable term would inflate the miss list with noise.
+// A definition's "conclusion" is its return type, not a claim. Counting `ℝ`
+// as an unreadable term would inflate the miss list with noise.
 ```
 
 ## The constant tables
@@ -628,16 +748,16 @@ code on purpose:
  */
 ```
 
-| Table | Size | Examples | What it maps to |
-| --- | ---: | --- | --- |
-| `RELATIONS` | 7 | `Eq`, `Ne`, `LE.le`, `LT.lt`, `GE.ge`, `GT.gt`, `Iff` | `RelationKind` |
-| `BINARY_OPERATORS` | 6 | `HAdd.hAdd`, `HMul.hMul`, `HDiv.hDiv`, `HPow.hPow` | `OperatorKind` + symbol |
-| `UNARY_OPERATORS` | 3 | `Neg.neg`, `Inv.inv`, `abs` | `OperatorKind` + symbol |
-| `NAMED_FUNCTIONS` | 43 | `Real.sqrt`, `Real.log`, `Finset.sum`, `Set.Icc`, `Nat.floor`, `Max.max`, `ite` | display string |
-| `POSITIONAL` | 3 | `DFunLike.coe`, `FunLike.coe`, `Function.comp` | a fixed argument index and a kind |
-| `FILTERS` | 6 | `Filter.atTop`, `Filter.atBot`, `nhds`, `nhdsWithin`, `Filter.cofinite` | `FilterSpec` kind, label, point index |
-| `TRANSPARENT` | 7 | `Nat.cast`, `Int.cast`, `OfNat.ofNat`, `Decidable.decide` | an argument index to descend into |
-| `PREDICATES` | 25 | `Monotone`, `StrictMonoOn`, `Continuous`, `Summable`, `IsLUB`, `Set.InjOn` | `PredicateKind` + label |
+| Table              | Size | Examples                                                                        | What it maps to                       |
+| ------------------ | ---: | ------------------------------------------------------------------------------- | ------------------------------------- |
+| `RELATIONS`        |    7 | `Eq`, `Ne`, `LE.le`, `LT.lt`, `GE.ge`, `GT.gt`, `Iff`                           | `RelationKind`                        |
+| `BINARY_OPERATORS` |    6 | `HAdd.hAdd`, `HMul.hMul`, `HDiv.hDiv`, `HPow.hPow`                              | `OperatorKind` + symbol               |
+| `UNARY_OPERATORS`  |    3 | `Neg.neg`, `Inv.inv`, `abs`                                                     | `OperatorKind` + symbol               |
+| `NAMED_FUNCTIONS`  |   43 | `Real.sqrt`, `Real.log`, `Finset.sum`, `Set.Icc`, `Nat.floor`, `Max.max`, `ite` | display string                        |
+| `POSITIONAL`       |    3 | `DFunLike.coe`, `FunLike.coe`, `Function.comp`                                  | a fixed argument index and a kind     |
+| `FILTERS`          |    6 | `Filter.atTop`, `Filter.atBot`, `nhds`, `nhdsWithin`, `Filter.cofinite`         | `FilterSpec` kind, label, point index |
+| `TRANSPARENT`      |    7 | `Nat.cast`, `Int.cast`, `OfNat.ofNat`, `Decidable.decide`                       | an argument index to descend into     |
+| `PREDICATES`       |   25 | `Monotone`, `StrictMonoOn`, `Continuous`, `Summable`, `IsLUB`, `Set.InjOn`      | `PredicateKind` + label               |
 
 One hundred constants in total. Two further tables, `RELATION_PHRASE` and `RELATION_SYMBOL`, map
 each `RelationKind` to prose ("is at most") and to a symbol ("≤"). The explanation engine uses the
@@ -648,9 +768,9 @@ Three of these tables carry design decisions worth reading rather than skimming.
 `NAMED_FUNCTIONS` renders aggregations as named applications rather than as big-operator notation:
 
 ```ts
-  // Aggregations. Rendered as named applications rather than big-operator
-  // notation: `∑(s, i ↦ f i)` is honest about the two arguments, where a bare
-  // `∑` would hide which set is being summed over.
+// Aggregations. Rendered as named applications rather than big-operator
+// notation: `∑(s, i ↦ f i)` is honest about the two arguments, where a bare
+// `∑` would hide which set is being summed over.
 ```
 
 The same table names `OrderDual.toDual` rather than making it transparent, because order duality
@@ -660,13 +780,13 @@ a statement about the original.
 `PREDICATES` mixes two populations. The first eight entries carry a real `PredicateKind`
 (`monotone`, `strictly-monotone`, `antitone`, `strictly-antitone`) that `classifyMonotonicity`
 acts on. The rest carry `predicate: "other"` and a label, and feed `classifyProperty`, which
-reads them without interpreting them. Membership in this table is what recognition *means*:
+reads them without interpreting them. Membership in this table is what recognition _means_:
 
 ```ts
-  // Named properties ProofLens can *read* without claiming to interpret. Being
-  // in this table is an explicit statement that ProofLens recognises the
-  // property; anything absent stays `unsupported`, which is the honest answer
-  // and keeps the unsupported-mathematics backlog meaningful.
+// Named properties ProofLens can *read* without claiming to interpret. Being
+// in this table is an explicit statement that ProofLens recognises the
+// property; anything absent stays `unsupported`, which is the honest answer
+// and keeps the unsupported-mathematics backlog meaningful.
 ```
 
 ### `POSITIONAL` and `FILTERS`
@@ -722,7 +842,7 @@ lowers to an `operator` with `op: "comp"` and symbol `∘`.
 
 Each entry carries a `kind`, a prose `label`, and a `pointIndex`: `null` when the filter has no
 point (`Filter.atTop`), a negative index counting from the end otherwise (`nhds` uses `-1`,
-`nhdsWithin` uses `-2`). `lowerFilter` resolves the index against the *mathematical* arguments,
+`nhdsWithin` uses `-2`). `lowerFilter` resolves the index against the _mathematical_ arguments,
 after `mathematicalArgs` has dropped the plumbing, and produces `kind: "unknown"` with
 `label: "an unnamed filter"` for anything absent from the table.
 
@@ -761,7 +881,7 @@ carries one type plus one instance before its two, and `Iff` carries none. One n
 `valueArity: 2`, covers all three.
 
 There is a second, separate mechanism for the same problem. `mathematicalArgs` drops leading
-arguments that *look like* plumbing, and it is used for `opaque` arity and display, where no
+arguments that _look like_ plumbing, and it is used for `opaque` arity and display, where no
 table entry exists to consult:
 
 ```ts
@@ -800,11 +920,11 @@ docstrings already exist and are already extracted; see
 
 ### Directives
 
-| Directive | Parsed into | Notes |
-| --- | --- | --- |
+| Directive                               | Parsed into                                    | Notes                                                                                                                                                                                  |
+| --------------------------------------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `@prooflens.var <symbol> key="value" …` | `SemanticAnnotation` appended to `annotations` | Allowed keys: `meaning`, `units`, `domain`, `axis`, `role`. Unknown keys are ignored. A `var` line with no recognised key is recorded in `malformed` but the annotation is still kept. |
-| `@prooflens.visual <name>` | `suggestedVisual` | Surrounding double quotes are stripped. Last one wins. |
-| `@prooflens.concept <name>` | `concept` | Surrounding double quotes are stripped. Last one wins. |
+| `@prooflens.visual <name>`              | `suggestedVisual`                              | Surrounding double quotes are stripped. Last one wins.                                                                                                                                 |
+| `@prooflens.concept <name>`             | `concept`                                      | Surrounding double quotes are stripped. Last one wins.                                                                                                                                 |
 
 Any other `@prooflens.` line is recorded in `malformed` and dropped. Every non-directive line is
 kept as prose and becomes `TheoremIR.documentation`, so the docstring a human reads is not
@@ -900,27 +1020,27 @@ export interface TheoremIR {
 }
 ```
 
-| Field | Source | Notes |
-| --- | --- | --- |
-| `id` | `decl.name` | Equal to `name` in v0.1. Used as the `inputs` entry in derived claims and as the dependency-graph node id. |
-| `name` | `decl.name` | Fully qualified, e.g. `ProofLens.Examples.information_rate_bound`. |
-| `namespace` | `decl.namespace` | Lean's `declName.getPrefix`. |
-| `kind` | `decl.kind` | One of `axiom`, `definition`, `theorem`, `opaque`, `inductive`, `constructor`, `recursor`, `quot`. `classifyDefinition` switches on `definition` and `opaque`. |
-| `documentation` | `parseDocstring(...).prose` | The docstring with every `@prooflens.` line removed, trimmed, `null` if empty. |
-| `variables` | binders with `role === "parameter"` | Binders whose type is not a `Prop`. Each carries its `annotation` or `null`. |
-| `hypotheses` | binders with `role === "hypothesis"` | `Prop`-valued binders that are not instances. Each carries the lowered `proposition`, its rendered `display`, and the `usage` record from the Formal IR verbatim. |
-| `instances` | binders with `role === "instance"` | Typeclass instance binders, as `MathInstance` (`id`, `symbol`, `typeDisplay`). Recorded for completeness and provenance, deliberately excluded from `hypotheses`. |
-| `conclusion` | `derive(lowerProposition(decl.conclusion.tree, "conclusion"), …)` | A `Claim`, not a bare value. Its rule is `MATHIR_UNRECOGNISED_001` when the result is opaque and `MATHIR_LOWER_PROP_001` otherwise. |
-| `conclusionDisplay` | `renderProposition(conclusionProp)` | ProofLens's own rendering, built from the lowered tree. Unaffected by `notationFidelity`. |
-| `definitionBody` | `lowerExpression(decl.definitionBody.tree, "definitionBody", …)` | What a definition unfolds to. `null` for theorems, and for definitions whose body the extractor judged too large. |
-| `statementDisplay` | `decl.statement.pretty` | Lean's pretty printer, binders included. This *is* affected by `notationFidelity`. |
-| `dependencies` | `decl.dependencies` | Every constant the type or proof term references, unfiltered. `localDependencyEdges` does the filtering. |
-| `trust` | `decl.axioms`, `unusualAxioms(...)`, `decl.usesSorry`, `decl.proofTermAvailable` | `unusualAxioms` is everything beyond `propext`, `Classical.choice`, `Quot.sound`. |
-| `annotations` | `parseDocstring(...).annotations` | All of them, including ones whose `target` matches no binder. |
-| `suggestedVisual` | `@prooflens.visual` | Read by `applyAuthorHint` in the planner, via `resolveVisualHint`. See [visual-ir.md](./visual-ir.md). |
-| `concept` | `@prooflens.concept` | Used as figure `subtitle`. |
-| `ceiling` | `witness ? "verified" : "derived"` | The strongest status any claim about this declaration may carry. Degrades when the proof used `sorry`. |
-| `provenance` | `sourceRefFor(doc, decl)` | Declaration-level source reference with its span. |
+| Field               | Source                                                                           | Notes                                                                                                                                                                                                                                                                     |
+| ------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                | `decl.name`                                                                      | Equal to `name` in v0.1. Used as the `inputs` entry in derived claims and as the dependency-graph node id.                                                                                                                                                                |
+| `name`              | `decl.name`                                                                      | Fully qualified, e.g. `ProofLens.Examples.information_rate_bound`.                                                                                                                                                                                                        |
+| `namespace`         | `decl.namespace`                                                                 | Lean's `declName.getPrefix`.                                                                                                                                                                                                                                              |
+| `kind`              | `decl.kind`                                                                      | One of `axiom`, `definition`, `theorem`, `opaque`, `inductive`, `constructor`, `recursor`, `quot`. `classifyDefinition` switches on `definition` and `opaque`.                                                                                                            |
+| `documentation`     | `parseDocstring(...).prose`                                                      | The docstring with every `@prooflens.` line removed, trimmed, `null` if empty.                                                                                                                                                                                            |
+| `variables`         | binders with `role === "parameter"`                                              | Binders whose type is not a `Prop`. Each carries its `annotation` or `null`.                                                                                                                                                                                              |
+| `hypotheses`        | binders with `role === "hypothesis"`                                             | `Prop`-valued binders that are not instances. Each carries the lowered `proposition`, its rendered `display`, and the `usage` record from the Formal IR verbatim.                                                                                                         |
+| `instances`         | binders with `role === "instance"`                                               | Typeclass instance binders, as `MathInstance` (`id`, `symbol`, `typeDisplay`). Recorded for completeness and provenance, deliberately excluded from `hypotheses`.                                                                                                         |
+| `conclusion`        | `derive(lowerProposition(decl.conclusion.tree, "conclusion"), …)`                | A `Claim`, not a bare value. Its rule is `MATHIR_UNRECOGNISED_001` when the result is opaque and `MATHIR_LOWER_PROP_001` otherwise.                                                                                                                                       |
+| `conclusionDisplay` | `renderProposition(conclusionProp)`                                              | ProofLens's own rendering, built from the lowered tree. Unaffected by `notationFidelity`.                                                                                                                                                                                 |
+| `definitionBody`    | `lowerExpression(decl.definitionBody.tree, "definitionBody", …)`                 | What a definition unfolds to. `null` for theorems, and for definitions whose body the extractor judged too large.                                                                                                                                                         |
+| `statementDisplay`  | `decl.statement.pretty`                                                          | Lean's pretty printer, binders included. This _is_ affected by `notationFidelity`.                                                                                                                                                                                        |
+| `dependencies`      | `decl.dependencies`                                                              | Combined constants from the declaration's type and value, when available, including statement, proof, and definition-body references. Their roles are not separated. `localDependencyEdges` filters local references and counts outside references across the extraction. |
+| `trust`             | `decl.axioms`, `unusualAxioms(...)`, `decl.usesSorry`, `decl.proofTermAvailable` | `unusualAxioms` is everything beyond `propext`, `Classical.choice`, `Quot.sound`.                                                                                                                                                                                         |
+| `annotations`       | `parseDocstring(...).annotations`                                                | All of them, including ones whose `target` matches no binder.                                                                                                                                                                                                             |
+| `suggestedVisual`   | `@prooflens.visual`                                                              | Read by `applyAuthorHint` in the planner, via `resolveVisualHint`. See [visual-ir.md](./visual-ir.md).                                                                                                                                                                    |
+| `concept`           | `@prooflens.concept`                                                             | Used as figure `subtitle`.                                                                                                                                                                                                                                                |
+| `ceiling`           | `witness ? "verified" : "derived"`                                               | The strongest status any claim about this declaration may carry. Degrades when the proof used `sorry`.                                                                                                                                                                    |
+| `provenance`        | `sourceRefFor(doc, decl)`                                                        | Declaration-level source reference with its span.                                                                                                                                                                                                                         |
 
 `MathIRDocument` wraps `theorems` with `mathIRVersion` (`"0.1.0"`), `system`, and
 `notationFidelity` carried forward from the Formal IR.
@@ -946,7 +1066,7 @@ concrete `ℝ`, which is why the problem was invisible until the tool was pointe
 
 ### Definition bodies
 
-`definitionBody` is the one place a Lean *term* rather than a *statement* crosses into the IR, and
+`definitionBody` is the one place a Lean _term_ rather than a _statement_ crosses into the IR, and
 the boundary is drawn deliberately:
 
 ```lean
@@ -963,13 +1083,19 @@ result is:
 
 ```json
 {
-  "expression": { "kind": "operator", "op": "div", "symbol": "/", "args": ["…kB · T · log(2)…", "…D…"], "path": "definitionBody" },
+  "expression": {
+    "kind": "operator",
+    "op": "div",
+    "symbol": "/",
+    "args": ["…kB · T · log(2)…", "…D…"],
+    "path": "definitionBody"
+  },
   "display": "kB · T · log(2) / D"
 }
 ```
 
 Downstream, `classifyDefinition` emits a second classification when a body is present: the
-definition *is* a functional relationship, with the defined name on one side and the quantities it
+definition _is_ a functional relationship, with the defined name on one side and the quantities it
 is built from on the other. That is what lets `landauerCost` and `rate_eq_count_div_time` share a
 figure.
 
@@ -985,7 +1111,15 @@ The full worked example, from `examples/corpus.formal-ir.json` to lowered MathIR
 ```json
 {
   "pretty": "x ≤ P / T",
-  "constants": ["LE.le", "Real", "Real.instLE", "HDiv.hDiv", "instHDiv", "DivInvMonoid.toDiv", "Real.instDivInvMonoid"]
+  "constants": [
+    "LE.le",
+    "Real",
+    "Real.instLE",
+    "HDiv.hDiv",
+    "instHDiv",
+    "DivInvMonoid.toDiv",
+    "Real.instDivInvMonoid"
+  ]
 }
 ```
 
@@ -1049,7 +1183,12 @@ Produced by `prooflens inspect examples/corpus.formal-ir.json simple_upper_bound
     "op": "div",
     "symbol": "/",
     "args": [
-      { "kind": "variable", "id": "_uniq.136", "symbol": "P", "path": "conclusion.args[3].args[4]" },
+      {
+        "kind": "variable",
+        "id": "_uniq.136",
+        "symbol": "P",
+        "path": "conclusion.args[3].args[4]"
+      },
       { "kind": "variable", "id": "_uniq.137", "symbol": "T", "path": "conclusion.args[3].args[5]" }
     ],
     "path": "conclusion.args[3]"
@@ -1108,29 +1247,29 @@ Look at the raw tree:
 prooflens inspect /tmp/mine.json my_theorem --stage formal
 ```
 
-Count the arguments of the application, then count how many of the *trailing* ones carry
+Count the arguments of the application, then count how many of the _trailing_ ones carry
 mathematics. For `Real.tanh x` the answer is one: `Real.tanh` is monomorphic in `ℝ`, so there is
 no carrier type or instance argument at all, and `valueArity: 1`. For a typeclass-generic
 operation like `HAdd.hAdd`, the argument list is `α β γ inst a b` and `valueArity: 2`.
 
-If the interesting argument is *not* at the end — a coercion, a composition, anything that can be
+If the interesting argument is _not_ at the end — a coercion, a composition, anything that can be
 applied to further arguments — `valueArity` is the wrong mechanism and `POSITIONAL` is the right
 one. Note that a `POSITIONAL` entry hard-codes an index into someone else's signature, so it must
 stay guarded on the argument count.
 
 ### 3. Add the entry
 
-Pick the table by what the constant *is*:
+Pick the table by what the constant _is_:
 
-| The constant is | Table |
-| --- | --- |
-| a proposition-forming relation between two values | `RELATIONS` |
+| The constant is                                                    | Table                                  |
+| ------------------------------------------------------------------ | -------------------------------------- |
+| a proposition-forming relation between two values                  | `RELATIONS`                            |
 | an arithmetic operation with a conventional infix or prefix symbol | `BINARY_OPERATORS` / `UNARY_OPERATORS` |
-| a function with a conventional name or notation | `NAMED_FUNCTIONS` |
-| a coercion or composition whose function sits at a fixed index | `POSITIONAL` |
-| a filter appearing in `Filter.Tendsto` | `FILTERS` |
-| a coercion or literal wrapper that should be invisible | `TRANSPARENT` |
-| a named property of a subject | `PREDICATES` |
+| a function with a conventional name or notation                    | `NAMED_FUNCTIONS`                      |
+| a coercion or composition whose function sits at a fixed index     | `POSITIONAL`                           |
+| a filter appearing in `Filter.Tendsto`                             | `FILTERS`                              |
+| a coercion or literal wrapper that should be invisible             | `TRANSPARENT`                          |
+| a named property of a subject                                      | `PREDICATES`                           |
 
 ```ts
 export const NAMED_FUNCTIONS: Record<string, { display: string } & Signature> = {
@@ -1154,7 +1293,7 @@ branch in `packages/classifier/src/classify.ts` is needed or the conclusion stil
 
 ### 4. Make sure it traverses
 
-If you added a new proposition or expression *kind* rather than a table entry, add it to
+If you added a new proposition or expression _kind_ rather than a table entry, add it to
 `walkExpression`/`walkProposition` in `traverse.ts` in the same change. A kind that lowers but
 does not traverse disappears from coverage analysis, which means the backlog stops reporting
 whatever is unreadable inside it. `packages/math-ir/test/propositions.test.ts` exists to catch
@@ -1179,10 +1318,10 @@ will be omitted, not that they will be wrong. It is not free, though. `Real.log`
 precisely because its absence silenced the Landauer bound:
 
 ```ts
-      // `log` of a *literal* is decidable without any hypothesis. This matters:
-      // constants like `log 2` appear in the denominator of real bounds, and
-      // without this the whole bound becomes sign-unknown and ProofLens goes
-      // silent about parameters it could legitimately reason about.
+// `log` of a *literal* is decidable without any hypothesis. This matters:
+// constants like `log 2` appear in the denominator of real bounds, and
+// without this the whole bound becomes sign-unknown and ProofLens goes
+// silent about parameters it could legitimately reason about.
 ```
 
 ### 6. Verify, then re-measure

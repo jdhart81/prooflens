@@ -25,16 +25,6 @@ visual explanation + exploration
 human mathematical understanding
 ```
 
-<p align="center">
-  <img src="docs/media/prooflens-proof-animation.gif" width="640"
-       alt="Animated dependency graph: the Landauer information-rate bound's proof assembling itself, foundations first, ending at the theorem." />
-  <br/>
-  <em>A real proof building itself in its own dependency order — the Landauer
-  information-rate bound, extracted from Lean, animated by
-  <code>prooflens render --animate</code>. The order is derived from the proof
-  term; only the pacing is a display choice.</em>
-</p>
-
 ---
 
 ## Why this exists
@@ -45,8 +35,9 @@ role of the assumptions. Supported interactive scenes let the reader change inpu
 and follow their effects through the equation and picture.
 
 Conjectures belong here too. An incomplete proof does not prevent a useful visual
-description of its statement. ProofLens labels it unproved: exploring examples
-does not establish that the general claim is true.
+description of its statement. ProofLens marks admitted declarations as statements
+without completed proofs in that artifact: exploring examples does not establish
+that the general claim is true.
 
 Visual understanding is the primary experience. Proof status and provenance keep
 that explanation honest; specialized certificate tools are secondary workflows.
@@ -64,6 +55,20 @@ Source previews do not run Lean or verify proofs. Imported extraction metadata i
 verification attestation. Unsupported syntax and mathematical forms remain explicit gaps.
 Start with the [own-statement walkthrough](docs/quickstart.md#explore-a-conjecture).
 
+## OpenAI mathematics example
+
+The Seymour graph explorer follows the pinned `openai/math` definitions of first
+and second neighborhoods. Choose a small graph, edit arrow directions, inspect
+each vertex, and save an example with source provenance. Start the local browser
+app with `pnpm dev:web`, then open `http://localhost:5173/#seymour`.
+
+The [companion Lean specification](examples/openai-math/seymour/README.md) checks
+that its definitions match the released target. Independent TypeScript tests
+compare all 59,809 oriented graphs with one to five vertices against a
+shortest-path oracle. These checks support finite example calculations; they do
+not verify the general conjecture or OpenAI's released solution. The companion
+uses Lean 4.24.0; the upstream 4.34.1 environment has not been reproduced.
+
 ## What v0.1 does
 
 Point it at a Lean 4 declaration and it will show you, in the infoview next to
@@ -73,17 +78,19 @@ your code:
 - a mathematical rendering of the conclusion (`N / t ≤ P · D / (kB · T · log 2)`);
 - what kind of statement it is — an upper bound, a monotonicity property, a sign
   fact, a definition, an equivalence;
-- **which of the stated hypotheses the proof actually uses**;
+- **which stated hypotheses occur nowhere in a completed extracted proof term,
+  later hypothesis types, or the conclusion**; admitted or unavailable proof terms
+  produce no assumption-use findings;
 - how the bound responds to each parameter, where that follows from the
   hypotheses;
-- a generated figure — optionally **animated**: dependency graphs build
-  foundations-first to the conclusion in the proof's own dependency order,
-  limit curves trace onto their asymptote (`prooflens render --animate`);
-
-  <img src="docs/media/prooflens-limit.gif" width="420" alt="A limit curve tracing onto its asymptote" /> <img src="docs/media/prooflens-assumption-sensitivity.gif" width="420" alt="Assumption-sensitivity figure animating: used hypotheses connect to the conclusion, unused ones stay detached" />
-
-- what the proof rests on: its local dependency graph, its axioms, and whether
-  it reaches `sorry`;
+- a generated figure — optionally **animated**: declaration-reference graphs
+  appear in increasing local-reference depth, and illustrative limit curves trace
+  toward their asymptote (`prooflens render --animate`). Appearance order follows
+  the displayed structure; pacing is a display choice, and neither reconstructs
+  proof steps;
+- local declaration references from statements and bodies, when available;
+  these references do not distinguish proof use from statement use;
+- the declaration's axiom dependencies and whether its proof reaches `sorry`;
 - an optional, source-pinned [TorchLean adapter](docs/torchlean-adapter.md) that explains neural
   robustness margins and carries an exact-real kernel certificate for its two displayed examples;
 - a versioned [research-paper packet importer](docs/paper-packets.md) that binds certificate-required

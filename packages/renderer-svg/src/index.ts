@@ -247,9 +247,9 @@ function dispatch(type: VisualType | string, spec: VisualSpec, ctx: RenderContex
 /** Plain-language descriptions of what each figure shows. */
 const TYPE_DESCRIPTION: Record<string, string> = {
   "upper-bound-plot":
-    "a horizontal number line showing which values the bounded quantity is permitted to take and which the theorem rules out",
+    "a horizontal number line showing the ranges permitted and excluded by the stated bound",
   "lower-bound-plot":
-    "a horizontal number line showing which values the bounded quantity is permitted to take and which the theorem rules out",
+    "a horizontal number line showing the ranges permitted and excluded by the stated bound",
   "number-line":
     "a horizontal number line with the marked value and the regions on either side of it",
   "monotonicity-plot":
@@ -259,11 +259,11 @@ const TYPE_DESCRIPTION: Record<string, string> = {
   "assumption-sensitivity":
     "two columns of boxes: the theorem's stated hypotheses on the left, the conclusion on the right, with a connector drawn for each hypothesis the proof term actually uses",
   "dependency-graph":
-    "a layered graph of the declarations this proof references, with arrows pointing from each declaration to what it depends on",
+    "a layered graph of declaration references in statements and bodies, with arrows pointing from each declaration to a referenced declaration; proof-only use is not distinguished",
   "implication-graph": "a layered graph showing which statement follows from which",
   "relationship-diagram": "a layered graph of the elements and how they relate",
   "expression-tree":
-    "the theorem's formal structure: the conclusion, with the hypotheses that lead to it listed beneath",
+    "the statement's formal structure: the conclusion, with its stated hypotheses listed beneath",
 };
 
 /**
@@ -295,6 +295,10 @@ function describe(spec: VisualSpec): string {
     parts.push(
       `${unused.length} of the stated hypotheses (${unused.map((e) => e.label).join(", ")}) are never used by the proof.`,
     );
+  }
+
+  for (const warning of spec.annotations.filter((a) => a.kind === "warning")) {
+    parts.push(warning.text);
   }
 
   parts.push(`Why this figure: ${spec.rationale}`);

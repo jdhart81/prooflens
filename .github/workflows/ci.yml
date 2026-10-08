@@ -133,6 +133,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
 
+      - name: Check Seymour definitions against the pinned OpenAI target
+        run: pnpm verify:seymour-lean --receipt /tmp/ci.seymour-lean-receipt.json
+
       # Extraction runs through Lean's own frontend (see ADR 0001), which is the
       # only path guaranteed to produce full notation fidelity.
       - name: Extract Formal IR from the corpus

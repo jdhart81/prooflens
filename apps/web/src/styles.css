@@ -2998,42 +2998,583 @@ summary {
 }
 
 /* Own-statement workflow and equation-driven mathematical experiments. */
-.input-panel { margin-bottom: 1.2rem; }
-.input-panel > summary { font-size: 1.05rem; }
-.input-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; margin: .8rem 0; }
-.input-toolbar button { padding: .55rem .9rem; border: 1px solid #64748b; border-radius: 6px; background: #23425c; color: #f1f5f9; cursor: pointer; font: inherit; }
-.input-toolbar button.button-secondary { background: transparent; color: inherit; }
-.input-toolbar button:disabled { opacity: .5; cursor: default; }
-.input-toolbar label { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
-.file-picker input { max-width: 240px; }
-.input-source-label { display: block; margin: .75rem 0 .4rem; font-weight: 600; }
-.source-input { width: 100%; box-sizing: border-box; resize: vertical; background: #101925; color: #e2e8f0; border: 1px solid #64748b; border-radius: 7px; padding: .75rem; font: 13px/1.5 ui-monospace, monospace; }
-.input-help { font-size: .8rem; line-height: 1.6; opacity: .85; }
-.input-help a { color: inherit; text-decoration: underline; }
-.input-error { padding: .75rem; border-left: 3px solid #ef4444; white-space: pre-wrap; overflow-wrap: anywhere; }
-.input-notice, .import-status { padding: .7rem 1rem; border-left: 3px solid #d6a94d; overflow-wrap: anywhere; }
-.math-exploration { padding: 1.1rem; }
-.exploration-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; flex-wrap: wrap; }
-.exploration-heading h3 { margin: 0; font-size: 1.15rem; }
-.illustration-label { font-size: .72rem; border: 1px solid #64748b; border-radius: 20px; padding: .25rem .55rem; }
-.exploration-narrative { line-height: 1.65; }
-.exploration-formula { font: 1.12rem/1.6 ui-monospace, monospace; overflow-wrap: anywhere; padding: .8rem; background: #64748b16; border-radius: 6px; }
-.exploration-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: .7rem; }
-.exploration-controls label { display: flex; flex-direction: column; gap: .3rem; min-width: 0; }
-.exploration-controls input, .plot-range input { width: 100%; box-sizing: border-box; min-width: 0; padding: .45rem; border: 1px solid #64748b; border-radius: 5px; background: transparent; color: inherit; font: inherit; }
-.exploration-result { margin: 1rem 0; padding: .8rem 1rem; border-left: 3px solid #6a9c84; background: #6a9c8410; line-height: 1.6; }
-.exploration-result--outside { border-color: #d6a94d; background: #d6a94d10; }
-.exploration-result p { margin: .35rem 0; }
-.exploration-chart { width: 100%; height: auto; display: block; }
-.plot-range { display: flex; gap: .7rem; margin: .8rem 0; }
-.plot-range label { max-width: 150px; display: flex; flex-direction: column; gap: .25rem; font-size: .8rem; }
-.axis-picker, .fraction-control { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; margin: .9rem 0; font-size: .9rem; }
-.axis-picker select, .input-toolbar select { padding: .4rem; background: #101925; color: #e2e8f0; border: 1px solid #64748b; border-radius: 5px; }
-.assumption-results { list-style: none; padding: 0; font-size: .85rem; }
-.assumption-results li { display: flex; justify-content: space-between; gap: 1rem; padding: .4rem 0; border-bottom: 1px solid #64748b44; }
-.assumption-results li span { overflow-wrap: anywhere; }
-.assumption-results b { white-space: nowrap; }
-.plot-empty { border: 1px dashed #64748b; padding: 2rem 1rem; }
-@media (max-width: 650px) { .math-exploration { padding: .75rem; } .exploration-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); } .input-toolbar { align-items: stretch; } }
-.supporting-figures { border-top: 1px solid #64748b44; padding: .8rem 1rem; }
-.supporting-figures > summary { cursor: pointer; font-size: .85rem; }
+.input-panel {
+  margin-bottom: 1.2rem;
+}
+.input-panel > summary {
+  font-size: 1.05rem;
+}
+.input-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.8rem 0;
+}
+.input-toolbar button {
+  padding: 0.55rem 0.9rem;
+  border: 1px solid #64748b;
+  border-radius: 6px;
+  background: #23425c;
+  color: #f1f5f9;
+  cursor: pointer;
+  font: inherit;
+}
+.input-toolbar button.button-secondary {
+  background: transparent;
+  color: inherit;
+}
+.input-toolbar button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.input-toolbar label {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.file-picker input {
+  max-width: 240px;
+}
+.input-source-label {
+  display: block;
+  margin: 0.75rem 0 0.4rem;
+  font-weight: 600;
+}
+.source-input {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  background: #101925;
+  color: #e2e8f0;
+  border: 1px solid #64748b;
+  border-radius: 7px;
+  padding: 0.75rem;
+  font:
+    13px/1.5 ui-monospace,
+    monospace;
+}
+.input-help {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+.input-help a {
+  color: inherit;
+  text-decoration: underline;
+}
+.input-error {
+  padding: 0.75rem;
+  border-left: 3px solid #ef4444;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.input-notice,
+.import-status {
+  padding: 0.7rem 1rem;
+  border-left: 3px solid #d6a94d;
+  overflow-wrap: anywhere;
+}
+.math-exploration {
+  padding: 1.1rem;
+}
+.exploration-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+.exploration-heading h3 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+.illustration-label {
+  font-size: 0.72rem;
+  border: 1px solid #64748b;
+  border-radius: 20px;
+  padding: 0.25rem 0.55rem;
+}
+.exploration-narrative {
+  line-height: 1.65;
+}
+.exploration-formula {
+  font:
+    1.12rem/1.6 ui-monospace,
+    monospace;
+  overflow-wrap: anywhere;
+  padding: 0.8rem;
+  background: #64748b16;
+  border-radius: 6px;
+}
+.exploration-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.7rem;
+}
+.exploration-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+.exploration-controls input,
+.plot-range input {
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 0.45rem;
+  border: 1px solid #64748b;
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.exploration-result {
+  margin: 1rem 0;
+  padding: 0.8rem 1rem;
+  border-left: 3px solid #6a9c84;
+  background: #6a9c8410;
+  line-height: 1.6;
+}
+.exploration-result--outside {
+  border-color: #d6a94d;
+  background: #d6a94d10;
+}
+.exploration-result p {
+  margin: 0.35rem 0;
+}
+.exploration-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.plot-range {
+  display: flex;
+  gap: 0.7rem;
+  margin: 0.8rem 0;
+}
+.plot-range label {
+  max-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+}
+.axis-picker,
+.fraction-control {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0.9rem 0;
+  font-size: 0.9rem;
+}
+.axis-picker select,
+.input-toolbar select {
+  padding: 0.4rem;
+  background: #101925;
+  color: #e2e8f0;
+  border: 1px solid #64748b;
+  border-radius: 5px;
+}
+.assumption-results {
+  list-style: none;
+  padding: 0;
+  font-size: 0.85rem;
+}
+.assumption-results li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #64748b44;
+}
+.assumption-results li span {
+  overflow-wrap: anywhere;
+}
+.assumption-results b {
+  white-space: nowrap;
+}
+.plot-empty {
+  border: 1px dashed #64748b;
+  padding: 2rem 1rem;
+}
+@media (max-width: 650px) {
+  .math-exploration {
+    padding: 0.75rem;
+  }
+  .exploration-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .input-toolbar {
+    align-items: stretch;
+  }
+}
+.supporting-figures {
+  border-top: 1px solid #64748b44;
+  padding: 0.8rem 1rem;
+}
+.supporting-figures > summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.workspace-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1.5rem;
+}
+.workspace-nav a {
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  text-decoration: none;
+}
+.workspace-nav a[aria-current="page"] {
+  background: var(--selected-bg);
+  border-color: var(--selected-border);
+  font-weight: 650;
+}
+.seymour {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.seymour-heading {
+  max-width: 850px;
+}
+.seymour-heading h2 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  line-height: 1.2;
+  margin: 0.4rem 0 0.8rem;
+}
+.seymour-heading > p {
+  font-size: 1rem;
+}
+.seymour-eyebrow {
+  color: var(--text-dim);
+  font-size: 0.8rem !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.seymour-boundary {
+  padding: 0.8rem 1rem;
+  background: var(--surface-2);
+  border-left: 3px solid var(--border-strong);
+  border-radius: 0.25rem;
+}
+.seymour button,
+.seymour select {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 0.4rem;
+  padding: 0.55rem 0.7rem;
+}
+.seymour button {
+  cursor: pointer;
+}
+.seymour button:hover {
+  background: var(--surface-2);
+  border-color: var(--selected-border);
+}
+.seymour-presets {
+  margin: 1.4rem 0;
+}
+.seymour-presets > span {
+  display: block;
+  font-weight: 650;
+  margin-bottom: 0.5rem;
+}
+.seymour-presets__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.seymour-note {
+  color: var(--text-dim);
+  min-height: 1.5em;
+}
+.seymour-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+.seymour .panel {
+  padding: 1.2rem;
+  min-width: 0;
+}
+.seymour-panel-heading {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.seymour-panel-heading h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.seymour-panel-heading label {
+  white-space: nowrap;
+  color: var(--text-dim);
+}
+.seymour-panel-heading select {
+  margin-left: 0.35rem;
+}
+.seymour-canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.5rem 0;
+  color: var(--text-dim);
+}
+.seymour-edge {
+  stroke: var(--text-faint);
+  stroke-width: 2.5;
+  color: var(--text-faint);
+}
+.seymour-edge--first {
+  stroke: #2563eb;
+  color: #2563eb;
+  stroke-width: 3;
+}
+.seymour-edge--second {
+  stroke: #d97706;
+  color: #d97706;
+  stroke-width: 3;
+}
+.seymour-vertex {
+  cursor: pointer;
+}
+.seymour-vertex circle {
+  fill: var(--surface);
+  stroke: var(--border-strong);
+  stroke-width: 2;
+}
+.seymour-vertex text {
+  fill: var(--text);
+  font-size: 19px;
+  font-weight: 650;
+  pointer-events: none;
+}
+.seymour-vertex--selected circle {
+  fill: #6d28d9;
+  stroke: #6d28d9;
+  stroke-width: 4;
+}
+.seymour-vertex--selected text {
+  fill: white;
+}
+.seymour-vertex--first circle {
+  fill: #dbeafe;
+  stroke: #2563eb;
+}
+.seymour-vertex--second circle {
+  fill: #ffedd5;
+  stroke: #c2410c;
+}
+.seymour-vertex--first text,
+.seymour-vertex--second text {
+  fill: #172033;
+}
+.seymour-vertex:focus {
+  outline: none;
+}
+.seymour-vertex:focus-visible circle {
+  stroke: var(--focus);
+  stroke-width: 6;
+}
+.seymour-vertex text.seymour-vertex-check {
+  font-size: 13px;
+  font-weight: 500;
+  fill: var(--text-dim);
+}
+.seymour-legend {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  gap: 0.5rem 1rem;
+  padding: 0;
+  margin: 0.3rem 0;
+  font-size: 0.8rem;
+}
+.seymour-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.seymour-dot {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+}
+.seymour-dot--selected {
+  background: #6d28d9;
+}
+.seymour-dot--first {
+  background: #2563eb;
+}
+.seymour-dot--second {
+  background: #d97706;
+}
+.seymour-small {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+.seymour-counts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2rem minmax(0, 1fr);
+  margin: 1.4rem 0;
+  align-items: center;
+}
+.seymour-count {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.seymour-count strong {
+  font-size: 2.8rem;
+  line-height: 1.1;
+}
+.seymour-count--first strong {
+  color: #2563eb;
+}
+.seymour-count--second strong {
+  color: #c2410c;
+}
+.seymour-count code {
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+.seymour-comparator {
+  font-size: 1.8rem;
+  text-align: center;
+}
+.seymour-result {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 0.7rem;
+  background: var(--surface-2);
+  border-radius: 0.4rem;
+  margin-bottom: 0;
+}
+.seymour-result--good {
+  font-weight: 650;
+}
+.seymour-definitions {
+  margin: 0;
+}
+.seymour-definitions dt {
+  font-weight: 650;
+  margin: 0.8rem 0 0.2rem;
+}
+.seymour-definitions dd {
+  margin: 0;
+  color: var(--text-dim);
+}
+.seymour-neighborhood h4 {
+  margin: 1.4rem 0 0.6rem;
+  font-size: 0.9rem;
+}
+.seymour-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+.seymour-table th,
+.seymour-table td {
+  padding: 0.35rem;
+  border-bottom: 1px solid var(--border);
+}
+.seymour-table thead th {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+.seymour-table button {
+  padding: 0.3rem 0.8rem;
+}
+.seymour-row--selected {
+  background: var(--selected-bg);
+}
+.seymour-editor {
+  margin-top: 1rem;
+}
+.seymour-editor > p {
+  color: var(--text-dim);
+}
+.seymour-pairs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.seymour-pairs button {
+  min-width: 5rem;
+}
+.seymour-pairs button.seymour-pair--active {
+  border-color: var(--selected-border);
+  background: var(--selected-bg);
+  font-weight: 650;
+}
+.seymour-evidence {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface);
+}
+.seymour-evidence summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+.seymour-evidence > p {
+  max-width: 85ch;
+}
+.seymour-source {
+  padding: 0.8rem;
+  background: var(--surface-2);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.8rem;
+}
+.seymour-provenance {
+  font-size: 0.8rem;
+}
+.seymour-provenance dt {
+  font-weight: 650;
+  margin-top: 0.7rem;
+}
+.seymour-provenance dd {
+  margin: 0.2rem 0;
+  overflow-wrap: anywhere;
+}
+@media (prefers-color-scheme: dark) {
+  .seymour-count--first strong {
+    color: #93c5fd;
+  }
+  .seymour-count--second strong {
+    color: #fdba74;
+  }
+}
+@media (max-width: 760px) {
+  .seymour-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .seymour .panel {
+    padding: 1rem;
+  }
+  .seymour-heading > p {
+    font-size: 0.95rem;
+  }
+  .seymour-presets__buttons button {
+    flex: 1 1 10rem;
+  }
+  .workspace-nav a {
+    flex: 1 1 12rem;
+    text-align: center;
+  }
+}

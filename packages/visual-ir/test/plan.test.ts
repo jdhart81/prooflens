@@ -1160,7 +1160,7 @@ describe("dependency graph specs", () => {
       .flatMap((p) => p.specsWithGraph)
       .filter((s) => s.type === "dependency-graph")) {
       expect(spec.annotations.map((a) => a.text).join(" ")).toMatch(
-        /further dependencies lie outside the extracted modules/,
+        /Across the entire extraction, .* declaration references lie outside the extracted modules/,
       );
     }
   });

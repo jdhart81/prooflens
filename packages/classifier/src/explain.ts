@@ -181,7 +181,13 @@ export function explain(
 
   // --- Assumptions -------------------------------------------------------
   const sensitivity = classifications.find((c) => c.payload.kind === "assumption-sensitivity");
-  if (sensitivity && sensitivity.payload.kind === "assumption-sensitivity") {
+  if (
+    !theorem.trust.usesSorry &&
+    theorem.trust.proofTermAvailable &&
+    theorem.hypotheses.every((h) => h.usage.proofTermAvailable) &&
+    sensitivity?.payload.kind === "assumption-sensitivity" &&
+    sensitivity.payload.data.proofTermAvailable
+  ) {
     const { unusedInProof, used } = sensitivity.payload.data;
     const text =
       unusedInProof.length === 0
@@ -242,8 +248,8 @@ export function explain(
     layers.push(
       layer(
         "trust",
-        "Not proved",
-        "This declaration's proof reaches `sorryAx`. Nothing about it has been verified, and every reading below is about the statement, not about a theorem.",
+        "Admitted declaration",
+        "This extracted declaration reaches `sorryAx` and does not establish its statement. These readings describe the statement; a completed proof may exist in another artifact.",
         "derived",
         RULES.TRUST,
         theorem,

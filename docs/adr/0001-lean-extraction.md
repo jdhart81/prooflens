@@ -17,7 +17,7 @@ Three constraints shaped the decision.
    without any language model.
 2. Invariant 6 requires an intermediate representation rich enough that later
    stages can be rewritten without going back to Lean source.
-3. The extractor must work against *any* Lean project, not only ours, which
+3. The extractor must work against _any_ Lean project, not only ours, which
    rules out anything that depends on mathlib being present.
 
 ## Options considered
@@ -80,7 +80,7 @@ occurs in the elaborated proof term, in any later binder's type, or in the
 conclusion. A hypothesis that occurs in none of the three was stated but never
 used by this proof.
 
-This is deliberately a *syntactic occurrence check on the elaborated term*, and
+This is deliberately a _syntactic occurrence check on the elaborated term_, and
 its limits are stated wherever it is surfaced: it is a fact about one proof, not
 about mathematical necessity. A different proof of the same statement may need
 the hypothesis. It powers ProofLens's assumption-sensitivity view, which is
@@ -89,7 +89,7 @@ ADR 0002 for why it became the flagship rather than the plots.
 
 ## Two runners, and why the IR reports which one ran
 
-The extraction *logic* is one library. It can be driven two ways.
+The extraction _logic_ is one library. It can be driven two ways.
 
 **The frontend path (reference).** `#prooflens_export "out.json" Some.Module`
 is a Lean command. The ProofLens CLI generates a three-line driver file that
@@ -129,7 +129,7 @@ report `notation`. The CLI uses it by default.
   fine for the infoview widget, which extracts a single declaration plus its
   same-module dependency closure (`Extract/Focus.lean`) rather than a whole
   module.
-- Only the *final proof term* is visible. Tactic structure, intermediate goals,
+- Only the _final proof term_ is visible. Tactic structure, intermediate goals,
   and proof-state evolution are not extracted in v0.1. Adding them is where
   LeanDojo becomes the right dependency rather than a rejected one.
 - Adding a second proof assistant means writing a new extractor that emits the
@@ -141,6 +141,14 @@ report `notation`. The CLI uses it by default.
   mathlib-backed theorem, most of them are library lemmas outside the extracted
   modules; ProofLens counts those and says how many rather than drawing a graph
   that implies completeness.
+
+  **Implementation clarification, 2026-10-07:** the extractor combines constants from
+  declaration types and values, when values are available. The dependency field includes
+  statement and definition-body references as well as proof references, without separating
+  their roles. Current graph captions say "Declaration references"; the outside-reference
+  count covers the entire extraction. Animation follows displayed reference layers, not
+  the chronology of proof steps.
+
 - `Expr` is transcribed but not normalised. Two definitionally equal statements
   written differently produce different trees, and ProofLens will treat them as
   different. Definitional unfolding is a v0.2+ question.

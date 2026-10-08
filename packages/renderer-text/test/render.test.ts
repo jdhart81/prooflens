@@ -341,7 +341,9 @@ describe("monotonicity", () => {
   });
 
   it("says the shape is arbitrary", () => {
-    expect(renderText(monotonicitySpec())).toContain("one arbitrary function");
+    expect(renderText(monotonicitySpec())).toContain("illustrate the stated order property");
+    expect(renderText(monotonicitySpec())).toContain("shape is a display choice");
+    expect(renderText(monotonicitySpec())).not.toContain("proved order property");
     expect(renderText(monotonicitySpec())).toContain("u ≤ v ⟹ f u ≤ f v");
   });
 });

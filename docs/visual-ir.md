@@ -2,7 +2,7 @@
 
 ## Renderer independence
 
-VisualIR describes *what to show*, never *how to draw it*. The type file states the rule and the
+VisualIR describes _what to show_, never _how to draw it_. The type file states the rule and the
 reason:
 
 ```ts
@@ -35,11 +35,11 @@ anything with.
 
 Logical positions are the honest encoding of what the planner does know:
 
-- For plot-like figures, `x`/`y` in `[0, 1]` say *which side of the marker* something lies on.
+- For plot-like figures, `x`/`y` in `[0, 1]` say _which side of the marker_ something lies on.
   `planBound` puts the bound at `x: 0.5` and the bounded quantity at `x: 0.32` for an upper bound
   and `x: 0.68` for a lower bound. Those three numbers carry exactly one bit of real content: the
   ordering.
-- For graph-like figures, `layer` and `order` say *what comes before what*. `planDependencies`
+- For graph-like figures, `layer` and `order` say _what comes before what_. `planDependencies`
   sets `layer` to the node's `depth`, which is the length of the longest chain of local
   dependencies below it, computed in `dependencyGraph`. `planAssumptionSensitivity` puts every
   hypothesis on `layer: 0` and the conclusion on `layer: 1`.
@@ -68,8 +68,8 @@ viewBox and lays layered graphs out in columns; `renderer-text` maps the same `[
 character cells:
 
 ```ts
-  const col = (p: number | undefined, fallback = 0.5): number =>
-    Math.round(clamp01(p, fallback) * (span - 1));
+const col = (p: number | undefined, fallback = 0.5): number =>
+  Math.round(clamp01(p, fallback) * (span - 1));
 ```
 
 Both are correct because neither is claiming anything the spec did not say. The SVG renderer even
@@ -94,19 +94,19 @@ export type VisualType =
   | "text-diagram";
 ```
 
-| Type | Shows | Emitted by |
-| --- | --- | --- |
-| `upper-bound-plot` | A schematic axis with the bound marked, the region the bounded quantity may occupy, and the region the theorem rules out. | `planBound(theorem, c, "upper")` |
-| `lower-bound-plot` | The same figure mirrored: the permitted region lies to the right of the bound. | `planBound(theorem, c, "lower")` |
-| `number-line` | Zero marked, with the quantity on one side of it. The sign-fact figure. | `planPositivity` |
-| `monotonicity-plot` | A schematic curve with its direction of travel, plus the order relation the predicate asserts (`u ≤ v ⟹ f u ≤ f v`). | `planMonotonicity` |
-| `limit-plot` | Either a dotted line at the limit value with a curve closing on it, or, for a divergence, a curve leaving the frame in the direction the target filter names. | `planLimit` |
-| `relationship-diagram` | Inputs on one layer, the quantity they compute on the next: what a value is built out of. | `planFunctionalRelationship` |
-| `dependency-graph` | The declarations this proof term references, layered by dependency depth, plus a count of the edges outside the extraction. | `planDependencies` |
-| `implication-graph` | Two propositions and the arrow between them, `→` or `↔`. | `planImplication` |
-| `assumption-sensitivity` | Every stated hypothesis as a node, connected to the conclusion when the proof term uses it and detached when it does not. | `planAssumptionSensitivity` |
-| `expression-tree` | The conclusion with the hypotheses that lead to it. The structure-preserving fallback. | `planExpressionTree` |
-| `text-diagram` | Reserved for a spec whose content is prose. | Nothing in v0.1; falls through to the generic layout in both renderers |
+| Type                     | Shows                                                                                                                                                                                                                                        | Emitted by                                                             |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `upper-bound-plot`       | A schematic axis with the bound marked, the region the bounded quantity may occupy, and the region the theorem rules out.                                                                                                                    | `planBound(theorem, c, "upper")`                                       |
+| `lower-bound-plot`       | The same figure mirrored: the permitted region lies to the right of the bound.                                                                                                                                                               | `planBound(theorem, c, "lower")`                                       |
+| `number-line`            | Zero marked, with the quantity on one side of it. The sign-fact figure.                                                                                                                                                                      | `planPositivity`                                                       |
+| `monotonicity-plot`      | A schematic curve with its direction of travel, plus the order relation the predicate asserts (`u ≤ v ⟹ f u ≤ f v`).                                                                                                                         | `planMonotonicity`                                                     |
+| `limit-plot`             | Either a dotted line at the limit value with a curve closing on it, or, for a divergence, a curve leaving the frame in the direction the target filter names.                                                                                | `planLimit`                                                            |
+| `relationship-diagram`   | Inputs on one layer, the quantity they compute on the next: what a value is built out of.                                                                                                                                                    | `planFunctionalRelationship`                                           |
+| `dependency-graph`       | Declaration references from statements and bodies, when available, layered by local-reference depth. Proof-only use is not distinguished. The outside-reference count covers the entire extraction, even when a local subgraph is displayed. | `planDependencies`                                                     |
+| `implication-graph`      | Two propositions and the arrow between them, `→` or `↔`.                                                                                                                                                                                     | `planImplication`                                                      |
+| `assumption-sensitivity` | Hypothesis occurrence findings for a completed, available extracted proof. Hypotheses reported unused are detached; admitted or unavailable proof terms produce no such figure.                                                              | `planAssumptionSensitivity`                                            |
+| `expression-tree`        | The conclusion with its stated hypotheses. Admitted or unavailable proof terms leave hypothesis states neutral. Connectors show statement structure and do not establish proof use.                                                          | `planExpressionTree`                                                   |
+| `text-diagram`           | Reserved for a spec whose content is prose.                                                                                                                                                                                                  | Nothing in v0.1; falls through to the generic layout in both renderers |
 
 Over the 35 declarations in `examples/corpus.formal-ir.json` the planner produces 75 figures:
 27 `assumption-sensitivity`, 13 `upper-bound-plot`, 12 `dependency-graph`, 6 `monotonicity-plot`,
@@ -121,7 +121,7 @@ Over the 679-declaration mathlib slice it produces 1,490, in a noticeably differ
 
 ### `limit-plot`
 
-Worth singling out because it is the one figure type whose *shape* is a claim rather than a
+Worth singling out because it is the one figure type whose _shape_ is a claim rather than a
 decoration. `planLimit` splits on `convergent`, computed by `classifyLimit` from the target
 filter's kind:
 
@@ -136,9 +136,9 @@ function to it, and a tick on the vertical axis. A divergence gets neither, and 
 entity positioned at the edge the values run toward:
 
 ```ts
-    // Where the values run off to, as a *position* rather than as prose. A
-    // renderer that had to substring-match "decreases without bound" would draw
-    // upward the day a new at-bot-flavoured filter is worded differently.
+// Where the values run off to, as a *position* rather than as prose. A
+// renderer that had to substring-match "decreases without bound" would draw
+// upward the day a new at-bot-flavoured filter is worded differently.
 ```
 
 That is the bottom-origin `y` convention doing real work: `y: target.kind === "at-bot" ? 0 : 1`
@@ -165,26 +165,26 @@ export interface VisualEntity {
 }
 ```
 
-| Field | Meaning |
-| --- | --- |
-| `id` | Unique within the spec. Referenced by `VisualRelationship.from`/`to` and `VisualAnnotation.target`. Renderers derive element ids from it, which is part of what makes SVG output byte-identical across runs. |
-| `kind` | One of `quantity`, `bound`, `region`, `function`, `node`, `hypothesis`, `conclusion`, `label`. Renderers switch on this for shape: `pushNumberLine` finds the axis marker with `spec.entities.find((e) => e.kind === "bound")` and fills the axis from the entities with `kind === "region"`. |
-| `label` | The primary text. Usually a rendered expression (`renderExpression(bound)`) or a hypothesis symbol. |
-| `detail` | Secondary text: a hypothesis statement, a declaration kind, or an annotation's meaning and units. `planBound` fills it from `@prooflens.var` when the bounded quantity is an annotated variable. |
-| `position` | `LogicalPosition`: `x`/`y` in `[0,1]` for plots, `layer`/`order` for graphs. Optional, and renderers must survive it being absent or `NaN`. |
-| `emphasis` | `primary`, `secondary`, or `muted`. A visual weighting hint, not a claim. |
-| `state` | `neutral`, `used`, `unused`, `warning`, `excluded`, `permitted`. This one *is* a claim: `unused` means the proof term does not mention this hypothesis, and `excluded` means the theorem rules this region out. |
-| `epistemic` | The standing of this element specifically. Required. |
-| `sourceRef` | Where this element came from, including the structural `path` into the expression tree. This is what lets a UI answer "why are you showing me this?" by highlighting the exact subterm. |
+| Field       | Meaning                                                                                                                                                                                                                                                                                       |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`        | Unique within the spec. Referenced by `VisualRelationship.from`/`to` and `VisualAnnotation.target`. Renderers derive element ids from it, which is part of what makes SVG output byte-identical across runs.                                                                                  |
+| `kind`      | One of `quantity`, `bound`, `region`, `function`, `node`, `hypothesis`, `conclusion`, `label`. Renderers switch on this for shape: `pushNumberLine` finds the axis marker with `spec.entities.find((e) => e.kind === "bound")` and fills the axis from the entities with `kind === "region"`. |
+| `label`     | The primary text. Usually a rendered expression (`renderExpression(bound)`) or a hypothesis symbol.                                                                                                                                                                                           |
+| `detail`    | Secondary text: a hypothesis statement, a declaration kind, or an annotation's meaning and units. `planBound` fills it from `@prooflens.var` when the bounded quantity is an annotated variable.                                                                                              |
+| `position`  | `LogicalPosition`: `x`/`y` in `[0,1]` for plots, `layer`/`order` for graphs. Optional, and renderers must survive it being absent or `NaN`.                                                                                                                                                   |
+| `emphasis`  | `primary`, `secondary`, or `muted`. A visual weighting hint, not a claim.                                                                                                                                                                                                                     |
+| `state`     | `neutral`, `used`, `unused`, `warning`, `excluded`, `permitted`. `unused` records no occurrence in a completed extracted proof term, later hypothesis types, or the conclusion. `neutral` makes no proof-use finding. `excluded` denotes values outside the stated bound.                     |
+| `epistemic` | The standing of this element specifically. Required.                                                                                                                                                                                                                                          |
+| `sourceRef` | Where this element came from, including the structural `path` into the expression tree. This is what lets a UI answer "why are you showing me this?" by highlighting the exact subterm.                                                                                                       |
 
 The per-element `epistemic` exists because a figure is not epistemically uniform:
 
 ```ts
-  /**
-   * Epistemic standing of *this element*. A bound's position on an axis is
-   * usually `illustrative` even when the bound itself is `verified`, because
-   * the axis was chosen for legibility.
-   */
+/**
+ * Epistemic standing of *this element*. A bound's position on an axis is
+ * usually `illustrative` even when the bound itself is `verified`, because
+ * the axis was chosen for legibility.
+ */
 ```
 
 `planMonotonicity` is the clearest case. The function entity carries the classification's status
@@ -213,18 +213,18 @@ export interface VisualRelationship {
 `renderer-text` test suite asserts this explicitly:
 
 ```ts
-  it("survives malformed positions and dangling relationship endpoints", () => {
-    const spec = graphSpec();
-    spec.entities[0]!.position = { layer: Number.NaN, order: Number.NaN };
-    spec.relationships.push({
-      id: "dangling",
-      kind: "implies",
-      from: "nope",
-      to: "also-nope",
-      epistemic: "derived",
-    });
-    expect(() => renderText(spec)).not.toThrow();
+it("survives malformed positions and dangling relationship endpoints", () => {
+  const spec = graphSpec();
+  spec.entities[0]!.position = { layer: Number.NaN, order: Number.NaN };
+  spec.relationships.push({
+    id: "dangling",
+    kind: "implies",
+    from: "nope",
+    to: "also-nope",
+    epistemic: "derived",
   });
+  expect(() => renderText(spec)).not.toThrow();
+});
 ```
 
 `state` on a relationship carries the same meaning as on an entity. In
@@ -246,24 +246,24 @@ export interface AxisSpec {
 }
 ```
 
-| Field | Meaning |
-| --- | --- |
-| `id` | Identifier within the spec. `planBound` uses `"value"`; `planMonotonicity` uses `"input"` and `"output"`. |
-| `orientation` | Which way the axis runs. |
-| `label` | Axis label. `planBound` prefers the annotated `meaning` over the raw expression, so an annotated theorem gets "achieved operation rate" rather than "x". |
-| `units` | From `@prooflens.var … units="…"`, when present. |
-| `scale` | `numeric` or `schematic`. See below. |
-| `ticks` | Positions in the same `[0,1]` logical space as `LogicalPosition.x`. `planBound` emits exactly one, at `0.5`, labelled with the bound expression. |
-| `epistemic` | Required. Every axis v0.1 emits is `illustrative`. |
+| Field         | Meaning                                                                                                                                                  |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`          | Identifier within the spec. `planBound` uses `"value"`; `planMonotonicity` uses `"input"` and `"output"`.                                                |
+| `orientation` | Which way the axis runs.                                                                                                                                 |
+| `label`       | Axis label. `planBound` prefers the annotated `meaning` over the raw expression, so an annotated theorem gets "achieved operation rate" rather than "x". |
+| `units`       | From `@prooflens.var … units="…"`, when present.                                                                                                         |
+| `scale`       | `numeric` or `schematic`. See below.                                                                                                                     |
+| `ticks`       | Positions in the same `[0,1]` logical space as `LogicalPosition.x`. `planBound` emits exactly one, at `0.5`, labelled with the bound expression.         |
+| `epistemic`   | Required. Every axis v0.1 emits is `illustrative`.                                                                                                       |
 
 `scale` is the field that keeps a plot from becoming a lie:
 
 ```ts
-  /**
-   * Whether the axis carries real numbers or is purely schematic. Schematic
-   * axes are `illustrative`: positions along them mean "this side of that",
-   * nothing more.
-   */
+/**
+ * Whether the axis carries real numbers or is purely schematic. Schematic
+ * axes are `illustrative`: positions along them mean "this side of that",
+ * nothing more.
+ */
 ```
 
 Renderers act on it. `pushNumberLine` computes `const schematic = axis === undefined || axis.scale === "schematic";` and prints the qualifier in the axis caption and in the key. Every axis
@@ -284,13 +284,13 @@ export interface VisualAnnotation {
 
 `kind` is one of `caption`, `callout`, `warning`, `legend`, `rationale`.
 
-| Kind | Used for |
-| --- | --- |
-| `rationale` | The sentence that justifies the figure. Every planner function emits exactly one, with `id: "rationale"`, mirroring `VisualSpec.rationale`. |
-| `callout` | A specific derived fact about one element, with `target` naming it. `planBound` emits one per sensitivity direction: "Increasing T decreases the bound." |
-| `legend` | The epistemic notice and the caveats. `epistemicNotice` produces the schematic-axis legend; `planAssumptionSensitivity` produces the "a different proof might need them" caveat; `planDependencies` produces the external-dependency count. |
-| `warning` | `planBound` emits one when `theorem.trust.usesSorry`: "This statement is not proved: its proof reaches `sorryAx`." |
-| `caption` | Reserved; nothing in v0.1 emits one. |
+| Kind        | Used for                                                                                                                                                                                                                                    |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rationale` | The sentence that justifies the figure. Every planner function emits exactly one, with `id: "rationale"`, mirroring `VisualSpec.rationale`.                                                                                                 |
+| `callout`   | A specific derived fact about one element, with `target` naming it. `planBound` emits one per sensitivity direction: "Increasing T decreases the bound."                                                                                    |
+| `legend`    | The epistemic notice and the caveats. `epistemicNotice` produces the schematic-axis legend; `planAssumptionSensitivity` produces the "a different proof might need them" caveat; `planDependencies` produces the external-dependency count. |
+| `warning`   | `planBound` emits one when `theorem.trust.usesSorry`: "This statement is not proved: its proof reaches `sorryAx`."                                                                                                                          |
+| `caption`   | Reserved; nothing in v0.1 emits one.                                                                                                                                                                                                        |
 
 ## The epistemic encoding rule
 
@@ -327,8 +327,8 @@ Two rules govern every spec the planner emits, stated in the planner's own heade
       },
 ```
 
-The distinction to hold on to: the *regions* in that figure are `derived`, because "x may lie
-below P / T" is a genuine consequence of the theorem. Only their *drawn extent* is a display
+The distinction to hold on to: the _regions_ in that figure are `derived`, because "x may lie
+below P / T" is a genuine consequence of the theorem. Only their _drawn extent_ is a display
 choice, and that is what the axis's `illustrative` status covers. The planner comments the
 difference where it makes it:
 
@@ -381,17 +381,17 @@ status: illustrative — A display choice. It makes no mathematical claim.
 ## `rationale` is mandatory
 
 ```ts
-  /**
-   * Why this visualization was chosen, in one sentence, naming the evidence.
-   * Required. A figure that cannot explain itself does not ship.
-   */
-  rationale: string;
+/**
+ * Why this visualization was chosen, in one sentence, naming the evidence.
+ * Required. A figure that cannot explain itself does not ship.
+ */
+rationale: string;
 ```
 
 It is a required field on `VisualSpec`, so a spec without one does not typecheck. Both renderers
 print it under a "WHY THIS FIGURE" heading.
 
-The point is that the rationale names *evidence*, not the rule's general description. Compare
+The point is that the rationale names _evidence_, not the rule's general description. Compare
 what the `Rule` says with what the rationale says for the same firing on `simple_upper_bound`:
 
 ```
@@ -412,8 +412,8 @@ or in the conclusion.
 Two planner functions do not take their rationale from a classification, because no
 classification selected them, and both say so explicitly:
 
-- `planDependencies`: "A dependency graph is always available, because it is read directly from
-  the proof term rather than from any recognised statement shape."
+- `planDependencies`: "This graph follows extracted declaration references without interpreting
+  their mathematical role."
 - `planExpressionTree`: the unsupported classification's `reason` when there is one, and
   otherwise "Shown so the statement's structure stays inspectable."
 
@@ -447,11 +447,11 @@ flowchart TD
 ### 1. Assumption sensitivity first, but only when there are unused hypotheses
 
 ```ts
-  // A theorem with a redundant hypothesis is more interesting than its plot.
-  if (sensitivity && hasUnused) {
-    const spec = planAssumptionSensitivity(theorem, sensitivity);
-    if (spec) specs.push(spec);
-  }
+// A theorem with a redundant hypothesis is more interesting than its plot.
+if (sensitivity && hasUnused) {
+  const spec = planAssumptionSensitivity(theorem, sensitivity);
+  if (spec) specs.push(spec);
+}
 ```
 
 This is the one place the planner ranks one figure above another on editorial grounds, and the
@@ -480,7 +480,7 @@ and `definition` reaches a figure indirectly, because `classifyDefinition` co-em
 That last group is not an oversight; it is the recognised-but-not-drawable set.
 `switching_coefficient_ne_zero` classifies cleanly as `distinctness` and gets only its
 assumption-sensitivity and dependency figures, which is the correct outcome: `C · V ^ 2 ≠ 0` says
-where a value is *not*, and a number line marking one excluded point would be a picture of
+where a value is _not_, and a number line marking one excluded point would be a picture of
 almost no information.
 
 #### Only the natural reading of a bound gets a figure
@@ -512,19 +512,30 @@ A theorem where every hypothesis is used still gets the figure, just after its s
 The rationale in that case reads "Every one of the N stated hypotheses occurs in the elaborated
 proof term."
 
+Classification, explanation, and visual planning each guard this analysis: the declaration
+must not reach `sorryAx`, its proof term must be available, and every hypothesis must have
+available occurrence data. Stale classifications cannot bypass those guards. Every view of an
+admitted declaration carries its own warning, including the SVG's accessible description.
+
 ### 4. Dependency graph
 
 Emitted whenever `context.dependencies` is supplied and `subgraphFor(graph, theorem.id)` has more
 than one node. `runPipeline` always supplies it. Twelve of the 35 corpus declarations have a
 local dependency deep enough to draw.
 
+The extractor unions constants from declaration types and values, when values are available.
+Edges therefore include statement, proof, and definition-body references without separating
+their roles. The graph title is "Declaration references". Its external count is the count
+across the entire extraction, not a count for the focused declaration alone. Animated layers
+follow this graph's displayed structure and do not reconstruct the order of proof steps.
+
 ### 5. The structure-preserving fallback
 
 ```ts
-  const unsupported = classifications.find((c) => c.payload.kind === "unsupported");
-  if (specs.length === 0 || unsupported) {
-    specs.push(planExpressionTree(theorem, unsupported));
-  }
+const unsupported = classifications.find((c) => c.payload.kind === "unsupported");
+if (specs.length === 0 || unsupported) {
+  specs.push(planExpressionTree(theorem, unsupported));
+}
 ```
 
 Note the `||`: the fallback is appended whenever there is an `unsupported` classification, even
@@ -592,8 +603,8 @@ their request went unfulfilled, turning a useful signal into noise.
 #### Finding versus preference
 
 ```ts
-  const leadIsFinding = specs[0]?.type === "assumption-sensitivity" || theorem.trust.usesSorry;
-  const target = leadIsFinding ? 1 : 0;
+const leadIsFinding = specs[0]?.type === "assumption-sensitivity" || theorem.trust.usesSorry;
+const target = leadIsFinding ? 1 : 0;
 ```
 
 `target` is the slot the requested figure is moved into: position 0 normally, position 1 when a
@@ -627,7 +638,7 @@ output type. Use `packages/renderer-text` as the smaller model.
 ### The contract
 
 1. **Handle every `VisualType`, including ones you do not know.** A `VisualType` you have never
-   heard of must render as *something*, not throw. Both existing renderers do this with a
+   heard of must render as _something_, not throw. Both existing renderers do this with a
    `default` branch to a generic layout:
 
    ```ts

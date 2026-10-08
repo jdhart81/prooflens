@@ -5240,7 +5240,7 @@ var RULES = {
   },
   DEPENDENCY_GRAPH: {
     id: "GRAPH_DEPENDENCY_001",
-    description: "Edges were read from the constants each declaration's proof term references.",
+    description: "Edges were read from declaration references in statements and bodies, when available; proof-only use is not distinguished.",
     produces: "derived"
   },
   UNSUPPORTED: {
@@ -5727,6 +5727,10 @@ function classifyImplication(theorem) {
 function classifyAssumptionSensitivity(theorem) {
   if (theorem.hypotheses.length === 0)
     return [];
+  if (theorem.trust.usesSorry || !theorem.trust.proofTermAvailable)
+    return [];
+  if (!theorem.hypotheses.every((h) => h.usage.proofTermAvailable))
+    return [];
   const unused = theorem.hypotheses.filter((h) => h.usage.unusedInProof);
   const used = theorem.hypotheses.filter((h) => !h.usage.unusedInProof);
   const proofTermAvailable = theorem.hypotheses.some((h) => h.usage.proofTermAvailable);
@@ -5742,7 +5746,7 @@ function classifyTrust(theorem) {
   if (!usesSorry && unusualAxioms2.length === 0)
     return [];
   return [
-    makeClassification(theorem, RULES.TRUST, { kind: "trust", data: { usesSorry, unusualAxioms: unusualAxioms2 } }, usesSorry ? "The proof term reaches `sorryAx`. This statement has NOT been proved." : `The proof depends on axioms beyond Lean's standard three: ${unusualAxioms2.join(", ")}.`, "axioms")
+    makeClassification(theorem, RULES.TRUST, { kind: "trust", data: { usesSorry, unusualAxioms: unusualAxioms2 } }, usesSorry ? "This extracted declaration does not prove the statement: its proof term reaches `sorryAx`." : `The proof depends on axioms beyond Lean's standard three: ${unusualAxioms2.join(", ")}.`, "axioms")
   ];
 }
 function classifyDefinition(theorem) {
@@ -5919,7 +5923,7 @@ function explain(theorem, classifications, options = {}) {
   }
   layers.push(layer("structural", "What kind of statement this is", structural, "derived", RULES.UPPER_BOUND, theorem));
   const sensitivity = classifications.find((c) => c.payload.kind === "assumption-sensitivity");
-  if (sensitivity && sensitivity.payload.kind === "assumption-sensitivity") {
+  if (!theorem.trust.usesSorry && theorem.trust.proofTermAvailable && theorem.hypotheses.every((h) => h.usage.proofTermAvailable) && sensitivity?.payload.kind === "assumption-sensitivity" && sensitivity.payload.data.proofTermAvailable) {
     const { unusedInProof, used } = sensitivity.payload.data;
     const text2 = unusedInProof.length === 0 ? `All ${used.length} stated hypotheses are used by this proof.` : `${unusedInProof.map((h) => `\`${h.symbol} : ${h.display}\``).join(" and ")} ${unusedInProof.length === 1 ? "is" : "are"} stated but never used by this proof term. That does not mean the hypothesis is mathematically unnecessary \u2014 only that this particular proof does not touch it.`;
     layers.push(layer("assumptions", "Which assumptions did the work", text2, "derived", RULES.ASSUMPTION_SENSITIVITY, theorem));
@@ -5934,7 +5938,7 @@ function explain(theorem, classifications, options = {}) {
     }
   }
   if (theorem.trust.usesSorry) {
-    layers.push(layer("trust", "Not proved", "This declaration's proof reaches `sorryAx`. Nothing about it has been verified, and every reading below is about the statement, not about a theorem.", "derived", RULES.TRUST, theorem));
+    layers.push(layer("trust", "Admitted declaration", "This extracted declaration reaches `sorryAx` and does not establish its statement. These readings describe the statement; a completed proof may exist in another artifact.", "derived", RULES.TRUST, theorem));
   } else if (theorem.trust.unusualAxioms.length > 0) {
     layers.push(layer("trust", "Trust base", `Beyond Lean's standard axioms, this proof depends on: ${theorem.trust.unusualAxioms.join(", ")}.`, "derived", RULES.TRUST, theorem));
   }
@@ -5989,7 +5993,7 @@ function dependencyGraph(doc) {
       declaration: d.name,
       module: d.source?.module ?? null
     })),
-    note: "Edges are the constants each proof term actually references. Dependencies on declarations outside the extracted modules are counted, not drawn."
+    note: "Edges are declaration references from statements and bodies, when available; they do not distinguish proof use from statement use. References outside the extracted modules are counted across the extraction, not drawn."
   });
 }
 function subgraphFor(graph, root) {
@@ -6064,7 +6068,7 @@ function planBound(theorem, classification, direction) {
     annotations.push({
       id: "warning:sorry",
       kind: "warning",
-      text: "This statement is not proved: its proof reaches `sorryAx`.",
+      text: "This extracted declaration is admitted (`sorryAx`) and does not prove its statement. The figure describes the statement.",
       epistemic: "derived"
     });
   }
@@ -6435,6 +6439,8 @@ function planMonotonicity(theorem, classification) {
 function planAssumptionSensitivity(theorem, classification) {
   if (classification.payload.kind !== "assumption-sensitivity")
     return null;
+  if (theorem.trust.usesSorry || !theorem.trust.proofTermAvailable || !theorem.hypotheses.every((h) => h.usage.proofTermAvailable) || !classification.payload.data.proofTermAvailable)
+    return null;
   const { used, unusedInProof } = classification.payload.data;
   const status = classification.claim.status;
   const entities = [];
@@ -6656,7 +6662,7 @@ function planDependencies(theorem, graph) {
   return {
     id: `${theorem.id}:dependencies`,
     type: "dependency-graph",
-    title: "What this proof rests on",
+    title: "Declaration references",
     subtitle: theorem.name.split(".").pop(),
     entities,
     relationships: sub.edges.map((e, i) => ({
@@ -6672,13 +6678,13 @@ function planDependencies(theorem, graph) {
       {
         id: "rationale",
         kind: "rationale",
-        text: "Edges are the declarations this proof term actually references.",
+        text: "Edges show declaration references in statements and bodies, when available. They do not distinguish proof use from statement use.",
         epistemic: "derived"
       },
       {
         id: "external",
         kind: "legend",
-        text: `${sub.externalDependencyCount} further dependencies lie outside the extracted modules and are not drawn.`,
+        text: `Across the entire extraction, ${sub.externalDependencyCount} declaration references lie outside the extracted modules and are not drawn. This is not a count for this local graph alone.`,
         epistemic: "derived"
       }
     ],
@@ -6687,7 +6693,7 @@ function planDependencies(theorem, graph) {
       sources: [refFor(theorem)],
       inputs: [theorem.id]
     },
-    rationale: "A dependency graph is always available, because it is read directly from the proof term rather than from any recognised statement shape."
+    rationale: "This graph follows extracted declaration references without interpreting their mathematical role."
   };
 }
 function planExpressionTree(theorem, classification) {
@@ -6708,7 +6714,7 @@ function planExpressionTree(theorem, classification) {
       label: `${h.symbol} : ${h.display}`,
       position: { layer: 1, order: i },
       emphasis: "secondary",
-      state: !h.usage.proofTermAvailable ? "neutral" : h.usage.unusedInProof ? "unused" : "used",
+      state: theorem.trust.usesSorry || !theorem.trust.proofTermAvailable || !h.usage.proofTermAvailable ? "neutral" : h.usage.unusedInProof ? "unused" : "used",
       epistemic: theorem.conclusion.status,
       sourceRef: refFor(theorem, `binders.${h.symbol}`)
     }))
@@ -6819,6 +6825,18 @@ function planVisuals(theorem, classifications, context = {}) {
   const unsupported = classifications.find((c) => c.payload.kind === "unsupported");
   if (specs.length === 0 || unsupported) {
     specs.push(planExpressionTree(theorem, unsupported));
+  }
+  if (theorem.trust.usesSorry) {
+    for (const spec of specs) {
+      if (spec.annotations.some((a) => a.id === "warning:sorry"))
+        continue;
+      spec.annotations.push({
+        id: "warning:sorry",
+        kind: "warning",
+        text: "This extracted declaration is admitted (`sorryAx`) and does not prove its statement. The figure describes the statement.",
+        epistemic: "derived"
+      });
+    }
   }
   return applyAuthorHint(theorem, specs);
 }
@@ -7468,6 +7486,22 @@ function compileMathExploration(theorem, formal) {
   return blocked("No numerical exploration is available for this expression shape. Its structural explanation remains below.");
 }
 
+// packages/visual-ir/dist/seymour.js
+var SEYMOUR_SOURCE = Object.freeze({
+  repositoryUrl: "https://github.com/openai/math",
+  commit: "adc7f1241b42e322a6451854ab7e4b4c146bf78a",
+  path: "lean/ComparatorChallenges/SeymourSecondNeighborhood.lean",
+  challengeUrl: "https://github.com/openai/math/blob/adc7f1241b42e322a6451854ab7e4b4c146bf78a/lean/ComparatorChallenges/SeymourSecondNeighborhood.lean",
+  scopeUrl: "https://github.com/openai/math/blob/adc7f1241b42e322a6451854ab7e4b4c146bf78a/lean/docs/173.md",
+  blobSha: "70d287c3f831d0698352b144d39cdf29cac6c24b",
+  sourceSha256: "fa4a37831405b3fe7f6a88a2dce8918982195ee1757e05e4623055822d36ca98",
+  firstNeighbors: "OAI.SeymourSecondNeighborhood.firstNeighbors",
+  secondNeighbors: "OAI.SeymourSecondNeighborhood.secondNeighbors",
+  goodVertex: "OAI.SeymourSecondNeighborhood.GoodVertex",
+  statementName: "OAI.SeymourSecondNeighborhood.exists_goodVertex",
+  statementIsPlaceholder: true
+});
+
 // packages/pipeline/src/index.ts
 var PROOFLENS_VERSION = "0.1.0";
 function runPipeline(formal) {
@@ -7621,7 +7655,7 @@ function afterStage(stage) {
 }
 var ANIMATION_LEGEND_ROW = {
   swatch: "none",
-  text: "Order of appearance follows the proof's dependency structure. The pacing is a display choice."
+  text: "Order of appearance follows the figure's displayed structure. The pacing is a display choice."
 };
 function buildAnimationStylesheet(ctx) {
   const targets = ctx.animTargets;
@@ -8330,11 +8364,11 @@ function layoutNumberLine(spec, ctx) {
   }
   legend.push({
     swatch: "permit",
-    text: "Solid band: the range of values the theorem permits."
+    text: "Solid band: the range of values the stated bound permits."
   });
   legend.push({
     swatch: "exclude",
-    text: "Hatched band: values the theorem rules out."
+    text: "Hatched band: values the stated bound excludes."
   });
   if (bound) {
     legend.push(
@@ -8489,7 +8523,7 @@ function layoutMonotonicity(spec, ctx) {
   }
   legend.push({
     swatch: "curve",
-    text: "The curve is one arbitrary function with the proved order property. The theorem constrains the ordering, not the shape."
+    text: "The curve illustrates the stated order property. The statement specifies the ordering; the curve's shape is a display choice."
   });
   if (schematic) {
     legend.push({
@@ -8743,11 +8777,11 @@ function layoutLimit(spec, ctx) {
   if (convergent) {
     legend.push({
       swatch: "asymptote",
-      text: "Dotted horizontal line: the limit value. The curve closes on it and never meets it \u2014 the theorem says the values get arbitrarily close, not that any of them is the limit."
+      text: "Dotted horizontal line: the stated limit value. The curve approaches it without meeting it, illustrating arbitrary closeness rather than equality to the limit."
     });
     legend.push({
       swatch: "curve",
-      text: "The curve is one arbitrary function with the proved limit. The theorem constrains where the values end up, not the path they take to get there."
+      text: "The curve illustrates the stated limit. The statement specifies where the values approach; the curve's path is a display choice."
     });
     legend.push({
       swatch: "arrow",
@@ -9155,20 +9189,21 @@ function layoutExpressionTree(spec, ctx) {
     const boxWidth = inner - 26;
     let lastCenter = y;
     for (const entity of hypotheses) {
-      const used = entity.state !== "unused";
-      const height = hypothesisBoxHeight(entity, boxWidth, used);
+      const used = entity.state === "used";
+      const unused = entity.state === "unused";
+      const height = hypothesisBoxHeight(entity, boxWidth, !unused);
       const hypAnim = ctx.anim({
         kind: used ? "enter" : "fade",
         delay: stageDelay(1)
       });
-      svg += renderHypothesisBox(entity, boxX, y, boxWidth, used, hypAnim);
+      svg += renderHypothesisBox(entity, boxX, y, boxWidth, !unused, hypAnim);
       lastCenter = y + height / 2;
       svg += line(
         spineX,
         lastCenter,
         boxX,
         lastCenter,
-        used ? `pl-edge-used${ctx.anim({ kind: "draw", delay: spineAt, length: boxX - spineX })}` : `pl-edge pl-weak-stroke${ctx.anim({ kind: "fade", delay: spineAt })}`
+        used ? `pl-edge-used${ctx.anim({ kind: "draw", delay: spineAt, length: boxX - spineX })}` : `pl-edge${unused ? " pl-weak-stroke" : ""}${ctx.anim({ kind: "fade", delay: spineAt })}`
       );
       y += height + 10;
     }
@@ -9185,9 +9220,15 @@ function layoutExpressionTree(spec, ctx) {
     );
   }
   legend.push({
-    swatch: "used-box",
-    text: "ProofLens shows a theorem's formal structure even when it cannot interpret the statement. Nothing in this figure is guessed."
+    swatch: "none",
+    text: "Boxes and connectors show the statement's formal structure and its stated assumptions."
   });
+  if (hypotheses.some((h) => h.state === "neutral")) {
+    legend.push({
+      swatch: "none",
+      text: "Proof use has not been analysed for the neutral hypotheses. Their connectors do not claim that a completed proof uses them."
+    });
+  }
   if (hypotheses.some((h) => h.state === "unused")) {
     legend.push({
       swatch: "unused-box",
@@ -9502,16 +9543,16 @@ function dispatch(type, spec, ctx) {
   }
 }
 var TYPE_DESCRIPTION = {
-  "upper-bound-plot": "a horizontal number line showing which values the bounded quantity is permitted to take and which the theorem rules out",
-  "lower-bound-plot": "a horizontal number line showing which values the bounded quantity is permitted to take and which the theorem rules out",
+  "upper-bound-plot": "a horizontal number line showing the ranges permitted and excluded by the stated bound",
+  "lower-bound-plot": "a horizontal number line showing the ranges permitted and excluded by the stated bound",
   "number-line": "a horizontal number line with the marked value and the regions on either side of it",
   "monotonicity-plot": "a schematic curve illustrating the direction in which the function's output moves as its input increases",
   "limit-plot": "a schematic plot of what the function's values do along the given filter: either a dotted line at the limit value with a curve that closes on it without ever meeting it, or, for a divergence, a curve leaving the frame under an arrowhead",
   "assumption-sensitivity": "two columns of boxes: the theorem's stated hypotheses on the left, the conclusion on the right, with a connector drawn for each hypothesis the proof term actually uses",
-  "dependency-graph": "a layered graph of the declarations this proof references, with arrows pointing from each declaration to what it depends on",
+  "dependency-graph": "a layered graph of declaration references in statements and bodies, with arrows pointing from each declaration to a referenced declaration; proof-only use is not distinguished",
   "implication-graph": "a layered graph showing which statement follows from which",
   "relationship-diagram": "a layered graph of the elements and how they relate",
-  "expression-tree": "the theorem's formal structure: the conclusion, with the hypotheses that lead to it listed beneath"
+  "expression-tree": "the statement's formal structure: the conclusion, with its stated hypotheses listed beneath"
 };
 function describe(spec) {
   const what = TYPE_DESCRIPTION[spec.type] ?? `a listing of this figure's ${spec.entities.length} elements`;
@@ -9531,6 +9572,9 @@ function describe(spec) {
     parts.push(
       `${unused.length} of the stated hypotheses (${unused.map((e) => e.label).join(", ")}) are never used by the proof.`
     );
+  }
+  for (const warning of spec.annotations.filter((a) => a.kind === "warning")) {
+    parts.push(warning.text);
   }
   parts.push(`Why this figure: ${spec.rationale}`);
   return parts.join(" ");

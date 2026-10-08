@@ -22,7 +22,8 @@ export interface DependencyGraph {
   /**
    * Dependencies on declarations outside the extracted modules — mathlib
    * lemmas, mostly. Reported so the UI can say the graph is local rather than
-   * implying it is the whole proof.
+   * implying it is the whole graph. This count covers the entire extraction,
+   * including when a local subgraph is displayed.
    */
   externalDependencyCount: number;
 }
@@ -30,7 +31,8 @@ export interface DependencyGraph {
 /**
  * Build the local dependency graph.
  *
- * Edges point from a declaration to the declarations its proof term uses. Only
+ * Edges point from a declaration to constants in its statement or body. The
+ * extractor combines these references; they are not proof-only dependencies. Only
  * declarations present in the same extraction are included; see
  * `externalDependencyCount` for what was left out.
  */
@@ -75,7 +77,7 @@ export function dependencyGraph(doc: FormalIRDocument): Claim<DependencyGraph> {
       declaration: d.name,
       module: d.source?.module ?? null,
     })),
-    note: "Edges are the constants each proof term actually references. Dependencies on declarations outside the extracted modules are counted, not drawn.",
+    note: "Edges are declaration references from statements and bodies, when available; they do not distinguish proof use from statement use. References outside the extracted modules are counted across the extraction, not drawn.",
   });
 }
 

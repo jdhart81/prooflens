@@ -8,7 +8,7 @@ machinery in service of the distinction described here.
 A proof assistant tells you one thing very precisely: that a particular
 proposition follows from particular assumptions, by rules a kernel checked.
 
-Everything a human wants to know beyond that — what the theorem *means*, why it
+Everything a human wants to know beyond that — what the theorem _means_, why it
 is interesting, what it implies physically, what the bound looks like, which
 assumption is doing the work — is not in the kernel's answer. It is
 interpretation. Some of it is mechanically derived and reliable; some of it is a
@@ -26,14 +26,14 @@ than no system, because it launders guesses into apparent certainty.
 ProofLens tags every piece of information with one of six statuses, ordered from
 strongest to weakest. The order is a lattice, and it is used, not decorative.
 
-| Status | Means | Example |
-|---|---|---|
-| `verified` | Asserted by the proof assistant's kernel. | The exact Lean statement of a theorem. |
-| `derived` | Computed from verified data by a deterministic, inspectable rule. | "The conclusion's relation is `≤`, so this is an upper bound." |
-| `interpreted` | A reading of the formal statement, or a human author's declaration about it. | "`P` is electrical power, measured in watts." |
-| `heuristic` | A rule of thumb expected to be wrong sometimes. | A guess at which of several plots would be most useful. |
-| `illustrative` | A display choice that makes no mathematical claim. | The position of a marker on a schematic axis. |
-| `speculative` | Produced by a language model or other unverified source. | A generated analogy. |
+| Status         | Means                                                                        | Example                                                        |
+| -------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `verified`     | Asserted by the proof assistant's kernel.                                    | The exact Lean statement of a theorem.                         |
+| `derived`      | Computed from verified data by a deterministic, inspectable rule.            | "The conclusion's relation is `≤`, so this is an upper bound." |
+| `interpreted`  | A reading of the formal statement, or a human author's declaration about it. | "`P` is electrical power, measured in watts."                  |
+| `heuristic`    | A rule of thumb expected to be wrong sometimes.                              | A guess at which of several plots would be most useful.        |
+| `illustrative` | A display choice that makes no mathematical claim.                           | The position of a marker on a schematic axis.                  |
+| `speculative`  | Produced by a language model or other unverified source.                     | A generated analogy.                                           |
 
 `heuristic` and `speculative` are unused in v0.1, because v0.1's core contains
 no heuristics and no model. They exist in the schema because the architecture
@@ -54,7 +54,7 @@ export function transcribe<T>(
   witness: KernelWitness,
   value: T,
   provenance: Omit<Provenance, "rule"> & { rule?: never },
-): Claim<T>
+): Claim<T>;
 ```
 
 A `KernelWitness` carries a brand keyed by a **module-local** symbol. Not
@@ -94,9 +94,9 @@ claim carries:
 
 ```ts
 interface Provenance {
-  sources: SourceReference[];   // declaration, module, source span, structural path
-  rule?: Rule;                  // stable id, e.g. RELATION_UPPER_BOUND_001
-  inputs?: string[];            // upstream claim ids
+  sources: SourceReference[]; // declaration, module, source span, structural path
+  rule?: Rule; // stable id, e.g. RELATION_UPPER_BOUND_001
+  inputs?: string[]; // upstream claim ids
   note?: string;
 }
 ```
@@ -107,7 +107,7 @@ exact subterm responsible for it. Rule ids are public API: they appear in
 provenance output, in tests, and in issue reports, so renaming one is a breaking
 change.
 
-The question the UI must be able to answer is *"why are you showing me this?"*,
+The question the UI must be able to answer is _"why are you showing me this?"_,
 and the answer must name evidence rather than restate the conclusion. Compare:
 
 > The conclusion `x ≤ P / T` puts `x` on the smaller side of `≤`, so `P / T` is
@@ -118,15 +118,15 @@ second must be believed.
 
 ## Where each stage sits
 
-| Stage | Strongest status it can emit | Why |
-|---|---|---|
-| Formal IR | `verified` | Transcription of what the kernel accepted. |
-| MathIR | `derived` | The Lean-constant-to-mathematics table is ours, not the kernel's. |
-| Classifiers | `derived` | Deterministic rules over verified structure. |
-| Semantic annotations | `interpreted` | A human author's claim. Lean checked none of it. |
-| Visualization planner | `derived` | Selection is deterministic and explains itself. |
-| Schematic axes and positions | `illustrative` | Chosen for legibility. They assert nothing. |
-| AI adapters (future) | `speculative` | Nothing underwrites them. |
+| Stage                        | Strongest status it can emit | Why                                                               |
+| ---------------------------- | ---------------------------- | ----------------------------------------------------------------- |
+| Formal IR                    | `verified`                   | Transcription of what the kernel accepted.                        |
+| MathIR                       | `derived`                    | The Lean-constant-to-mathematics table is ours, not the kernel's. |
+| Classifiers                  | `derived`                    | Deterministic rules over verified structure.                      |
+| Semantic annotations         | `interpreted`                | A human author's claim. Lean checked none of it.                  |
+| Visualization planner        | `derived`                    | Selection is deterministic and explains itself.                   |
+| Schematic axes and positions | `illustrative`               | Chosen for legibility. They assert nothing.                       |
+| AI adapters (future)         | `speculative`                | Nothing underwrites them.                                         |
 
 The last row is the one the whole design exists for. When a language model
 eventually writes an explanation, the architecture already guarantees it arrives
@@ -145,8 +145,14 @@ that looks measured but is not is a lie told in a visual grammar readers trust.
 **A `sorry` collapses everything.** If a proof reaches `sorryAx`, no witness is
 minted, the `formal` explanation layer switches from "What was proved" to "What
 was stated", a warning banner leads the panel, and every downstream claim is
-`derived` at best. The statement's *structure* is still analysable — it is a real
+`derived` at best. The statement's _structure_ is still analysable — it is a real
 Lean term — but nothing about its truth is.
+
+Admitted declarations also suppress assumption-use classifications, explanations, and figures.
+An admitted term can ignore a hypothesis because `sorryAx` supplies the goal; that is not an
+insight about a completed proof. Unavailable proof terms receive the same suppression. The
+admission warning describes the extracted artifact and does not assert that no completed
+proof of the statement exists elsewhere.
 
 **An unused hypothesis is `derived`, not `verified`, and the wording says why.**
 Occurrence analysis on the elaborated proof term is mechanical and reliable, so

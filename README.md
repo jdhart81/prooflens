@@ -35,6 +35,16 @@ human mathematical understanding
 
 ---
 
+## See cancellation in one example
+
+[Open ProofLens](https://jdhart81.github.io/prooflens/), choose `abs_upper_bound`, and set `a = 1, b = 1`: both sides of `|a + b| ≤ |a| + |b|` equal 2. Change `b` to −1: the left side becomes 0 and the right side stays 2. The inputs cancel; the inequality still holds at these values.
+
+Use **Why this picture**, the original Lean statement, and **Save explanation** to connect the picture to the claim. The bundled example carries extracted Lean proof metadata; the plot remains a numerical illustration. Browser source previews do not run Lean or prove a conjecture.
+
+[Inspect the Lean source](corpus/ProofLensExamples/Bounds.lean) · [Try a supported pasted statement](docs/two-minute-demo.md) · [Tell us what became clearer or blocked you](https://github.com/jdhart81/prooflens/issues/new?template=builder_trial.yml)
+
+---
+
 ## Why this exists
 
 A formal statement can be precise and still be difficult to understand. ProofLens

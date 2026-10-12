@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ProofLens — See why a bound still holds</title>
+  <meta name="description" content="Explore cancellation in the triangle inequality, then reproduce the example in ProofLens. Numerical examples explain; they do not prove.">
+  <style>
+    :root{--ink:#152a37;--muted:#526574;--blue:#2167d1;--orange:#b45309;--green:#14715d;--line:#d8e2e7;--paper:#f5f8f9}
+    *{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--paper);font:17px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:#1759b4;text-underline-offset:3px}button,input{font:inherit}button,a.button{cursor:pointer;display:inline-block;border-radius:8px;padding:11px 18px;font-weight:650;text-decoration:none;border:1px solid var(--line);background:white;color:var(--ink)}button:hover,a.button:hover{border-color:var(--blue)}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #568aff;outline-offset:4px}.button.primary{background:var(--blue);border-color:var(--blue);color:white}.wrap{max-width:1160px;margin:auto;padding:0 28px}header{border-bottom:1px solid var(--line);background:white}nav{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 0}.brand{font-size:22px;letter-spacing:-.6px;font-weight:750}.brand span{color:var(--muted);font-size:14px;font-weight:400;letter-spacing:0;margin-left:14px}.navlinks{display:flex;gap:20px;font-size:14px}h1{font-size:clamp(36px,5vw,62px);line-height:1.07;letter-spacing:-2.6px;margin:12px 0 24px;max-width:770px}h2{font-size:29px;line-height:1.2;letter-spacing:-.8px;margin:0 0 14px}h3{font-size:19px;margin:0 0 9px}.eyebrow{text-transform:uppercase;letter-spacing:1.8px;font-size:12px;font-weight:750;color:var(--green)}.hero{padding:60px 0 42px}.lead{max-width:740px;color:var(--muted);font-size:21px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin:25px 0 15px}.note{font-size:14px;color:var(--muted)}.experiment{display:grid;grid-template-columns:.78fr 1.22fr;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:white;box-shadow:0 15px 45px #18394a09}.controls{padding:30px;background:#f0f5f7;border-right:1px solid var(--line)}.equation{font:600 27px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:-1px;padding-bottom:14px}.control{margin:24px 0}.control label{display:flex;justify-content:space-between;font-weight:650}.control input{width:100%;margin:12px 0 0;accent-color:var(--blue)}.control output{font-variant-numeric:tabular-nums}.presets{display:flex;flex-wrap:wrap;gap:8px}.presets button{padding:8px 12px;font-size:14px}.visual{padding:30px}.pill{display:inline-block;background:#eaf3ef;color:var(--green);font-size:12px;font-weight:700;border-radius:99px;padding:5px 10px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.metric{border:1px solid var(--line);border-radius:10px;padding:16px}.metric small{display:block;color:var(--muted);font-size:14px}.metric strong{display:block;font-size:36px;line-height:1.2;font-variant-numeric:tabular-nums;color:var(--blue)}.metric.right strong{color:var(--orange)}.metric code{font-size:15px}.visual svg{width:100%;height:auto;display:block;margin:15px 0 0}.insight{padding:14px 16px;border-left:3px solid var(--green);background:#f2f7f5;margin:12px 0}.boundary{margin:22px 0 0;padding:18px 22px;border:1px solid var(--line);border-radius:10px;background:white;display:flex;gap:14px;align-items:flex-start}.boundary strong{white-space:nowrap}.boundary p{margin:0;font-size:15px;color:var(--muted)}section.block{padding:52px 0;border-bottom:1px solid var(--line)}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin:24px 0}.stepno{display:block;color:var(--green);font-size:13px;font-weight:750;letter-spacing:1px;margin-bottom:10px}.steps p,.columns p{color:var(--muted);margin:8px 0}.columns{display:grid;grid-template-columns:1fr 1fr;gap:36px}.source{font-size:14px}.source code{overflow-wrap:anywhere}pre{overflow-x:auto;padding:20px;background:#142836;color:#ebf3f7;border-radius:10px;font:14px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace}.evidence{border:1px solid var(--line);border-radius:12px;background:white;padding:22px}.evidence img{width:100%;display:block;border-radius:8px}.evidence figcaption{font-size:13px;color:var(--muted);margin-top:12px}figure{margin:0}details{margin-top:20px;border-top:1px solid var(--line);padding-top:16px}summary{cursor:pointer;font-weight:650}footer{padding:28px 0 45px;font-size:14px;color:var(--muted)}.footerlinks{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0}
+    @media(max-width:760px){.wrap{padding:0 19px}.brand span{display:none}.navlinks{gap:12px}.hero{padding:38px 0 28px}h1{letter-spacing:-1.5px}.lead{font-size:18px}.experiment,.columns,.steps{grid-template-columns:1fr}.controls{border-right:0;border-bottom:1px solid var(--line);padding:23px}.visual{padding:23px}.boundary{display:block}.boundary strong{display:block;margin-bottom:6px}.steps{gap:24px}section.block{padding:36px 0}.equation{font-size:23px}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+    @media print{button,.actions,.navlinks,input{display:none}.experiment,.columns{display:block}body{background:white}.hero{padding:20px 0}section.block{padding:20px 0}a{color:inherit}.controls{border:0}}
+  </style>
+</head>
+<body>
+  <header><div class="wrap"><nav aria-label="Main navigation"><div class="brand">ProofLens<span>Visual understanding for Lean statements</span></div><div class="navlinks"><a href="#reproduce">Try in ProofLens</a><a href="#source">Inspect the source</a></div></nav></div></header>
+  <main class="wrap">
+    <div class="hero">
+      <div class="eyebrow">A small example you can reproduce</div>
+      <h1>See why a bound still holds<br>when the values change.</h1>
+      <p class="lead">Two inputs can cancel each other. Their combined magnitude gets smaller, while the sum of their individual magnitudes stays the same. ProofLens connects that picture to the Lean statement.</p>
+      <div class="actions"><a class="button primary" href="https://jdhart81.github.io/prooflens/">Open the live ProofLens app ↗</a><a class="button" href="#try">Explore this example</a></div>
+      <p class="note">The live browser app requires no installation or account. This companion example runs locally and collects no feedback.</p>
+    </div>
+    <section id="try" aria-labelledby="try-heading">
+      <div class="experiment">
+        <div class="controls">
+          <span class="eyebrow">Change one input</span>
+          <h2 id="try-heading">What happens when b changes sign?</h2>
+          <div class="equation">|a + b| ≤ |a| + |b|</div>
+          <p>Start with a = 1 and b = 1. Then change b to −1. Compare the two sides.</p>
+          <div class="control"><label for="input-a">a <output id="value-a" for="input-a">1</output></label><input id="input-a" type="range" min="-4" max="4" step="0.25" value="1" aria-label="Value of a"></div>
+          <div class="control"><label for="input-b">b <output id="value-b" for="input-b">1</output></label><input id="input-b" type="range" min="-4" max="4" step="0.25" value="1" aria-label="Value of b"></div>
+          <div class="presets"><button type="button" id="cancel">Try b = −1</button><button type="button" id="reset">Reset a = 1, b = 1</button></div>
+          <p class="note">The slider range is a display choice. The Lean statement is over real numbers, without these slider limits.</p>
+        </div>
+        <div class="visual">
+          <span class="pill">Numerical illustration</span>
+          <div class="metrics" aria-live="polite" aria-atomic="true"><div class="metric"><small>Combined magnitude</small><code>|a + b|</code><strong id="lhs">2</strong></div><div class="metric right"><small>Sum of magnitudes</small><code>|a| + |b|</code><strong id="rhs">2</strong></div></div>
+          <svg id="chart" viewBox="0 0 600 230" role="img" aria-labelledby="chart-title chart-description"><title id="chart-title">Two signed inputs and their combined magnitude</title><desc id="chart-description">Numerical example a equals 1 and b equals 1. Both sides equal 2.</desc><g id="chart-content"></g></svg>
+          <p class="insight" id="insight" aria-live="polite">Both inputs point in the same direction. Their magnitudes add, so the two sides are equal.</p>
+          <p class="note">A sampled picture does not prove the inequality for all real inputs. This companion uses ordinary browser arithmetic and is separate from ProofLens’s extraction and verification machinery.</p>
+        </div>
+      </div>
+      <noscript><p>The interactive companion needs JavaScript. You can still reproduce the example in the live app: a = 1, b = 1 gives 2 ≤ 2; a = 1, b = −1 gives 0 ≤ 2.</p></noscript>
+      <div class="boundary"><strong>Keep the labels with the picture.</strong><p>ProofLens distinguishes extracted proof status, deterministic explanations, author interpretations and numerical illustrations. Pasting Lean source into its browser does not run Lean or check a proof.</p></div>
+    </section>
+    <section id="reproduce" class="block" aria-labelledby="reproduce-heading">
+      <div class="eyebrow">Browser first · estimated two minutes</div>
+      <h2 id="reproduce-heading">Reproduce it in the actual app.</h2>
+      <div class="steps">
+        <div><span class="stepno">01 / CHOOSE</span><h3>Select abs_upper_bound</h3><p>Open the live app. Under <strong>Explore a statement</strong>, choose <code>abs_upper_bound</code>. If needed, filter by name. Set a = 1 and b = 1.</p></div>
+        <div><span class="stepno">02 / CHANGE</span><h3>Make b negative</h3><p>Confirm left side 2 and right side 2. Change b to −1. The left side becomes 0; the right side remains 2. The displayed relationship still holds.</p></div>
+        <div><span class="stepno">03 / EXPLAIN</span><h3>Say what became clearer</h3><p>Use <strong>Why this picture</strong> and the original Lean statement to connect the values to the claim. <strong>Save explanation</strong> and <strong>Save chart</strong> keep the app’s captions and qualifications.</p></div>
+      </div>
+      <div class="actions"><a class="button primary" href="https://jdhart81.github.io/prooflens/">Try the live app ↗</a><a class="button" href="https://github.com/jdhart81/prooflens/issues/new?template=builder_trial.yml">Share a first-use report ↗</a></div>
+      <p class="note">Feedback is optional. The linked issue is public and needs a GitHub account to submit; use public or synthetic inputs and omit private research and personal information. Completing this example demonstrates interaction, not a measured learning benefit.</p>
+    </section>
+    <section id="source" class="block" aria-labelledby="source-heading">
+      <div class="columns">
+        <div><div class="eyebrow">Statement → values → explanation</div><h2 id="source-heading">Inspect the formal claim.</h2><p>The bundled declaration delegates its proof to Lean’s triangle inequality theorem. The live app displays a Lean-checked declaration in its bundled extraction, while the chart remains a numerical illustration.</p><pre><code>theorem abs_upper_bound (a b : ℝ) :
+    |a + b| ≤ |a| + |b| :=
+  abs_add_le a b</code></pre><p class="source"><a href="https://github.com/jdhart81/prooflens/blob/6d18d52fa3a780989e34ec75c38fa6e0ab26a154/corpus/ProofLensExamples/Bounds.lean#L86">Inspect the pinned Lean source</a> · <a href="https://github.com/jdhart81/prooflens/blob/6d18d52fa3a780989e34ec75c38fa6e0ab26a154/docs/epistemic-model.md">Read the status-label model</a></p><p class="note">The “signal amplitude” reading comes from author annotations. Lean checks the mathematical statement; it does not establish a physical experiment or validate that interpretation.</p></div>
+        <div class="evidence"><figure><img src="assets/live-cancellation.jpg" alt="The live ProofLens app with abs_upper_bound selected, a equal to 1 and b equal to negative 1, showing left side 0 and right side 2." loading="lazy"><figcaption>Actual live app observed October 11, 2026 (America/New_York). Controls, values and the numerical-illustration label were checked directly. Source revision: <code>6d18d52</code>.</figcaption></figure></div>
+      </div>
+      <details><summary>What we verified—and what remains unknown</summary><p>On October 11, the current source revision had seven successful GitHub check runs, including the Lean corpus/end-to-end pipeline and Pages deployment. The non-gating mathlib coverage metric was skipped. The live app displayed 2/2 at a = b = 1 and 0/2 after b became −1.</p><p>These are technical readiness observations. They do not establish independent useful use, improved comprehension, repeat use, scientific validity outside the formal statement, or revenue.</p><p><a href="https://github.com/jdhart81/prooflens/actions/runs/37862210751">Source pipeline run</a> · <a href="https://github.com/jdhart81/prooflens/actions/runs/37862210705">Pages build and deployment</a></p></details>
+    </section>
+    <section class="block" aria-labelledby="next-heading"><div class="columns"><div><div class="eyebrow">Use it for your own question</div><h2 id="next-heading">The next useful example is yours.</h2><p>Try a small public or synthetic statement you want to understand. The browser supports a bounded subset of Lean syntax; unsupported forms remain visible gaps. Source previews explain supported statements and do not check proofs.</p><a href="https://github.com/jdhart81/prooflens/blob/6d18d52fa3a780989e34ec75c38fa6e0ab26a154/docs/two-minute-demo.md">Try the square-root source-preview walkthrough ↗</a></div><div><h3>Build with the project</h3><p>Report one confusing step, contribute a supported example, or propose a focused visualization. Contributions should preserve the correct status labels, source provenance and DCO sign-offs.</p><p><a href="https://github.com/jdhart81/prooflens/blob/6d18d52fa3a780989e34ec75c38fa6e0ab26a154/CONTRIBUTING.md">Contribution guide ↗</a></p></div></div></section>
+  </main>
+  <footer class="wrap"><strong>ProofLens · Justin Hart / Viridis</strong><div class="footerlinks"><a href="https://github.com/jdhart81/prooflens">Project source</a><a href="CASE_STUDY.md">Case study</a><a href="../first-use/PARTICIPANT_PACKET.md">First-use packet</a></div><p>Companion visuals are explanatory examples; no account, analytics or feedback submission is built into this page.</p></footer>
+  <script>
+    (() => {
+      'use strict';
+      const aInput=document.getElementById('input-a'),bInput=document.getElementById('input-b');
+      const format=n=>Object.is(n,-0)?'0':String(n);
+      const x=n=>300+n*32;
+      function line(x1,y1,x2,y2,color,width=5,dash='') {return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${width}" stroke-linecap="round" ${dash?`stroke-dasharray="${dash}"`:''}/>`;}
+      function arrow(from,to,y,color) {const target=x(to),sgn=to>=from?1:-1;return line(x(from),y,target,y,color)+(from===to?`<circle cx="${target}" cy="${y}" r="4" fill="${color}"/>`:`<path d="M ${target-sgn*10} ${y-6} L ${target} ${y} L ${target-sgn*10} ${y+6}" fill="none" stroke="${color}" stroke-width="3"/>`);}
+      function update() {
+        const a=Number(aInput.value),b=Number(bInput.value),lhs=Math.abs(a+b),rhs=Math.abs(a)+Math.abs(b);
+        document.getElementById('value-a').textContent=format(a);document.getElementById('value-b').textContent=format(b);
+        document.getElementById('lhs').textContent=format(lhs);document.getElementById('rhs').textContent=format(rhs);
+        const desc=`a = ${format(a)}, b = ${format(b)}. Combined magnitude ${format(lhs)}; sum of magnitudes ${format(rhs)}. Numerical illustration only.`;
+        document.getElementById('chart-description').textContent=desc;
+        document.getElementById('insight').textContent=lhs===rhs?'No cancellation occurs. The combined magnitude equals the sum of the individual magnitudes.':'Opposite signs create cancellation. The combined magnitude is smaller than the sum of the individual magnitudes; the inequality still holds.';
+        let markup=line(44,111,556,111,'#cedbe2',1)+line(300,28,300,184,'#cedbe2',1,'4 4');
+        for(let n=-8;n<=8;n+=2){markup+=line(x(n),107,x(n),115,'#92a6b3',1)+`<text x="${x(n)}" y="134" text-anchor="middle" font-size="12" fill="#526574">${n}</text>`;}
+        markup+=arrow(0,a,48,'#2167d1')+`<text x="44" y="25" font-size="13" fill="#2167d1">First input a = ${format(a)}</text>`;
+        markup+=arrow(a,a+b,86,'#b45309')+`<text x="330" y="25" font-size="13" fill="#b45309">Then add b = ${format(b)}</text>`;
+        markup+=`<circle cx="${x(a+b)}" cy="111" r="5" fill="#14715d"/><text x="44" y="164" font-size="13" fill="#14715d">Signed sum a + b = ${format(a+b)}</text>`;
+        markup+=line(44,195,44+lhs*40,195,'#2167d1',8)+`<text x="410" y="199" font-size="13" fill="#2167d1">Combined: ${format(lhs)}</text>`;
+        markup+=line(44,220,44+rhs*40,220,'#b45309',8)+`<text x="410" y="224" font-size="13" fill="#b45309">Magnitudes: ${format(rhs)}</text>`;
+        document.getElementById('chart-content').innerHTML=markup;
+      }
+      aInput.addEventListener('input',update);bInput.addEventListener('input',update);
+      document.getElementById('cancel').addEventListener('click',()=>{bInput.value='-1';update();});
+      document.getElementById('reset').addEventListener('click',()=>{aInput.value='1';bInput.value='1';update();});update();
+    })();
+  </script>
+</body>
+</html>

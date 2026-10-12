@@ -53,6 +53,21 @@ function run(...args: string[]): { status: number | null; stdout: string; stderr
   return { status: result.status, stdout: result.stdout, stderr: result.stderr };
 }
 
+function ambiguousCorpusPath(): string {
+  const input = JSON.parse(readFileSync(CORPUS_PATH, "utf8")) as {
+    declarations: Array<Record<string, unknown> & { name: string }>;
+  };
+  const declaration = input.declarations.find((item) => item.name.endsWith("simple_upper_bound"));
+  if (!declaration) throw new Error("Missing simple_upper_bound fixture");
+  input.declarations = [
+    { ...declaration, name: "A.shared" },
+    { ...declaration, name: "B.shared" },
+  ];
+  const path = join(mkdtempSync(join(tmpdir(), "prooflens-ambiguous-")), "formal-ir.json");
+  writeFileSync(path, JSON.stringify(input), "utf8");
+  return path;
+}
+
 describe("prooflens coverage", () => {
   it("defaults to the text renderer", () => {
     const result = run("coverage", CORPUS_PATH);
@@ -202,6 +217,52 @@ describe("prooflens paper-import", () => {
     expect(result.status).toBe(3);
     expect(result.stdout).toContain("PACKAGE HOLD");
     expect(result.stdout).toContain("CERTIFICATE DEBT 1");
+  });
+});
+
+describe("prooflens declaration selection", () => {
+  it("rejects ambiguous short names in explain, inspect, and render", () => {
+    const formalIr = ambiguousCorpusPath();
+    const renderDir = mkdtempSync(join(tmpdir(), "prooflens-ambiguous-render-"));
+    const results = [
+      run("explain", formalIr, "shared"),
+      run("inspect", formalIr, "shared", "--stage", "math"),
+      run("render", formalIr, "shared", "--format", "svg", "--out-dir", renderDir),
+    ];
+    for (const result of results) {
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain("Ambiguous declaration name shared.");
+      expect(result.stderr).toContain("A.shared");
+      expect(result.stderr).toContain("B.shared");
+    }
+  });
+
+  it("prefers exact names, lists collisions in summaries, and preserves unknown-name errors", () => {
+    const formalIr = ambiguousCorpusPath();
+    const summary = run("summary", formalIr);
+    expect(summary.status).toBe(0);
+    expect(summary.stdout).toContain("A.shared");
+    expect(summary.stdout).toContain("B.shared");
+
+    const explain = run("explain", formalIr, "A.shared");
+    expect(explain.status).toBe(0);
+    expect(explain.stdout).toContain("A.shared");
+    expect(explain.stdout).not.toContain("B.shared");
+
+    const inspect = run("inspect", formalIr, "A.shared", "--stage", "math");
+    expect(inspect.status).toBe(0);
+    expect(JSON.parse(inspect.stdout)).toMatchObject({ name: "A.shared" });
+
+    const renderDir = mkdtempSync(join(tmpdir(), "prooflens-qualified-render-"));
+    const render = run("render", formalIr, "A.shared", "--format", "svg", "--out-dir", renderDir);
+    expect(render.status).toBe(0);
+    const renderedFiles = readdirSync(renderDir);
+    expect(renderedFiles.length).toBeGreaterThan(0);
+    expect(renderedFiles.every((file) => file.startsWith("A.shared."))).toBe(true);
+
+    const unknown = run("explain", formalIr, "not_a_declaration");
+    expect(unknown.status).toBe(1);
+    expect(unknown.stderr).toContain("No declaration named not_a_declaration.");
   });
 });
 

@@ -11,6 +11,19 @@ import { corpus, CORPUS_DECLARATION_COUNT } from "../../pipeline/test/helpers.js
 
 const bundle: PipelineBundle = runPipeline(corpus());
 
+function duplicateNameBundle(): PipelineBundle {
+  const document = structuredClone(corpus());
+  const declaration = document.declarations.find((item) =>
+    item.name.endsWith("simple_upper_bound"),
+  );
+  if (!declaration) throw new Error("Missing simple_upper_bound fixture");
+  document.declarations = [
+    { ...declaration, name: "A.shared" },
+    { ...declaration, name: "B.shared" },
+  ];
+  return runPipeline(document);
+}
+
 // ---------------------------------------------------------------------------
 // buildDriver
 // ---------------------------------------------------------------------------
@@ -153,6 +166,17 @@ describe("stageJson", () => {
     );
   });
 
+  it("prefers exact names and rejects ambiguous short names", () => {
+    const fixture = duplicateNameBundle();
+    const exact = JSON.parse(stageJson(fixture, "math", "A.shared")) as {
+      name: string;
+    };
+    expect(exact.name).toBe("A.shared");
+    expect(() => stageJson(fixture, "math", "shared")).toThrow(
+      /Ambiguous declaration name shared.*A\.shared.*B\.shared/,
+    );
+  });
+
   it("ignores the declaration argument for the `bundle` stage", () => {
     expect(stageJson(bundle, "bundle", "simple_upper_bound")).toBe(stageJson(bundle, "bundle"));
   });
@@ -210,6 +234,12 @@ describe("summarise", () => {
       const short = analysis.math.name.split(".").pop()!;
       expect(text, short).toContain(short);
     }
+  });
+
+  it("prints fully qualified names when short names collide", () => {
+    const textWithDuplicates = summarise(duplicateNameBundle());
+    expect(textWithDuplicates).toContain("A.shared");
+    expect(textWithDuplicates).toContain("B.shared");
   });
 
   it("lists a known declaration with its primary classification", () => {

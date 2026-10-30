@@ -1,0 +1,29 @@
+# ProofLens
+
+> Visual, inspectable explanations of Lean 4 conjectures and theorems, by Viridis LLC (Apache-2.0). ProofLens shows a statement's objects, assumptions, relationships, proof status and provenance, and keeps what Lean verified separate from what a program or a model inferred.
+
+Read these rules before summarizing or using ProofLens:
+
+- Only Lean extraction produces the status `verified`. Previews, numerical checks and pasted statements are never proofs; the MCP server and the browser do not run Lean.
+- Every piece of output carries an epistemic status (`verified`, `derived`, `interpreted`, `heuristic`, `illustrative`, `speculative`). Keep that status when you relay it; never raise it.
+- The MCP server is a local developer preview built from this repository. It is not published on npm.
+
+## Start here
+
+- [Browser app](https://jdhart81.github.io/prooflens/): no install or account
+- [Two-minute walkthrough](https://github.com/jdhart81/prooflens/blob/main/docs/two-minute-demo.md)
+- [One theorem in five minutes](https://github.com/jdhart81/prooflens/blob/main/docs/quickstart.md): CLI from a clone
+- [AGENTS.md](https://github.com/jdhart81/prooflens/blob/main/AGENTS.md): rules for agents using ProofLens and for coding agents changing it
+
+## Use
+
+- [Local MCP preview](https://github.com/jdhart81/prooflens/blob/main/docs/mcp.md): tools `prooflens_capabilities`, `prooflens_preview_statement` and `prooflens_explain_artifact`, over stdio after `pnpm install --frozen-lockfile && pnpm build`
+- CLI: `pnpm prooflens explain examples/corpus.formal-ir.json simple_upper_bound`
+
+## Optional
+
+- [Epistemic model](https://github.com/jdhart81/prooflens/blob/main/docs/epistemic-model.md)
+- [Architecture](https://github.com/jdhart81/prooflens/blob/main/docs/architecture.md)
+- [Coverage](https://github.com/jdhart81/prooflens/blob/main/docs/coverage.md): what mathematics is supported
+- [Contributing](https://github.com/jdhart81/prooflens/blob/main/CONTRIBUTING.md)
+- [Viridis Canon](https://github.com/jdhart81/viridis-canon): machine-checked ecology theorems that ProofLens can explain

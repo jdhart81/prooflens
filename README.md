@@ -316,6 +316,8 @@ does not measure reader comprehension. See [the roadmap](docs/roadmap.md).
 
 ## Documentation
 
+Agents and LLM tools can start from [llms.txt](llms.txt) and [AGENTS.md](AGENTS.md).
+
 - [Product direction](docs/product-direction.md) — Lean code to visual mathematical understanding
 
 - [One theorem in five minutes](docs/quickstart.md) — the smallest complete Lean-to-visual path

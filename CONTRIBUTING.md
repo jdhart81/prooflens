@@ -383,13 +383,14 @@ CI re-extracts and compares `examples/corpus.formal-ir.json` (ignoring the
 before committing it** — a change to extraction shows up here first, and this is
 the likeliest place for an epistemic regression to slip past unnoticed.
 
-Note that **nothing automates or verifies the copy under `apps/web/public/`** —
-no script, no Vite plugin, and CI checks only the `examples/` file. If you
-re-extract and forget the copy, the tests and the CLI will use fresh data while
-the web app silently serves the old extraction. Copy it in the same commit.
-`pnpm --filter @prooflens/web verify` exercises the real browser data path
-against that file and will catch a badly broken copy, though not a merely stale
-one.
+The web application's `prebuild` and `predev` hooks run
+`scripts/sync-corpus.mjs`, which copies the canonical corpus and paper-packet
+examples into `apps/web/public/`. `pnpm extract:corpus` also runs this sync.
+CI builds the web application before running
+`pnpm --filter @prooflens/web verify`, so that check uses a synchronized copy.
+After re-extracting, review and commit any changed canonical files and browser
+copies together; synchronization does not replace the extraction or epistemic
+checks.
 
 ### 3. A corpus free of `sorry`
 
